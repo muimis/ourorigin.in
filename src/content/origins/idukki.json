@@ -12,10 +12,10 @@
   },
   "method": "Shade-Grown Wild Harvest",
   "images": {
-    "canopy": "/assets/origins/idukki-canopy.png",
-    "land": "/assets/origins/idukki-hand.png",
-    "hand": "/assets/origins/idukki-hand.png",
-    "specimen": "/assets/origins/idukki-specimen.png",
+    "canopy": "/assets/origins/idukki-canopy.webp",
+    "land": "/assets/origins/idukki-hand.webp",
+    "hand": "/assets/origins/idukki-hand.webp",
+    "specimen": "/assets/origins/idukki-specimen.webp",
     "isPlaceholderImagery": false
   }
 }

@@ -12,10 +12,10 @@
   },
   "method": "Lowland Homesteading",
   "images": {
-    "canopy": "/assets/origins/thiruvananthapuram-canopy.png",
-    "land": "/assets/origins/thiruvananthapuram-hand.jpg",
-    "hand": "/assets/origins/thiruvananthapuram-hand.jpg",
-    "specimen": "/assets/origins/thiruvananthapuram-specimen.png",
+    "canopy": "/assets/origins/thiruvananthapuram-canopy.webp",
+    "land": "/assets/origins/thiruvananthapuram-hand.webp",
+    "hand": "/assets/origins/thiruvananthapuram-hand.webp",
+    "specimen": "/assets/origins/thiruvananthapuram-specimen.webp",
     "isPlaceholderImagery": false
   }
 }

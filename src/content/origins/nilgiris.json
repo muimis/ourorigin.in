@@ -12,10 +12,10 @@
   },
   "method": "Forest Polyculture",
   "images": {
-    "canopy": "/assets/origins/nilgiris-canopy.png",
-    "land": "/assets/origins/nilgiris-hand.png",
-    "hand": "/assets/origins/nilgiris-hand.png",
-    "specimen": "/assets/origins/nilgiris-specimen.png",
+    "canopy": "/assets/origins/nilgiris-canopy.webp",
+    "land": "/assets/origins/nilgiris-hand.webp",
+    "hand": "/assets/origins/nilgiris-hand.webp",
+    "specimen": "/assets/origins/nilgiris-specimen.webp",
     "isPlaceholderImagery": false
   }
 }
