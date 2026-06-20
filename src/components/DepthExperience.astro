@@ -18,7 +18,6 @@ const strata = [
 
 // Determine sizes for the offering stratum
 const sizes = product ? product.data.sizes : [];
-
 ---
 
 <div class="depth-experience-container">
@@ -27,46 +26,50 @@ const sizes = product ? product.data.sizes : [];
     <OriginMark variant="gold" size={48} id="depth-gauge-mark" />
   </div>
 
-  {strata.map((s, i) => (
-    <section 
-      class={`stratum stratum-${s.id}`} 
-      style={`z-index: ${i + 1}; top: ${i * 5}dvh;`}
-    >
-      <div class="stratum-content">
-        <h2>{s.title}</h2>
+  <div class="pin-container">
+    {strata.map((s, i) => (
+      <section 
+        class={`stratum stratum-${s.id}`} 
+        style={`z-index: ${i + 1}; height: ${100 - (i * 5)}dvh;`}
+      >
+        <div class="stratum-content">
+          <div class="stratum-shadow"></div>
+          <h2 class="stratum-title">{s.title}</h2>
+        </div>
+      </section>
+    ))}
+
+    <!-- Offering Stratum (Custom Layout) -->
+    <section class="stratum stratum-offering" style={`z-index: 5; height: 80dvh;`}>
+      <div class="stratum-content offering-content">
+        <div class="stratum-shadow"></div>
+        <h2 class="stratum-title">OFFERING</h2>
+        
+        {sizes.length > 0 ? (
+          <div class="size-selector">
+            <div class="size-options">
+              {sizes.map((sizeObj: any, idx: number) => (
+                <label class="size-option">
+                  <input 
+                    type="radio" 
+                    name="product-size" 
+                    value={sizeObj.label} 
+                    data-price={sizeObj.priceINR}
+                    checked={idx === 0}
+                  />
+                  <span class="size-label">{sizeObj.label}</span>
+                  <span class="size-price">₹{sizeObj.priceINR}</span>
+                </label>
+              ))}
+            </div>
+            <button id="purchase-btn" class="primary-btn">Purchase</button>
+          </div>
+        ) : (
+          <p>OFFERING — [product.sizes]</p>
+        )}
       </div>
     </section>
-  ))}
-
-  <!-- Offering Stratum (Custom Layout) -->
-  <section class="stratum stratum-offering" style={`z-index: 5; top: 20dvh;`}>
-    <div class="stratum-content offering-content">
-      <h2>OFFERING</h2>
-      
-      {sizes.length > 0 ? (
-        <div class="size-selector">
-          <div class="size-options">
-            {sizes.map((sizeObj: any, idx: number) => (
-              <label class="size-option">
-                <input 
-                  type="radio" 
-                  name="product-size" 
-                  value={sizeObj.label} 
-                  data-price={sizeObj.priceINR}
-                  checked={idx === 0}
-                />
-                <span class="size-label">{sizeObj.label}</span>
-                <span class="size-price">₹{sizeObj.priceINR}</span>
-              </label>
-            ))}
-          </div>
-          <button id="purchase-btn" class="primary-btn">Purchase</button>
-        </div>
-      ) : (
-        <p>OFFERING — [product.sizes]</p>
-      )}
-    </div>
-  </section>
+  </div>
 </div>
 
 <style>
@@ -74,9 +77,14 @@ const sizes = product ? product.data.sizes : [];
     position: relative;
     background-color: var(--color-forest-deep);
     color: var(--color-warm-cream);
-    /* Extra padding at bottom so the final stratum can scroll fully up if needed,
-       but actually each section is 100dvh, so total scroll is natural. */
-    padding-bottom: 20dvh; 
+    /* GSAP will pin this container */
+  }
+
+  .pin-container {
+    width: 100vw;
+    height: 100dvh;
+    overflow: hidden;
+    position: relative;
   }
 
   .depth-gauge-wrapper {
@@ -88,11 +96,11 @@ const sizes = product ? product.data.sizes : [];
   }
 
   .stratum {
-    position: sticky;
-    height: 100dvh;
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100vw;
-    display: flex;
-    overflow: hidden;
+    will-change: transform;
   }
 
   .stratum-content {
@@ -103,18 +111,32 @@ const sizes = product ? product.data.sizes : [];
     justify-content: center;
     background-color: var(--color-forest-deep);
     transform-origin: top center;
-    will-change: transform, opacity;
+    will-change: transform;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
-    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.4);
+    position: relative;
+    border-radius: 2rem 2rem 0 0; /* Creates distinct card stacking effect */
+    overflow: hidden;
   }
 
-  /* Basic typographic styling for the placeholders */
-  .stratum-content h2 {
+  .stratum-shadow {
+    position: absolute;
+    inset: 0;
+    background-color: #000;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  /* Basic typographic styling */
+  .stratum-title {
     font-family: var(--font-narrative);
     font-size: var(--text-size-stratum-title);
     font-weight: 300;
     letter-spacing: 0.05em;
     margin: 0 0 1rem 0;
+    z-index: 10;
+    position: relative;
   }
 
   .offering-content {
@@ -127,6 +149,8 @@ const sizes = product ? product.data.sizes : [];
     flex-direction: column;
     gap: 2rem;
     align-items: center;
+    z-index: 10;
+    position: relative;
   }
 
   .size-options {
@@ -185,7 +209,7 @@ const sizes = product ? product.data.sizes : [];
     background-color: var(--color-warm-cream);
   }
 
-  /* Temporary differentiated backgrounds for Phase 1 testing */
+  /* Temporary differentiated backgrounds */
   .stratum-canopy .stratum-content { background-color: #0c1509; }
   .stratum-land .stratum-content { background-color: #111a12; }
   .stratum-hand .stratum-content { background-color: #152016; }
@@ -205,7 +229,6 @@ const sizes = product ? product.data.sizes : [];
       this.initDepthGauge();
       this.initPurchaseAction();
       
-      // Ensure ScrollTrigger recalculates after custom fonts (display=swap) load
       document.fonts.ready.then(() => {
         ScrollTrigger.refresh();
       });
@@ -226,28 +249,61 @@ const sizes = product ? product.data.sizes : [];
     initStrata() {
       const strata = document.querySelectorAll('.stratum');
       
+      // Start all strata below the viewport EXCEPT the first one
+      gsap.set(strata, { y: "100dvh" });
+      gsap.set(strata[0], { y: "0dvh" });
+
+      // Create a master pinned timeline
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".depth-experience-container",
+          start: "top top",
+          end: "+=400%", // 4 transitions * 100% viewport height
+          scrub: true,
+          pin: ".pin-container",
+          anticipatePin: 1
+        }
+      });
+
       strata.forEach((stratum, index) => {
-        // The last stratum does not scale down (it's the final layer)
-        if (index === strata.length - 1) return;
+        if (index === 0) return; // First stratum is already at y:0
 
-        const content = stratum.querySelector('.stratum-content');
-        const nextStratum = strata[index + 1];
+        const prevStratum = strata[index - 1];
+        const prevContent = prevStratum.querySelector('.stratum-content');
+        const prevShadow = prevStratum.querySelector('.stratum-shadow');
+        const prevTitle = prevStratum.querySelector('.stratum-title');
+        const prevSelector = prevStratum.querySelector('.size-selector'); 
 
-        // Animate the current stratum scaling down as the *next* stratum slides up
-        gsap.to(content, {
-          scale: 0.94,
-          opacity: 0.3,
+        const topOffset = index * 5; // The resting offset: 5, 10, 15, 20
+        const label = `step${index}`;
+
+        // 1. Current stratum slides up to its designated resting offset
+        tl.to(stratum, {
+          y: `${topOffset}dvh`,
           ease: "none",
-          scrollTrigger: {
-            trigger: nextStratum,
-            // Start when the top of the next stratum enters the bottom of the viewport
-            start: "top bottom",
-            // End when the top of the next stratum hits its own sticky 'top' position
-            // Since nextStratum has top: (index+1)*5 dvh, we use that as the end point.
-            end: `top ${(index + 1) * 5}%`,
-            scrub: true,
-          }
-        });
+          duration: 1
+        }, label)
+        
+        // 2. Previous stratum scales down to create the receding ghost band effect
+        .to(prevContent, {
+          scale: 0.94,
+          ease: "none",
+          duration: 1
+        }, label)
+        
+        // 3. Previous stratum darkens completely so it doesn't cause transparency jumble
+        .to(prevShadow, {
+          opacity: 0.85,
+          ease: "none",
+          duration: 1
+        }, label)
+        
+        // 4. Previous stratum text fades out completely (done in first 50% of the slide)
+        .to([prevTitle, prevSelector], {
+          opacity: 0,
+          ease: "none",
+          duration: 0.5
+        }, label);
       });
     }
 
@@ -256,7 +312,6 @@ const sizes = product ? product.data.sizes : [];
       const container = document.querySelector('.depth-experience-container');
 
       if (gauge && container) {
-        // Bind the gauge movement to the overall container scroll progress
         gsap.fromTo(gauge, 
           { y: "10dvh" }, 
           { 
@@ -265,20 +320,21 @@ const sizes = product ? product.data.sizes : [];
             scrollTrigger: {
               trigger: container,
               start: "top top",
-              end: "bottom bottom",
+              end: "+=400%", // Matches the pin duration
               scrub: true
             }
           }
         );
 
-        // Click interaction
         gauge.addEventListener('click', () => {
           console.log('open spatial overlay - future direction');
         });
+
+        document.dispatchEvent(new CustomEvent('play-origin-mark-entrance'));
       }
     }
   }
 
-  // Initialize on load
+  // Ensure initialization happens safely
   new DepthExperience();
 </script>
