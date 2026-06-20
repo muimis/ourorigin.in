@@ -27,18 +27,25 @@ const strokeColor = colorMap[variant];
   role="img"
 >
   <!-- Outer ring -->
-  <circle class="om-outer" cx="140" cy="140" r="108" stroke={strokeColor} stroke-width="1.5" opacity="0.4"/>
+  <circle class="om-outer" cx="140" cy="140" r="108" stroke={strokeColor} stroke-width="1.5" opacity="0.6"/>
   
   <!-- Crosshairs -->
-  <g class="om-crosshairs" stroke={strokeColor} stroke-width="1.5" opacity="0.9" stroke-linecap="round">
-    <line x1="140" y1="72"  x2="140" y2="104"/>
-    <line x1="140" y1="176" x2="140" y2="208"/>
-    <line x1="72"  y1="140" x2="104" y2="140"/>
-    <line x1="176" y1="140" x2="208" y2="140"/>
+  <g class="om-crosshairs" stroke={strokeColor} stroke-width="1.5" opacity="1" stroke-linecap="round">
+    <!-- Main Lines -->
+    <line class="main-line" x1="140" y1="104" x2="140" y2="48"/>
+    <line class="main-line" x1="140" y1="176" x2="140" y2="232"/>
+    <line class="main-line" x1="104" y1="140" x2="48"  y2="140"/>
+    <line class="main-line" x1="176" y1="140" x2="232" y2="140"/>
+    
+    <!-- Diagonal Lines -->
+    <line class="diag-line" x1="102" y1="102" x2="91"  y2="91"/>
+    <line class="diag-line" x1="178" y1="102" x2="189" y2="91"/>
+    <line class="diag-line" x1="102" y1="178" x2="91"  y2="189"/>
+    <line class="diag-line" x1="178" y1="178" x2="189" y2="189"/>
   </g>
 
   <!-- Inner ring -->
-  <circle class="om-inner" cx="140" cy="140" r="28" stroke={strokeColor} stroke-width="1.5" opacity="0.75" fill="none"/>
+  <circle class="om-inner" cx="140" cy="140" r="28" stroke={strokeColor} stroke-width="1.5" opacity="0.85" fill="none"/>
   
   <!-- Center dot -->
   <circle class="om-dot" cx="140" cy="140" r="6" fill={strokeColor} opacity="1"/>
@@ -56,18 +63,20 @@ const strokeColor = colorMap[variant];
     init() {
       document.querySelectorAll('.origin-mark').forEach(svg => {
         const outer = svg.querySelector('.om-outer');
-        const lines = svg.querySelectorAll('.om-crosshairs line');
+        const mainLines = svg.querySelectorAll('.om-crosshairs .main-line');
+        const diagLines = svg.querySelectorAll('.om-crosshairs .diag-line');
         const inner = svg.querySelector('.om-inner');
         const dot = svg.querySelector('.om-dot');
 
-        // Lengths for draw-on effect
-        const outerLen = 2 * Math.PI * 108; // ~678.58
-        const innerLen = 2 * Math.PI * 28;  // ~175.93
-        const lineLen = 32;
+        const outerLen = 2 * Math.PI * 108; 
+        const innerLen = 2 * Math.PI * 28;  
+        const mainLen = 56;
+        const diagLen = 16;
 
         gsap.set(outer, { strokeDasharray: outerLen, strokeDashoffset: outerLen });
         gsap.set(inner, { strokeDasharray: innerLen, strokeDashoffset: innerLen });
-        gsap.set(lines, { strokeDasharray: lineLen, strokeDashoffset: lineLen });
+        gsap.set(mainLines, { strokeDasharray: mainLen, strokeDashoffset: mainLen });
+        gsap.set(diagLines, { strokeDasharray: diagLen, strokeDashoffset: diagLen });
         gsap.set(dot, { scale: 0, transformOrigin: "50% 50%", opacity: 0 });
       });
     }
@@ -75,42 +84,35 @@ const strokeColor = colorMap[variant];
     play() {
       document.querySelectorAll('.origin-mark').forEach(svg => {
         const outer = svg.querySelector('.om-outer');
-        const lines = svg.querySelectorAll('.om-crosshairs line');
+        const mainLines = svg.querySelectorAll('.om-crosshairs .main-line');
+        const diagLines = svg.querySelectorAll('.om-crosshairs .diag-line');
         const inner = svg.querySelector('.om-inner');
         const dot = svg.querySelector('.om-dot');
 
         const outerLen = 2 * Math.PI * 108;
         const innerLen = 2 * Math.PI * 28;
-        const lineLen = 32;
+        const mainLen = 56;
+        const diagLen = 16;
 
-        // Reset to beginning
         gsap.set(outer, { strokeDashoffset: outerLen });
         gsap.set(inner, { strokeDashoffset: innerLen });
-        gsap.set(lines, { strokeDashoffset: lineLen });
+        gsap.set(mainLines, { strokeDashoffset: mainLen });
+        gsap.set(diagLines, { strokeDashoffset: diagLen });
         gsap.set(dot, { scale: 0, opacity: 0 });
 
         const tl = gsap.timeline();
-        
-        // duration-deep: 700ms
         const dur = 0.7; 
-        // ~30% overlap: start slightly before previous finishes
         const overlap = "-=" + (dur * 0.3); 
-        
-        // Custom cubic-bezier is hard natively without CustomEase, 
-        // using power3.out as closest approximation to the ease-settle (0.22, 1, 0.36, 1)
         const easeSettle = "power3.out";
 
         tl.to(outer, { strokeDashoffset: 0, duration: dur, ease: easeSettle })
-          .to(lines, { strokeDashoffset: 0, duration: dur, ease: easeSettle, stagger: 0 }, overlap)
+          .to([mainLines, diagLines], { strokeDashoffset: 0, duration: dur, ease: easeSettle, stagger: 0 }, overlap)
           .to(inner, { strokeDashoffset: 0, duration: dur, ease: easeSettle }, overlap)
-          // For the dot, use a slight back.out for organic settling or just standard ease
           .to(dot, { scale: 1, opacity: 1, duration: 0.32, ease: "back.out(1.5)" }, overlap);
       });
     }
   }
 
-  // Ensure it only initializes once
-  // cast to any: custom one-time-init flag on window, not in default Window type
   if (!(window as any).originMarkAnimationInitialized) {
     new OriginMarkAnimation();
     (window as any).originMarkAnimationInitialized = true;
