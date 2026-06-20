@@ -1,0 +1,164 @@
+---
+import OriginMark from './OriginMark.astro';
+
+export interface Props {
+  origin?: any;
+  product?: any;
+}
+
+const { origin, product } = Astro.props;
+
+// For Phase 1, we use dummy data if no props are passed
+const strata = [
+  { id: 'canopy', title: origin ? `CANOPY — ${origin.data.elevation}` : 'CANOPY — [origin.elevation]' },
+  { id: 'land', title: origin ? `LAND — ${origin.data.soil}` : 'LAND — [origin.soil]' },
+  { id: 'hand', title: origin && product ? `HAND — ${origin.data.method} / ${product.data.methodDescription}` : 'HAND — [origin.method]' },
+  { id: 'specimen', title: product ? `SPECIMEN — ${product.data.botanicalName}` : 'SPECIMEN — [product.botanicalName]' },
+  { id: 'offering', title: product ? `OFFERING — Options available` : 'OFFERING — [product.sizes]' }
+];
+---
+
+<div class="depth-experience-container">
+  <!-- Depth Gauge -->
+  <div class="depth-gauge-wrapper">
+    <OriginMark variant="gold" size={80} id="depth-gauge-mark" />
+  </div>
+
+  {strata.map((s, i) => (
+    <section 
+      class={`stratum stratum-${s.id}`} 
+      style={`z-index: ${i + 1}; top: ${i * 5}dvh;`}
+    >
+      <div class="stratum-content">
+        <h2>{s.title}</h2>
+      </div>
+    </section>
+  ))}
+</div>
+
+<style>
+  .depth-experience-container {
+    position: relative;
+    background-color: var(--color-forest-deep);
+    color: var(--color-warm-cream);
+    /* Extra padding at bottom so the final stratum can scroll fully up if needed,
+       but actually each section is 100dvh, so total scroll is natural. */
+    padding-bottom: 20dvh; 
+  }
+
+  .depth-gauge-wrapper {
+    position: fixed;
+    right: 24px;
+    top: 0; 
+    z-index: 9999;
+    cursor: pointer;
+  }
+
+  .stratum {
+    position: sticky;
+    height: 100dvh;
+    width: 100vw;
+    display: flex;
+    overflow: hidden;
+  }
+
+  .stratum-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-forest-deep);
+    transform-origin: top center;
+    will-change: transform, opacity;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Basic typographic styling for the placeholders */
+  .stratum-content h2 {
+    font-family: var(--font-narrative);
+    font-size: 2rem;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+  }
+
+  /* Temporary differentiated backgrounds for Phase 1 testing */
+  .stratum-canopy .stratum-content { background-color: #0c1509; }
+  .stratum-land .stratum-content { background-color: #111a12; }
+  .stratum-hand .stratum-content { background-color: #152016; }
+  .stratum-specimen .stratum-content { background-color: #1a261a; }
+  .stratum-offering .stratum-content { background-color: #1f2d1e; }
+</style>
+
+<script>
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  class DepthExperience {
+    constructor() {
+      this.initStrata();
+      this.initDepthGauge();
+    }
+
+    initStrata() {
+      const strata = document.querySelectorAll('.stratum');
+      
+      strata.forEach((stratum, index) => {
+        // The last stratum does not scale down (it's the final layer)
+        if (index === strata.length - 1) return;
+
+        const content = stratum.querySelector('.stratum-content');
+        const nextStratum = strata[index + 1];
+
+        // Animate the current stratum scaling down as the *next* stratum slides up
+        gsap.to(content, {
+          scale: 0.94,
+          opacity: 0.3,
+          ease: "none",
+          scrollTrigger: {
+            trigger: nextStratum,
+            // Start when the top of the next stratum enters the bottom of the viewport
+            start: "top bottom",
+            // End when the top of the next stratum hits its own sticky 'top' position
+            // Since nextStratum has top: (index+1)*5 dvh, we use that as the end point.
+            end: `top ${(index + 1) * 5}%`,
+            scrub: true,
+          }
+        });
+      });
+    }
+
+    initDepthGauge() {
+      const gauge = document.querySelector('.depth-gauge-wrapper');
+      const container = document.querySelector('.depth-experience-container');
+
+      if (gauge && container) {
+        // Bind the gauge movement to the overall container scroll progress
+        gsap.fromTo(gauge, 
+          { y: "10dvh" }, 
+          { 
+            y: "80dvh",
+            ease: "none",
+            scrollTrigger: {
+              trigger: container,
+              start: "top top",
+              end: "bottom bottom",
+              scrub: true
+            }
+          }
+        );
+
+        // Click interaction
+        gauge.addEventListener('click', () => {
+          console.log('open spatial overlay - future direction');
+        });
+      }
+    }
+  }
+
+  // Initialize on load
+  new DepthExperience();
+</script>
