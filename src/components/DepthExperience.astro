@@ -8,14 +8,17 @@ export interface Props {
 
 const { origin, product } = Astro.props;
 
-// For Phase 1, we use dummy data if no props are passed
+// Build the content for the first 4 strata
 const strata = [
   { id: 'canopy', title: origin ? `CANOPY — ${origin.data.elevation}` : 'CANOPY — [origin.elevation]' },
   { id: 'land', title: origin ? `LAND — ${origin.data.soil}` : 'LAND — [origin.soil]' },
   { id: 'hand', title: origin && product ? `HAND — ${origin.data.method} / ${product.data.methodDescription}` : 'HAND — [origin.method]' },
-  { id: 'specimen', title: product ? `SPECIMEN — ${product.data.botanicalName}` : 'SPECIMEN — [product.botanicalName]' },
-  { id: 'offering', title: product ? `OFFERING — Options available` : 'OFFERING — [product.sizes]' }
+  { id: 'specimen', title: product ? `SPECIMEN — ${product.data.botanicalName}` : 'SPECIMEN — [product.botanicalName]' }
 ];
+
+// Determine sizes for the offering stratum
+const sizes = product ? product.data.sizes : [];
+
 ---
 
 <div class="depth-experience-container">
@@ -34,6 +37,36 @@ const strata = [
       </div>
     </section>
   ))}
+
+  <!-- Offering Stratum (Custom Layout) -->
+  <section class="stratum stratum-offering" style={`z-index: 5; top: 20dvh;`}>
+    <div class="stratum-content offering-content">
+      <h2>OFFERING</h2>
+      
+      {sizes.length > 0 ? (
+        <div class="size-selector">
+          <div class="size-options">
+            {sizes.map((sizeObj: any, idx: number) => (
+              <label class="size-option">
+                <input 
+                  type="radio" 
+                  name="product-size" 
+                  value={sizeObj.label} 
+                  data-price={sizeObj.priceINR}
+                  checked={idx === 0}
+                />
+                <span class="size-label">{sizeObj.label}</span>
+                <span class="size-price">₹{sizeObj.priceINR}</span>
+              </label>
+            ))}
+          </div>
+          <button id="purchase-btn" class="primary-btn">Purchase</button>
+        </div>
+      ) : (
+        <p>OFFERING — [product.sizes]</p>
+      )}
+    </div>
+  </section>
 </div>
 
 <style>
@@ -81,6 +114,75 @@ const strata = [
     font-size: var(--text-size-stratum-title);
     font-weight: 300;
     letter-spacing: 0.05em;
+    margin: 0 0 1rem 0;
+  }
+
+  .offering-content {
+    flex-direction: column;
+  }
+
+  /* Size Selector Styles */
+  .size-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .size-options {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .size-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border: 1px solid rgba(245, 237, 216, 0.2);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .size-option:has(input:checked) {
+    border-color: var(--color-gold);
+    background-color: rgba(166, 124, 60, 0.1);
+  }
+
+  .size-option input {
+    display: none;
+  }
+
+  .size-label {
+    font-family: var(--font-evidence);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+  }
+
+  .size-price {
+    font-family: var(--font-narrative);
+    font-size: 1.2rem;
+    color: var(--color-gold);
+  }
+
+  .primary-btn {
+    background-color: var(--color-gold);
+    color: var(--color-forest-deep);
+    border: none;
+    padding: 1rem 3rem;
+    font-family: var(--font-institutional);
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .primary-btn:hover {
+    background-color: var(--color-warm-cream);
   }
 
   /* Temporary differentiated backgrounds for Phase 1 testing */
@@ -101,11 +203,24 @@ const strata = [
     constructor() {
       this.initStrata();
       this.initDepthGauge();
+      this.initPurchaseAction();
       
       // Ensure ScrollTrigger recalculates after custom fonts (display=swap) load
       document.fonts.ready.then(() => {
         ScrollTrigger.refresh();
       });
+    }
+
+    initPurchaseAction() {
+      const btn = document.getElementById('purchase-btn');
+      if (btn) {
+        btn.addEventListener('click', () => {
+          const selected = document.querySelector('input[name="product-size"]:checked') as HTMLInputElement;
+          if (selected) {
+            console.log(`[Action] Add to Cart: ${selected.value} at ₹${selected.dataset.price}`);
+          }
+        });
+      }
     }
 
     initStrata() {
