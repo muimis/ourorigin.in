@@ -1,0 +1,20 @@
+{
+  "slug": "nilgiris",
+  "name": "Nilgiris",
+  "elevation": "2600m",
+  "bioregion": "Western Ghats",
+  "coordinates": "11.41°N, 76.70°E",
+  "rainfall": "[LIVE DATA REQUIRED] Heavy monsoon rainfall",
+  "soil": "[LIVE DATA REQUIRED] Forest loam",
+  "community": {
+    "description": "Indigenous farming communities, Nilgiris",
+    "verified": false
+  },
+  "method": "Forest Polyculture",
+  "images": {
+    "canopy": "/assets/bg-geo.webp",
+    "land": "/assets/bg-bio.webp",
+    "hand": "/assets/bg-method.webp",
+    "isPlaceholderImagery": true
+  }
+}

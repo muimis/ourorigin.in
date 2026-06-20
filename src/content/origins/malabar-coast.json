@@ -1,0 +1,20 @@
+{
+  "slug": "malabar-coast",
+  "name": "Malabar Coast",
+  "elevation": "300m",
+  "bioregion": "Western Ghats",
+  "coordinates": "11.87°N, 75.37°E",
+  "rainfall": "[LIVE DATA REQUIRED] Coastal monsoon rainfall",
+  "soil": "[LIVE DATA REQUIRED] Laterite soil",
+  "community": {
+    "description": "Indigenous farming communities, Malabar Coast",
+    "verified": false
+  },
+  "method": "Smallholder, hand harvest",
+  "images": {
+    "canopy": "/assets/bg-geo.webp",
+    "land": "/assets/bg-bio.webp",
+    "hand": "/assets/bg-method.webp",
+    "isPlaceholderImagery": true
+  }
+}

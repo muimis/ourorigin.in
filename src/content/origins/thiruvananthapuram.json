@@ -1,0 +1,20 @@
+{
+  "slug": "thiruvananthapuram",
+  "name": "Thiruvananthapuram",
+  "elevation": "10m",
+  "bioregion": "Western Ghats",
+  "coordinates": "8.52°N, 76.94°E",
+  "rainfall": "[LIVE DATA REQUIRED] Tropical monsoon rainfall",
+  "soil": "[LIVE DATA REQUIRED] Coastal laterite",
+  "community": {
+    "description": "Indigenous farming communities, Thiruvananthapuram",
+    "verified": false
+  },
+  "method": "Lowland Homesteading",
+  "images": {
+    "canopy": "/assets/bg-geo.webp",
+    "land": "/assets/bg-bio.webp",
+    "hand": "/assets/bg-method.webp",
+    "isPlaceholderImagery": true
+  }
+}

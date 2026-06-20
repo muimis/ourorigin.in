@@ -1,0 +1,145 @@
+---
+import { getCollection } from 'astro:content';
+import OriginMark from './OriginMark.astro';
+
+const origins = await getCollection('origins');
+
+// Order by elevation (highest to lowest)
+const orderedSlugs = ['nilgiris', 'idukki', 'wayanad', 'malabar-coast', 'thiruvananthapuram'];
+const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug === slug)).filter(Boolean);
+---
+
+<div class="living-matrix-container">
+  <div class="matrix-bands">
+    {orderedOrigins.map((origin) => {
+      const isWayanad = origin.data.slug === 'wayanad';
+      const linkHref = isWayanad ? '/origins/wayanad/black-pepper' : '#';
+      
+      return (
+        <a href={linkHref} class={`matrix-band ${isWayanad ? '' : 'empty-state'}`}>
+          <div class="band-content">
+            <h2 class="origin-name">{origin.data.name}</h2>
+            <div class="band-reveal">
+              <p class="origin-meta">{origin.data.elevation} · {origin.data.bioregion}</p>
+              {isWayanad ? (
+                <p class="origin-action">Descend</p>
+              ) : (
+                <p class="origin-action">This origin is still being documented.</p>
+              )}
+            </div>
+          </div>
+        </a>
+      )
+    })}
+  </div>
+  
+  <div class="matrix-mark-wrapper">
+    <OriginMark animate={false} size="var(--origin-mark-gauge-size)" />
+  </div>
+</div>
+
+<style>
+  .living-matrix-container {
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    background-color: var(--color-forest-deep);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .matrix-bands {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+  }
+  
+  .matrix-band {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: var(--color-warm-cream);
+    border-bottom: 1px solid rgba(245, 237, 216, 0.1);
+    transition: flex-grow var(--duration-standard) var(--ease-settle), background-color var(--duration-standard) var(--ease-settle);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .matrix-band:last-child {
+    border-bottom: none;
+  }
+  
+  .matrix-band:hover, .matrix-band:focus {
+    flex-grow: 1.5;
+    background-color: rgba(245, 237, 216, 0.03);
+    outline: none;
+  }
+  
+  .band-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .origin-name {
+    font-family: var(--font-institutional);
+    font-size: var(--text-size-stratum-title);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin: 0;
+    font-weight: 400;
+  }
+  
+  .band-reveal {
+    height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: height var(--duration-standard) var(--ease-settle), opacity var(--duration-standard) var(--ease-settle), margin var(--duration-standard) var(--ease-settle);
+  }
+  
+  .matrix-band:hover .band-reveal, .matrix-band:focus .band-reveal {
+    height: auto;
+    opacity: 1;
+    margin-top: 1rem;
+  }
+  
+  .origin-meta {
+    font-family: var(--font-evidence);
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    opacity: 0.8;
+    margin: 0 0 0.5rem 0;
+  }
+  
+  .origin-action {
+    font-family: var(--font-narrative);
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--color-gold);
+    margin: 0;
+  }
+  
+  .matrix-band.empty-state .origin-action {
+    color: rgba(245, 237, 216, 0.6);
+  }
+
+  .matrix-mark-wrapper {
+    position: absolute;
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  @media (max-width: 768px) {
+    .matrix-mark-wrapper {
+      right: 1rem;
+    }
+  }
+</style>

@@ -1,5 +1,5 @@
 :root {
-  --color-forest-deep: #1C3A2E;
+  --color-forest-deep: #0c1509;
   --color-warm-cream: #F5EDD8;
   --color-gold: #A67C3C;
   --font-institutional: 'Cinzel', serif;
@@ -7,6 +7,16 @@
   --font-evidence: 'DM Mono', monospace;
   /* Fluid typography: 24px on mobile, scaling with viewport, up to 40px on large screens */
   --text-size-stratum-title: clamp(1.5rem, 5vw, 2.5rem);
+  --stratum-text-max-width: 85vw;
+  
+  /* Stratum Architectural Tokens */
+  --stratum-border-radius: 0; /* Confirmed: explicitly sharp, brutalist, structural bands */
+  --stratum-scroll-distance-multiplier: 200%; /* Confirmed: halved from 400% for punchier velocity */
+  
+  /* Origin Mark Design Lock */
+  --origin-mark-gauge-size: 48px; /* Confirmed: Material Design standard touch-target */
+  --origin-mark-stroke-width: 0.5; /* Confirmed: mathematically matches the 1.5 stroke on 280 viewBox */
+
   --ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
   --duration-micro: 120ms;
   --duration-standard: 320ms;

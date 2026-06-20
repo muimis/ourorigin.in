@@ -1,0 +1,20 @@
+{
+  "slug": "idukki",
+  "name": "Idukki",
+  "elevation": "1200m",
+  "bioregion": "Western Ghats",
+  "coordinates": "9.85°N, 76.97°E",
+  "rainfall": "[LIVE DATA REQUIRED] Heavy monsoon rainfall",
+  "soil": "[LIVE DATA REQUIRED] Forest loam",
+  "community": {
+    "description": "Indigenous farming communities, Idukki",
+    "verified": false
+  },
+  "method": "Shade-Grown Wild Harvest",
+  "images": {
+    "canopy": "/assets/bg-geo.webp",
+    "land": "/assets/bg-bio.webp",
+    "hand": "/assets/bg-method.webp",
+    "isPlaceholderImagery": true
+  }
+}
