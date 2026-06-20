@@ -1,0 +1,26 @@
+{
+  "slug": "black-pepper",
+  "name": "Forest Black Pepper",
+  "botanicalName": "Piper nigrum",
+  "originSlug": "wayanad",
+  "batchRef": "WYD-BP-001",
+  "harvestMonth": "January - March",
+  "sizes": [
+    {
+      "label": "50g",
+      "priceINR": 109,
+      "isPriceVerified": true
+    },
+    {
+      "label": "100g",
+      "priceINR": 199,
+      "isPriceVerified": true
+    },
+    {
+      "label": "250g",
+      "priceINR": 449,
+      "isPriceVerified": true
+    }
+  ],
+  "methodDescription": "Harvested by hand, sun-dried on traditional mats."
+}

@@ -1,0 +1,12 @@
+:root {
+  --color-forest-deep: #1C3A2E;
+  --color-warm-cream: #F5EDD8;
+  --color-gold: #A67C3C;
+  --font-institutional: 'Cinzel', serif;
+  --font-narrative: 'Cormorant Garamond', serif;
+  --font-evidence: 'DM Mono', monospace;
+  --ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-micro: 120ms;
+  --duration-standard: 320ms;
+  --duration-deep: 700ms;
+}

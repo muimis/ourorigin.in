@@ -1,0 +1,20 @@
+{
+  "slug": "wayanad",
+  "name": "Wayanad",
+  "elevation": "900–1,100m",
+  "bioregion": "Western Ghats",
+  "coordinates": "11°36′N, 76°04′E",
+  "rainfall": "2,500–3,000mm annually",
+  "soil": "Forest Loam",
+  "community": {
+    "description": "Indigenous farming communities, Wayanad",
+    "verified": false
+  },
+  "method": "Traditional Agrarian",
+  "images": {
+    "canopy": "/assets/bg-geo.webp",
+    "land": "/assets/bg-bio.webp",
+    "hand": "/assets/bg-method.webp",
+    "isPlaceholderImagery": true
+  }
+}
