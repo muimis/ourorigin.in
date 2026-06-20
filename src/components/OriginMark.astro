@@ -33,10 +33,10 @@ const strokeColor = colorMap[variant];
   role="img"
 >
   <!-- Outer ring: 100% width -->
-  <circle class="om-outer" cx="50" cy="50" r="49" stroke={strokeColor} stroke-width="1.5" opacity="0.6"/>
+  <circle class="om-outer" cx="50" cy="50" r="49" stroke={strokeColor} stroke-width="0.5" opacity="0.6"/>
   
   <!-- Crosshairs -->
-  <g class="om-crosshairs" stroke={strokeColor} stroke-width="1.5" opacity="1" stroke-linecap="round">
+  <g class="om-crosshairs" stroke={strokeColor} stroke-width="0.5" opacity="1" stroke-linecap="round">
     <!-- Main Lines: extend from r=14 to r=37 -->
     <line class="main-line" x1="50" y1="36" x2="50" y2="13"/>
     <line class="main-line" x1="50" y1="64" x2="50" y2="87"/>
@@ -51,7 +51,7 @@ const strokeColor = colorMap[variant];
   </g>
 
   <!-- Inner ring: 20% of mark width -->
-  <circle class="om-inner" cx="50" cy="50" r="10" stroke={strokeColor} stroke-width="1.5" opacity="0.85" fill="none"/>
+  <circle class="om-inner" cx="50" cy="50" r="10" stroke={strokeColor} stroke-width="0.5" opacity="0.85" fill="none"/>
   
   <!-- Center dot: 4.3% of mark width -->
   <circle class="om-dot" cx="50" cy="50" r="2.15" fill={strokeColor} opacity="1"/>
