@@ -115,7 +115,6 @@ const sizes = product ? product.data.sizes : [];
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.4);
     position: relative;
-    border-radius: 2rem 2rem 0 0; /* Creates distinct card stacking effect */
     overflow: hidden;
   }
 
@@ -258,7 +257,7 @@ const sizes = product ? product.data.sizes : [];
         scrollTrigger: {
           trigger: ".depth-experience-container",
           start: "top top",
-          end: "+=400%", // 4 transitions * 100% viewport height
+          end: "+=200%", // Halved from 400% for much faster, punchier transitions
           scrub: true,
           pin: ".pin-container",
           anticipatePin: 1
@@ -284,21 +283,14 @@ const sizes = product ? product.data.sizes : [];
           duration: 1
         }, label)
         
-        // 2. Previous stratum scales down to create the receding ghost band effect
-        .to(prevContent, {
-          scale: 0.94,
-          ease: "none",
-          duration: 1
-        }, label)
-        
-        // 3. Previous stratum darkens completely so it doesn't cause transparency jumble
+        // 2. Previous stratum darkens completely so it becomes a receding shadow band
         .to(prevShadow, {
           opacity: 0.85,
           ease: "none",
           duration: 1
         }, label)
         
-        // 4. Previous stratum text fades out completely (done in first 50% of the slide)
+        // 3. Previous stratum text fades out completely (done in first 50% of the slide)
         .to([prevTitle, prevSelector], {
           opacity: 0,
           ease: "none",
@@ -320,7 +312,7 @@ const sizes = product ? product.data.sizes : [];
             scrollTrigger: {
               trigger: container,
               start: "top top",
-              end: "+=400%", // Matches the pin duration
+              end: "+=200%", // Matches the new faster pin duration
               scrub: true
             }
           }
