@@ -22,6 +22,7 @@ const origins = defineCollection({
       canopy: z.string(),
       land: z.string(),
       hand: z.string(),
+      specimen: z.string(),
       isPlaceholderImagery: z.boolean()
     })
   }).superRefine((data, ctx) => {

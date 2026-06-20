@@ -12,9 +12,10 @@
   },
   "method": "Traditional Agrarian",
   "images": {
-    "canopy": "/assets/bg-geo.webp",
-    "land": "/assets/bg-bio.webp",
-    "hand": "/assets/bg-method.webp",
-    "isPlaceholderImagery": true
+    "canopy": "/assets/origins/wayanad-canopy.jpg",
+    "land": "/assets/origins/wayanad-hand.png",
+    "hand": "/assets/origins/wayanad-hand.png",
+    "specimen": "/assets/origins/wayanad-specimen.png",
+    "isPlaceholderImagery": false
   }
 }
