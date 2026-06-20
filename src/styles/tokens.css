@@ -5,7 +5,8 @@
   --font-institutional: 'Cinzel', serif;
   --font-narrative: 'Cormorant Garamond', serif;
   --font-evidence: 'DM Mono', monospace;
-  --text-size-stratum-title: 1.75rem;
+  /* Fluid typography: 24px on mobile, scaling with viewport, up to 40px on large screens */
+  --text-size-stratum-title: clamp(1.5rem, 5vw, 2.5rem);
   --ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
   --duration-micro: 120ms;
   --duration-standard: 320ms;

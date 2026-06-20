@@ -33,25 +33,25 @@ const strokeColor = colorMap[variant];
   role="img"
 >
   <!-- Outer ring: 100% width -->
-  <circle class="om-outer" cx="50" cy="50" r="49" stroke={strokeColor} stroke-width="0.75" opacity="0.6"/>
+  <circle class="om-outer" cx="50" cy="50" r="49" stroke={strokeColor} stroke-width="1.5" opacity="0.6"/>
   
   <!-- Crosshairs -->
-  <g class="om-crosshairs" stroke={strokeColor} stroke-width="0.75" opacity="1" stroke-linecap="round">
-    <!-- Main Lines: extend from inner circle (10) to 74% of total width (37) -->
-    <line class="main-line" x1="50" y1="40" x2="50" y2="13"/>
-    <line class="main-line" x1="50" y1="60" x2="50" y2="87"/>
-    <line class="main-line" x1="40" y1="50" x2="13" y2="50"/>
-    <line class="main-line" x1="60" y1="50" x2="87" y2="50"/>
+  <g class="om-crosshairs" stroke={strokeColor} stroke-width="1.5" opacity="1" stroke-linecap="round">
+    <!-- Main Lines: extend from r=14 to r=37 -->
+    <line class="main-line" x1="50" y1="36" x2="50" y2="13"/>
+    <line class="main-line" x1="50" y1="64" x2="50" y2="87"/>
+    <line class="main-line" x1="36" y1="50" x2="13" y2="50"/>
+    <line class="main-line" x1="64" y1="50" x2="87" y2="50"/>
     
-    <!-- Optional Corner Ticks at 45° -->
-    <line class="diag-line" x1="30.2" y1="30.2" x2="26" y2="26"/>
-    <line class="diag-line" x1="69.8" y1="30.2" x2="74" y2="26"/>
-    <line class="diag-line" x1="30.2" y1="69.8" x2="26" y2="74"/>
-    <line class="diag-line" x1="69.8" y1="69.8" x2="74" y2="74"/>
+    <!-- Optional Corner Ticks: from r=20 to r=25 at 45° -->
+    <line class="diag-line" x1="35.86" y1="35.86" x2="32.32" y2="32.32"/>
+    <line class="diag-line" x1="64.14" y1="35.86" x2="67.68" y2="32.32"/>
+    <line class="diag-line" x1="35.86" y1="64.14" x2="32.32" y2="67.68"/>
+    <line class="diag-line" x1="64.14" y1="64.14" x2="67.68" y2="67.68"/>
   </g>
 
   <!-- Inner ring: 20% of mark width -->
-  <circle class="om-inner" cx="50" cy="50" r="10" stroke={strokeColor} stroke-width="0.75" opacity="0.85" fill="none"/>
+  <circle class="om-inner" cx="50" cy="50" r="10" stroke={strokeColor} stroke-width="1.5" opacity="0.85" fill="none"/>
   
   <!-- Center dot: 4.3% of mark width -->
   <circle class="om-dot" cx="50" cy="50" r="2.15" fill={strokeColor} opacity="1"/>
@@ -76,8 +76,8 @@ const strokeColor = colorMap[variant];
 
         const outerLen = 2 * Math.PI * 49; 
         const innerLen = 2 * Math.PI * 10;  
-        const mainLen = 27; // 37 - 10
-        const diagLen = 6;  // ~34 - 28
+        const mainLen = 23; // 37 - 14
+        const diagLen = 5;  // 25 - 20
 
         gsap.set(outer, { strokeDasharray: outerLen, strokeDashoffset: outerLen });
         gsap.set(inner, { strokeDasharray: innerLen, strokeDashoffset: innerLen });
@@ -97,8 +97,8 @@ const strokeColor = colorMap[variant];
 
         const outerLen = 2 * Math.PI * 49;
         const innerLen = 2 * Math.PI * 10;
-        const mainLen = 27;
-        const diagLen = 6;
+        const mainLen = 23;
+        const diagLen = 5;
 
         gsap.set(outer, { strokeDashoffset: outerLen });
         gsap.set(inner, { strokeDashoffset: innerLen });
