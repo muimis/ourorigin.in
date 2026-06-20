@@ -5,6 +5,7 @@
   --font-institutional: 'Cinzel', serif;
   --font-narrative: 'Cormorant Garamond', serif;
   --font-evidence: 'DM Mono', monospace;
+  --text-size-stratum-title: 1.75rem;
   --ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
   --duration-micro: 120ms;
   --duration-standard: 320ms;

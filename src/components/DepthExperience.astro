@@ -78,7 +78,7 @@ const strata = [
   /* Basic typographic styling for the placeholders */
   .stratum-content h2 {
     font-family: var(--font-narrative);
-    font-size: 2rem;
+    font-size: var(--text-size-stratum-title);
     font-weight: 300;
     letter-spacing: 0.05em;
   }
@@ -101,6 +101,11 @@ const strata = [
     constructor() {
       this.initStrata();
       this.initDepthGauge();
+      
+      // Ensure ScrollTrigger recalculates after custom fonts (display=swap) load
+      document.fonts.ready.then(() => {
+        ScrollTrigger.refresh();
+      });
     }
 
     initStrata() {
@@ -155,6 +160,10 @@ const strata = [
         gauge.addEventListener('click', () => {
           console.log('open spatial overlay - future direction');
         });
+
+        // The Origin Mark stays invisible initially waiting for its entrance trigger.
+        // We must dispatch the play event here so it draws on and becomes visible!
+        document.dispatchEvent(new CustomEvent('play-origin-mark-entrance'));
       }
     }
   }
