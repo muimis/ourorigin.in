@@ -1,5 +1,6 @@
 ---
 import OriginMark from './OriginMark.astro';
+import LiveWeather from './LiveWeather.astro';
 
 export interface Props {
   origin?: any;
@@ -10,10 +11,10 @@ const { origin, product } = Astro.props;
 
 // Build the content for the first 4 strata
 const strata = [
-  { id: 'canopy', title: origin ? `CANOPY — ${origin.data.elevation}` : 'CANOPY — [origin.elevation]' },
-  { id: 'land', title: origin ? `LAND — ${origin.data.soil}` : 'LAND — [origin.soil]' },
-  { id: 'hand', title: origin && product ? `HAND — ${origin.data.method} / ${product.data.methodDescription}` : 'HAND — [origin.method]' },
-  { id: 'specimen', title: product ? `SPECIMEN — ${product.data.botanicalName}` : 'SPECIMEN — [product.botanicalName]' }
+  { id: 'canopy', title: origin ? `CANOPY — ${origin.data.elevation}` : 'CANOPY — [origin.elevation]', image: origin ? origin.data.images.canopy : null, hasWeather: true },
+  { id: 'land', title: origin ? `LAND — ${origin.data.soil}` : 'LAND — [origin.soil]', image: origin ? origin.data.images.land : null, hasWeather: false },
+  { id: 'hand', title: origin && product ? `HAND — ${origin.data.method} / ${product.data.methodDescription}` : 'HAND — [origin.method]', image: origin ? origin.data.images.hand : null, hasWeather: false },
+  { id: 'specimen', title: product ? `SPECIMEN — ${product.data.botanicalName}` : 'SPECIMEN — [product.botanicalName]', image: origin ? origin.data.images.specimen : null, hasWeather: false }
 ];
 
 // Determine sizes for the offering stratum
@@ -33,8 +34,14 @@ const sizes = product ? product.data.sizes : [];
         style={`z-index: ${i + 1}; height: ${100 - (i * 5)}dvh;`}
       >
         <div class="stratum-content">
+          {s.image && !origin?.data.images.isPlaceholderImagery && (
+            <div class="stratum-image" style={`background-image: url('${s.image}')`}></div>
+          )}
           <div class="stratum-shadow"></div>
-          <h2 class="stratum-title">{s.title}</h2>
+          <h2 class="stratum-title">
+            {s.title}
+            {s.hasWeather && origin && <LiveWeather coordinates={origin.data.coordinates} />}
+          </h2>
         </div>
       </section>
     ))}
@@ -125,6 +132,18 @@ const sizes = product ? product.data.sizes : [];
     opacity: 0;
     pointer-events: none;
     z-index: 5;
+  }
+
+  .stratum-image {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    /* Blend photography subtly into the Forest Deep brand color */
+    opacity: 0.35;
+    mix-blend-mode: luminosity;
+    z-index: 1;
+    pointer-events: none;
   }
 
   /* Basic typographic styling */

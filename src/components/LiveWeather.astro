@@ -1,0 +1,85 @@
+---
+export interface Props {
+  coordinates: string; // e.g. "11.605° N, 76.083° E"
+}
+
+const { coordinates } = Astro.props;
+---
+
+<live-weather data-coords={coordinates} class="live-weather-component">
+  <span class="weather-text">· [Fetching Live Data]</span>
+</live-weather>
+
+<script>
+  class LiveWeather extends HTMLElement {
+    connectedCallback() {
+      const coordsStr = this.dataset.coords;
+      if (!coordsStr) return;
+
+      // Extract raw numbers, e.g., "11.605° N, 76.083° E" -> 11.605, 76.083
+      // Handle potential spaces and degree symbols
+      const cleanStr = coordsStr.replace(/[^\d.,-]/g, '');
+      const parts = cleanStr.split(',');
+      
+      if (parts.length >= 2) {
+        const lat = parseFloat(parts[0]);
+        const lon = parseFloat(parts[1]);
+        if (!isNaN(lat) && !isNaN(lon)) {
+          this.fetchWeather(lat, lon);
+        }
+      }
+    }
+
+    getConditionFromCode(code: number) {
+      // WMO Weather interpretation codes
+      if (code === 0) return "Clear sky";
+      if (code === 1 || code === 2 || code === 3) return "Partly cloudy";
+      if (code === 45 || code === 48) return "Fog";
+      if (code >= 51 && code <= 55) return "Drizzle";
+      if (code >= 61 && code <= 65) return "Rain";
+      if (code >= 71 && code <= 77) return "Snow";
+      if (code >= 80 && code <= 82) return "Showers";
+      if (code >= 95) return "Thunderstorm";
+      return "Active";
+    }
+
+    async fetchWeather(lat: number, lon: number) {
+      try {
+        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+        const data = await res.json();
+        
+        if (data.current_weather) {
+          const temp = Math.round(data.current_weather.temperature);
+          const condition = this.getConditionFromCode(data.current_weather.weathercode);
+          
+          const textEl = this.querySelector('.weather-text');
+          if (textEl) {
+            // "· 22°C, Rain"
+            textEl.textContent = `· ${temp}°C, ${condition} (Live)`;
+          }
+        }
+      } catch (err) {
+        console.error("[LiveWeather] fetch failed", err);
+        const textEl = this.querySelector('.weather-text');
+        if (textEl) {
+          textEl.textContent = `· [Live Data Offline]`;
+        }
+      }
+    }
+  }
+
+  // Register the custom element if it hasn't been already
+  if (!customElements.get('live-weather')) {
+    customElements.define('live-weather', LiveWeather);
+  }
+</script>
+
+<style>
+  .live-weather-component {
+    display: inline-block;
+    transition: opacity 0.3s ease;
+  }
+  .weather-text {
+    opacity: 0.8;
+  }
+</style>
