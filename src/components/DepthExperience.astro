@@ -21,7 +21,7 @@ const strata = [
 <div class="depth-experience-container">
   <!-- Depth Gauge -->
   <div class="depth-gauge-wrapper">
-    <OriginMark variant="gold" size={80} id="depth-gauge-mark" />
+    <OriginMark variant="gold" size={40} id="depth-gauge-mark" />
   </div>
 
   {strata.map((s, i) => (
@@ -160,10 +160,6 @@ const strata = [
         gauge.addEventListener('click', () => {
           console.log('open spatial overlay - future direction');
         });
-
-        // The Origin Mark stays invisible initially waiting for its entrance trigger.
-        // We must dispatch the play event here so it draws on and becomes visible!
-        document.dispatchEvent(new CustomEvent('play-origin-mark-entrance'));
       }
     }
   }

@@ -3,9 +3,15 @@ export interface Props {
   size?: number;
   variant?: 'primary' | 'reversed' | 'gold';
   id?: string;
+  animate?: boolean;
 }
 
-const { size = 100, variant = 'primary', id = Math.random().toString(36).substring(7) } = Astro.props;
+const { 
+  size = 100, 
+  variant = 'primary', 
+  id = Math.random().toString(36).substring(7),
+  animate = false 
+} = Astro.props;
 
 const colorMap = {
   primary: 'var(--color-warm-cream)',
@@ -17,38 +23,38 @@ const strokeColor = colorMap[variant];
 
 <svg 
   id={`origin-mark-${id}`}
-  class={`origin-mark variant-${variant}`} 
+  class={`origin-mark variant-${variant} ${animate ? 'om-animated' : ''}`} 
   width={size} 
   height={size} 
-  viewBox="0 0 280 280" 
+  viewBox="0 0 100 100" 
   xmlns="http://www.w3.org/2000/svg" 
   fill="none" 
   aria-label="OurOrigin — Origin Mark" 
   role="img"
 >
-  <!-- Outer ring -->
-  <circle class="om-outer" cx="140" cy="140" r="108" stroke={strokeColor} stroke-width="1.5" opacity="0.6"/>
+  <!-- Outer ring: 100% width -->
+  <circle class="om-outer" cx="50" cy="50" r="49" stroke={strokeColor} stroke-width="0.75" opacity="0.6"/>
   
   <!-- Crosshairs -->
-  <g class="om-crosshairs" stroke={strokeColor} stroke-width="1.5" opacity="1" stroke-linecap="round">
-    <!-- Main Lines -->
-    <line class="main-line" x1="140" y1="104" x2="140" y2="48"/>
-    <line class="main-line" x1="140" y1="176" x2="140" y2="232"/>
-    <line class="main-line" x1="104" y1="140" x2="48"  y2="140"/>
-    <line class="main-line" x1="176" y1="140" x2="232" y2="140"/>
+  <g class="om-crosshairs" stroke={strokeColor} stroke-width="0.75" opacity="1" stroke-linecap="round">
+    <!-- Main Lines: extend from inner circle (10) to 74% of total width (37) -->
+    <line class="main-line" x1="50" y1="40" x2="50" y2="13"/>
+    <line class="main-line" x1="50" y1="60" x2="50" y2="87"/>
+    <line class="main-line" x1="40" y1="50" x2="13" y2="50"/>
+    <line class="main-line" x1="60" y1="50" x2="87" y2="50"/>
     
-    <!-- Diagonal Lines -->
-    <line class="diag-line" x1="102" y1="102" x2="91"  y2="91"/>
-    <line class="diag-line" x1="178" y1="102" x2="189" y2="91"/>
-    <line class="diag-line" x1="102" y1="178" x2="91"  y2="189"/>
-    <line class="diag-line" x1="178" y1="178" x2="189" y2="189"/>
+    <!-- Optional Corner Ticks at 45° -->
+    <line class="diag-line" x1="30.2" y1="30.2" x2="26" y2="26"/>
+    <line class="diag-line" x1="69.8" y1="30.2" x2="74" y2="26"/>
+    <line class="diag-line" x1="30.2" y1="69.8" x2="26" y2="74"/>
+    <line class="diag-line" x1="69.8" y1="69.8" x2="74" y2="74"/>
   </g>
 
-  <!-- Inner ring -->
-  <circle class="om-inner" cx="140" cy="140" r="28" stroke={strokeColor} stroke-width="1.5" opacity="0.85" fill="none"/>
+  <!-- Inner ring: 20% of mark width -->
+  <circle class="om-inner" cx="50" cy="50" r="10" stroke={strokeColor} stroke-width="0.75" opacity="0.85" fill="none"/>
   
-  <!-- Center dot -->
-  <circle class="om-dot" cx="140" cy="140" r="6" fill={strokeColor} opacity="1"/>
+  <!-- Center dot: 4.3% of mark width -->
+  <circle class="om-dot" cx="50" cy="50" r="2.15" fill={strokeColor} opacity="1"/>
 </svg>
 
 <script>
@@ -61,17 +67,17 @@ const strokeColor = colorMap[variant];
     }
 
     init() {
-      document.querySelectorAll('.origin-mark').forEach(svg => {
+      document.querySelectorAll('.om-animated').forEach(svg => {
         const outer = svg.querySelector('.om-outer');
         const mainLines = svg.querySelectorAll('.om-crosshairs .main-line');
         const diagLines = svg.querySelectorAll('.om-crosshairs .diag-line');
         const inner = svg.querySelector('.om-inner');
         const dot = svg.querySelector('.om-dot');
 
-        const outerLen = 2 * Math.PI * 108; 
-        const innerLen = 2 * Math.PI * 28;  
-        const mainLen = 56;
-        const diagLen = 16;
+        const outerLen = 2 * Math.PI * 49; 
+        const innerLen = 2 * Math.PI * 10;  
+        const mainLen = 27; // 37 - 10
+        const diagLen = 6;  // ~34 - 28
 
         gsap.set(outer, { strokeDasharray: outerLen, strokeDashoffset: outerLen });
         gsap.set(inner, { strokeDasharray: innerLen, strokeDashoffset: innerLen });
@@ -82,17 +88,17 @@ const strokeColor = colorMap[variant];
     }
 
     play() {
-      document.querySelectorAll('.origin-mark').forEach(svg => {
+      document.querySelectorAll('.om-animated').forEach(svg => {
         const outer = svg.querySelector('.om-outer');
         const mainLines = svg.querySelectorAll('.om-crosshairs .main-line');
         const diagLines = svg.querySelectorAll('.om-crosshairs .diag-line');
         const inner = svg.querySelector('.om-inner');
         const dot = svg.querySelector('.om-dot');
 
-        const outerLen = 2 * Math.PI * 108;
-        const innerLen = 2 * Math.PI * 28;
-        const mainLen = 56;
-        const diagLen = 16;
+        const outerLen = 2 * Math.PI * 49;
+        const innerLen = 2 * Math.PI * 10;
+        const mainLen = 27;
+        const diagLen = 6;
 
         gsap.set(outer, { strokeDashoffset: outerLen });
         gsap.set(inner, { strokeDashoffset: innerLen });
