@@ -69,7 +69,9 @@ const sizes = product ? product.data.sizes : [];
                 </label>
               ))}
             </div>
-            <button id="purchase-btn" class="primary-btn">Continue to the Source</button>
+            <button class="source-button checkout-trigger">
+        <span class="button-text">Continue to the Source</span>
+      </button>
           </div>
         ) : (
           <p>OFFERING — [product.sizes]</p>
@@ -146,25 +148,49 @@ const sizes = product ? product.data.sizes : [];
     pointer-events: none;
   }
 
-  /* Terrain Cuts / Map Borders - Alternating Alignment */
+  /* Terrain Cuts / Map Borders - Real Geographical SVG Masks */
   .stratum-canopy {
     /* Base layer - full screen */
   }
   .stratum-land {
-    /* Right-aligned: Straight right edge, jagged left, top, bottom */
-    clip-path: polygon(12% 4%, 35% 1%, 65% 5%, 100% 0%, 100% 100%, 70% 96%, 40% 100%, 15% 95%, 5% 80%, 12% 60%, 0% 40%, 8% 20%);
+    -webkit-mask-image: url('/maps/wayanad.svg');
+    -webkit-mask-size: 130%;
+    -webkit-mask-position: top -10% right -10%;
+    -webkit-mask-repeat: no-repeat;
+    mask-image: url('/maps/wayanad.svg');
+    mask-size: 130%;
+    mask-position: top -10% right -10%;
+    mask-repeat: no-repeat;
   }
   .stratum-hand {
-    /* Left-aligned: Straight left edge, jagged right, top, bottom */
-    clip-path: polygon(0% 0%, 40% 5%, 75% 2%, 92% 6%, 100% 25%, 90% 50%, 98% 75%, 88% 90%, 60% 100%, 25% 95%, 0% 100%);
+    -webkit-mask-image: url('/maps/wayanad.svg');
+    -webkit-mask-size: 150%;
+    -webkit-mask-position: bottom -20% left -20%;
+    -webkit-mask-repeat: no-repeat;
+    mask-image: url('/maps/wayanad.svg');
+    mask-size: 150%;
+    mask-position: bottom -20% left -20%;
+    mask-repeat: no-repeat;
   }
   .stratum-specimen {
-    /* Right-aligned: Straight right edge, jagged left, top, bottom */
-    clip-path: polygon(8% 5%, 30% 2%, 60% 6%, 100% 0%, 100% 100%, 75% 97%, 45% 99%, 10% 94%, 0% 85%, 10% 65%, 2% 45%, 15% 25%);
+    -webkit-mask-image: url('/maps/idukki.svg');
+    -webkit-mask-size: 140%;
+    -webkit-mask-position: center left -10%;
+    -webkit-mask-repeat: no-repeat;
+    mask-image: url('/maps/idukki.svg');
+    mask-size: 140%;
+    mask-position: center left -10%;
+    mask-repeat: no-repeat;
   }
   .stratum-offering {
-    /* Left-aligned: Straight left edge, jagged right, top, bottom */
-    clip-path: polygon(0% 0%, 35% 4%, 65% 1%, 85% 5%, 95% 30%, 85% 55%, 100% 80%, 90% 95%, 55% 100%, 20% 96%, 0% 100%);
+    -webkit-mask-image: url('/maps/trivandrum.svg');
+    -webkit-mask-size: 120%;
+    -webkit-mask-position: bottom -10% center;
+    -webkit-mask-repeat: no-repeat;
+    mask-image: url('/maps/trivandrum.svg');
+    mask-size: 120%;
+    mask-position: bottom -10% center;
+    mask-repeat: no-repeat;
   }
 
   .stratum-image.image-preserve-people {
@@ -276,16 +302,26 @@ const sizes = product ? product.data.sizes : [];
     }
 
     initPurchaseAction() {
-      const btn = document.getElementById('purchase-btn');
-      if (btn) {
-        btn.addEventListener('click', () => {
-          const selected = document.querySelector('input[name="product-size"]:checked') as HTMLInputElement;
-          if (selected) {
-            console.log(`[Action] Add to Cart: ${selected.value} at ₹${selected.dataset.price}`);
-          }
-        });
-      }
-    }
+  const checkoutBtn = document.querySelector('.checkout-trigger');
+  if (checkoutBtn) {
+    checkoutBtn.addEventListener('click', () => {
+      // Find the currently selected size and price
+      const selected = document.querySelector('input[name="product-size"]:checked') as HTMLInputElement;
+      
+      let sizeText = selected ? selected.value : 'a selection';
+      let priceText = selected ? `₹${selected.dataset.price}` : '₹...';
+      
+      const originName = "Wayanad"; // This should be dynamic based on the page context if possible
+      const productName = "Black Pepper"; 
+      
+      const message = `Hello, I am interested in sourcing ${originName} ${productName} (${sizeText}) at ${priceText}.`;
+      const waNumber = "919645555668";
+      const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
+      
+      window.open(waUrl, '_blank');
+    });
+  }
+}
 
     initStrata() {
       const strata = document.querySelectorAll('.stratum');
