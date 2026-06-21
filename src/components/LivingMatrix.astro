@@ -133,6 +133,7 @@ const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug ==
     animation: subtleBreathe 12s infinite ease-in-out;
     color: var(--color-warm-cream);
     text-decoration: none;
+    opacity: 0; /* Hidden natively for GSAP entrance */
   }
 
   /* Overlapping Topographic Plate Boundaries */
@@ -202,6 +203,8 @@ const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug ==
     text-transform: uppercase;
     margin: 0;
     font-weight: 400;
+    opacity: 0; /* Hidden natively for GSAP entrance */
+    transform: translateY(10px);
   }
   
   .band-reveal {
