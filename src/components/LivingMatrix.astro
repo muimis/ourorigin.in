@@ -25,22 +25,15 @@ function getHighestElevation(elevationString) {
     {orderedOrigins.map((origin, index) => {
       const isWayanad = origin.data.slug === 'wayanad';
       const linkHref = isWayanad ? '/origins/wayanad/black-pepper' : '#';
-      // Redistribute space to fit inside a 90vh container (leaving 5vh gap top and bottom)
-      // Middle plates (1, 2, 3) get 18vh visible + 100px overlap
-      let heightCalc = 'calc(18vh + 100px)'; 
-      if (index === 0) {
-        heightCalc = 'calc(14vh + 100px)'; // Nilgiris (smaller)
-      } else if (index === orderedOrigins.length - 1) {
-        heightCalc = '22vh'; // Thiru (taller)
-      }
+      // Mathematical layout perfection for 90vh container:
+      // Every plate gets exactly the same height, and the 400px overlap is seamlessly absorbed.
+      let bandStyle = `flex: 0 0 calc(18vh + 80px);`;
       
-      let bandStyle = `flex: 0 0 ${heightCalc};`;
-      
-      // Shift text visually to center within the UNMASKED area
-      if (index === 0) {
-        bandStyle += ' padding-top: 30px; padding-bottom: 90px;'; // push text up away from bottom mask, slightly down from very top
-      } else if (index === orderedOrigins.length - 1) {
-        bandStyle += ' padding-top: 50px; padding-bottom: 50px;'; // perfect vertical center in its available 24vh box
+      // Shift text visually to center within the UNMASKED solid area of each plate
+      if (index === orderedOrigins.length - 1) {
+        bandStyle += ' padding-top: 100px;'; // Last plate: push text below the 100px top wavy mask
+      } else {
+        bandStyle += ' padding-bottom: 100px;'; // All other plates: push text up away from the bottom covered 100px
       }
 
       if (index > 0) {
