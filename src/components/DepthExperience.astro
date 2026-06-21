@@ -35,7 +35,7 @@ const sizes = product ? product.data.sizes : [];
     {strata.map((s, i) => (
       <section 
         class={`stratum stratum-${s.id}`} 
-        style={`z-index: ${i + 1}; height: ${100 - (i * 5)}dvh; transform: translateY(${i === 0 ? '0' : '100dvh'}); ${i > 0 && maskUrl ? `--mask-url: url('${maskUrl}');` : ''}`}
+        style={`z-index: ${i + 1}; height: 100dvh; width: 100vw; transform: translateY(${i === 0 ? '0' : '100dvh'}); ${maskUrl ? `--mask-url: url('${maskUrl}');` : ''}`}
       >
         <div class="stratum-content">
           {s.image && !origin?.data.images.isPlaceholderImagery && (
@@ -51,7 +51,7 @@ const sizes = product ? product.data.sizes : [];
     ))}
 
     <!-- Offering Stratum (Custom Layout) -->
-    <section class="stratum stratum-offering" style={`z-index: 5; height: 80dvh; transform: translateY(100dvh); ${maskUrl ? `--mask-url: url('${maskUrl}');` : ''}`}>
+    <section class="stratum stratum-offering" style={`z-index: 5; height: 100dvh; width: 100vw; transform: translateY(100dvh); ${maskUrl ? `--mask-url: url('${maskUrl}');` : ''}`}>
       <div class="stratum-content offering-content">
         <div class="stratum-shadow"></div>
         <h2 class="stratum-title">OFFERING</h2>
@@ -153,40 +153,22 @@ const sizes = product ? product.data.sizes : [];
   }
 
   /* Terrain Cuts / Map Borders - Dynamically injected via --mask-url to match the active origin */
-  .stratum-land, .stratum-hand, .stratum-specimen, .stratum-offering {
+  .stratum-canopy, .stratum-land, .stratum-hand, .stratum-specimen, .stratum-offering {
     -webkit-mask-image: var(--mask-url);
     mask-image: var(--mask-url);
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
+    
+    /* Scale the map up massively and anchor it to the top-right. 
+       This ensures the top and right edges of the screen are cut by the map's natural jagged boundaries,
+       but the left and bottom edges of the screen fall fully inside the solid area of the map, keeping them straight. */
+    -webkit-mask-size: 300%;
+    mask-size: 300%;
+    -webkit-mask-position: top 0 right 0;
+    mask-position: top 0 right 0;
   }
   
-  .stratum-canopy {
-    /* Base layer - full screen */
-  }
-  .stratum-land {
-    -webkit-mask-size: 130%;
-    -webkit-mask-position: top -10% right -10%;
-    mask-size: 130%;
-    mask-position: top -10% right -10%;
-  }
-  .stratum-hand {
-    -webkit-mask-size: 150%;
-    -webkit-mask-position: bottom -20% left -20%;
-    mask-size: 150%;
-    mask-position: bottom -20% left -20%;
-  }
-  .stratum-specimen {
-    -webkit-mask-size: 140%;
-    -webkit-mask-position: center left -10%;
-    mask-size: 140%;
-    mask-position: center left -10%;
-  }
-  .stratum-offering {
-    -webkit-mask-size: 120%;
-    -webkit-mask-position: bottom -10% center;
-    mask-size: 120%;
-    mask-position: bottom -10% center;
-  }
+  /* Additional layer specific styles can go here if needed */
 
   .stratum-image.image-preserve-people {
     opacity: 0.55;
@@ -325,9 +307,12 @@ const sizes = product ? product.data.sizes : [];
     initStrata() {
       const strata = document.querySelectorAll('.stratum');
       
-      // Start all strata below the viewport EXCEPT the first one (handled natively via CSS transform to prevent FOUC)
-      // but we inform GSAP of the initial state
-      gsap.set(strata, { y: (i) => i === 0 ? "0dvh" : "100dvh" });
+      // Start all strata below the viewport EXCEPT the first one
+      // We also offset them slightly to the left so they slide in diagonally to form the top/right stacked cascade
+      gsap.set(strata, { 
+        y: (i) => i === 0 ? "0dvh" : "100dvh",
+        x: (i) => i === 0 ? "0vw" : `-${i * 4}vw` 
+      });
 
       // Create a master pinned timeline
       const tl = gsap.timeline({
@@ -358,12 +343,14 @@ const sizes = product ? product.data.sizes : [];
         const prevTitle = prevStratum.querySelector('.stratum-title');
         const prevSelector = prevStratum.querySelector('.size-selector'); 
 
-        const topOffset = index * 5; // The resting offset: 5, 10, 15, 20
+        const topOffset = index * 4; // Uniform distance move to stack (4vh down)
+        const leftOffset = index * 4; // Uniform distance move to stack (4vw left)
         const label = `step${index}`;
 
         // 1. Current stratum slides up to its designated resting offset
         tl.to(stratum, {
           y: `${topOffset}dvh`,
+          x: `-${leftOffset}vw`,
           ease: "none",
           duration: 1
         }, label)
