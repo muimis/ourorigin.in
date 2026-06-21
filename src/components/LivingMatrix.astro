@@ -22,23 +22,24 @@ const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug ==
       if (index > 0) {
         const maskSvg = [
           "",
-          `url("data:image/svg+xml,%3Csvg width='1000' height='100' viewBox='0 0 1000 100' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1000,100 L0,100 L0,50 Q100,0 200,50 T400,20 T600,60 T800,10 T1000,50 Z' fill='black' /%3E%3C/svg%3E")`,
-          `url("data:image/svg+xml,%3Csvg width='1000' height='100' viewBox='0 0 1000 100' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1000,100 L0,100 L0,30 Q150,70 300,40 T500,20 T750,60 T1000,30 Z' fill='black' /%3E%3C/svg%3E")`,
-          `url("data:image/svg+xml,%3Csvg width='1000' height='100' viewBox='0 0 1000 100' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1000,100 L0,100 L0,20 Q200,80 400,50 T650,80 T850,40 T1000,60 Z' fill='black' /%3E%3C/svg%3E")`,
-          `url("data:image/svg+xml,%3Csvg width='1000' height='100' viewBox='0 0 1000 100' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1000,100 L0,100 L0,60 Q120,20 250,50 T500,40 T700,60 T1000,30 Z' fill='black' /%3E%3C/svg%3E")`
+          `url("data:image/svg+xml,%3Csvg width='1000' height='100' viewBox='0 0 1000 100' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1000,100 L0,100 L0,60 C150,60 200,10 300,20 C400,30 450,90 600,70 C750,50 850,10 1000,40 Z' fill='black' /%3E%3C/svg%3E")`,
+          `url("data:image/svg+xml,%3Csvg width='1000' height='100' viewBox='0 0 1000 100' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1000,100 L0,100 L0,40 C100,40 150,80 250,70 C350,60 400,20 550,30 C700,40 800,90 1000,60 Z' fill='black' /%3E%3C/svg%3E")`,
+          `url("data:image/svg+xml,%3Csvg width='1000' height='100' viewBox='0 0 1000 100' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1000,100 L0,100 L0,70 C200,70 250,20 400,30 C550,40 600,80 750,60 C900,40 950,20 1000,50 Z' fill='black' /%3E%3C/svg%3E")`,
+          `url("data:image/svg+xml,%3Csvg width='1000' height='100' viewBox='0 0 1000 100' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1000,100 L0,100 L0,30 C150,30 200,70 350,60 C500,50 600,10 750,30 C900,50 950,80 1000,40 Z' fill='black' /%3E%3C/svg%3E")`
         ][index];
         const maskCss = `mask-image: ${maskSvg}, linear-gradient(white, white); mask-position: top center, bottom center; mask-size: 100% 100px, 100% calc(100% - 99px); mask-repeat: no-repeat;`;
         const webkitMaskCss = `-webkit-mask-image: ${maskSvg}, linear-gradient(white, white); -webkit-mask-position: top center, bottom center; -webkit-mask-size: 100% 100px, 100% calc(100% - 99px); -webkit-mask-repeat: no-repeat;`;
-        bandStyle += ` margin-top: -100px; padding-top: 100px; ${maskCss} ${webkitMaskCss}`;
+        // Removed padding-top so text naturally centers in the flexbox without overlapping boundaries
+        bandStyle += ` margin-top: -100px; ${maskCss} ${webkitMaskCss}`;
       }
       
       return (
         <a href={linkHref} class={`matrix-band ${isWayanad ? '' : 'empty-state'}`} style={bandStyle}>
-          <TopographicMap index={index} elevationText={origin.data.elevation} />
+          <TopographicMap index={index} />
           <div class="band-content">
             <h2 class="origin-name">{origin.data.name}</h2>
             <div class="band-reveal">
-              <p class="origin-meta">{origin.data.bioregion}</p>
+              <p class="origin-meta">{origin.data.elevation} · {origin.data.bioregion}</p>
               {isWayanad ? (
                 <p class="origin-action">Descend</p>
               ) : (
