@@ -103,21 +103,23 @@ const strokeColor = colorMap[variant];
         const mainLen = 23;
         const diagLen = 5;
 
-        gsap.set(outer, { strokeDashoffset: outerLen });
-        gsap.set(inner, { strokeDashoffset: innerLen });
-        gsap.set(mainLines, { strokeDashoffset: mainLen });
-        gsap.set(diagLines, { strokeDashoffset: diagLen });
+        gsap.set(outer, { strokeDashoffset: outerLen, opacity: 0 });
+        gsap.set(inner, { strokeDashoffset: innerLen, opacity: 0 });
+        gsap.set(mainLines, { strokeDashoffset: mainLen, opacity: 0 });
+        gsap.set(diagLines, { strokeDashoffset: diagLen, opacity: 0 });
         gsap.set(dot, { scale: 0, opacity: 0 });
 
         const tl = gsap.timeline();
         const dur = 1.0; 
         const easeSettle = "power3.out";
 
+        // Dot scales in completely first
         tl.to(dot, { scale: 1, opacity: 1, duration: 0.32, ease: "back.out(1.5)" })
-          .add("drawOutward", "-=0.1")
-          .to(inner, { strokeDashoffset: 0, duration: dur, ease: easeSettle }, "drawOutward")
-          .to([mainLines, diagLines], { strokeDashoffset: 0, duration: dur, ease: easeSettle, stagger: 0 }, "drawOutward+=0.1")
-          .to(outer, { strokeDashoffset: 0, duration: dur, ease: easeSettle }, "drawOutward+=0.2");
+          // Strictly AFTER the dot finishes, the lines begin to draw
+          .add("drawOutward", "+=0.05")
+          .to(inner, { strokeDashoffset: 0, opacity: 1, duration: dur, ease: easeSettle }, "drawOutward")
+          .to([mainLines, diagLines], { strokeDashoffset: 0, opacity: 1, duration: dur, ease: easeSettle, stagger: 0 }, "drawOutward+=0.1")
+          .to(outer, { strokeDashoffset: 0, opacity: 1, duration: dur, ease: easeSettle }, "drawOutward+=0.2");
       });
     }
   }
