@@ -119,51 +119,53 @@ const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug ==
   }
 
   .matrix-band {
+    flex: 1;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     padding: 0 4rem;
     cursor: pointer;
     background-color: var(--color-forest-deep);
     transition: flex var(--duration-deep) var(--ease-settle), 
                 background-color var(--duration-standard) ease;
-    overflow: hidden;
+    /* Removed overflow: hidden to allow topographic lips to overlap previous bands */
     position: relative;
     animation: subtleBreathe 12s infinite ease-in-out;
     color: var(--color-warm-cream);
     text-decoration: none;
   }
-  
-  /* Overlap bands to hide straight edges and create tectonic plates */
-  .matrix-band + .matrix-band {
-    margin-top: -40px;
-  }
 
-  /* Topographic Plate Structures via CSS Polygons */
-  .matrix-band:nth-child(2) {
-    clip-path: polygon(0% 20px, 8% 5px, 15% 35px, 22% 10px, 30% 25px, 45% 0px, 55% 30px, 68% 10px, 80% 25px, 92% 5px, 100% 20px, 100% 100%, 0% 100%);
-  }
-  .matrix-band:nth-child(3) {
-    clip-path: polygon(0% 5px, 12% 30px, 25% 0px, 35% 25px, 50% 10px, 62% 35px, 75% 5px, 88% 25px, 100% 0px, 100% 100%, 0% 100%);
-  }
-  .matrix-band:nth-child(4) {
-    clip-path: polygon(0% 30px, 10% 0px, 20% 20px, 35% 5px, 48% 30px, 60% 10px, 72% 25px, 85% 5px, 95% 30px, 100% 15px, 100% 100%, 0% 100%);
-  }
-  .matrix-band:nth-child(5) {
-    clip-path: polygon(0% 15px, 15% 35px, 28% 5px, 40% 25px, 55% 0px, 68% 30px, 82% 10px, 92% 25px, 100% 5px, 100% 100%, 0% 100%);
-  }
-
+  /* Overlapping Topographic Plate Boundaries */
   .matrix-band::after {
     content: '';
     position: absolute;
-    top: 0; /* Attach topographic line to the jagged top edge */
+    top: -39px; /* Shift up to overlap the previous band. -39px to avoid 1px gaps */
     left: 0;
-    right: 0;
     width: 100%;
     height: 40px;
-    background: linear-gradient(to bottom, rgba(235, 230, 224, 0.05), transparent);
-    z-index: 5;
+    background-repeat: no-repeat;
+    background-position: bottom;
+    background-size: 100% 100%; /* Stretch horizontally, fix height */
+    z-index: 5; /* Ensure it renders over the previous band */
     pointer-events: none;
+  }
+  
+  .matrix-band:nth-child(1)::after {
+    display: none; /* No overlap needed for the first band */
+  }
+
+  /* Organic smooth curves filled with Forest Deep green to simulate physical overlapping plates */
+  .matrix-band:nth-child(2)::after {
+    background-image: url("data:image/svg+xml,%3Csvg width='1000' height='40' viewBox='0 0 1000 40' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,40 L0,20 Q100,0 200,20 T400,10 T600,25 T800,5 T1000,20 L1000,40 Z' fill='%230c1509' /%3E%3Cpath d='M0,20 Q100,0 200,20 T400,10 T600,25 T800,5 T1000,20' fill='none' stroke='rgba(245,237,216,0.2)' stroke-width='2' /%3E%3C/svg%3E");
+  }
+  .matrix-band:nth-child(3)::after {
+    background-image: url("data:image/svg+xml,%3Csvg width='1000' height='40' viewBox='0 0 1000 40' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,40 L0,10 Q150,30 300,15 T500,5 T750,25 T1000,10 L1000,40 Z' fill='%230c1509' /%3E%3Cpath d='M0,10 Q150,30 300,15 T500,5 T750,25 T1000,10' fill='none' stroke='rgba(245,237,216,0.2)' stroke-width='2' /%3E%3C/svg%3E");
+  }
+  .matrix-band:nth-child(4)::after {
+    background-image: url("data:image/svg+xml,%3Csvg width='1000' height='40' viewBox='0 0 1000 40' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,40 L0,5 Q200,35 400,20 T650,35 T850,15 T1000,25 L1000,40 Z' fill='%230c1509' /%3E%3Cpath d='M0,5 Q200,35 400,20 T650,35 T850,15 T1000,25' fill='none' stroke='rgba(245,237,216,0.2)' stroke-width='2' /%3E%3C/svg%3E");
+  }
+  .matrix-band:nth-child(5)::after {
+    background-image: url("data:image/svg+xml,%3Csvg width='1000' height='40' viewBox='0 0 1000 40' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,40 L0,25 Q120,5 250,20 T500,15 T700,25 T1000,10 L1000,40 Z' fill='%230c1509' /%3E%3Cpath d='M0,25 Q120,5 250,20 T500,15 T700,25 T1000,10' fill='none' stroke='rgba(245,237,216,0.2)' stroke-width='2' /%3E%3C/svg%3E");
   }
   
   /* Stagger the breathe animation so they don't pulse together */
