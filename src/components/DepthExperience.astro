@@ -156,13 +156,16 @@ const sizes = product ? product.data.sizes : [];
   .stratum-canopy, .stratum-land, .stratum-hand, .stratum-specimen, .stratum-offering {
     -webkit-mask-image: var(--mask-url);
     mask-image: var(--mask-url);
-    /* CSS mask-position with percentage and size > 100% uses an inverse offset formula.
-       63% 37% perfectly places the top-right corner of the screen at the map's jagged boundary,
-       while the bottom-left corner sits deep in the solid black center. */
-    -webkit-mask-size: 220%;
-    mask-size: 220%;
-    -webkit-mask-position: 63% 37%;
-    mask-position: 63% 37%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    /* Use explicit viewport units for bulletproof positioning.
+       The mask is a flipped map, meaning its top-right is the jagged cut, and center is solid black.
+       We make the mask 3x the screen size, and shift it so the center of the mask sits at the bottom-left of the screen.
+       This ensures the bottom and left edges are completely solid, while the top and right edges hit the jagged cut. */
+    -webkit-mask-size: 250vw 250vh;
+    mask-size: 250vw 250vh;
+    -webkit-mask-position: -125vw -50vh;
+    mask-position: -125vw -50vh;
   }
   
   .stratum-content {
