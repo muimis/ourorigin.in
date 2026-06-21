@@ -37,9 +37,12 @@ const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug ==
         <a href={linkHref} class={`matrix-band ${isWayanad ? '' : 'empty-state'}`} style={bandStyle}>
           <TopographicMap index={index} />
           <div class="band-content">
-            <h2 class="origin-name">{origin.data.name}</h2>
+            <h2 class="origin-name">
+              {origin.data.name}
+              {origin.data.elevation && <sup class="elevation-sup">{origin.data.elevation}</sup>}
+            </h2>
             <div class="band-reveal">
-              <p class="origin-meta">{origin.data.elevation} · {origin.data.bioregion}</p>
+              <p class="origin-meta">{origin.data.bioregion}</p>
               {isWayanad ? (
                 <p class="origin-action">Descend</p>
               ) : (
@@ -149,29 +152,26 @@ const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug ==
     transition: flex var(--duration-deep) var(--ease-settle), 
                 background-color var(--duration-standard) ease;
     position: relative;
-    animation: subtleBreathe 12s infinite ease-in-out;
+    /* Static background, removed subtleBreathe to prevent mask rendering bugs */
     color: var(--color-warm-cream);
     text-decoration: none;
-    opacity: 0; /* Hidden natively for GSAP entrance */
+    opacity: 0; /* The masks carve the rect into topographic shapes. No ::after needed! */
   }
-
-  /* The masks carve the rect into topographic shapes. No ::after needed! */
   
-  /* Stagger the breathe animation so they don't pulse together */
-  .matrix-band:nth-child(1) { animation-delay: 0s; }
-  .matrix-band:nth-child(2) { animation-delay: -2s; }
-  .matrix-band:nth-child(3) { animation-delay: -4s; }
-  .matrix-band:nth-child(4) { animation-delay: -6s; }
-  .matrix-band:nth-child(5) { animation-delay: -8s; }
-
   .matrix-band:last-child {
     border-bottom: none;
+  }
+  
+  .matrix-band {
+    /* Base configuration for hover expansion */
+    flex: var(--base-flex);
   }
   
   .matrix-band:hover, .matrix-band:focus {
     /* Significant expansion to feel like "opening" rather than just hovering */
     flex: calc(var(--base-flex) + 2) !important;
-    background-color: rgba(245, 237, 216, 0.04);
+    background-color: #121d0e; /* Solid background to prevent seeing layers underneath! */
+    color: var(--color-pure-white);
     outline: none;
     animation-play-state: paused;
   }
@@ -193,6 +193,16 @@ const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug ==
     font-weight: 400;
     opacity: 0; /* Hidden natively for GSAP entrance */
     transform: translateY(10px);
+    display: inline-block; /* Ensure sup aligns properly */
+  }
+  
+  .elevation-sup {
+    vertical-align: super;
+    font-size: 0.35em; /* True superscript sizing */
+    margin-left: 0.5rem;
+    font-family: var(--font-evidence);
+    letter-spacing: 0.1em;
+    opacity: 0.7;
   }
   
   .band-reveal {
