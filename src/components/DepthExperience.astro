@@ -146,6 +146,20 @@ const sizes = product ? product.data.sizes : [];
     pointer-events: none;
   }
 
+  /* Terrain Cuts / Map Borders */
+  .stratum-land {
+    clip-path: polygon(0% 4%, 15% 1%, 35% 6%, 50% 2%, 65% 5%, 85% 0%, 100% 3%, 100% 100%, 0% 100%);
+  }
+  .stratum-hand {
+    clip-path: polygon(0% 1%, 20% 5%, 40% 1%, 60% 7%, 80% 2%, 100% 5%, 100% 100%, 0% 100%);
+  }
+  .stratum-specimen {
+    clip-path: polygon(0% 6%, 10% 2%, 30% 7%, 55% 1%, 75% 5%, 90% 0%, 100% 4%, 100% 100%, 0% 100%);
+  }
+  .stratum-offering {
+    clip-path: polygon(0% 3%, 25% 7%, 50% 2%, 70% 6%, 90% 1%, 100% 4%, 100% 100%, 0% 100%);
+  }
+
   .stratum-image.image-preserve-people {
     opacity: 0.55;
     mix-blend-mode: normal;
@@ -277,7 +291,7 @@ const sizes = product ? product.data.sizes : [];
         scrollTrigger: {
           trigger: ".depth-experience-container",
           start: "top top",
-          end: "+=120%", // Reduced from 200% so it completes much faster
+          end: "+=150%", // Adjusted to 150% as requested
           scrub: true,
           pin: ".pin-container",
           anticipatePin: 1,
@@ -318,11 +332,11 @@ const sizes = product ? product.data.sizes : [];
           duration: 1
         }, label)
         
-        // 3. Previous stratum text moves to the top edge and scales down to occupy the visual "tab" space
+        // 3. Previous stratum text transforms into a large, faint watermark behind the organic terrain cut
         .to(prevTitle, {
-          y: "-45dvh",
-          scale: 0.45,
-          opacity: 0.5,
+          y: "-30dvh",
+          scale: 1.8,
+          opacity: 0.08,
           ease: "none",
           duration: 1
         }, label)

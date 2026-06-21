@@ -121,15 +121,31 @@ const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug ==
   .matrix-band {
     display: flex;
     align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    color: var(--color-warm-cream);
-    border-bottom: 1px solid rgba(245, 237, 216, 0.05);
-    /* Transition flex-grow so it feels like an opening when hovered */
-    transition: flex var(--duration-slow) var(--ease-settle), background-color var(--duration-standard) var(--ease-settle);
-    position: relative;
+    justify-content: flex-start;
+    padding: 0 4rem;
+    cursor: pointer;
+    background-color: var(--color-forest-deep);
+    transition: flex var(--duration-deep) var(--ease-settle), 
+                background-color var(--duration-standard) ease;
     overflow: hidden;
+    position: relative;
     animation: subtleBreathe 12s infinite ease-in-out;
+    color: var(--color-warm-cream);
+    text-decoration: none;
+  }
+
+  .matrix-band::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 200%;
+    height: 4px;
+    background-image: url("data:image/svg+xml,%3Csvg width='1000' height='4' viewBox='0 0 1000 4' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 2C100 0 150 4 250 2C350 0 400 4 500 2C600 0 650 4 750 2C850 0 900 4 1000 2' stroke='rgba(245, 237, 216, 0.1)' stroke-width='1'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-position: center;
+    z-index: 5;
+    pointer-events: none;
   }
   
   /* Stagger the breathe animation so they don't pulse together */
