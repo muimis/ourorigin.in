@@ -115,7 +115,7 @@ if (match) {
   }
   
   // Shift all coordinates: Y = Y - 30
-  // viewBox width becomes 920 (max X is 920)
+  // viewBox width becomes 5920 (max X is 920, but we extend 5000 to the left)
   // viewBox height becomes 1536 - 30 = 1506
   
   function shiftCommands(cmdArray) {
@@ -134,15 +134,12 @@ if (match) {
   const shiftedForward = shiftCommands(commands.slice(1, 217)).join(' ');
   const shiftedReverse = shiftCommands(reversePart1).join(' ');
   
-  const filledPath = `M 632,0 ${shiftedForward} L 920,1477 L 920,1506 L 0,1506 L 0,260 ${shiftedReverse} Z`;
+  // To extend infinitely to the left, we add a huge negative X to the left-bounding points!
+  // The left edge points were at X=0. We change them to X=-5000.
+  const filledPath = `M 632,0 ${shiftedForward} L 920,1477 L 920,1506 L -5000,1506 L -5000,260 ${shiftedReverse} Z`;
   
-  const filledSvg = `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 1506">
-  <path d="${filledPath}" fill="black" />
-</svg>
-  `;
-  
-  const finalSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 1506"><path d="${filledPath}" fill="black" /></svg>`;
+  // We set viewBox to include the -5000 left area. Width = 5920. Height = 1506.
+  const finalSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-5000 0 5920 1506"><path d="${filledPath}" fill="black" /></svg>`;
   fs.writeFileSync('public/maps/wayanadu map cut_solid.svg', finalSvg);
-  console.log('Created public/maps/wayanadu map cut_solid.svg with perfect bounds');
+  console.log('Created public/maps/wayanadu map cut_solid.svg with extended left bounds');
 }
