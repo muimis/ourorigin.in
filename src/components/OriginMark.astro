@@ -79,10 +79,10 @@ const strokeColor = colorMap[variant];
         const mainLen = 23; // 37 - 14
         const diagLen = 5;  // 25 - 20
 
-        gsap.set(outer, { strokeDasharray: outerLen, strokeDashoffset: outerLen });
-        gsap.set(inner, { strokeDasharray: innerLen, strokeDashoffset: innerLen });
-        gsap.set(mainLines, { strokeDasharray: mainLen, strokeDashoffset: mainLen });
-        gsap.set(diagLines, { strokeDasharray: diagLen, strokeDashoffset: diagLen });
+        gsap.set(outer, { strokeDasharray: outerLen, strokeDashoffset: outerLen, opacity: 0 });
+        gsap.set(inner, { strokeDasharray: innerLen, strokeDashoffset: innerLen, opacity: 0 });
+        gsap.set(mainLines, { strokeDasharray: mainLen, strokeDashoffset: mainLen, opacity: 0 });
+        gsap.set(diagLines, { strokeDasharray: diagLen, strokeDashoffset: diagLen, opacity: 0 });
         gsap.set(dot, { scale: 0, transformOrigin: "50% 50%", opacity: 0 });
         
         // Remove native hidden state now that GSAP has taken over
