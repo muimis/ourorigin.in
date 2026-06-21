@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import OriginMark from './OriginMark.astro';
+import TopographicMap from './TopographicMap.astro';
 
 const origins = await getCollection('origins');
 
@@ -17,12 +18,27 @@ const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug ==
       // Elevation felt visually: higher elevation gets slightly more natural space
       const baseFlex = 1 + ((orderedOrigins.length - index) * 0.15);
       
+      let bandStyle = `--base-flex: ${baseFlex}; flex: ${baseFlex};`;
+      if (index > 0) {
+        const maskSvg = [
+          "",
+          `url("data:image/svg+xml,%3Csvg width='1000' height='100' viewBox='0 0 1000 100' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1000,100 L0,100 L0,50 Q100,0 200,50 T400,20 T600,60 T800,10 T1000,50 Z' fill='black' /%3E%3C/svg%3E")`,
+          `url("data:image/svg+xml,%3Csvg width='1000' height='100' viewBox='0 0 1000 100' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1000,100 L0,100 L0,30 Q150,70 300,40 T500,20 T750,60 T1000,30 Z' fill='black' /%3E%3C/svg%3E")`,
+          `url("data:image/svg+xml,%3Csvg width='1000' height='100' viewBox='0 0 1000 100' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1000,100 L0,100 L0,20 Q200,80 400,50 T650,80 T850,40 T1000,60 Z' fill='black' /%3E%3C/svg%3E")`,
+          `url("data:image/svg+xml,%3Csvg width='1000' height='100' viewBox='0 0 1000 100' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1000,100 L0,100 L0,60 Q120,20 250,50 T500,40 T700,60 T1000,30 Z' fill='black' /%3E%3C/svg%3E")`
+        ][index];
+        const maskCss = `mask-image: ${maskSvg}, linear-gradient(white, white); mask-position: top center, bottom center; mask-size: 100% 100px, 100% calc(100% - 99px); mask-repeat: no-repeat;`;
+        const webkitMaskCss = `-webkit-mask-image: ${maskSvg}, linear-gradient(white, white); -webkit-mask-position: top center, bottom center; -webkit-mask-size: 100% 100px, 100% calc(100% - 99px); -webkit-mask-repeat: no-repeat;`;
+        bandStyle += ` margin-top: -100px; padding-top: 100px; ${maskCss} ${webkitMaskCss}`;
+      }
+      
       return (
-        <a href={linkHref} class={`matrix-band ${isWayanad ? '' : 'empty-state'}`} style={`--base-flex: ${baseFlex}; flex: ${baseFlex};`}>
+        <a href={linkHref} class={`matrix-band ${isWayanad ? '' : 'empty-state'}`} style={bandStyle}>
+          <TopographicMap index={index} elevationText={origin.data.elevation} />
           <div class="band-content">
             <h2 class="origin-name">{origin.data.name}</h2>
             <div class="band-reveal">
-              <p class="origin-meta">{origin.data.elevation} · {origin.data.bioregion}</p>
+              <p class="origin-meta">{origin.data.bioregion}</p>
               {isWayanad ? (
                 <p class="origin-action">Descend</p>
               ) : (
@@ -123,12 +139,14 @@ const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug ==
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 4rem;
+    /* padding-top is dynamic via inline styles */
+    padding-left: 4rem;
+    padding-right: 4rem;
+    padding-bottom: 0;
     cursor: pointer;
     background-color: var(--color-forest-deep);
     transition: flex var(--duration-deep) var(--ease-settle), 
                 background-color var(--duration-standard) ease;
-    /* Removed overflow: hidden to allow topographic lips to overlap previous bands */
     position: relative;
     animation: subtleBreathe 12s infinite ease-in-out;
     color: var(--color-warm-cream);
@@ -136,38 +154,7 @@ const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug ==
     opacity: 0; /* Hidden natively for GSAP entrance */
   }
 
-  /* Overlapping Topographic Plate Boundaries */
-  .matrix-band::after {
-    content: '';
-    position: absolute;
-    top: -39px; /* Shift up to overlap the previous band. -39px to avoid 1px gaps */
-    left: 0;
-    width: 100%;
-    height: 40px;
-    background-repeat: no-repeat;
-    background-position: bottom;
-    background-size: 100% 100%; /* Stretch horizontally, fix height */
-    z-index: 5; /* Ensure it renders over the previous band */
-    pointer-events: none;
-  }
-  
-  .matrix-band:nth-child(1)::after {
-    display: none; /* No overlap needed for the first band */
-  }
-
-  /* Organic smooth curves filled with Forest Deep green to simulate physical overlapping plates */
-  .matrix-band:nth-child(2)::after {
-    background-image: url("data:image/svg+xml,%3Csvg width='1000' height='40' viewBox='0 0 1000 40' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,40 L0,20 Q100,0 200,20 T400,10 T600,25 T800,5 T1000,20 L1000,40 Z' fill='%230c1509' /%3E%3Cpath d='M0,20 Q100,0 200,20 T400,10 T600,25 T800,5 T1000,20' fill='none' stroke='rgba(245,237,216,0.2)' stroke-width='2' /%3E%3C/svg%3E");
-  }
-  .matrix-band:nth-child(3)::after {
-    background-image: url("data:image/svg+xml,%3Csvg width='1000' height='40' viewBox='0 0 1000 40' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,40 L0,10 Q150,30 300,15 T500,5 T750,25 T1000,10 L1000,40 Z' fill='%230c1509' /%3E%3Cpath d='M0,10 Q150,30 300,15 T500,5 T750,25 T1000,10' fill='none' stroke='rgba(245,237,216,0.2)' stroke-width='2' /%3E%3C/svg%3E");
-  }
-  .matrix-band:nth-child(4)::after {
-    background-image: url("data:image/svg+xml,%3Csvg width='1000' height='40' viewBox='0 0 1000 40' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,40 L0,5 Q200,35 400,20 T650,35 T850,15 T1000,25 L1000,40 Z' fill='%230c1509' /%3E%3Cpath d='M0,5 Q200,35 400,20 T650,35 T850,15 T1000,25' fill='none' stroke='rgba(245,237,216,0.2)' stroke-width='2' /%3E%3C/svg%3E");
-  }
-  .matrix-band:nth-child(5)::after {
-    background-image: url("data:image/svg+xml,%3Csvg width='1000' height='40' viewBox='0 0 1000 40' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,40 L0,25 Q120,5 250,20 T500,15 T700,25 T1000,10 L1000,40 Z' fill='%230c1509' /%3E%3Cpath d='M0,25 Q120,5 250,20 T500,15 T700,25 T1000,10' fill='none' stroke='rgba(245,237,216,0.2)' stroke-width='2' /%3E%3C/svg%3E");
-  }
+  /* The masks carve the rect into topographic shapes. No ::after needed! */
   
   /* Stagger the breathe animation so they don't pulse together */
   .matrix-band:nth-child(1) { animation-delay: 0s; }

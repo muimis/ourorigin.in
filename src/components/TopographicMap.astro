@@ -1,0 +1,129 @@
+---
+export interface Props {
+  index: number;
+  elevationText: string;
+}
+
+const { index, elevationText } = Astro.props;
+
+// Topographic Curves (Left to Right) for bands 1 to 4 (index 1 to 4)
+// Band 0 has no overlap.
+const curves = [
+  "", // Band 0
+  "M0,50 Q100,0 200,50 T400,20 T600,60 T800,10 T1000,50",
+  "M0,30 Q150,70 300,40 T500,20 T750,60 T1000,30",
+  "M0,20 Q200,80 400,50 T650,80 T850,40 T1000,60",
+  "M0,60 Q120,20 250,50 T500,40 T700,60 T1000,30"
+];
+
+// Inner contour lines (mimicking a zoomed-out map)
+const innerContours = [
+  [], // Band 0
+  [
+    "M0,65 Q100,15 200,65 T400,35 T600,75 T800,25 T1000,65",
+    "M0,80 Q100,30 200,80 T400,50 T600,90 T800,40 T1000,80",
+    "M250,110 C270,90 310,90 330,110 C350,130 310,150 290,130 Z",
+    "M270,115 C280,105 300,105 310,115 C320,125 300,135 290,125 Z",
+    "M850,100 C870,80 910,80 930,100 C950,120 910,140 890,120 Z"
+  ],
+  [
+    "M0,45 Q150,85 300,55 T500,35 T750,75 T1000,45",
+    "M0,60 Q150,100 300,70 T500,50 T750,90 T1000,60",
+    "M450,100 C480,80 520,80 550,100 C580,120 520,150 490,120 Z",
+    "M470,105 C490,95 510,95 520,105 C530,115 510,125 490,115 Z",
+    "M100,120 C120,100 160,100 180,120 C200,140 160,160 140,140 Z"
+  ],
+  [
+    "M0,35 Q200,95 400,65 T650,95 T850,55 T1000,75",
+    "M0,50 Q200,110 400,80 T650,110 T850,70 T1000,90",
+    "M700,130 C720,110 760,110 780,130 C800,150 760,170 740,150 Z",
+    "M720,135 C730,125 750,125 760,135 C770,145 750,155 740,145 Z",
+    "M300,110 C320,90 360,90 380,110 C400,130 360,150 340,130 Z"
+  ],
+  [
+    "M0,75 Q120,35 250,65 T500,55 T700,75 T1000,45",
+    "M0,90 Q120,50 250,80 T500,70 T700,90 T1000,60",
+    "M550,120 C570,100 610,100 630,120 C650,140 610,160 590,140 Z",
+    "M570,125 C580,115 600,115 610,125 C620,135 600,145 590,135 Z",
+    "M150,110 C170,90 210,90 230,110 C250,130 210,150 190,130 Z"
+  ]
+];
+
+const curve = curves[index];
+const inners = innerContours[index];
+const pathId = `text-path-${index}`;
+
+// We use the first inner contour to attach the elevation text so it flows elegantly just below the main border
+const textPathTarget = inners && inners.length > 0 ? inners[0] : curve;
+---
+
+{index > 0 && (
+  <svg 
+    class="topographic-map" 
+    viewBox="0 0 1000 150" 
+    preserveAspectRatio="none" 
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <!-- Main Topographic Plate Boundary -->
+    <path 
+      class="plate-border" 
+      d={curve} 
+    />
+
+    <!-- Inner Topographic Contours (Map details) -->
+    {inners.map(p => (
+      <path class="inner-contour" d={p} />
+    ))}
+
+    <!-- Hidden Path for Elevation Text (mirrors the first inner contour) -->
+    <path id={pathId} d={textPathTarget} fill="none" stroke="none" />
+
+    <!-- Elevation Text bound to the hidden path -->
+    <text class="elevation-text">
+      <!-- startOffset="50%" and text-anchor="middle" perfectly centers the text on the curve -->
+      <textPath href={`#${pathId}`} startOffset="50%" text-anchor="middle">
+        {elevationText}
+      </textPath>
+    </text>
+  </svg>
+)}
+
+<style>
+  .topographic-map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    /* Fixed 150px height matching the mask size so curves never stretch vertically! */
+    height: 150px; 
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .plate-border {
+    fill: none;
+    stroke: rgba(245, 237, 216, 0.4); /* Visible edge of the plate */
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .inner-contour {
+    fill: none;
+    stroke: rgba(245, 237, 216, 0.15); /* Faint map lines */
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .elevation-text {
+    fill: rgba(245, 237, 216, 0.6);
+    font-family: var(--font-evidence);
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  /* Only transitions opacity/visibility to prevent GSAP distortion */
+  .topographic-map {
+    transition: opacity var(--duration-standard) ease;
+  }
+</style>
