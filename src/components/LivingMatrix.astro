@@ -25,12 +25,25 @@ function getHighestElevation(elevationString) {
     {orderedOrigins.map((origin, index) => {
       const isWayanad = origin.data.slug === 'wayanad';
       const linkHref = isWayanad ? '/origins/wayanad/black-pepper' : '#';
-      // Calculate dynamic flex basis to compensate EXACTLY for the 100px overlap mask.
-      // Every plate except the last one loses 100px of its visual height to the mask of the plate below it.
-      // By giving them 100px more flex-basis, they will all appear visually identical on screen.
-      const isLast = index === orderedOrigins.length - 1;
-      let bandStyle = isLast ? 'flex: 1 1 0%;' : 'flex: 1 1 100px;';
+      // Redistribute space: 
+      // Nilgiris (0) doesn't have a top mask, so it can afford to be shorter.
+      // Thiruvananthapuram (last) needs extra space so text doesn't touch the bottom screen edge.
+      let heightCalc = 'calc(20vh + 100px)'; // Middle plates (1, 2, 3)
+      if (index === 0) {
+        heightCalc = 'calc(16vh + 100px)';
+      } else if (index === orderedOrigins.length - 1) {
+        heightCalc = '24vh';
+      }
       
+      let bandStyle = `flex: 0 0 ${heightCalc};`;
+      
+      // Shift text visually to center within the UNMASKED area
+      if (index === 0) {
+        bandStyle += ' padding-bottom: 80px;'; // push text up
+      } else if (index === orderedOrigins.length - 1) {
+        bandStyle += ' padding-top: 60px; padding-bottom: 20px;'; // push text down from wavy mask, up from bottom edge
+      }
+
       if (index > 0) {
         const maskSvg = [
           "",
