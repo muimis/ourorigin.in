@@ -12,18 +12,29 @@ const { coordinates } = Astro.props;
 
 <script>
   class LiveWeather extends HTMLElement {
+    parseDMS(dmsStr) {
+      const parts = dmsStr.match(/(\d+)°(\d+)?['′]?[A-Z]/);
+      if (parts) {
+        let deg = parseFloat(parts[1]);
+        let min = parts[2] ? parseFloat(parts[2]) : 0;
+        return deg + (min / 60);
+      }
+      return NaN;
+    }
+
     connectedCallback() {
       const coordsStr = this.dataset.coords;
       if (!coordsStr) return;
 
-      // Extract raw numbers, e.g., "11.605° N, 76.083° E" -> 11.605, 76.083
-      // Handle potential spaces and degree symbols
-      const cleanStr = coordsStr.replace(/[^\d.,-]/g, '');
-      const parts = cleanStr.split(',');
-      
+      // Handle DMS format like "11°36′N, 76°04′E"
+      const parts = coordsStr.split(',');
       if (parts.length >= 2) {
-        const lat = parseFloat(parts[0]);
-        const lon = parseFloat(parts[1]);
+        const latStr = parts[0].trim();
+        const lonStr = parts[1].trim();
+        
+        const lat = this.parseDMS(latStr) || parseFloat(latStr);
+        const lon = this.parseDMS(lonStr) || parseFloat(lonStr);
+        
         if (!isNaN(lat) && !isNaN(lon)) {
           this.fetchWeather(lat, lon);
         }

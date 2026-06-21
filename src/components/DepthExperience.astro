@@ -140,8 +140,9 @@ const sizes = product ? product.data.sizes : [];
     background-size: cover;
     background-position: center;
     /* Blend photography subtly into the Forest Deep brand color */
-    opacity: 0.35;
-    mix-blend-mode: luminosity;
+    opacity: 0.6;
+    mix-blend-mode: hard-light;
+    filter: brightness(1.1) contrast(1.1) grayscale(30%);
     z-index: 1;
     pointer-events: none;
   }
