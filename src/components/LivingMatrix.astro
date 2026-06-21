@@ -25,14 +25,13 @@ function getHighestElevation(elevationString) {
     {orderedOrigins.map((origin, index) => {
       const isWayanad = origin.data.slug === 'wayanad';
       const linkHref = isWayanad ? '/origins/wayanad/black-pepper' : '#';
-      // Redistribute space: 
-      // Nilgiris (0) doesn't have a top mask, so it can afford to be shorter.
-      // Thiruvananthapuram (last) needs extra space so text doesn't touch the bottom screen edge.
-      let heightCalc = 'calc(20vh + 100px)'; // Middle plates (1, 2, 3)
+      // Redistribute space to fit inside a 90vh container (leaving 5vh gap top and bottom)
+      // Middle plates (1, 2, 3) get 18vh visible + 100px overlap
+      let heightCalc = 'calc(18vh + 100px)'; 
       if (index === 0) {
-        heightCalc = 'calc(16vh + 100px)';
+        heightCalc = 'calc(14vh + 100px)'; // Nilgiris (smaller)
       } else if (index === orderedOrigins.length - 1) {
-        heightCalc = '24vh';
+        heightCalc = '22vh'; // Thiru (taller)
       }
       
       let bandStyle = `flex: 0 0 ${heightCalc};`;
@@ -148,6 +147,8 @@ function getHighestElevation(elevationString) {
     background-color: var(--color-forest-deep);
     position: relative;
     overflow: hidden;
+    padding: 5vh 0; /* Breathing room top and bottom */
+    box-sizing: border-box; /* Crucial so padding doesn't overflow 100vh */
   }
   
   .matrix-bands {
