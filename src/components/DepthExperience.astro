@@ -146,18 +146,25 @@ const sizes = product ? product.data.sizes : [];
     pointer-events: none;
   }
 
-  /* Terrain Cuts / Map Borders */
+  /* Terrain Cuts / Map Borders - Alternating Alignment */
+  .stratum-canopy {
+    /* Base layer - full screen */
+  }
   .stratum-land {
-    clip-path: polygon(0% 4%, 15% 1%, 35% 6%, 50% 2%, 65% 5%, 85% 0%, 100% 3%, 100% 100%, 0% 100%);
+    /* Right-aligned: Straight right edge, jagged left, top, bottom */
+    clip-path: polygon(12% 4%, 35% 1%, 65% 5%, 100% 0%, 100% 100%, 70% 96%, 40% 100%, 15% 95%, 5% 80%, 12% 60%, 0% 40%, 8% 20%);
   }
   .stratum-hand {
-    clip-path: polygon(0% 1%, 20% 5%, 40% 1%, 60% 7%, 80% 2%, 100% 5%, 100% 100%, 0% 100%);
+    /* Left-aligned: Straight left edge, jagged right, top, bottom */
+    clip-path: polygon(0% 0%, 40% 5%, 75% 2%, 92% 6%, 100% 25%, 90% 50%, 98% 75%, 88% 90%, 60% 100%, 25% 95%, 0% 100%);
   }
   .stratum-specimen {
-    clip-path: polygon(0% 6%, 10% 2%, 30% 7%, 55% 1%, 75% 5%, 90% 0%, 100% 4%, 100% 100%, 0% 100%);
+    /* Right-aligned: Straight right edge, jagged left, top, bottom */
+    clip-path: polygon(8% 5%, 30% 2%, 60% 6%, 100% 0%, 100% 100%, 75% 97%, 45% 99%, 10% 94%, 0% 85%, 10% 65%, 2% 45%, 15% 25%);
   }
   .stratum-offering {
-    clip-path: polygon(0% 3%, 25% 7%, 50% 2%, 70% 6%, 90% 1%, 100% 4%, 100% 100%, 0% 100%);
+    /* Left-aligned: Straight left edge, jagged right, top, bottom */
+    clip-path: polygon(0% 0%, 35% 4%, 65% 1%, 85% 5%, 95% 30%, 85% 55%, 100% 80%, 90% 95%, 55% 100%, 20% 96%, 0% 100%);
   }
 
   .stratum-image.image-preserve-people {
@@ -175,7 +182,8 @@ const sizes = product ? product.data.sizes : [];
     z-index: 10;
     position: relative;
     text-align: center;
-    max-width: 85vw;
+    max-width: 75vw;
+    padding: 0 2rem;
     line-height: 1.4;
   }
 
