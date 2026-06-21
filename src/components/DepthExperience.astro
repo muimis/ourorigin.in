@@ -154,17 +154,23 @@ const sizes = product ? product.data.sizes : [];
 
   /* Terrain Cuts / Map Borders - Dynamically injected via --mask-url to match the active origin */
   .stratum-canopy, .stratum-land, .stratum-hand, .stratum-specimen, .stratum-offering {
-    -webkit-mask-image: var(--mask-url);
-    mask-image: var(--mask-url);
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    /* Use the map image exactly as provided by the user. 
-       The user pre-cropped the map outline so the left and bottom are perfectly straight,
-       and the top and right form the jagged cut. We stretch it to fill the screen exactly. */
-    -webkit-mask-size: auto 100%;
-    mask-size: auto 100%;
-    -webkit-mask-position: top right;
-    mask-position: top right;
+    /* We use two masks:
+       1. The map cut SVG (placed top right, preserves its aspect ratio of ~0.61).
+       2. A solid black gradient (placed top left, fills the remaining width of the screen). 
+       This flawlessly handles all screen sizes (mobile and desktop) without hitting SVG rendering limits. */
+    -webkit-mask-image: var(--mask-url), linear-gradient(black, black);
+    mask-image: var(--mask-url), linear-gradient(black, black);
+    
+    -webkit-mask-repeat: no-repeat, no-repeat;
+    mask-repeat: no-repeat, no-repeat;
+    
+    /* The map height is 100%. The map width naturally becomes 0.61 * 100vh. 
+       The gradient covers the remaining width (100% - 60vh) so it overlaps slightly to prevent gaps. */
+    -webkit-mask-size: auto 100%, calc(100% - 60vh) 100%;
+    mask-size: auto 100%, calc(100% - 60vh) 100%;
+    
+    -webkit-mask-position: top right, top left;
+    mask-position: top right, top left;
   }
   
   .stratum-content {
