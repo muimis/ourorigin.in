@@ -25,15 +25,22 @@ function getHighestElevation(elevationString) {
     {orderedOrigins.map((origin, index) => {
       const isWayanad = origin.data.slug === 'wayanad';
       const linkHref = isWayanad ? '/origins/wayanad/black-pepper' : '#';
-      // Mathematical layout perfection for 90vh container:
-      // Every plate gets exactly the same height, and the 400px overlap is seamlessly absorbed.
-      let bandStyle = `flex: 0 0 calc(18vh + 80px);`;
+      // The true visual boundary between plates is the exact middle of the 100px overlapping wavy mask (50px).
+      // To create 5 perfectly equal 18vh visual bands inside a 90vh container:
+      let heightCalc = 'calc(18vh + 100px)'; // Middle plates: hold top mask + bottom mask
+      if (index === 0) {
+        heightCalc = 'calc(18vh + 50px)'; // Nilgiris: only has bottom mask
+      } else if (index === orderedOrigins.length - 1) {
+        heightCalc = 'calc(18vh + 50px)'; // Thiru: only has top mask
+      }
       
-      // Shift text visually to center within the UNMASKED solid area of each plate
-      if (index === orderedOrigins.length - 1) {
-        bandStyle += ' padding-top: 100px;'; // Last plate: push text below the 100px top wavy mask
-      } else {
-        bandStyle += ' padding-bottom: 100px;'; // All other plates: push text up away from the bottom covered 100px
+      let bandStyle = `flex: 0 0 ${heightCalc};`;
+      
+      // Shift text exactly 25px (via 50px padding) to perfectly align with the visual mask centers
+      if (index === 0) {
+        bandStyle += ' padding-bottom: 50px;'; // Center text relative to straight top edge & wavy bottom
+      } else if (index === orderedOrigins.length - 1) {
+        bandStyle += ' padding-top: 50px;'; // Center text relative to wavy top edge & straight bottom edge
       }
 
       if (index > 0) {
