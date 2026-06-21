@@ -114,45 +114,35 @@ if (match) {
     reversePart1.push(cmd);
   }
   
-  let part2 = commands.slice(idxOfLeftEdge, 217);
-  // Remove the 'L' from the first element of part2 so it connects smoothly
+  // Shift all coordinates: Y = Y - 30
+  // viewBox width becomes 920 (max X is 920)
+  // viewBox height becomes 1536 - 30 = 1506
   
-  // Wait, if we use the V-shape EXACTLY as the user provided:
-  // M 632,30 -> (0,290) -> (920,1507).
-  // And we want to fill the "inside" of the V.
-  // The polygon is:
-  // M 632,30
-  // ... to 0,290
-  // ... to 920,1507
-  // L 920,1536
-  // L 0,1536
-  // L 0,290
-  // And then from 0,290 we trace BACK to 632,30!
+  function shiftCommands(cmdArray) {
+    return cmdArray.map(cmd => {
+      const type = cmd[0];
+      const coords = cmd.substring(1).trim().split(',');
+      if (coords.length === 2) {
+        const x = parseInt(coords[0]);
+        const y = parseInt(coords[1]) - 30; // Shift UP by 30
+        return `${type} ${x},${y}`;
+      }
+      return cmd;
+    });
+  }
   
-  const filledPath = `M 632,30 ${commands.slice(1, 217).join(' ')} L 921,1507 L 921,1536 L 0,1536 L 0,290 ${reversePart1.join(' ')} Z`;
+  const shiftedForward = shiftCommands(commands.slice(1, 217)).join(' ');
+  const shiftedReverse = shiftCommands(reversePart1).join(' ');
+  
+  const filledPath = `M 632,0 ${shiftedForward} L 920,1477 L 920,1506 L 0,1506 L 0,260 ${shiftedReverse} Z`;
   
   const filledSvg = `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 921 1536">
-  <!-- Filled polygon in black -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 1506">
   <path d="${filledPath}" fill="black" />
-  <!-- Original red stroke on top -->
-  <path d="${match[1]}" fill="none" stroke="red" stroke-width="2" />
 </svg>
   `;
   
-  const html = `
-<!DOCTYPE html>
-<html>
-<body style='background: #eee; margin: 0; padding: 20px; text-align: center;'>
-  <div style='background: white; border: 1px solid #ccc; display: inline-block; width: 100%; max-width: 600px;'>
-    ${filledSvg.replace('<svg ', '<svg style="width: 100%; height: auto; display: block;" ')}
-  </div>
-</body>
-</html>
-  `;
-  fs.writeFileSync('public/test-svg-polygon.html', html);
-  // Also save the actual SVG mask we will use
-  const finalSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 921 1536"><path d="${filledPath}" fill="black" /></svg>`;
+  const finalSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 1506"><path d="${filledPath}" fill="black" /></svg>`;
   fs.writeFileSync('public/maps/wayanadu map cut_solid.svg', finalSvg);
-  console.log('Created public/test-svg-polygon.html and public/maps/wayanadu map cut_solid.svg');
+  console.log('Created public/maps/wayanadu map cut_solid.svg with perfect bounds');
 }
