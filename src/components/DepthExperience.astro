@@ -159,13 +159,12 @@ const sizes = product ? product.data.sizes : [];
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
     
-    /* Scale the map up massively and anchor it to the top-right. 
-       This ensures the top and right edges of the screen are cut by the map's natural jagged boundaries,
-       but the left and bottom edges of the screen fall fully inside the solid area of the map, keeping them straight. */
-    -webkit-mask-size: 300%;
-    mask-size: 300%;
-    -webkit-mask-position: top 0 right 0;
-    mask-position: top 0 right 0;
+    /* Place the bottom-left corner of the screen deep inside the solid black center of the map.
+       The top-right corner of the screen extends outward, crossing the map's jagged boundary. */
+    -webkit-mask-size: 220%;
+    mask-size: 220%;
+    -webkit-mask-position: left 35% bottom 35%;
+    mask-position: left 35% bottom 35%;
   }
   
   /* Additional layer specific styles can go here if needed */
