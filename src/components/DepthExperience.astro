@@ -158,14 +158,13 @@ const sizes = product ? product.data.sizes : [];
     mask-image: var(--mask-url);
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
-    /* Use explicit viewport units for bulletproof positioning.
-       The mask is a flipped map, meaning its top-right is the jagged cut, and center is solid black.
-       We make the mask 3x the screen size, and shift it so the center of the mask sits at the bottom-left of the screen.
-       This ensures the bottom and left edges are completely solid, while the top and right edges hit the jagged cut. */
-    -webkit-mask-size: 250vw 250vh;
-    mask-size: 250vw 250vh;
-    -webkit-mask-position: -125vw -50vh;
-    mask-position: -125vw -50vh;
+    /* Use the map image exactly as provided by the user. 
+       The user pre-cropped the map outline so the left and bottom are perfectly straight,
+       and the top and right form the jagged cut. We stretch it to fill the screen exactly. */
+    -webkit-mask-size: 100vw 100vh;
+    mask-size: 100vw 100vh;
+    -webkit-mask-position: top left;
+    mask-position: top left;
   }
   
   .stratum-content {
