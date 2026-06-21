@@ -119,62 +119,49 @@ const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug ==
   }
 
   .matrix-band {
-    flex: 1;
     display: flex;
     align-items: center;
     justify-content: flex-start;
     padding: 0 4rem;
-    position: relative;
-    overflow: hidden;
     cursor: pointer;
-    transition: flex 0.8s var(--ease-matrix);
-    
-    /* Apply asymmetric topographic cut via PNG mask */
-    -webkit-mask-image: url('/maps/topographic lines reference for homepage_solid.png');
-    -webkit-mask-size: 150%;
-    -webkit-mask-position: center;
-    mask-image: url('/maps/topographic lines reference for homepage_solid.png');
-    mask-size: 150%;
-    mask-position: center;
     background-color: var(--color-forest-deep);
-    background-image: var(--band-bg);
-    background-size: cover;
-    background-position: center;
-    background-blend-mode: luminosity;
+    transition: flex var(--duration-deep) var(--ease-settle), 
+                background-color var(--duration-standard) ease;
+    overflow: hidden;
+    position: relative;
+    animation: subtleBreathe 12s infinite ease-in-out;
     color: var(--color-warm-cream);
     text-decoration: none;
-    animation: subtleBreathe 12s infinite ease-in-out;
   }
   
-  /* Alternate mask positions so each band cuts differently */
-  .matrix-band:nth-child(even) {
-    -webkit-mask-position: top -20% left 10%;
-    mask-position: top -20% left 10%;
-  }
-  .matrix-band:nth-child(3n) {
-    -webkit-mask-position: bottom -10% right 20%;
-    mask-position: bottom -10% right 20%;
+  /* Overlap bands to hide straight edges and create tectonic plates */
+  .matrix-band + .matrix-band {
+    margin-top: -40px;
   }
 
-  .matrix-band::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-color: rgba(12, 21, 9, 0.4);
-    z-index: 1;
-    transition: background-color 0.8s var(--ease-matrix);
+  /* Topographic Plate Structures via CSS Polygons */
+  .matrix-band:nth-child(2) {
+    clip-path: polygon(0% 20px, 8% 5px, 15% 35px, 22% 10px, 30% 25px, 45% 0px, 55% 30px, 68% 10px, 80% 25px, 92% 5px, 100% 20px, 100% 100%, 0% 100%);
+  }
+  .matrix-band:nth-child(3) {
+    clip-path: polygon(0% 5px, 12% 30px, 25% 0px, 35% 25px, 50% 10px, 62% 35px, 75% 5px, 88% 25px, 100% 0px, 100% 100%, 0% 100%);
+  }
+  .matrix-band:nth-child(4) {
+    clip-path: polygon(0% 30px, 10% 0px, 20% 20px, 35% 5px, 48% 30px, 60% 10px, 72% 25px, 85% 5px, 95% 30px, 100% 15px, 100% 100%, 0% 100%);
+  }
+  .matrix-band:nth-child(5) {
+    clip-path: polygon(0% 15px, 15% 35px, 28% 5px, 40% 25px, 55% 0px, 68% 30px, 82% 10px, 92% 25px, 100% 5px, 100% 100%, 0% 100%);
   }
 
   .matrix-band::after {
     content: '';
     position: absolute;
-    bottom: -1px;
+    top: 0; /* Attach topographic line to the jagged top edge */
     left: 0;
-    width: 200%;
-    height: 4px;
-    background-image: url("data:image/svg+xml,%3Csvg width='1000' height='4' viewBox='0 0 1000 4' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 2C100 0 150 4 250 2C350 0 400 4 500 2C600 0 650 4 750 2C850 0 900 4 1000 2' stroke='rgba(245, 237, 216, 0.1)' stroke-width='1'/%3E%3C/svg%3E");
-    background-repeat: repeat-x;
-    background-position: center;
+    right: 0;
+    width: 100%;
+    height: 40px;
+    background: linear-gradient(to bottom, rgba(235, 230, 224, 0.05), transparent);
     z-index: 5;
     pointer-events: none;
   }
