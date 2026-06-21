@@ -35,7 +35,7 @@ const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug ==
     })}
   </div>
   
-  <div class="matrix-mark-wrapper">
+  <div class="matrix-mark-wrapper initial-center">
     <OriginMark animate={true} size="var(--origin-mark-gauge-size)" />
   </div>
 </div>
@@ -52,6 +52,7 @@ const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug ==
       // The half-second of nothing, then the mark, then the bands.
       const bands = document.querySelectorAll('.matrix-band');
       const originNames = document.querySelectorAll('.origin-name');
+      const markWrapper = document.querySelector('.matrix-mark-wrapper');
       
       // Hide initially
       gsap.set(bands, { opacity: 0 });
@@ -65,12 +66,19 @@ const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug ==
         const event = new Event('play-origin-mark-entrance');
         document.dispatchEvent(event);
       })
+      .to(markWrapper, {
+        scale: 1,
+        x: '0%',
+        right: window.innerWidth <= 768 ? '1rem' : '2rem',
+        duration: 1.5,
+        ease: 'power3.inOut'
+      }, "+=1.5") // Wait for the draw to finish before moving to the side
       .to(bands, {
         opacity: 1,
         duration: 2,
         stagger: 0.15,
         ease: 'power2.inOut'
-      }, "+=0.2") // start fading bands in slightly after the mark begins
+      }, "-=0.8") // Fade in bands as the mark slides over
       .to(originNames, {
         y: 0,
         opacity: 1,
@@ -211,8 +219,13 @@ const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug ==
     z-index: 10;
   }
 
+  .matrix-mark-wrapper.initial-center {
+    right: 50%;
+    transform: translate(50%, -50%) scale(2.5);
+  }
+
   @media (max-width: 768px) {
-    .matrix-mark-wrapper {
+    .matrix-mark-wrapper:not(.initial-center) {
       right: 1rem;
     }
   }

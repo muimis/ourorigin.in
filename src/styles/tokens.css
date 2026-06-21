@@ -21,4 +21,10 @@
   --duration-micro: 120ms;
   --duration-standard: 320ms;
   --duration-deep: 700ms;
+  --duration-slow: 1000ms;
+}
+
+/* Global mobile tap highlight removal */
+a, button, [role="button"], input, select, textarea {
+  -webkit-tap-highlight-color: transparent;
 }

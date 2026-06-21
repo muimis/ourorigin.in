@@ -31,7 +31,7 @@ const sizes = product ? product.data.sizes : [];
     {strata.map((s, i) => (
       <section 
         class={`stratum stratum-${s.id}`} 
-        style={`z-index: ${i + 1}; height: ${100 - (i * 5)}dvh;`}
+        style={`z-index: ${i + 1}; height: ${100 - (i * 5)}dvh; transform: translateY(${i === 0 ? '0' : '100dvh'});`}
       >
         <div class="stratum-content">
           {s.image && !origin?.data.images.isPlaceholderImagery && (
@@ -47,7 +47,7 @@ const sizes = product ? product.data.sizes : [];
     ))}
 
     <!-- Offering Stratum (Custom Layout) -->
-    <section class="stratum stratum-offering" style={`z-index: 5; height: 80dvh;`}>
+    <section class="stratum stratum-offering" style={`z-index: 5; height: 80dvh; transform: translateY(100dvh);`}>
       <div class="stratum-content offering-content">
         <div class="stratum-shadow"></div>
         <h2 class="stratum-title">OFFERING</h2>
@@ -268,21 +268,29 @@ const sizes = product ? product.data.sizes : [];
     initStrata() {
       const strata = document.querySelectorAll('.stratum');
       
-      // Start all strata below the viewport EXCEPT the first one
-      gsap.set(strata, { y: "100dvh" });
-      gsap.set(strata[0], { y: "0dvh" });
+      // Start all strata below the viewport EXCEPT the first one (handled natively via CSS transform to prevent FOUC)
+      // but we inform GSAP of the initial state
+      gsap.set(strata, { y: (i) => i === 0 ? "0dvh" : "100dvh" });
 
       // Create a master pinned timeline
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: ".depth-experience-container",
           start: "top top",
-          end: "+=200%", // Halved from 400% for much faster, punchier transitions
+          end: "+=120%", // Reduced from 200% so it completes much faster
           scrub: true,
           pin: ".pin-container",
-          anticipatePin: 1
+          anticipatePin: 1,
+          snap: {
+            snapTo: "labels",
+            duration: { min: 0.2, max: 0.6 },
+            delay: 0.1,
+            ease: "power1.inOut"
+          }
         }
       });
+      
+      tl.addLabel("step0"); // Base state
 
       strata.forEach((stratum, index) => {
         if (index === 0) return; // First stratum is already at y:0
@@ -310,13 +318,23 @@ const sizes = product ? product.data.sizes : [];
           duration: 1
         }, label)
         
-        // 3. Previous stratum text fades out completely (done in first 50% of the slide)
-        .to([prevTitle, prevSelector], {
+        // 3. Previous stratum text moves to the top edge and scales down to occupy the visual "tab" space
+        .to(prevTitle, {
+          y: "-45dvh",
+          scale: 0.45,
+          opacity: 0.5,
+          ease: "none",
+          duration: 1
+        }, label)
+        
+        .to(prevSelector, {
           opacity: 0,
           ease: "none",
           duration: 0.5
         }, label);
       });
+      
+      tl.addLabel("step" + strata.length); // Final snap point
     }
 
     initDepthGauge() {
