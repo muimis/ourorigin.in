@@ -25,10 +25,12 @@ function getHighestElevation(elevationString) {
     {orderedOrigins.map((origin, index) => {
       const isWayanad = origin.data.slug === 'wayanad';
       const linkHref = isWayanad ? '/origins/wayanad/black-pepper' : '#';
-      // Elevation felt visually: higher elevation gets slightly more natural space
-      const baseFlex = 1 + ((orderedOrigins.length - index) * 0.15);
+      // Calculate dynamic flex basis to compensate EXACTLY for the 100px overlap mask.
+      // Every plate except the last one loses 100px of its visual height to the mask of the plate below it.
+      // By giving them 100px more flex-basis, they will all appear visually identical on screen.
+      const isLast = index === orderedOrigins.length - 1;
+      let bandStyle = isLast ? 'flex: 1 1 0%;' : 'flex: 1 1 100px;';
       
-      let bandStyle = `--base-flex: ${baseFlex}; flex: ${baseFlex};`;
       if (index > 0) {
         const maskSvg = [
           "",
@@ -47,10 +49,10 @@ function getHighestElevation(elevationString) {
         <a href={linkHref} class={`matrix-band ${isWayanad ? '' : 'empty-state'}`} style={bandStyle}>
           <TopographicMap index={index} />
           <div class="band-content">
-            <div class="title-group">
-              {origin.data.elevation && <div class="elevation-sup">{getHighestElevation(origin.data.elevation)}M</div>}
-              <h2 class="origin-name">{origin.data.name}</h2>
-            </div>
+            <h2 class="origin-name">
+              {origin.data.name}
+              {origin.data.elevation && <sup class="elevation-sup">{getHighestElevation(origin.data.elevation)}M</sup>}
+            </h2>
             <div class="band-reveal">
               <p class="origin-meta">{origin.data.bioregion}</p>
               {isWayanad ? (
@@ -81,12 +83,12 @@ function getHighestElevation(elevationString) {
     init() {
       // The half-second of nothing, then the mark, then the bands.
       const bands = document.querySelectorAll('.matrix-band');
-      const titleGroups = document.querySelectorAll('.title-group');
+      const originNames = document.querySelectorAll('.origin-name');
       const markWrapper = document.querySelector('.matrix-mark-wrapper');
       
       // Hide initially
       gsap.set(bands, { opacity: 0 });
-      gsap.set(titleGroups, { y: 10, opacity: 0 });
+      gsap.set(originNames, { y: 10, opacity: 0 });
 
       // Orchestrate the arrival
       const tl = gsap.timeline({ delay: 0.5 });
@@ -109,7 +111,7 @@ function getHighestElevation(elevationString) {
         stagger: 0.15,
         ease: 'power2.inOut'
       }, "-=0.8") // Fade in bands as the mark slides over
-      .to(titleGroups, {
+      .to(originNames, {
         y: 0,
         opacity: 1,
         duration: 1.5,
@@ -179,7 +181,7 @@ function getHighestElevation(elevationString) {
   
   .matrix-band:hover, .matrix-band:focus {
     /* Gentle expansion to prevent overlapping text while maintaining focus */
-    flex: calc(var(--base-flex) + 0.5) !important;
+    flex-grow: 1.5 !important;
     background-color: #121d0e; /* Solid background to prevent seeing layers underneath! */
     color: var(--color-pure-white);
     outline: none;
@@ -195,6 +197,7 @@ function getHighestElevation(elevationString) {
   }
   
   .title-group {
+    /* Container class kept in case GSAP still targets it, though we restored origin-name inside */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -207,19 +210,22 @@ function getHighestElevation(elevationString) {
   
   .origin-name {
     font-family: var(--font-institutional);
-    font-size: var(--text-size-stratum-title);
+    /* Use clamp so long names like Thiruvananthapuram scale down on mobile instead of wrapping */
+    font-size: clamp(1.2rem, 4vw, var(--text-size-stratum-title));
     letter-spacing: 0.1em;
     text-transform: uppercase;
     margin: 0;
     font-weight: 400;
+    white-space: nowrap;
   }
   
   .elevation-sup {
+    vertical-align: super;
+    font-size: 0.35em; /* True superscript sizing */
+    margin-left: 0.2rem;
     font-family: var(--font-evidence);
-    font-size: 0.8rem;
     letter-spacing: 0.1em;
     opacity: 0.7;
-    margin-bottom: -0.2rem; /* Bring closer to text */
   }
   
   .band-reveal {
