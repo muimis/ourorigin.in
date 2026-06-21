@@ -7,6 +7,14 @@ const origins = await getCollection('origins');
 // Order by elevation (highest to lowest)
 const orderedSlugs = ['nilgiris', 'idukki', 'wayanad', 'malabar-coast', 'thiruvananthapuram'];
 const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug === slug)).filter(Boolean);
+
+const anchorProducts: Record<string, string> = {
+  'nilgiris': 'Tea',
+  'idukki': 'Cardamom',
+  'wayanad': 'Black Pepper',
+  'malabar-coast': 'Clove',
+  'thiruvananthapuram': 'Dry Ginger'
+};
 ---
 
 <div class="living-matrix-container">
@@ -21,6 +29,7 @@ const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug ==
             <h2 class="origin-name">{origin.data.name}</h2>
             <div class="band-reveal">
               <p class="origin-meta">{origin.data.elevation} · {origin.data.bioregion}</p>
+              <p class="origin-yield">Yield: {anchorProducts[origin.data.slug]}</p>
               {isWayanad ? (
                 <p class="origin-action">Descend</p>
               ) : (
@@ -113,7 +122,16 @@ const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug ==
     font-size: 0.85rem;
     letter-spacing: 0.05em;
     opacity: 0.8;
+    margin: 0 0 0.25rem 0;
+  }
+
+  .origin-yield {
+    font-family: var(--font-evidence);
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    opacity: 0.6;
     margin: 0 0 0.5rem 0;
+    text-transform: uppercase;
   }
   
   .origin-action {
