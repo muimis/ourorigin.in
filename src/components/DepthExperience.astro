@@ -11,11 +11,15 @@ const { origin, product } = Astro.props;
 
 // Build the content for the first 4 strata
 const strata = [
-  { id: 'canopy', title: origin ? `CANOPY — ${origin.data.elevation}` : 'CANOPY — [origin.elevation]', image: origin ? origin.data.images.canopy : null, hasWeather: true },
-  { id: 'land', title: origin ? `LAND — ${origin.data.soil}` : 'LAND — [origin.soil]', image: origin ? origin.data.images.land : null, hasWeather: false },
-  { id: 'hand', title: origin && product ? `HAND — ${origin.data.method} / ${product.data.methodDescription}` : 'HAND — [origin.method]', image: origin ? origin.data.images.hand : null, hasWeather: false },
-  { id: 'specimen', title: product ? `SPECIMEN — ${product.data.botanicalName}` : 'SPECIMEN — [product.botanicalName]', image: origin ? origin.data.images.specimen : null, hasWeather: false }
+  { id: 'canopy', title: origin ? `CANOPY — ${origin.data.elevation || ''}` : 'CANOPY', image: origin ? origin.data.images.canopy : null, hasWeather: true },
+  { id: 'land', title: origin ? `LAND — ${origin.data.soil || 'Rich Soil'}` : 'LAND', image: origin ? origin.data.images.land : null, hasWeather: false },
+  { id: 'hand', title: origin && product ? `HAND — ${origin.data.method || 'Artisanal'} / ${product.data.methodDescription || 'Sourced with care'}` : 'HAND', image: origin ? origin.data.images.hand : null, hasWeather: false },
+  { id: 'specimen', title: product ? `SPECIMEN — ${product.data.botanicalName || ''}` : 'SPECIMEN', image: origin ? origin.data.images.specimen : null, hasWeather: false }
 ];
+
+// Dynamically fetch the origin mask URL to avoid hardcoding "wayanad map outline"
+const maskUrl = origin ? encodeURI(`/maps/${origin.data.slug} map outline_solid.png`) : '';
+
 
 // Determine sizes for the offering stratum
 const sizes = product ? product.data.sizes : [];
@@ -27,11 +31,11 @@ const sizes = product ? product.data.sizes : [];
     <OriginMark variant="gold" size={48} id="depth-gauge-mark" />
   </div>
 
-  <div class="pin-container">
+  <div class="pin-container" data-origin-name={origin?.data.name} data-product-name={product?.data.name}>
     {strata.map((s, i) => (
       <section 
         class={`stratum stratum-${s.id}`} 
-        style={`z-index: ${i + 1}; height: ${100 - (i * 5)}dvh; transform: translateY(${i === 0 ? '0' : '100dvh'});`}
+        style={`z-index: ${i + 1}; height: ${100 - (i * 5)}dvh; transform: translateY(${i === 0 ? '0' : '100dvh'}); ${i > 0 && maskUrl ? `--mask-url: url('${maskUrl}');` : ''}`}
       >
         <div class="stratum-content">
           {s.image && !origin?.data.images.isPlaceholderImagery && (
@@ -47,7 +51,7 @@ const sizes = product ? product.data.sizes : [];
     ))}
 
     <!-- Offering Stratum (Custom Layout) -->
-    <section class="stratum stratum-offering" style={`z-index: 5; height: 80dvh; transform: translateY(100dvh);`}>
+    <section class="stratum stratum-offering" style={`z-index: 5; height: 80dvh; transform: translateY(100dvh); ${maskUrl ? `--mask-url: url('${maskUrl}');` : ''}`}>
       <div class="stratum-content offering-content">
         <div class="stratum-shadow"></div>
         <h2 class="stratum-title">OFFERING</h2>
@@ -148,49 +152,40 @@ const sizes = product ? product.data.sizes : [];
     pointer-events: none;
   }
 
-  /* Terrain Cuts / Map Borders - Real Solid Geographical Masks */
+  /* Terrain Cuts / Map Borders - Dynamically injected via --mask-url to match the active origin */
+  .stratum-land, .stratum-hand, .stratum-specimen, .stratum-offering {
+    -webkit-mask-image: var(--mask-url);
+    mask-image: var(--mask-url);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+  }
+  
   .stratum-canopy {
     /* Base layer - full screen */
   }
   .stratum-land {
-    -webkit-mask-image: url('/maps/wayanad map outline_solid.png');
     -webkit-mask-size: 130%;
     -webkit-mask-position: top -10% right -10%;
-    -webkit-mask-repeat: no-repeat;
-    mask-image: url('/maps/wayanad map outline_solid.png');
     mask-size: 130%;
     mask-position: top -10% right -10%;
-    mask-repeat: no-repeat;
   }
   .stratum-hand {
-    -webkit-mask-image: url('/maps/wayanad map outline_solid.png');
     -webkit-mask-size: 150%;
     -webkit-mask-position: bottom -20% left -20%;
-    -webkit-mask-repeat: no-repeat;
-    mask-image: url('/maps/wayanad map outline_solid.png');
     mask-size: 150%;
     mask-position: bottom -20% left -20%;
-    mask-repeat: no-repeat;
   }
   .stratum-specimen {
-    -webkit-mask-image: url('/maps/idukki map outline_solid.png');
     -webkit-mask-size: 140%;
     -webkit-mask-position: center left -10%;
-    -webkit-mask-repeat: no-repeat;
-    mask-image: url('/maps/idukki map outline_solid.png');
     mask-size: 140%;
     mask-position: center left -10%;
-    mask-repeat: no-repeat;
   }
   .stratum-offering {
-    -webkit-mask-image: url('/maps/trivandrum map outline_solid.png');
     -webkit-mask-size: 120%;
     -webkit-mask-position: bottom -10% center;
-    -webkit-mask-repeat: no-repeat;
-    mask-image: url('/maps/trivandrum map outline_solid.png');
     mask-size: 120%;
     mask-position: bottom -10% center;
-    mask-repeat: no-repeat;
   }
 
   .stratum-image.image-preserve-people {
@@ -201,7 +196,8 @@ const sizes = product ? product.data.sizes : [];
   /* Basic typographic styling */
   .stratum-title {
     font-family: var(--font-narrative);
-    font-size: var(--text-size-stratum-title);
+    /* Fluid typography prevents long botanical names from wrapping ungracefully on mobile */
+    font-size: clamp(1.5rem, 5vw, var(--text-size-stratum-title));
     font-weight: 300;
     letter-spacing: 0.05em;
     margin: 0 0 1rem 0;
@@ -230,6 +226,8 @@ const sizes = product ? product.data.sizes : [];
   .size-options {
     display: flex;
     gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
   .size-option {
@@ -311,8 +309,9 @@ const sizes = product ? product.data.sizes : [];
       let sizeText = selected ? selected.value : 'a selection';
       let priceText = selected ? `₹${selected.dataset.price}` : '₹...';
       
-      const originName = "Wayanad"; // This should be dynamic based on the page context if possible
-      const productName = "Black Pepper"; 
+      const pinContainer = document.querySelector('.pin-container') as HTMLElement;
+      const originName = pinContainer?.dataset.originName || "OurOrigin";
+      const productName = pinContainer?.dataset.productName || "Product";
       
       const message = `Hello, I am interested in sourcing ${originName} ${productName} (${sizeText}) at ${priceText}.`;
       const waNumber = "919645555668";
@@ -335,7 +334,7 @@ const sizes = product ? product.data.sizes : [];
         scrollTrigger: {
           trigger: ".depth-experience-container",
           start: "top top",
-          end: "+=150%", // Adjusted to 150% as requested
+          end: "+=350%", // Slowed down from 150% to give a luxurious, deliberate pace
           scrub: true,
           pin: ".pin-container",
           anticipatePin: 1,
