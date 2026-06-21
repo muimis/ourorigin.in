@@ -114,8 +114,8 @@ if (match) {
     reversePart1.push(cmd);
   }
   
-  // Shift all coordinates: Y = Y - 30
-  // viewBox width becomes 5920 (max X is 920, but we extend 5000 to the left)
+  // Shift all coordinates: Y = Y - 30, X = X + 5000
+  // viewBox width becomes 5920 (max X is 920 + 5000 = 5920)
   // viewBox height becomes 1536 - 30 = 1506
   
   function shiftCommands(cmdArray) {
@@ -123,8 +123,8 @@ if (match) {
       const type = cmd[0];
       const coords = cmd.substring(1).trim().split(',');
       if (coords.length === 2) {
-        const x = parseInt(coords[0]);
-        const y = parseInt(coords[1]) - 30; // Shift UP by 30
+        const x = parseInt(coords[0]) + 5000; // Shift RIGHT by 5000 to avoid negative viewBox
+        const y = parseInt(coords[1]) - 30;   // Shift UP by 30
         return `${type} ${x},${y}`;
       }
       return cmd;
@@ -134,12 +134,13 @@ if (match) {
   const shiftedForward = shiftCommands(commands.slice(1, 217)).join(' ');
   const shiftedReverse = shiftCommands(reversePart1).join(' ');
   
-  // To extend infinitely to the left, we add a huge negative X to the left-bounding points!
-  // The left edge points were at X=0. We change them to X=-5000.
-  const filledPath = `M 632,0 ${shiftedForward} L 920,1477 L 920,1506 L -5000,1506 L -5000,260 ${shiftedReverse} Z`;
+  // The left edge points were at X=0. They become X=5000.
+  // We want to extend infinitely to the left, so we add points at X=0.
+  // The rightmost edge was at 920. It becomes 5920.
+  const filledPath = `M 5632,0 ${shiftedForward} L 5920,1477 L 5920,1506 L 0,1506 L 0,260 ${shiftedReverse} Z`;
   
-  // We set viewBox to include the -5000 left area. Width = 5920. Height = 1506.
-  const finalSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-5000 0 5920 1506"><path d="${filledPath}" fill="black" /></svg>`;
+  // We set viewBox to start at 0. Width = 5920. Height = 1506.
+  const finalSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 5920 1506"><path d="${filledPath}" fill="black" /></svg>`;
   fs.writeFileSync('public/maps/wayanadu map cut_solid.svg', finalSvg);
-  console.log('Created public/maps/wayanadu map cut_solid.svg with extended left bounds');
+  console.log('Created public/maps/wayanadu map cut_solid.svg with positive viewBox coordinates');
 }
