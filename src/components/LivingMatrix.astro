@@ -147,7 +147,8 @@ function getHighestElevation(elevationString) {
     background-color: var(--color-forest-deep);
     position: relative;
     overflow: hidden;
-    padding: 5vh 0; /* Breathing room top and bottom */
+    /* Shifted up slightly (~3mm / 1.5vh) while keeping total 10vh padding to maintain the 90vh internal plate math */
+    padding: 3.5vh 0 6.5vh 0; 
     box-sizing: border-box; /* Crucial so padding doesn't overflow 100vh */
   }
   
