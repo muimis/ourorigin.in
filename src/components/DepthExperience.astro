@@ -17,8 +17,8 @@ const strata = [
   { id: 'specimen', title: product ? `SPECIMEN — ${product.data.botanicalName || ''}` : 'SPECIMEN', image: origin ? origin.data.images.specimen : null, hasWeather: false }
 ];
 
-// Dynamically fetch the origin mask URL to avoid hardcoding "wayanad map outline"
-const maskUrl = origin ? encodeURI(`/maps/${origin.data.slug} map outline_solid.png`) : '';
+// Dynamically fetch the origin mask URL, but for Wayanad use the new solid SVG based on the uploaded border
+const maskUrl = origin?.data.slug === 'wayanad' ? encodeURI('/maps/wayanadu map cut_solid.svg') : '';
 
 
 // Determine sizes for the offering stratum
