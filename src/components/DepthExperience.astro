@@ -148,49 +148,21 @@ const sizes = product ? product.data.sizes : [];
     pointer-events: none;
   }
 
-  /* Terrain Cuts / Map Borders - Real Geographical SVG Masks */
+  /* Terrain Cuts / Map Borders - Organic Asymmetric Polygons */
   .stratum-canopy {
     /* Base layer - full screen */
   }
   .stratum-land {
-    -webkit-mask-image: url('/maps/wayanad.svg');
-    -webkit-mask-size: 130%;
-    -webkit-mask-position: top -10% right -10%;
-    -webkit-mask-repeat: no-repeat;
-    mask-image: url('/maps/wayanad.svg');
-    mask-size: 130%;
-    mask-position: top -10% right -10%;
-    mask-repeat: no-repeat;
+    clip-path: polygon(15% 6%, 22% 2%, 35% 8%, 45% 4%, 55% 7%, 75% 2%, 85% 9%, 100% 0%, 100% 100%, 75% 94%, 60% 98%, 45% 95%, 30% 99%, 15% 93%, 0% 98%, 0% 12%, 5% 9%);
   }
   .stratum-hand {
-    -webkit-mask-image: url('/maps/wayanad.svg');
-    -webkit-mask-size: 150%;
-    -webkit-mask-position: bottom -20% left -20%;
-    -webkit-mask-repeat: no-repeat;
-    mask-image: url('/maps/wayanad.svg');
-    mask-size: 150%;
-    mask-position: bottom -20% left -20%;
-    mask-repeat: no-repeat;
+    clip-path: polygon(0% 2%, 10% 8%, 25% 3%, 40% 9%, 55% 5%, 70% 10%, 85% 4%, 95% 7%, 100% 1%, 100% 97%, 85% 93%, 70% 98%, 55% 94%, 40% 99%, 25% 92%, 10% 97%, 0% 91%);
   }
   .stratum-specimen {
-    -webkit-mask-image: url('/maps/idukki.svg');
-    -webkit-mask-size: 140%;
-    -webkit-mask-position: center left -10%;
-    -webkit-mask-repeat: no-repeat;
-    mask-image: url('/maps/idukki.svg');
-    mask-size: 140%;
-    mask-position: center left -10%;
-    mask-repeat: no-repeat;
+    clip-path: polygon(5% 5%, 15% 1%, 30% 7%, 45% 3%, 60% 8%, 80% 2%, 90% 6%, 100% 3%, 100% 96%, 85% 99%, 70% 95%, 55% 98%, 40% 94%, 25% 98%, 10% 93%, 0% 99%, 0% 8%);
   }
   .stratum-offering {
-    -webkit-mask-image: url('/maps/trivandrum.svg');
-    -webkit-mask-size: 120%;
-    -webkit-mask-position: bottom -10% center;
-    -webkit-mask-repeat: no-repeat;
-    mask-image: url('/maps/trivandrum.svg');
-    mask-size: 120%;
-    mask-position: bottom -10% center;
-    mask-repeat: no-repeat;
+    clip-path: polygon(0% 4%, 12% 9%, 28% 2%, 42% 8%, 58% 3%, 72% 9%, 88% 4%, 100% 7%, 100% 100%, 0% 100%);
   }
 
   .stratum-image.image-preserve-people {

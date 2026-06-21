@@ -129,27 +129,20 @@ const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug ==
     cursor: pointer;
     transition: flex 0.8s var(--ease-matrix);
     
-    /* Apply asymmetric topographic cut */
-    -webkit-mask-image: url('/maps/topographic.svg');
-    -webkit-mask-size: 150%;
-    -webkit-mask-position: center;
-    mask-image: url('/maps/topographic.svg');
-    mask-size: 150%;
-    mask-position: center;
+    /* Apply asymmetric topographic cut via CSS polygon */
+    clip-path: polygon(0% 4%, 10% 1%, 25% 6%, 45% 2%, 65% 5%, 85% 1%, 100% 4%, 100% 96%, 85% 99%, 65% 95%, 45% 98%, 25% 94%, 10% 99%, 0% 96%);
     background-color: var(--color-forest-deep);
     color: var(--color-warm-cream);
     text-decoration: none;
     animation: subtleBreathe 12s infinite ease-in-out;
   }
   
-  /* Alternate mask positions so each band cuts differently */
+  /* Alternate polygon cuts so each band cuts differently */
   .matrix-band:nth-child(even) {
-    -webkit-mask-position: top -20% left 10%;
-    mask-position: top -20% left 10%;
+    clip-path: polygon(0% 2%, 15% 7%, 35% 3%, 55% 8%, 75% 1%, 90% 6%, 100% 2%, 100% 98%, 90% 94%, 75% 99%, 55% 92%, 35% 97%, 15% 93%, 0% 98%);
   }
   .matrix-band:nth-child(3n) {
-    -webkit-mask-position: bottom -10% right 20%;
-    mask-position: bottom -10% right 20%;
+    clip-path: polygon(0% 6%, 20% 2%, 40% 7%, 60% 3%, 80% 8%, 95% 4%, 100% 6%, 100% 94%, 95% 96%, 80% 92%, 60% 97%, 40% 93%, 20% 98%, 0% 94%);
   }
 
   .matrix-band::before {
