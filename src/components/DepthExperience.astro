@@ -156,15 +156,24 @@ const sizes = product ? product.data.sizes : [];
   .stratum-canopy, .stratum-land, .stratum-hand, .stratum-specimen, .stratum-offering {
     -webkit-mask-image: var(--mask-url);
     mask-image: var(--mask-url);
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    
-    /* Place the bottom-left corner of the screen deep inside the solid black center of the map.
-       The top-right corner of the screen extends outward, crossing the map's jagged boundary. */
+    /* CSS mask-position with percentage and size > 100% uses an inverse offset formula.
+       63% 37% perfectly places the top-right corner of the screen at the map's jagged boundary,
+       while the bottom-left corner sits deep in the solid black center. */
     -webkit-mask-size: 220%;
     mask-size: 220%;
-    -webkit-mask-position: left 35% bottom 35%;
-    mask-position: left 35% bottom 35%;
+    -webkit-mask-position: 63% 37%;
+    mask-position: 63% 37%;
+  }
+  
+  .stratum-content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    /* Add padding so content doesn't get clipped by the top/right topographical cuts */
+    padding-top: 8vh;
+    padding-right: 12vw;
   }
   
   /* Additional layer specific styles can go here if needed */
@@ -356,7 +365,7 @@ const sizes = product ? product.data.sizes : [];
         
         // 2. Previous stratum darkens completely so it becomes a receding shadow band
         .to(prevShadow, {
-          opacity: 0.85,
+          opacity: 0.5,
           ease: "none",
           duration: 1
         }, label)
