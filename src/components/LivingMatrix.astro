@@ -8,6 +8,16 @@ const origins = await getCollection('origins');
 // Order by elevation (highest to lowest)
 const orderedSlugs = ['nilgiris', 'idukki', 'wayanad', 'malabar-coast', 'thiruvananthapuram'];
 const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug === slug)).filter(Boolean);
+
+// Helper to get highest elevation from string like "100m - 1500m"
+function getHighestElevation(elevationString) {
+  if (!elevationString) return '';
+  const matches = elevationString.match(/\d+/g);
+  if (matches) {
+    return Math.max(...matches.map(Number));
+  }
+  return elevationString.replace(/[^0-9]/g, '');
+}
 ---
 
 <div class="living-matrix-container" id="living-matrix">
@@ -37,10 +47,10 @@ const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug ==
         <a href={linkHref} class={`matrix-band ${isWayanad ? '' : 'empty-state'}`} style={bandStyle}>
           <TopographicMap index={index} />
           <div class="band-content">
-            <h2 class="origin-name">
-              {origin.data.name}
-              {origin.data.elevation && <sup class="elevation-sup">{origin.data.elevation}</sup>}
-            </h2>
+            <div class="title-group">
+              {origin.data.elevation && <div class="elevation-sup">{getHighestElevation(origin.data.elevation)}M</div>}
+              <h2 class="origin-name">{origin.data.name}</h2>
+            </div>
             <div class="band-reveal">
               <p class="origin-meta">{origin.data.bioregion}</p>
               {isWayanad ? (
@@ -71,12 +81,12 @@ const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug ==
     init() {
       // The half-second of nothing, then the mark, then the bands.
       const bands = document.querySelectorAll('.matrix-band');
-      const originNames = document.querySelectorAll('.origin-name');
+      const titleGroups = document.querySelectorAll('.title-group');
       const markWrapper = document.querySelector('.matrix-mark-wrapper');
       
       // Hide initially
       gsap.set(bands, { opacity: 0 });
-      gsap.set(originNames, { y: 10, opacity: 0 });
+      gsap.set(titleGroups, { y: 10, opacity: 0 });
 
       // Orchestrate the arrival
       const tl = gsap.timeline({ delay: 0.5 });
@@ -99,7 +109,7 @@ const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug ==
         stagger: 0.15,
         ease: 'power2.inOut'
       }, "-=0.8") // Fade in bands as the mark slides over
-      .to(originNames, {
+      .to(titleGroups, {
         y: 0,
         opacity: 1,
         duration: 1.5,
@@ -168,8 +178,8 @@ const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug ==
   }
   
   .matrix-band:hover, .matrix-band:focus {
-    /* Significant expansion to feel like "opening" rather than just hovering */
-    flex: calc(var(--base-flex) + 2) !important;
+    /* Gentle expansion to prevent overlapping text while maintaining focus */
+    flex: calc(var(--base-flex) + 0.5) !important;
     background-color: #121d0e; /* Solid background to prevent seeing layers underneath! */
     color: var(--color-pure-white);
     outline: none;
@@ -184,6 +194,17 @@ const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug ==
     text-align: center;
   }
   
+  .title-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    /* Translate container natively for GSAP to animate it smoothly */
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  
   .origin-name {
     font-family: var(--font-institutional);
     font-size: var(--text-size-stratum-title);
@@ -191,18 +212,14 @@ const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug ==
     text-transform: uppercase;
     margin: 0;
     font-weight: 400;
-    opacity: 0; /* Hidden natively for GSAP entrance */
-    transform: translateY(10px);
-    display: inline-block; /* Ensure sup aligns properly */
   }
   
   .elevation-sup {
-    vertical-align: super;
-    font-size: 0.35em; /* True superscript sizing */
-    margin-left: 0.5rem;
     font-family: var(--font-evidence);
+    font-size: 0.8rem;
     letter-spacing: 0.1em;
     opacity: 0.7;
+    margin-bottom: -0.2rem; /* Bring closer to text */
   }
   
   .band-reveal {
