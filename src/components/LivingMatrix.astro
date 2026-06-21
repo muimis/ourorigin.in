@@ -39,9 +39,9 @@ function getHighestElevation(elevationString) {
       
       // Shift text visually to center within the UNMASKED area
       if (index === 0) {
-        bandStyle += ' padding-bottom: 80px;'; // push text up
+        bandStyle += ' padding-top: 30px; padding-bottom: 90px;'; // push text up away from bottom mask, slightly down from very top
       } else if (index === orderedOrigins.length - 1) {
-        bandStyle += ' padding-top: 60px; padding-bottom: 20px;'; // push text down from wavy mask, up from bottom edge
+        bandStyle += ' padding-top: 50px; padding-bottom: 50px;'; // perfect vertical center in its available 24vh box
       }
 
       if (index > 0) {
@@ -168,6 +168,7 @@ function getHighestElevation(elevationString) {
     display: flex;
     align-items: center;
     justify-content: center;
+    box-sizing: border-box; /* Crucial so inline padding doesn't break perfect vh math! */
     /* padding-top is dynamic via inline styles */
     padding-left: 4rem;
     padding-right: 4rem;
