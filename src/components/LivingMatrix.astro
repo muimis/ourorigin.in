@@ -7,29 +7,22 @@ const origins = await getCollection('origins');
 // Order by elevation (highest to lowest)
 const orderedSlugs = ['nilgiris', 'idukki', 'wayanad', 'malabar-coast', 'thiruvananthapuram'];
 const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug === slug)).filter(Boolean);
-
-const anchorProducts: Record<string, string> = {
-  'nilgiris': 'Tea',
-  'idukki': 'Cardamom',
-  'wayanad': 'Black Pepper',
-  'malabar-coast': 'Clove',
-  'thiruvananthapuram': 'Dry Ginger'
-};
 ---
 
-<div class="living-matrix-container">
+<div class="living-matrix-container" id="living-matrix">
   <div class="matrix-bands">
-    {orderedOrigins.map((origin) => {
+    {orderedOrigins.map((origin, index) => {
       const isWayanad = origin.data.slug === 'wayanad';
       const linkHref = isWayanad ? '/origins/wayanad/black-pepper' : '#';
+      // Elevation felt visually: higher elevation gets slightly more natural space
+      const baseFlex = 1 + ((orderedOrigins.length - index) * 0.15);
       
       return (
-        <a href={linkHref} class={`matrix-band ${isWayanad ? '' : 'empty-state'}`}>
+        <a href={linkHref} class={`matrix-band ${isWayanad ? '' : 'empty-state'}`} style={`--base-flex: ${baseFlex}; flex: ${baseFlex};`}>
           <div class="band-content">
             <h2 class="origin-name">{origin.data.name}</h2>
             <div class="band-reveal">
               <p class="origin-meta">{origin.data.elevation} · {origin.data.bioregion}</p>
-              <p class="origin-yield">Yield: {anchorProducts[origin.data.slug]}</p>
               {isWayanad ? (
                 <p class="origin-action">Descend</p>
               ) : (
@@ -43,9 +36,56 @@ const anchorProducts: Record<string, string> = {
   </div>
   
   <div class="matrix-mark-wrapper">
-    <OriginMark animate={false} size="var(--origin-mark-gauge-size)" />
+    <OriginMark animate={true} size="var(--origin-mark-gauge-size)" />
   </div>
 </div>
+
+<script>
+  import gsap from 'gsap';
+
+  class LivingMatrixOrchestrator {
+    constructor() {
+      this.init();
+    }
+
+    init() {
+      // The half-second of nothing, then the mark, then the bands.
+      const bands = document.querySelectorAll('.matrix-band');
+      const originNames = document.querySelectorAll('.origin-name');
+      
+      // Hide initially
+      gsap.set(bands, { opacity: 0 });
+      gsap.set(originNames, { y: 10, opacity: 0 });
+
+      // Orchestrate the arrival
+      const tl = gsap.timeline({ delay: 0.5 });
+
+      tl.call(() => {
+        // Fire the origin mark entrance animation
+        const event = new Event('play-origin-mark-entrance');
+        document.dispatchEvent(event);
+      })
+      .to(bands, {
+        opacity: 1,
+        duration: 2,
+        stagger: 0.15,
+        ease: 'power2.inOut'
+      }, "+=0.2") // start fading bands in slightly after the mark begins
+      .to(originNames, {
+        y: 0,
+        opacity: 1,
+        duration: 1.5,
+        stagger: 0.1,
+        ease: 'power3.out'
+      }, "-=1.5");
+    }
+  }
+
+  // Run orchestrator on load
+  document.addEventListener('DOMContentLoaded', () => {
+    new LivingMatrixOrchestrator();
+  });
+</script>
 
 <style>
   .living-matrix-container {
@@ -64,27 +104,43 @@ const anchorProducts: Record<string, string> = {
     width: 100%;
   }
   
+  @keyframes subtleBreathe {
+    0% { background-color: rgba(245, 237, 216, 0); }
+    50% { background-color: rgba(245, 237, 216, 0.015); }
+    100% { background-color: rgba(245, 237, 216, 0); }
+  }
+
   .matrix-band {
-    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     text-decoration: none;
     color: var(--color-warm-cream);
-    border-bottom: 1px solid rgba(245, 237, 216, 0.1);
-    transition: flex-grow var(--duration-standard) var(--ease-settle), background-color var(--duration-standard) var(--ease-settle);
+    border-bottom: 1px solid rgba(245, 237, 216, 0.05);
+    /* Transition flex-grow so it feels like an opening when hovered */
+    transition: flex var(--duration-slow) var(--ease-settle), background-color var(--duration-standard) var(--ease-settle);
     position: relative;
     overflow: hidden;
+    animation: subtleBreathe 12s infinite ease-in-out;
   }
   
+  /* Stagger the breathe animation so they don't pulse together */
+  .matrix-band:nth-child(1) { animation-delay: 0s; }
+  .matrix-band:nth-child(2) { animation-delay: -2s; }
+  .matrix-band:nth-child(3) { animation-delay: -4s; }
+  .matrix-band:nth-child(4) { animation-delay: -6s; }
+  .matrix-band:nth-child(5) { animation-delay: -8s; }
+
   .matrix-band:last-child {
     border-bottom: none;
   }
   
   .matrix-band:hover, .matrix-band:focus {
-    flex-grow: 1.5;
-    background-color: rgba(245, 237, 216, 0.03);
+    /* Significant expansion to feel like "opening" rather than just hovering */
+    flex: calc(var(--base-flex) + 2) !important;
+    background-color: rgba(245, 237, 216, 0.04);
     outline: none;
+    animation-play-state: paused;
   }
   
   .band-content {
@@ -108,13 +164,14 @@ const anchorProducts: Record<string, string> = {
     height: 0;
     opacity: 0;
     overflow: hidden;
-    transition: height var(--duration-standard) var(--ease-settle), opacity var(--duration-standard) var(--ease-settle), margin var(--duration-standard) var(--ease-settle);
+    /* Use slower, more deliberate timing for the reveal to match the "opening" feel */
+    transition: height var(--duration-slow) var(--ease-settle), opacity var(--duration-slow) var(--ease-settle), margin var(--duration-slow) var(--ease-settle);
   }
   
   .matrix-band:hover .band-reveal, .matrix-band:focus .band-reveal {
     height: auto;
     opacity: 1;
-    margin-top: 1rem;
+    margin-top: 1.5rem;
   }
   
   .origin-meta {
@@ -122,16 +179,7 @@ const anchorProducts: Record<string, string> = {
     font-size: 0.85rem;
     letter-spacing: 0.05em;
     opacity: 0.8;
-    margin: 0 0 0.25rem 0;
-  }
-
-  .origin-yield {
-    font-family: var(--font-evidence);
-    font-size: 0.85rem;
-    letter-spacing: 0.05em;
-    opacity: 0.6;
     margin: 0 0 0.5rem 0;
-    text-transform: uppercase;
   }
   
   .origin-action {
@@ -140,8 +188,16 @@ const anchorProducts: Record<string, string> = {
     font-style: italic;
     color: var(--color-gold);
     margin: 0;
+    opacity: 0;
+    transform: translateY(5px);
+    transition: opacity var(--duration-standard) ease 0.2s, transform var(--duration-standard) ease 0.2s;
   }
   
+  .matrix-band:hover .origin-action, .matrix-band:focus .origin-action {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
   .matrix-band.empty-state .origin-action {
     color: rgba(245, 237, 216, 0.6);
   }

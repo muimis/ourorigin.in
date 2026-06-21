@@ -17,3 +17,10 @@ This log captures confirmed decisions to prevent silent drift between building p
 ### Open Items (HOLD)
 * **Brand Green Refinement:** The current `--color-forest-deep` background color is NOT final. The exact brand green is pending founder input. Do not alter it until explicitly instructed.
 * **Origin Mark Adjustments:** Further adjustments to the Origin Mark geometry are pending founder input. Do not touch the Origin Mark design until explicitly requested in a follow-up direction.
+
+## 2026-06-21: Direction 05 — Wayanad Finalization & Matrix Refinement
+
+### Brand Identity & Structural Philosophy
+* **Forest Deep Locked:** The `--color-forest-deep` background color is permanently finalized at `#0c1509`, superseding all previous drafts.
+* **Seven-States Model:** The Geo, Bio, Community, Method, Product, Observation (evidence), and Time (living) states form the primary structural philosophy. "Product → Origin → People" is reframed to describe the emotional arc, not literal page sequencing.
+* **Community Naming:** The generic pattern `"Indigenous farming communities, [Region]"` is confirmed as permanent launch copy, closing the open item regarding specific tribal placeholder names.
