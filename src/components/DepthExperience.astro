@@ -161,8 +161,8 @@ const sizes = product ? product.data.sizes : [];
     /* Use the map image exactly as provided by the user. 
        The user pre-cropped the map outline so the left and bottom are perfectly straight,
        and the top and right form the jagged cut. We stretch it to fill the screen exactly. */
-    -webkit-mask-size: auto 100vh;
-    mask-size: auto 100vh;
+    -webkit-mask-size: auto 100%;
+    mask-size: auto 100%;
     -webkit-mask-position: top right;
     mask-position: top right;
   }
