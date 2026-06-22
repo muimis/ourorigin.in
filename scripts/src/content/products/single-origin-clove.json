@@ -1,0 +1,19 @@
+{
+  "slug": "single-origin-clove",
+  "name": "Single Origin Clove",
+  "botanicalName": "Syzygium aromaticum",
+  "originSlug": "wayanad",
+  "isAnchorProduct": true,
+  "batchRef": "WYD-CLV-001",
+  "harvestMonth": "Seasonal",
+  "sizes": [
+    {
+      "label": "100g",
+      "priceINR": 269,
+      "isPriceVerified": true
+    }
+  ],
+  "methodDescription": "Hand picked before blooming.",
+  "specimenCopy": "What's dried and sold as a clove is, botanically speaking, a flower bud — harvested before it ever got to open. The timing is everything: too early and the bud hasn't developed its oils; too late and it's already beginning to open, losing them. This clove is gathered from communities across the Western Ghats — Idukki, Kottayam, Pathanamthitta, and the forests further south toward Nagercoil — places that share the same ecosystem and the same understanding of when to pick, even where they don't share an administrative boundary. Single origin means single bioregion, honestly sourced, not a single GPS pin.",
+  "offeringCopy": "Caught at the right moment, by someone who knows what that moment looks like."
+}

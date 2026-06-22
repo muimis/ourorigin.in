@@ -1,0 +1,19 @@
+{
+  "slug": "tea",
+  "name": "Tea",
+  "botanicalName": "Camellia sinensis",
+  "originSlug": "nilgiris",
+  "isAnchorProduct": true,
+  "batchRef": "NIL-TEA-001",
+  "harvestMonth": "Ongoing",
+  "sizes": [
+    {
+      "label": "50g",
+      "priceINR": 149,
+      "isPriceVerified": false
+    }
+  ],
+  "methodDescription": "Picked by hand, fully oxidized.",
+  "specimenCopy": "The same plant makes green tea and black tea both. The difference is entirely in what happens after picking, not in what was grown. The leaf that becomes black tea and the leaf that becomes green tea came off the same bush, probably the same day. One was allowed to oxidize until it darkened. One wasn't.",
+  "offeringCopy": "You've been at 2,600 metres. The tea was too."
+}

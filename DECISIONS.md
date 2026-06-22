@@ -24,3 +24,15 @@ This log captures confirmed decisions to prevent silent drift between building p
 * **Forest Deep Locked:** The `--color-forest-deep` background color is permanently finalized at `#0c1509`, superseding all previous drafts.
 * **Seven-States Model:** The Geo, Bio, Community, Method, Product, Observation (evidence), and Time (living) states form the primary structural philosophy. "Product → Origin → People" is reframed to describe the emotional arc, not literal page sequencing.
 * **Community Naming:** The generic pattern `"Indigenous farming communities, [Region]"` is confirmed as permanent launch copy, closing the open item regarding specific tribal placeholder names.
+
+## 2026-06-22: Direction 05 + 06 — Wayanad Finalization & Content Integration
+
+### Architectural Changes
+* **Graduated Depth Architecture:** The depth system is no longer universal. Anchor products (one per origin) require full descent. Companion products bypass the descent and are addable directly via the Carousel.
+* **Carousel Card Split:** Anchor product cards function as invitations ("Enter this origin"), whereas Companion product cards function as simple purchase interfaces ("Add to Ledger") with selectable sizes.
+* **Carousel UI Context:** The Carousel is not a page. It is an overlay/modal triggered either from the Living Matrix band (to browse all origin yields) or from the Offering stratum (to see "More from this origin").
+* **Ledger Placement:** The Ledger is not an icon, but a persistent text element placed in the bottom left in counter-balance to the Origin Mark on the right. It slides up to 60-70dvh without a full takeover.
+
+### Data Model & Content
+* **Origin Narrative:** Narrative copy (canopy, land, hand) has been formally introduced as a required nested object within each origin's `.json` schema.
+* **Star Anise Removed:** Acknowledged as a data error; permanently removed from all data schemas.

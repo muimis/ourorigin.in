@@ -1,0 +1,18 @@
+{
+  "slug": "white-pepper",
+  "name": "White Pepper",
+  "botanicalName": "Piper nigrum",
+  "originSlug": "nilgiris",
+  "isAnchorProduct": false,
+  "batchRef": "NIL-WPP-001",
+  "harvestMonth": "January - March",
+  "sizes": [
+    {
+      "label": "50g",
+      "priceINR": 179,
+      "isPriceVerified": false
+    }
+  ],
+  "methodDescription": "Fully ripened, outer skin removed.",
+  "specimenCopy": "Piper nigrum, this time allowed to ripen fully on the vine — longer than black pepper — then soaked in water until the outer skin softens and can be rubbed away. What remains is the pale, sharper seed underneath. Three different products from one vine. None of them require a different plant."
+}

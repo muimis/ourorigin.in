@@ -12,10 +12,15 @@
   },
   "method": "Smallholder, hand harvest",
   "images": {
-    "canopy": "/assets/bg-geo.webp",
-    "land": "/assets/bg-bio.webp",
-    "hand": "/assets/bg-method.webp",
-    "specimen": "/assets/bg-specimen.webp",
+    "canopy": "/assets/origins/malabar-coast-canopy.webp",
+    "land": "/assets/origins/malabar-coast-land.webp",
+    "hand": "/assets/origins/malabar-coast-hand.webp",
+    "specimen": "/assets/origins/malabar-coast-specimen.webp",
     "isPlaceholderImagery": true
+  },
+  "narrative": {
+    "canopy": "This origin is still being documented.",
+    "land": "This origin is still being documented.",
+    "hand": "This origin is still being documented."
   }
 }

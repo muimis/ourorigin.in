@@ -1,0 +1,18 @@
+{
+  "slug": "turmeric",
+  "name": "Turmeric",
+  "botanicalName": "Curcuma longa",
+  "originSlug": "wayanad",
+  "isAnchorProduct": false,
+  "batchRef": "WYD-TUR-001",
+  "harvestMonth": "Seasonal",
+  "sizes": [
+    {
+      "label": "100g",
+      "priceINR": 129,
+      "isPriceVerified": false
+    }
+  ],
+  "methodDescription": "Boiled, dried, ground.",
+  "specimenCopy": "Turmeric is dug up, not picked. The whole rhizome comes out of the ground — a gnarled, orange-fleshed root that looks almost nothing like the fine yellow powder most people associate with it. After lifting: boiled briefly, dried for days, then ground. The colour comes from curcumin, which the plant produces not as a display but as protection from insects and fungal infection. A crop that colours itself to survive."
+}

@@ -1,0 +1,19 @@
+{
+  "slug": "dry-ginger",
+  "name": "Dry Ginger",
+  "botanicalName": "Zingiber officinale",
+  "originSlug": "thiruvananthapuram",
+  "isAnchorProduct": true,
+  "batchRef": "TVM-DGI-001",
+  "harvestMonth": "Seasonal",
+  "sizes": [
+    {
+      "label": "100g",
+      "priceINR": 149,
+      "isPriceVerified": false
+    }
+  ],
+  "methodDescription": "Dug up, boiled briefly, and sun-dried.",
+  "specimenCopy": "Dried until it's roughly a fifth of its fresh weight. The drying process — boiling first, then several days under the sun — transforms the chemistry of the root: fresh, citrusy volatiles diminish and a deeper, warmer, more resinous character emerges. Dry ginger and fresh ginger are not the same thing, one simply older. The transformation is intentional.",
+  "offeringCopy": "From the flatlands at the edge of the Western Ghats."
+}

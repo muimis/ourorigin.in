@@ -24,6 +24,11 @@ const origins = defineCollection({
       hand: z.string(),
       specimen: z.string(),
       isPlaceholderImagery: z.boolean()
+    }),
+    narrative: z.object({
+      canopy: z.string(),
+      land: z.string(),
+      hand: z.string()
     })
   }).superRefine((data, ctx) => {
     // Structural Safeguard: Prevent unverified community names from entering the build
@@ -47,6 +52,7 @@ const products = defineCollection({
     name: z.string(),
     botanicalName: z.string(),
     originSlug: reference('origins'),
+    isAnchorProduct: z.boolean(),
     batchRef: z.string(),
     harvestMonth: z.string(),
     sizes: z.array(
@@ -56,7 +62,9 @@ const products = defineCollection({
         isPriceVerified: z.boolean().default(false)
       })
     ).min(1),
-    methodDescription: z.string()
+    methodDescription: z.string(),
+    specimenCopy: z.string(),
+    offeringCopy: z.string().optional()
   })
 });
 

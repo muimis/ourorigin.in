@@ -1,0 +1,18 @@
+{
+  "slug": "green-tea",
+  "name": "Green Tea",
+  "botanicalName": "Camellia sinensis",
+  "originSlug": "nilgiris",
+  "isAnchorProduct": false,
+  "batchRef": "NIL-GTE-001",
+  "harvestMonth": "Ongoing",
+  "sizes": [
+    {
+      "label": "50g",
+      "priceINR": 179,
+      "isPriceVerified": false
+    }
+  ],
+  "methodDescription": "Unoxidized, pan-fired.",
+  "specimenCopy": "The same leaf as our Nilgiris tea, from the same bushes on the same slopes — simply stopped before it could darken. No oxidation. The green in green tea is not a different plant; it's a decision made within hours of picking."
+}

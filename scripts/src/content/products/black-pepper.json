@@ -1,0 +1,29 @@
+{
+  "slug": "black-pepper",
+  "name": "Forest Black Pepper",
+  "botanicalName": "Piper nigrum",
+  "originSlug": "wayanad",
+  "isAnchorProduct": true,
+  "batchRef": "WYD-FBP-001",
+  "harvestMonth": "January - March",
+  "sizes": [
+    {
+      "label": "50g",
+      "priceINR": 109,
+      "isPriceVerified": true
+    },
+    {
+      "label": "100g",
+      "priceINR": 199,
+      "isPriceVerified": true
+    },
+    {
+      "label": "250g",
+      "priceINR": 449,
+      "isPriceVerified": true
+    }
+  ],
+  "methodDescription": "Harvested by hand, sun-dried on traditional mats.",
+  "specimenCopy": "The berries are picked green. They only turn black in the drying — which means the colour you've always known as black pepper isn't the colour it grew. It's the colour of what happened to it afterward. What's sealed in this packet is the same fruit, transformed by sun and time, at the exact moment that transformation was considered complete.",
+  "offeringCopy": "If you've read this far, you already know more about this pepper than its label could tell you."
+}

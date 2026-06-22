@@ -13,9 +13,14 @@
   "method": "Traditional Agrarian",
   "images": {
     "canopy": "/assets/origins/wayanad-canopy.webp",
-    "land": "/assets/origins/wayanad-hand.webp",
+    "land": "/assets/origins/wayanad-land.webp",
     "hand": "/assets/origins/wayanad-hand.webp",
     "specimen": "/assets/origins/wayanad-specimen.webp",
     "isPlaceholderImagery": false
+  },
+  "narrative": {
+    "canopy": "Between 900 and 1,100 metres across the Western Ghats — on Wayanad's slopes and higher still where the Nilgiris shoulder begins. At this altitude the monsoon doesn't simply fall; it moves through in layers, soaking the canopy first, then the vine below, then the soil in a sequence that repeats for months.",
+    "land": "Forest loam — dark, loose, built up over years by leaf litter that no one cleared. It holds water the way a forest holds water: slowly, deeply, and for longer than cleared ground ever could. The farms where this pepper grows are not farms in the industrial sense — they are managed sections of a forest that is still, largely, a forest.",
+    "hand": "The vines climb living trees, not manufactured poles — the older way, before plantations introduced a tidier geometry. Harvest comes once a year, in January, done by hand from trees that have been climbed by the same families across generations. After picking, the berries are laid on traditional mats and sun-dried over several days until they reach the weight and colour and hardness that means they are done."
   }
 }

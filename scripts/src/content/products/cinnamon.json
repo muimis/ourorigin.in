@@ -1,0 +1,18 @@
+{
+  "slug": "cinnamon",
+  "name": "Cinnamon",
+  "botanicalName": "Cinnamomum verum",
+  "originSlug": "wayanad",
+  "isAnchorProduct": false,
+  "batchRef": "WYD-CIN-001",
+  "harvestMonth": "Seasonal",
+  "sizes": [
+    {
+      "label": "50g",
+      "priceINR": 149,
+      "isPriceVerified": false
+    }
+  ],
+  "methodDescription": "True cinnamon, inner bark peeling.",
+  "specimenCopy": "True cinnamon — not cassia, which is what fills most spice jars labelled cinnamon. The difference is in the bark: true cinnamon peels into thin, paper-soft layers. Cassia is a single thick curl, harder and more pungent. The plants are related; the results are different. This is the one that earned the name first."
+}

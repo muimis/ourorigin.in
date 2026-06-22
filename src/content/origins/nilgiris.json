@@ -13,9 +13,14 @@
   "method": "Forest Polyculture",
   "images": {
     "canopy": "/assets/origins/nilgiris-canopy.webp",
-    "land": "/assets/origins/nilgiris-hand.webp",
+    "land": "/assets/origins/nilgiris-land.webp",
     "hand": "/assets/origins/nilgiris-hand.webp",
     "specimen": "/assets/origins/nilgiris-specimen.webp",
-    "isPlaceholderImagery": false
+    "isPlaceholderImagery": true
+  },
+  "narrative": {
+    "canopy": "At 2,600 metres, the air doesn't behave the way it does anywhere else in peninsular India. Cold enough for frost in January — a cold the rest of South India has never experienced. Mist sits in the valleys most mornings and dissolves by ten. The light when it comes is thin, almost northern.",
+    "land": "The Nilgiris aren't solid forest the way the Western Ghats lower down are. They're a mosaic — open grassland breaking into pockets of stunted, wind-bent shola forest, then back to open ground. Tea was planted into this mosaic, not instead of it.",
+    "hand": "Tea is picked, not harvested — two leaves and a bud, by hand, repeated through the growing season rather than once a year. A picker works the same rows for years and can identify, before a leaf is processed, which part of which garden it came from."
   }
 }

@@ -1,0 +1,19 @@
+{
+  "slug": "cardamom",
+  "name": "Cardamom",
+  "botanicalName": "Elettaria cardamomum",
+  "originSlug": "idukki",
+  "isAnchorProduct": true,
+  "batchRef": "IDK-CAR-001",
+  "harvestMonth": "Ongoing",
+  "sizes": [
+    {
+      "label": "50g",
+      "priceINR": 399,
+      "isPriceVerified": false
+    }
+  ],
+  "methodDescription": "Wild-harvested, low-temperature drying.",
+  "specimenCopy": "The pods are picked intact, before they split, and dried at low temperature so the seeds inside keep the oils that give them their character. Most cardamom loses a measurable amount of those oils in overly aggressive drying. This one doesn't.",
+  "offeringCopy": "From the hills that were named for it. Nowhere else in the world has this quite the same way."
+}

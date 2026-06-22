@@ -1,0 +1,18 @@
+{
+  "slug": "mace",
+  "name": "Mace",
+  "botanicalName": "Myristica fragrans",
+  "originSlug": "idukki",
+  "isAnchorProduct": false,
+  "batchRef": "IDK-MAC-001",
+  "harvestMonth": "Seasonal",
+  "sizes": [
+    {
+      "label": "30g",
+      "priceINR": 249,
+      "isPriceVerified": false
+    }
+  ],
+  "methodDescription": "Separated from the nutmeg seed.",
+  "specimenCopy": "Mace is not a separate plant from nutmeg. It's the lace-like crimson covering — botanically, the aril — wrapped directly around the nutmeg seed. One tree quietly produces two different spices at once. Most people who have cooked with both have never noticed."
+}

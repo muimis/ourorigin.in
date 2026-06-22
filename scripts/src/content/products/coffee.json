@@ -1,0 +1,18 @@
+{
+  "slug": "coffee",
+  "name": "Coffee",
+  "botanicalName": "Coffea arabica",
+  "originSlug": "nilgiris",
+  "isAnchorProduct": false,
+  "batchRef": "NIL-COF-001",
+  "harvestMonth": "Seasonal",
+  "sizes": [
+    {
+      "label": "100g",
+      "priceINR": 299,
+      "isPriceVerified": false
+    }
+  ],
+  "methodDescription": "Shade grown, minimal intervention.",
+  "specimenCopy": "Grown in the same high terraces as tea — often within sight of each other, two crops that ask for almost identical altitude and shade. The berry that becomes coffee is picked red, when fully ripe. This one is processed simply, with as few interventions as possible."
+}

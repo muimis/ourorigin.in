@@ -1,0 +1,18 @@
+{
+  "slug": "green-pepper",
+  "name": "Green Pepper",
+  "botanicalName": "Piper nigrum",
+  "originSlug": "nilgiris",
+  "isAnchorProduct": false,
+  "batchRef": "NIL-GPP-001",
+  "harvestMonth": "January - March",
+  "sizes": [
+    {
+      "label": "30g",
+      "priceINR": 149,
+      "isPriceVerified": false
+    }
+  ],
+  "methodDescription": "Preserved green.",
+  "specimenCopy": "The same berry as Forest Black Pepper, picked from vines at the same altitude, at the same time of year — but preserved green instead of dried black. Black pepper and green pepper are not two different crops. They are two moments in the same crop's life, caught at different stages."
+}
