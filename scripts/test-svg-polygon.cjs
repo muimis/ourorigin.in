@@ -142,9 +142,9 @@ if (match) {
       
       shiftedForwardArray.push(`${type} ${x},${y}`);
       
-      // The user requested: "card right side cut only needed till the mid point of visible area, remining we can get in to full screen"
-      // Half of 1506 is 753. Stop the cut halfway down.
-      if (y >= 753) {
+      // The user requested: "lets make it 25%?"
+      // 25% of 1506 is approximately 376. Stop the cut here.
+      if (y >= 376) {
         // Draw a straight line to the right edge (X=920) and stop the jagged cut.
         shiftedForwardArray.push(`L 920,${y}`);
         break;
