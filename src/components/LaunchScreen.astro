@@ -97,11 +97,12 @@
           launchScreen.style.backgroundColor = 'transparent';
           launchScreen.classList.add('fade-out');
           
+          sessionStorage.setItem('ourorigin_visited', 'true');
+          // Allow LivingMatrix orchestrator to begin its sequence IMMEDIATELY while fading
+          window.dispatchEvent(new Event('launch-sequence-complete'));
+          
           setTimeout(() => {
             launchScreen.classList.add('hidden');
-            sessionStorage.setItem('ourorigin_visited', 'true');
-            // Allow LivingMatrix orchestrator to begin its sequence
-            window.dispatchEvent(new Event('launch-sequence-complete'));
           }, 1500); 
         }
       });

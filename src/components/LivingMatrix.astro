@@ -38,14 +38,7 @@ const anchorMap = {
 ---
 
 <div class="living-matrix-container" id="living-matrix">
-  <!-- Global Nav -->
-  <nav class="global-nav">
-    <div class="nav-left"></div>
-    <div class="nav-right">
-      <a href="/observations">Observations</a>
-      <a href="/why">Why this exists.</a>
-    </div>
-  </nav>
+  <!-- Nav removed per request -->
 
   <div class="matrix-bands">
     {orderedOrigins.map((origin, index) => {
@@ -378,35 +371,5 @@ const anchorMap = {
     }
   }
 
-  /* Global Nav Styles */
-  .global-nav {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    padding: 2rem 3rem;
-    display: flex;
-    justify-content: space-between;
-    z-index: 1000;
-    pointer-events: none; /* Let clicks pass through except on links */
-    box-sizing: border-box;
-  }
-  .nav-right {
-    display: flex;
-    gap: 2rem;
-    pointer-events: auto;
-  }
-  .nav-right a {
-    color: var(--color-warm-cream);
-    text-decoration: none;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    opacity: 0.6;
-    transition: opacity 0.3s ease;
-  }
-  .nav-right a:hover {
-    opacity: 1;
-  }
+  /* Nav CSS removed */
 </style>
