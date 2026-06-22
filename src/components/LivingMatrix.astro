@@ -18,13 +18,38 @@ function getHighestElevation(elevationString) {
   }
   return elevationString.replace(/[^0-9]/g, '');
 }
+
+const matrixCopy = {
+  'nilgiris': { fragment: 'Above the frost line.', subLine: 'Southern tip of the Deccan · High Altitude', cta: 'Enter this origin' },
+  'idukki': { fragment: 'The rain shadow.', subLine: 'Cardamom Hills · Equatorial Forest', cta: 'Enter this origin' },
+  'wayanad': { fragment: 'The vine doesn\'t stand. It climbs.', subLine: 'Western Ghats · Traditional Agrarian', cta: 'Enter this origin' },
+  'thiruvananthapuram': { fragment: 'Before the land drops into the ocean.', subLine: 'Coastal Plain · Equatorial', cta: 'Enter this origin' },
+  'malabar-coast': { fragment: 'The historical exchange.', subLine: 'Arabian Sea · Littoral', cta: 'This origin is still being documented.' }
+};
+
+const anchorMap = {
+  'nilgiris': '/origins/nilgiris/tea',
+  'idukki': '/origins/idukki/cardamom',
+  'wayanad': '/origins/wayanad/black-pepper',
+  'thiruvananthapuram': '/origins/thiruvananthapuram/dry-ginger',
+  'malabar-coast': '#'
+};
 ---
 
 <div class="living-matrix-container" id="living-matrix">
+  <!-- Global Nav -->
+  <nav class="global-nav">
+    <div class="nav-left"></div>
+    <div class="nav-right">
+      <a href="/observations">Observations</a>
+      <a href="/why">Why We Are Here</a>
+    </div>
+  </nav>
+
   <div class="matrix-bands">
     {orderedOrigins.map((origin, index) => {
-      const isWayanad = origin.data.slug === 'wayanad';
-      const linkHref = isWayanad ? '/origins/wayanad/black-pepper' : '#';
+      const linkHref = anchorMap[origin.data.slug];
+      const copy = matrixCopy[origin.data.slug];
       // The true visual boundary between plates is the exact middle of the 100px overlapping wavy mask (50px).
       // To create 5 perfectly equal 18vh visual bands inside a 90vh container:
       let heightCalc = 'calc(18vh + 100px)'; // Middle plates: hold top mask + bottom mask
@@ -57,27 +82,25 @@ function getHighestElevation(elevationString) {
         bandStyle += ` margin-top: -100px; ${maskCss} ${webkitMaskCss}`;
       }
       
+      bandStyle += ` --index: ${index};`;
+      
       return (
-        <a href={linkHref} class={`matrix-band ${isWayanad ? '' : 'empty-state'}`} style={bandStyle}>
+        <a href={linkHref} class={`matrix-band ${origin.data.slug === 'malabar-coast' ? 'empty-state' : ''}`} style={bandStyle}>
           <TopographicMap index={index} />
           <div class="band-content">
-            <h2 class="origin-name">
-              {origin.data.name}
-              {origin.data.elevation && <sup class="elevation-sup">{getHighestElevation(origin.data.elevation)}M</sup>}
-            </h2>
+            <div class="title-group">
+              <h2 class="origin-name">
+                {origin.data.name.toUpperCase()}
+                <sup class="elevation-sup">{getHighestElevation(origin.data.elevation)}M</sup>
+              </h2>
+            </div>
             <div class="band-reveal">
-              <p class="origin-meta">{origin.data.bioregion}</p>
-              {isWayanad ? (
-                <>
-                  <p class="origin-action">Enter this origin</p>
-                  <p class="carousel-trigger" data-origin={origin.id}>Browse all yields from this origin</p>
-                </>
-              ) : (
-                <>
-                  <p class="origin-action">This origin is still being documented.</p>
-                  <p class="carousel-trigger" data-origin={origin.id}>Browse all yields from this origin</p>
-                </>
-              )}
+              <p class="origin-meta">{copy.fragment}</p>
+              <p class="origin-subline">{copy.subLine}</p>
+              <div class="origin-live-telemetry"></div>
+              
+              <p class="origin-action">{copy.cta}</p>
+              <p class="carousel-trigger" data-origin={origin.id}>Browse all yields from this origin</p>
             </div>
           </div>
         </a>
@@ -101,7 +124,7 @@ function getHighestElevation(elevationString) {
     init() {
       // The half-second of nothing, then the mark, then the bands.
       const bands = document.querySelectorAll('.matrix-band');
-      const originNames = document.querySelectorAll('.origin-name');
+      const originNames = document.querySelectorAll('.title-group');
       const markWrapper = document.querySelector('.matrix-mark-wrapper');
       
       // Hide initially
@@ -175,9 +198,9 @@ function getHighestElevation(elevationString) {
   }
   
   @keyframes subtleBreathe {
-    0% { background-color: rgba(245, 237, 216, 0); }
-    50% { background-color: rgba(245, 237, 216, 0.015); }
-    100% { background-color: rgba(245, 237, 216, 0); }
+    0% { background-color: rgba(245, 237, 216, 0); transform: translateY(0); }
+    50% { background-color: rgba(245, 237, 216, 0.015); transform: translateY(-4px); }
+    100% { background-color: rgba(245, 237, 216, 0); transform: translateY(0); }
   }
 
   .matrix-band {
@@ -195,7 +218,9 @@ function getHighestElevation(elevationString) {
     transition: flex var(--duration-deep) var(--ease-settle), 
                 background-color var(--duration-standard) ease;
     position: relative;
-    /* Static background, removed subtleBreathe to prevent mask rendering bugs */
+    /* Static background, add subtleBreathe idle animation */
+    animation: subtleBreathe 10s ease-in-out infinite;
+    animation-delay: calc(var(--index, 0) * -2s); /* Stagger the breathing */
     color: var(--color-warm-cream);
     text-decoration: none;
     opacity: 0; /* The masks carve the rect into topographic shapes. No ::after needed! */
@@ -274,11 +299,18 @@ function getHighestElevation(elevationString) {
   }
   
   .origin-meta {
+    font-family: var(--font-narrative);
+    font-size: 1.1rem;
+    line-height: 1.4;
+    margin: 0 0 0.2rem 0;
+  }
+  
+  .origin-subline {
     font-family: var(--font-evidence);
     font-size: 0.85rem;
     letter-spacing: 0.05em;
-    opacity: 0.8;
-    margin: 0 0 0.5rem 0;
+    opacity: 0.6;
+    margin: 0 0 1rem 0;
   }
   
   .origin-action {
@@ -334,5 +366,37 @@ function getHighestElevation(elevationString) {
     .matrix-mark-wrapper:not(.initial-center) {
       right: 1rem;
     }
+  }
+
+  /* Global Nav Styles */
+  .global-nav {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    padding: 2rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    z-index: 1000;
+    pointer-events: none; /* Let clicks pass through except on links */
+    box-sizing: border-box;
+  }
+  .nav-right {
+    display: flex;
+    gap: 2rem;
+    pointer-events: auto;
+  }
+  .nav-right a {
+    color: var(--color-warm-cream);
+    text-decoration: none;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+  }
+  .nav-right a:hover {
+    opacity: 1;
   }
 </style>
