@@ -132,8 +132,8 @@ if (match) {
   }
   
   const shiftedForwardArray = [];
-  const forwardCommands = commands.slice(1, 217);
-  for (let cmd of forwardCommands) {
+  for (let i = 1; i <= 216; i++) {
+    const cmd = commands[i].trim();
     const type = cmd[0];
     const coords = cmd.substring(1).trim().split(',');
     if (coords.length === 2) {
@@ -143,8 +143,9 @@ if (match) {
       shiftedForwardArray.push(`${type} ${x},${y}`);
       
       // The user requested: "lets sto the rigt side cut to 1/10 position of the rightside screen and rest we can have full screen"
-      // 1/10 of 1506 is approximately 150. Stop the cut here.
-      if (y >= 150) {
+      // 1/10 of 1506 is approximately 150. Stop the cut here, BUT ONLY on the right-side cut!
+      // The right-side cut happens AFTER we reach idxOfLeftEdge.
+      if (i > idxOfLeftEdge && y >= 150) {
         // Draw a straight line to the right edge (X=920) and stop the jagged cut.
         shiftedForwardArray.push(`L 920,${y}`);
         break;
