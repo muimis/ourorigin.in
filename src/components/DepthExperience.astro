@@ -324,10 +324,10 @@ const sizes = product ? product.data.sizes : [];
       const strata = document.querySelectorAll('.stratum');
       
       // Start all strata below the viewport EXCEPT the first one
-      // We also offset them slightly to the left so they slide in diagonally to form the top/right stacked cascade
+      // We start X at 0 so they slide in diagonally up-and-left
       gsap.set(strata, { 
         y: (i) => i === 0 ? "0dvh" : "100dvh",
-        x: (i) => i === 0 ? "0vw" : `-${i * 4}vw` 
+        x: "0vw"
       });
 
       // Create a master pinned timeline
@@ -359,11 +359,11 @@ const sizes = product ? product.data.sizes : [];
         const prevTitle = prevStratum.querySelector('.stratum-title');
         const prevSelector = prevStratum.querySelector('.size-selector'); 
 
-        const topOffset = index * 4; // Uniform distance move to stack (4vh down)
-        const leftOffset = index * 4; // Uniform distance move to stack (4vw left)
+        const topOffset = index * 2; // Halved distance (2vh down)
+        const leftOffset = index * 2; // Halved distance (2vw left)
         const label = `step${index}`;
 
-        // 1. Current stratum slides up to its designated resting offset
+        // 1. Current stratum slides up and left to its designated resting offset (diagonal entry)
         tl.to(stratum, {
           y: `${topOffset}dvh`,
           x: `-${leftOffset}vw`,
