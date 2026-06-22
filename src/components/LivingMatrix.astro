@@ -165,7 +165,14 @@ const anchorMap = {
 
   // Run orchestrator on load
   document.addEventListener('DOMContentLoaded', () => {
-    new LivingMatrixOrchestrator();
+    const hasVisited = sessionStorage.getItem('ourorigin_visited');
+    if (hasVisited === 'true') {
+      new LivingMatrixOrchestrator();
+    } else {
+      window.addEventListener('launch-sequence-complete', () => {
+        new LivingMatrixOrchestrator();
+      });
+    }
     
     // Wire up carousel triggers
     document.querySelectorAll('.carousel-trigger').forEach(trigger => {

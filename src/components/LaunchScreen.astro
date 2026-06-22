@@ -3,16 +3,7 @@
 ---
 <div id="launch-screen" class="launch-screen hidden">
   <div class="launch-text-container">
-    <div class="static-prefix"><i>From the</i>&nbsp;</div>
-    <div class="dynamic-suffix-container">
-      <div class="launch-item cream">Source.</div>
-      <div class="launch-item gold">Western Ghats.</div>
-      <div class="launch-item cream">Nilgiris.</div>
-      <div class="launch-item cream">Idukki.</div>
-      <div class="launch-item cream">Wayanad.</div>
-      <div class="launch-item cream">Thiruvananthapuram.</div>
-      <div class="launch-item cream">Malabar Coast.</div>
-    </div>
+    <div class="launch-text"><i>From the</i> <span class="cream">Source.</span></div>
   </div>
 </div>
 
@@ -24,7 +15,7 @@
     width: 100vw;
     height: 100vh;
     height: 100dvh;
-    background-color: var(--color-forest-deep); /* Use brand deep forest instead of flat black for richness */
+    background-color: var(--color-forest-deep);
     z-index: 9999;
     display: flex;
     justify-content: center;
@@ -42,28 +33,17 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+  .launch-text {
     font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(1.4rem, 5vw, 2.8rem); /* Slightly larger for richness */
+    font-size: clamp(1.4rem, 5vw, 2.8rem);
     color: var(--color-warm-cream);
     letter-spacing: 0.02em;
-  }
-  .static-prefix {
-    white-space: nowrap;
-    opacity: 0.8; /* Subtle hierarchy */
-  }
-  .dynamic-suffix-container {
-    display: inline-grid;
-    text-align: left;
-  }
-  .launch-item {
-    grid-area: 1/1;
     opacity: 0;
-    white-space: nowrap;
     will-change: transform, opacity, filter;
   }
-  .gold {
-    color: var(--color-gold);
-    text-shadow: 0 0 12px rgba(166, 124, 60, 0.4); /* Luxurious subtle glow */
+  .launch-text i {
+    opacity: 0.8;
   }
   .cream {
     color: var(--color-warm-cream);
@@ -81,12 +61,9 @@
     if (!hasVisited && launchScreen) {
       launchScreen.classList.remove('hidden');
       
-      const items = gsap.utils.toArray('.launch-item');
-      const prefix = document.querySelector('.static-prefix');
+      const text = document.querySelector('.launch-text');
       
-      // Cinematic initial state
-      gsap.set(items, { y: 25, opacity: 0, filter: 'blur(4px)' });
-      gsap.set(prefix, { opacity: 0, filter: 'blur(4px)' });
+      gsap.set(text, { y: 20, opacity: 0, filter: 'blur(4px)' });
       
       const tl = gsap.timeline({
         onComplete: () => {
@@ -95,27 +72,20 @@
           setTimeout(() => {
             launchScreen.classList.add('hidden');
             sessionStorage.setItem('ourorigin_visited', 'true');
-          }, 1500); // Slower, richer fade out into the site
+            // Allow LivingMatrix orchestrator to begin its sequence
+            window.dispatchEvent(new Event('launch-sequence-complete'));
+          }, 1500); 
         }
       });
       
-      // Fade in the static prefix slowly
-      tl.to(prefix, { opacity: 0.9, filter: 'blur(0px)', duration: 1.5, ease: "power2.out" }, 0);
-      
-      const durationIn = 0.5;
-      const hold = 0.4;
-      const durationOut = 0.4;
-      
-      items.forEach((item, i) => {
-        // Stagger so items overlap perfectly in motion
-        const startTime = i === 0 ? 0.2 : `-=${durationOut - 0.1}`;
-        
-        tl.to(item, { y: 0, opacity: 1, filter: 'blur(0px)', duration: durationIn, ease: "power3.out" }, startTime)
-          .to(item, { y: -25, opacity: 0, filter: 'blur(4px)', duration: durationOut, ease: "power3.in" }, `+=${hold}`);
-      });
+      // Fade in "From the Source."
+      tl.to(text, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 1.0, ease: "power2.out" })
+        .to(text, { y: -20, opacity: 0, filter: 'blur(4px)', duration: 0.8, ease: "power2.in" }, "+=1.5");
         
     } else if (launchScreen) {
       launchScreen.classList.add('hidden');
+      // Fire immediately if already visited
+      window.dispatchEvent(new Event('launch-sequence-complete'));
     }
   });
 </script>
