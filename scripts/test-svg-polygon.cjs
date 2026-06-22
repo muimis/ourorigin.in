@@ -131,7 +131,29 @@ if (match) {
     });
   }
   
-  const shiftedForward = shiftCommands(commands.slice(1, 217)).join(' ');
+  const shiftedForwardArray = [];
+  const forwardCommands = commands.slice(1, 217);
+  for (let cmd of forwardCommands) {
+    const type = cmd[0];
+    const coords = cmd.substring(1).trim().split(',');
+    if (coords.length === 2) {
+      const x = parseInt(coords[0]);
+      const y = parseInt(coords[1]) - 30; // Shift UP by 30
+      
+      shiftedForwardArray.push(`${type} ${x},${y}`);
+      
+      // The user requested: "card right side cut only needed till the mid point of visible area, remining we can get in to full screen"
+      // Half of 1506 is 753. Stop the cut halfway down.
+      if (y >= 753) {
+        // Draw a straight line to the right edge (X=920) and stop the jagged cut.
+        shiftedForwardArray.push(`L 920,${y}`);
+        break;
+      }
+    } else {
+      shiftedForwardArray.push(cmd);
+    }
+  }
+  const shiftedForward = shiftedForwardArray.join(' ');
   const shiftedReverse = shiftCommands(reversePart1).join(' ');
   
   // Create a perfectly tight polygon that touches 0 on the left, 920 on the right, 0 on top, 1506 on bottom
