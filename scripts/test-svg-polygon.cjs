@@ -142,10 +142,9 @@ if (match) {
       
       shiftedForwardArray.push(`${type} ${x},${y}`);
       
-      // The user requested: "lets sto the rigt side cut to 1/10 position of the rightside screen and rest we can have full screen"
-      // 1/10 of 1506 is approximately 150. Stop the cut here, BUT ONLY on the right-side cut!
-      // The right-side cut happens AFTER we reach idxOfLeftEdge.
-      if (i > idxOfLeftEdge && y >= 150) {
+      // The user requested: "card right side cut only needed till the mid point of visible area, remining we can get in to full screen"
+      // Half of 1506 is 753. Stop the cut halfway down.
+      if (y >= 753) {
         // Draw a straight line to the right edge (X=920) and stop the jagged cut.
         shiftedForwardArray.push(`L 920,${y}`);
         break;
