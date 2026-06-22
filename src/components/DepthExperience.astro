@@ -56,6 +56,10 @@ const sizes = product ? product.data.sizes : [];
         <div class="stratum-shadow"></div>
         <h2 class="stratum-title">OFFERING</h2>
         
+        {product.data.offeringCopy && (
+          <p class="offering-copy">{product.data.offeringCopy}</p>
+        )}
+        
         {sizes.length > 0 ? (
           <div class="size-selector">
             <div class="size-options">
@@ -73,9 +77,13 @@ const sizes = product ? product.data.sizes : [];
                 </label>
               ))}
             </div>
-            <button class="source-button checkout-trigger">
-        <span class="button-text">Continue to the Source</span>
-      </button>
+            <button class="checkout-btn" data-product={JSON.stringify({
+              id: product.id,
+              name: product.data.name,
+              origin: origin.data.name,
+              originId: origin.id
+            })}>Continue to the Source</button>
+            <button class="more-from-origin-btn" data-origin={origin.id}>More from this origin</button>
           </div>
         ) : (
           <p>OFFERING — [product.sizes]</p>
@@ -278,6 +286,49 @@ const sizes = product ? product.data.sizes : [];
   .primary-btn:hover {
     background-color: var(--color-warm-cream);
   }
+  .offering-copy {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    color: rgba(244, 241, 235, 0.8);
+    margin-bottom: 2rem;
+    line-height: 1.5;
+    max-width: 600px;
+    text-align: center;
+  }
+
+  .checkout-btn {
+    width: 100%;
+    background: var(--color-warm-cream);
+    color: var(--color-forest-deep);
+    border: none;
+    font-family: 'DM Mono', monospace;
+    font-size: 1rem;
+    padding: 1.2rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-radius: 4px;
+    margin-top: 1rem;
+    transition: background-color 0.3s ease;
+  }
+  
+  .more-from-origin-btn {
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--color-warm-cream);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin-top: 1.5rem;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+  }
+  .more-from-origin-btn:hover {
+    opacity: 1;
+  }
 </style>
 
 <script>
@@ -298,27 +349,43 @@ const sizes = product ? product.data.sizes : [];
     }
 
     initPurchaseAction() {
-  const checkoutBtn = document.querySelector('.checkout-trigger');
-  if (checkoutBtn) {
-    checkoutBtn.addEventListener('click', () => {
-      // Find the currently selected size and price
-      const selected = document.querySelector('input[name="product-size"]:checked') as HTMLInputElement;
+      const checkoutBtn = document.querySelector('.checkout-btn');
+      if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', () => {
+          const productData = JSON.parse(checkoutBtn.getAttribute('data-product') || '{}');
+          const selectedSizeInput = document.querySelector('input[name="product-size"]:checked') as HTMLInputElement;
+          const size = selectedSizeInput ? selectedSizeInput.value : '';
+          const price = selectedSizeInput ? parseInt(selectedSizeInput.dataset.price || '0', 10) : 0;
+          
+          // Add to Ledger
+          const item = {
+            id: productData.id + '-' + size,
+            productId: productData.id,
+            name: productData.name,
+            origin: productData.origin,
+            originId: productData.originId,
+            size: size,
+            price: price,
+            quantity: 1
+          };
+          window.dispatchEvent(new CustomEvent('add-to-ledger', { detail: item }));
+          
+          // Open WhatsApp
+          const message = `Hi — I'd like to order ${productData.name} (${size}) from OurOrigin. I found you at ourorigin.in.`;
+          const encodedMessage = encodeURIComponent(message);
+          const waUrl = `https://wa.me/919645555668?text=${encodedMessage}`;
+          window.open(waUrl, '_blank');
+        });
+      }
       
-      let sizeText = selected ? selected.value : 'a selection';
-      let priceText = selected ? `₹${selected.dataset.price}` : '₹...';
-      
-      const pinContainer = document.querySelector('.pin-container') as HTMLElement;
-      const originName = pinContainer?.dataset.originName || "OurOrigin";
-      const productName = pinContainer?.dataset.productName || "Product";
-      
-      const message = `Hello, I am interested in sourcing ${originName} ${productName} (${sizeText}) at ${priceText}.`;
-      const waNumber = "919645555668";
-      const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
-      
-      window.open(waUrl, '_blank');
-    });
-  }
-}
+      const moreBtn = document.querySelector('.more-from-origin-btn');
+      if (moreBtn) {
+        moreBtn.addEventListener('click', () => {
+          const originId = moreBtn.getAttribute('data-origin');
+          window.dispatchEvent(new CustomEvent('open-carousel', { detail: { originId: originId, excludeAnchor: true } }));
+        });
+      }
+    }
 
     initStrata() {
       const strata = document.querySelectorAll('.stratum');

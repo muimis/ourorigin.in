@@ -68,9 +68,15 @@ function getHighestElevation(elevationString) {
             <div class="band-reveal">
               <p class="origin-meta">{origin.data.bioregion}</p>
               {isWayanad ? (
-                <p class="origin-action">Descend</p>
+                <>
+                  <p class="origin-action">Enter this origin</p>
+                  <p class="carousel-trigger" data-origin={origin.id}>Browse all yields from this origin</p>
+                </>
               ) : (
-                <p class="origin-action">This origin is still being documented.</p>
+                <>
+                  <p class="origin-action">This origin is still being documented.</p>
+                  <p class="carousel-trigger" data-origin={origin.id}>Browse all yields from this origin</p>
+                </>
               )}
             </div>
           </div>
@@ -136,6 +142,15 @@ function getHighestElevation(elevationString) {
   // Run orchestrator on load
   document.addEventListener('DOMContentLoaded', () => {
     new LivingMatrixOrchestrator();
+    
+    // Wire up carousel triggers
+    document.querySelectorAll('.carousel-trigger').forEach(trigger => {
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation(); // Don't collapse the band
+        const originId = trigger.getAttribute('data-origin');
+        window.dispatchEvent(new CustomEvent('open-carousel', { detail: { originId } }));
+      });
+    });
   });
 </script>
 
@@ -274,7 +289,22 @@ function getHighestElevation(elevationString) {
     margin: 0;
     opacity: 0;
     transform: translateY(5px);
-    transition: opacity var(--duration-standard) ease 0.2s, transform var(--duration-standard) ease 0.2s;
+    transition: opacity 0.3s ease;
+  }
+
+  .carousel-trigger {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    color: var(--color-warm-cream);
+    margin: 1.5rem 0 0 0;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+  }
+  .carousel-trigger:hover {
+    opacity: 1;
   }
   
   .matrix-band:hover .origin-action, .matrix-band:focus .origin-action {

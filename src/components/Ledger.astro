@@ -1,0 +1,452 @@
+---
+import { getCollection } from 'astro:content';
+
+const products = await getCollection('products');
+
+// Build a map of originId -> companion product names
+const companionProductsMap = {};
+products.forEach(product => {
+  if (!product.data.isAnchorProduct) {
+    const originId = typeof product.data.originSlug === 'object' ? product.data.originSlug.id : product.data.originSlug;
+    if (!companionProductsMap[originId]) {
+      companionProductsMap[originId] = [];
+    }
+    companionProductsMap[originId].push({
+      id: product.id,
+      name: product.data.name
+    });
+  }
+});
+
+const companionsJson = JSON.stringify(companionProductsMap);
+---
+
+<!-- Persistent Trigger -->
+<div id="ledger-trigger" class="ledger-trigger hidden">
+  <span id="ledger-count"></span> held
+</div>
+
+<!-- Slide-up Panel -->
+<div id="ledger-overlay" class="ledger-overlay hidden">
+  <div class="ledger-backdrop" id="ledger-close-backdrop"></div>
+  <div class="ledger-panel">
+    <div class="ledger-header">
+      <h2 class="ledger-title">What you're holding</h2>
+      <button id="ledger-close-btn" class="ledger-close">Close</button>
+    </div>
+    
+    <div class="ledger-content">
+      <div id="ledger-items-container" class="ledger-items">
+        <!-- JS will populate items here -->
+      </div>
+      
+      <div id="ledger-empty-state" class="ledger-empty hidden">
+        Nothing held yet.
+      </div>
+      
+      <div id="ledger-footer" class="ledger-footer hidden">
+        <div class="ledger-total">
+          <span>Total</span>
+          <span id="ledger-total-price" class="price-font">₹0</span>
+        </div>
+        <button id="ledger-checkout-btn" class="ledger-checkout">Continue to the Source</button>
+      </div>
+      
+      <!-- Secondary Discovery -->
+      <div id="ledger-discovery" class="ledger-discovery hidden">
+        <p id="discovery-text" class="discovery-text"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ companionsJson }}>
+  const companionsMap = JSON.parse(companionsJson);
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    const trigger = document.getElementById('ledger-trigger');
+    const countDisplay = document.getElementById('ledger-count');
+    const overlay = document.getElementById('ledger-overlay');
+    const closeBtn = document.getElementById('ledger-close-btn');
+    const backdrop = document.getElementById('ledger-close-backdrop');
+    const itemsContainer = document.getElementById('ledger-items-container');
+    const emptyState = document.getElementById('ledger-empty-state');
+    const footer = document.getElementById('ledger-footer');
+    const totalPriceDisplay = document.getElementById('ledger-total-price');
+    const discoverySection = document.getElementById('ledger-discovery');
+    const discoveryText = document.getElementById('discovery-text');
+    const checkoutBtn = document.getElementById('ledger-checkout-btn');
+    
+    let ledgerItems = JSON.parse(localStorage.getItem('ourorigin_ledger') || '[]');
+    
+    function updateTrigger() {
+      const count = ledgerItems.reduce((acc, item) => acc + item.quantity, 0);
+      if (count > 0) {
+        countDisplay.textContent = count;
+        trigger.classList.remove('hidden');
+      } else {
+        trigger.classList.add('hidden');
+      }
+    }
+    
+    function saveAndRender() {
+      localStorage.setItem('ourorigin_ledger', JSON.stringify(ledgerItems));
+      updateTrigger();
+      renderItems();
+    }
+    
+    function renderItems() {
+      itemsContainer.innerHTML = '';
+      
+      if (ledgerItems.length === 0) {
+        emptyState.classList.remove('hidden');
+        footer.classList.add('hidden');
+        discoverySection.classList.add('hidden');
+        return;
+      }
+      
+      emptyState.classList.add('hidden');
+      footer.classList.remove('hidden');
+      
+      let total = 0;
+      let originsInLedger = new Set();
+      
+      ledgerItems.forEach(item => {
+        total += item.price * item.quantity;
+        originsInLedger.add({id: item.originId, name: item.origin});
+        
+        const el = document.createElement('div');
+        el.className = 'ledger-item';
+        el.innerHTML = `
+          <div class="item-info">
+            <span class="item-name">${item.name}</span>
+            <span class="item-size">${item.size}</span>
+          </div>
+          <div class="item-controls">
+            <span class="price-font">₹${item.price}</span>
+            <div class="qty-controls">
+              <button class="qty-btn dec" data-id="${item.id}">-</button>
+              <span class="qty-val price-font">${item.quantity}</span>
+              <button class="qty-btn inc" data-id="${item.id}">+</button>
+            </div>
+          </div>
+        `;
+        itemsContainer.appendChild(el);
+      });
+      
+      totalPriceDisplay.textContent = `₹${total}`;
+      
+      // Wire up qty buttons
+      document.querySelectorAll('.qty-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = e.target.getAttribute('data-id');
+          const isInc = e.target.classList.contains('inc');
+          
+          const index = ledgerItems.findIndex(i => i.id === id);
+          if (index !== -1) {
+            if (isInc) {
+              ledgerItems[index].quantity++;
+            } else {
+              ledgerItems[index].quantity--;
+              if (ledgerItems[index].quantity <= 0) {
+                ledgerItems.splice(index, 1);
+              }
+            }
+            saveAndRender();
+          }
+        });
+      });
+      
+      // Handle Secondary Discovery
+      let discoveryHtmlChunks = [];
+      const uniqueOriginsMap = new Map();
+      Array.from(originsInLedger).forEach(o => uniqueOriginsMap.set(o.id, o.name));
+      
+      uniqueOriginsMap.forEach((originName, originId) => {
+        const companions = companionsMap[originId];
+        if (companions && companions.length > 0) {
+          // Filter out companions that are already in the ledger
+          const availableCompanions = companions.filter(c => !ledgerItems.some(i => i.productId === c.id));
+          
+          if (availableCompanions.length > 0) {
+            const linksHtml = availableCompanions.map(c => 
+              `<a href="#" class="discovery-link" data-origin="${originId}" data-product="${c.id}">${c.name}</a>`
+            ).join(', ');
+            
+            discoveryHtmlChunks.push(`Also from ${originName}: ${linksHtml}`);
+          }
+        }
+      });
+      
+      if (discoveryHtmlChunks.length > 0) {
+        discoveryText.innerHTML = discoveryHtmlChunks.join('<br>');
+        discoverySection.classList.remove('hidden');
+        
+        // Wire up discovery links
+        document.querySelectorAll('.discovery-link').forEach(link => {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const originId = e.target.getAttribute('data-origin');
+            closeLedger();
+            window.dispatchEvent(new CustomEvent('open-carousel', { detail: { originId: originId, excludeAnchor: true } }));
+          });
+        });
+      } else {
+        discoverySection.classList.add('hidden');
+      }
+    }
+    
+    // Checkout logic
+    checkoutBtn.addEventListener('click', () => {
+      let message = `Hi — I'd like to order:\n`;
+      ledgerItems.forEach(item => {
+        message += `- ${item.name} (${item.size}) x${item.quantity}\n`;
+      });
+      message += `\nfrom OurOrigin. I found you at ourorigin.in.`;
+      
+      const encodedMessage = encodeURIComponent(message);
+      const phone = '919645555668'; // The contact number
+      window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
+    });
+    
+    // Listen to add events
+    window.addEventListener('add-to-ledger', (e) => {
+      const item = e.detail;
+      const existingItem = ledgerItems.find(i => i.id === item.id);
+      
+      if (existingItem) {
+        existingItem.quantity += item.quantity;
+      } else {
+        ledgerItems.push(item);
+      }
+      
+      saveAndRender();
+    });
+    
+    const openLedger = () => {
+      renderItems();
+      overlay.classList.remove('hidden');
+    };
+    
+    const closeLedger = () => {
+      overlay.classList.add('hidden');
+    };
+    
+    trigger.addEventListener('click', openLedger);
+    closeBtn.addEventListener('click', closeLedger);
+    backdrop.addEventListener('click', closeLedger);
+    
+    // Initial render
+    updateTrigger();
+  });
+</script>
+
+<style>
+  .ledger-trigger {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    z-index: 900;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--color-warm-cream);
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    padding: 0;
+    transition: opacity 0.3s ease;
+  }
+  .ledger-trigger.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  .ledger-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1100;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    pointer-events: auto;
+    opacity: 1;
+    transition: opacity 0.4s ease;
+  }
+  .ledger-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  .ledger-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(12, 21, 9, 0.6);
+    backdrop-filter: blur(4px);
+    transition: opacity 0.4s ease;
+  }
+  
+  .ledger-panel {
+    position: relative;
+    width: 100%;
+    height: 70dvh;
+    background: var(--color-forest-deep);
+    border-top: 1px solid rgba(244, 241, 235, 0.2);
+    border-radius: 20px 20px 0 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(0);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .ledger-overlay.hidden .ledger-panel {
+    transform: translateY(100%);
+  }
+  
+  .ledger-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 5vw 1.5rem;
+    border-bottom: 1px solid rgba(244, 241, 235, 0.1);
+  }
+  .ledger-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.5rem;
+    margin: 0;
+  }
+  .ledger-close {
+    background: none;
+    border: none;
+    color: var(--color-warm-cream);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  
+  .ledger-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 2rem 5vw;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .ledger-empty {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    color: rgba(244, 241, 235, 0.6);
+    text-align: center;
+    margin-top: 2rem;
+  }
+  
+  .ledger-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(244, 241, 235, 0.1);
+  }
+  .item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+  .item-name {
+    font-family: 'Cinzel', serif;
+    font-size: 1.2rem;
+  }
+  .item-size {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: rgba(244, 241, 235, 0.6);
+  }
+  .item-controls {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .price-font {
+    font-family: 'DM Mono', monospace;
+  }
+  .qty-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    border: 1px solid rgba(244, 241, 235, 0.3);
+    border-radius: 20px;
+    padding: 0.2rem 0.5rem;
+  }
+  .qty-btn {
+    background: none;
+    border: none;
+    color: var(--color-warm-cream);
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+  }
+  
+  .ledger-footer {
+    margin-top: auto;
+    padding-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .ledger-total {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Cinzel', serif;
+    font-size: 1.2rem;
+  }
+  .ledger-checkout {
+    background: var(--color-warm-cream);
+    color: var(--color-forest-deep);
+    border: none;
+    font-family: 'DM Mono', monospace;
+    font-size: 1rem;
+    padding: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    width: 100%;
+  }
+  
+  .ledger-discovery {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px dashed rgba(244, 241, 235, 0.2);
+  }
+  .discovery-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: rgba(244, 241, 235, 0.8);
+    margin: 0;
+  }
+  .discovery-link {
+    color: var(--color-warm-cream);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(244, 241, 235, 0.4);
+    transition: border-color 0.2s ease;
+  }
+  .discovery-link:hover {
+    border-bottom-color: var(--color-warm-cream);
+  }
+  
+  .hidden {
+    display: none !important;
+  }
+</style>
