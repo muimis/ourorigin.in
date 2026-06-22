@@ -112,7 +112,7 @@ const sizes = product ? product.data.sizes : [];
     position: absolute;
     top: 0;
     left: 0;
-    width: 100vw;
+    width: 110vw; /* Extended to allow right-side overlap during diagonal left stack */
     will-change: transform;
   }
 
@@ -153,29 +153,28 @@ const sizes = product ? product.data.sizes : [];
   }
 
   /* Terrain Cuts / Map Borders - Dynamically injected via --mask-url to match the active origin */
-  .stratum-canopy, .stratum-land, .stratum-hand, .stratum-specimen, .stratum-offering {
-    /* We use two masks:
-       1. The map cut SVG (placed top right, preserves its aspect ratio of ~0.61).
+  .stratum-canopy, .stratum-land, .stratum-hand, .stratum-specimen {
+    /* We use THREE masks:
+       1. The map cut SVG (placed 10vw from right, preserves its aspect ratio).
        2. A solid black gradient (placed top left, fills the remaining width of the screen). 
-       This flawlessly handles all screen sizes (mobile and desktop) without hitting SVG rendering limits. */
-    -webkit-mask-image: var(--mask-url), linear-gradient(black, black);
-    mask-image: var(--mask-url), linear-gradient(black, black);
+       3. A solid black gradient (placed bottom right, fills the 10vw extended width for the bottom 75%).
+       This ensures the top 25% shows the stacked cuts, while the bottom 75% hides the layers below! */
+    -webkit-mask-image: var(--mask-url), linear-gradient(black, black), linear-gradient(black, black);
+    mask-image: var(--mask-url), linear-gradient(black, black), linear-gradient(black, black);
     
-    -webkit-mask-repeat: no-repeat, no-repeat;
-    mask-repeat: no-repeat, no-repeat;
+    -webkit-mask-repeat: no-repeat, no-repeat, no-repeat;
+    mask-repeat: no-repeat, no-repeat, no-repeat;
     
-    /* The map height is 100%. The map width naturally becomes 0.61 * 100vh. 
-       The gradient covers the remaining width (100% - 60vh) so it overlaps slightly to prevent gaps. */
-    -webkit-mask-size: auto 100%, calc(100% - 60vh) 100%;
-    mask-size: auto 100%, calc(100% - 60vh) 100%;
+    -webkit-mask-size: auto 100%, calc(100% - 60vh) 100%, 10vw 75%;
+    mask-size: auto 100%, calc(100% - 60vh) 100%, 10vw 75%;
     
-    -webkit-mask-position: top right, top left;
-    mask-position: top right, top left;
+    -webkit-mask-position: right 10vw top 0, top left, bottom right;
+    mask-position: right 10vw top 0, top left, bottom right;
   }
   
   .stratum-content {
     position: relative;
-    z-index: 2;
+    width: 100vw; /* Keep content constrained to the actual screen width */
     height: 100%;
     display: flex;
     flex-direction: column;
