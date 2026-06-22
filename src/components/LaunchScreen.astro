@@ -1,0 +1,78 @@
+---
+// LaunchScreen.astro
+---
+<div id="launch-screen" class="launch-screen hidden">
+  <div class="launch-text" id="launch-text-1">Wait.</div>
+  <div class="launch-text" id="launch-text-2">Are you lost?</div>
+  <div class="launch-text" id="launch-text-3">Or are you looking for something real?</div>
+</div>
+
+<style>
+  .launch-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    background-color: #000;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    transition: opacity 1s ease;
+  }
+  .launch-screen.hidden {
+    display: none;
+  }
+  .launch-screen.fade-out {
+    opacity: 0;
+  }
+  .launch-text {
+    position: absolute;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    color: var(--color-warm-cream);
+    opacity: 0;
+    text-align: center;
+    padding: 0 2rem;
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Check if this is the first visit
+    const hasVisited = sessionStorage.getItem('ourorigin_visited');
+    const launchScreen = document.getElementById('launch-screen');
+    
+    if (!hasVisited && launchScreen) {
+      launchScreen.classList.remove('hidden');
+      
+      const tl = gsap.timeline({
+        onComplete: () => {
+          launchScreen.classList.add('fade-out');
+          setTimeout(() => {
+            launchScreen.classList.add('hidden');
+            sessionStorage.setItem('ourorigin_visited', 'true');
+          }, 1000); // Wait for CSS fade out
+        }
+      });
+      
+      // Sequence completes in under 4 seconds total
+      tl.to('#launch-text-1', { opacity: 1, duration: 0.5 })
+        .to('#launch-text-1', { opacity: 0, duration: 0.3, delay: 0.4 })
+        
+        .to('#launch-text-2', { opacity: 1, duration: 0.5 })
+        .to('#launch-text-2', { opacity: 0, duration: 0.3, delay: 0.4 })
+        
+        .to('#launch-text-3', { opacity: 1, duration: 0.6 })
+        .to('#launch-text-3', { opacity: 0, duration: 0.4, delay: 0.6 });
+        
+    } else if (launchScreen) {
+      launchScreen.classList.add('hidden');
+    }
+  });
+</script>

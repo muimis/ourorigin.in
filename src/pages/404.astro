@@ -1,0 +1,73 @@
+---
+import '../styles/tokens.css';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost | OurOrigin</title>
+    <!-- Google Fonts with display=swap as explicitly requested -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Cormorant+Garamond:wght@300;400;500&family=DM+Mono:ital,wght@0,300;0,400;0,500&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            background-color: var(--color-forest-deep);
+            color: var(--color-warm-cream);
+            height: 100%;
+        }
+        .page-container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 5vw;
+        }
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 8rem;
+            margin: 0;
+            font-weight: 400;
+            opacity: 0.1;
+            position: absolute;
+            z-index: 0;
+        }
+        p {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            line-height: 1.4;
+            margin: 0;
+            z-index: 1;
+        }
+        .nav-link {
+            font-family: 'DM Mono', monospace;
+            color: var(--color-warm-cream);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 3rem;
+            display: inline-block;
+            border-bottom: 1px solid rgba(244, 241, 235, 0.3);
+            padding-bottom: 0.2rem;
+            transition: border-color 0.3s ease;
+            z-index: 1;
+        }
+        .nav-link:hover {
+            border-bottom-color: var(--color-warm-cream);
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <h1>404</h1>
+        <p>You have wandered off the path.</p>
+        <a href="/" class="nav-link">Return to the Matrix</a>
+    </div>
+</body>
+</html>

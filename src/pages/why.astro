@@ -1,0 +1,75 @@
+---
+import '../styles/tokens.css';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why We Are Here | OurOrigin</title>
+    <!-- Google Fonts with display=swap as explicitly requested -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Cormorant+Garamond:wght@300;400;500&family=DM+Mono:ital,wght@0,300;0,400;0,500&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            background-color: var(--color-forest-deep);
+            color: var(--color-warm-cream);
+            height: 100%;
+        }
+        .page-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20vh 5vw;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            margin: 0 0 2rem 0;
+            font-weight: 400;
+        }
+        p {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            line-height: 1.6;
+            margin: 0 0 1.5rem 0;
+            opacity: 0.9;
+        }
+        .nav-link {
+            font-family: 'DM Mono', monospace;
+            color: var(--color-warm-cream);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 4rem;
+            display: inline-block;
+            border-bottom: 1px solid rgba(244, 241, 235, 0.3);
+            padding-bottom: 0.2rem;
+            transition: border-color 0.3s ease;
+            align-self: flex-start;
+        }
+        .nav-link:hover {
+            border-bottom-color: var(--color-warm-cream);
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <h1>Why We Are Here</h1>
+        
+        <p>Most of what you consume has been separated from the soil it grew in, blended for uniformity, and traded like a stock. The origin is erased because the origin is inconvenient.</p>
+        
+        <p>OurOrigin is an attempt to map the things that haven't been ruined, directly to the specific bioregions that produce them best. We don't farm it all. We find who does, we document the reality of the geography, and we secure the yield before it enters the commodity stream.</p>
+        
+        <p>A ledger of what is real, from where it is real.</p>
+        
+        <a href="/" class="nav-link">Return to the Matrix</a>
+    </div>
+</body>
+</html>
