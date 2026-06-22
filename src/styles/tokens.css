@@ -28,3 +28,9 @@
 a, button, [role="button"], input, select, textarea {
   -webkit-tap-highlight-color: transparent;
 }
+
+/* Global overflow protection to prevent horizontal glitch scrolling */
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+}

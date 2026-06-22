@@ -13,10 +13,10 @@
   "method": "Lowland Homesteading",
   "images": {
     "canopy": "/assets/origins/thiruvananthapuram-canopy.webp",
-    "land": "/assets/origins/thiruvananthapuram-land.webp",
+    "land": "",
     "hand": "/assets/origins/thiruvananthapuram-hand.webp",
     "specimen": "/assets/origins/thiruvananthapuram-specimen.webp",
-    "isPlaceholderImagery": true
+    "isPlaceholderImagery": false
   },
   "narrative": {
     "canopy": "At 10 metres above sea level, this is the lowest of all five origins and the flattest. No altitude to shape the growing conditions. Warm and humid nearly year-round — cultivation works differently here, not against cold and mist, but with heat and wet.",

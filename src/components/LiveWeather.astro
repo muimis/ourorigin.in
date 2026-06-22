@@ -7,13 +7,13 @@ const { coordinates } = Astro.props;
 ---
 
 <live-weather data-coords={coordinates} class="live-weather-component">
-  <span class="weather-text">· [Fetching Live Data]</span>
+  <span class="weather-text">· Reading conditions...</span>
 </live-weather>
 
 <script>
   class LiveWeather extends HTMLElement {
     parseDMS(dmsStr) {
-      const parts = dmsStr.match(/(\d+)°(\d+)?['′]?[A-Z]/);
+      const parts = dmsStr.match(/([\d\.]+)°\s*([\d\.]+)?['′]?\s*[A-Z]/);
       if (parts) {
         let deg = parseFloat(parts[1]);
         let min = parts[2] ? parseFloat(parts[2]) : 0;
@@ -73,7 +73,7 @@ const { coordinates } = Astro.props;
         console.error("[LiveWeather] fetch failed", err);
         const textEl = this.querySelector('.weather-text');
         if (textEl) {
-          textEl.textContent = `· [Live Data Offline]`;
+          textEl.textContent = '· Conditions currently undocumented.';
         }
       }
     }

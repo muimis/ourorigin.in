@@ -2,9 +2,8 @@
 // LaunchScreen.astro
 ---
 <div id="launch-screen" class="launch-screen hidden">
-  <div class="launch-text" id="launch-text-1">Wait.</div>
-  <div class="launch-text" id="launch-text-2">Are you lost?</div>
-  <div class="launch-text" id="launch-text-3">Or are you looking for something real?</div>
+  <div class="launch-text" id="launch-text-1">From the Western Ghats.</div>
+  <div class="launch-text" id="launch-text-2">From the Source.</div>
 </div>
 
 <style>
@@ -62,15 +61,12 @@
         }
       });
       
-      // Sequence completes in under 4 seconds total
+      // Sequence completes in exactly 4 seconds total
       tl.to('#launch-text-1', { opacity: 1, duration: 0.5 })
-        .to('#launch-text-1', { opacity: 0, duration: 0.3, delay: 0.4 })
+        .to('#launch-text-1', { opacity: 0, duration: 0.3, delay: 1.2 })
         
         .to('#launch-text-2', { opacity: 1, duration: 0.5 })
-        .to('#launch-text-2', { opacity: 0, duration: 0.3, delay: 0.4 })
-        
-        .to('#launch-text-3', { opacity: 1, duration: 0.6 })
-        .to('#launch-text-3', { opacity: 0, duration: 0.4, delay: 0.6 });
+        .to('#launch-text-2', { opacity: 0, duration: 0.3, delay: 1.2 });
         
     } else if (launchScreen) {
       launchScreen.classList.add('hidden');

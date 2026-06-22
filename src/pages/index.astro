@@ -23,6 +23,17 @@ import LaunchScreen from '../components/LaunchScreen.astro';
             background-color: var(--color-forest-deep);
             color: var(--color-warm-cream);
         }
+        .global-fssai {
+            position: fixed;
+            bottom: 1rem;
+            right: 1.5rem;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--color-warm-cream);
+            opacity: 0.4;
+            pointer-events: none;
+            z-index: 9000;
+        }
     </style>
 </head>
 <body>
@@ -30,5 +41,6 @@ import LaunchScreen from '../components/LaunchScreen.astro';
     <LivingMatrix />
     <Carousel />
     <Ledger />
+    <div class="global-fssai">FSSAI Reg. No. 21326135000354</div>
 </body>
 </html>

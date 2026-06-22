@@ -198,11 +198,17 @@ const companionsJson = JSON.stringify(companionProductsMap);
     
     // Checkout logic
     checkoutBtn.addEventListener('click', () => {
-      let message = `Hi — I'd like to order:\n`;
-      ledgerItems.forEach(item => {
-        message += `- ${item.name} (${item.size}) x${item.quantity}\n`;
-      });
-      message += `\nfrom OurOrigin. I found you at ourorigin.in.`;
+      let message = '';
+      if (ledgerItems.length === 1 && ledgerItems[0].quantity === 1) {
+        const item = ledgerItems[0];
+        message = `Hi — I'd like to order ${item.name} (${item.size}) from OurOrigin. I found you at ourorigin.in.`;
+      } else {
+        message = `Hi — I'd like to order:\n`;
+        ledgerItems.forEach(item => {
+          message += `- ${item.name} (${item.size}) x${item.quantity}\n`;
+        });
+        message += `\nfrom OurOrigin. I found you at ourorigin.in.`;
+      }
       
       const encodedMessage = encodeURIComponent(message);
       const phone = '919645555668'; // The contact number

@@ -12,19 +12,20 @@ const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug ==
 // Helper to get highest elevation from string like "100m - 1500m"
 function getHighestElevation(elevationString) {
   if (!elevationString) return '';
-  const matches = elevationString.match(/\d+/g);
+  const cleanStr = elevationString.replace(/,/g, '');
+  const matches = cleanStr.match(/\d+/g);
   if (matches) {
     return Math.max(...matches.map(Number));
   }
-  return elevationString.replace(/[^0-9]/g, '');
+  return cleanStr.replace(/[^0-9]/g, '');
 }
 
 const matrixCopy = {
-  'nilgiris': { fragment: 'Above the frost line.', subLine: 'Southern tip of the Deccan · High Altitude', cta: 'Enter this origin' },
-  'idukki': { fragment: 'The rain shadow.', subLine: 'Cardamom Hills · Equatorial Forest', cta: 'Enter this origin' },
+  'nilgiris': { fragment: 'This high, India has frost.', subLine: 'Western Ghats · Forest Polyculture', cta: 'Enter this origin' },
+  'idukki': { fragment: 'These hills were named for what grows here.', subLine: 'Western Ghats · Shade-Grown Wild Harvest', cta: 'Enter this origin' },
   'wayanad': { fragment: 'The vine doesn\'t stand. It climbs.', subLine: 'Western Ghats · Traditional Agrarian', cta: 'Enter this origin' },
-  'thiruvananthapuram': { fragment: 'Before the land drops into the ocean.', subLine: 'Coastal Plain · Equatorial', cta: 'Enter this origin' },
-  'malabar-coast': { fragment: 'The historical exchange.', subLine: 'Arabian Sea · Littoral', cta: 'This origin is still being documented.' }
+  'thiruvananthapuram': { fragment: 'The root that becomes dry ginger is dug up, not picked.', subLine: 'Western Ghats · Lowland Homesteading', cta: 'Enter this origin' },
+  'malabar-coast': { fragment: 'This origin is still being documented.', subLine: 'Western Ghats · Smallholder Hand Harvest', cta: '' }
 };
 
 const anchorMap = {
@@ -42,7 +43,7 @@ const anchorMap = {
     <div class="nav-left"></div>
     <div class="nav-right">
       <a href="/observations">Observations</a>
-      <a href="/why">Why We Are Here</a>
+      <a href="/why">Why this exists.</a>
     </div>
   </nav>
 
@@ -267,13 +268,14 @@ const anchorMap = {
   
   .origin-name {
     font-family: var(--font-institutional);
-    /* Use clamp so long names like Thiruvananthapuram scale down on mobile instead of wrapping */
-    font-size: clamp(1.2rem, 4vw, var(--text-size-stratum-title));
+    /* Allow small mobile screens to scale down further, or wrap if needed */
+    font-size: clamp(0.9rem, 4.5vw, var(--text-size-stratum-title));
     letter-spacing: 0.1em;
     text-transform: uppercase;
     margin: 0;
     font-weight: 400;
-    white-space: nowrap;
+    text-align: center;
+    word-break: break-word;
   }
   
   .elevation-sup {

@@ -113,41 +113,43 @@ import '../styles/tokens.css';
         .nav-link:hover {
             border-bottom-color: var(--color-warm-cream);
         }
+        .contact-details p {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            line-height: 1.6;
+            margin: 0 0 1.5rem 0;
+            opacity: 0.9;
+        }
+        .contact-details strong {
+            font-family: 'DM Mono', monospace;
+            font-size: 1.2rem;
+            font-weight: normal;
+        }
+        .fssai-footer {
+            margin-top: auto;
+            padding-top: 4rem;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--color-warm-cream);
+            opacity: 0.4;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
     <div class="page-container">
-        <h1>Reach the Source</h1>
-        <p class="intro">Whether you're looking to source yields in volume, or have a question about an origin, we'll respond.</p>
+        <h1>Reach us directly.</h1>
         
-        <form action="#" method="POST" id="contact-form">
-            <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" required />
-            </div>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" required />
-            </div>
-            <div class="form-group">
-                <label for="message">Message</label>
-                <textarea id="message" name="message" required></textarea>
-            </div>
-            <button type="submit" class="submit-btn">Transmit</button>
-        </form>
-        
-        <div class="fallback">
-            Or email directly: <a href="mailto:hello@ourorigin.in">hello@ourorigin.in</a>
+        <div class="contact-details">
+            <p><strong>+91 96455 55668</strong><br>This is the fastest way to reach us. We respond personally, not through a bot.</p>
+            <p>ourorigin.in@gmail.com</p>
+            <p>@ourorigin.in on Instagram</p>
+            <p>We are based in Thiruvananthapuram, Kerala. We source, we pack, we ship. If you have a question about where something comes from, we'll tell you everything we know.</p>
         </div>
         
         <a href="/" class="nav-link">Return to the Matrix</a>
+        
+        <div class="fssai-footer">FSSAI Reg. No. 21326135000354</div>
     </div>
-
-    <script>
-        document.getElementById('contact-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert('Form submission is simulated for this prototype. Please use the mailto link.');
-        });
-    </script>
 </body>
 </html>

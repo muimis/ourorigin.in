@@ -13,7 +13,7 @@
   "method": "Traditional Agrarian",
   "images": {
     "canopy": "/assets/origins/wayanad-canopy.webp",
-    "land": "/assets/origins/wayanad-land.webp",
+    "land": "",
     "hand": "/assets/origins/wayanad-hand.webp",
     "specimen": "/assets/origins/wayanad-specimen.webp",
     "isPlaceholderImagery": false
