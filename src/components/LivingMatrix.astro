@@ -81,6 +81,15 @@ const anchorMap = {
       return (
         <div data-href={linkHref} class={`matrix-band ${origin.data.slug === 'malabar-coast' ? 'empty-state' : ''}`} style={bandStyle} tabindex="0">
           <TopographicMap index={index} />
+          
+          <!-- Mobile Hold Indicator -->
+          <div class="mobile-hold-indicator">
+            <svg viewBox="0 0 100 100" class="hold-svg">
+              <circle cx="50" cy="50" r="4" class="hold-dot" />
+              <circle cx="50" cy="50" r="15" class="hold-circle" />
+            </svg>
+          </div>
+
           <div class="band-content">
             <div class="title-group">
               <h2 class="origin-name">
@@ -189,15 +198,29 @@ const anchorMap = {
         const hasHover = window.matchMedia('(hover: hover)').matches;
         
         if (!hasHover) {
-          // Mobile: Tap to expand
+          e.preventDefault();
+          // Mobile: Tap to expand, hold, and navigate
+          const bandsContainer = document.querySelector('.matrix-bands');
+          
           if (!band.classList.contains('expanded')) {
             // Collapse others
-            document.querySelectorAll('.matrix-band.expanded').forEach(b => b.classList.remove('expanded'));
-            // Expand this one
+            document.querySelectorAll('.matrix-band.expanded').forEach(b => {
+              b.classList.remove('expanded');
+              b.classList.remove('holding');
+            });
+            bandsContainer.classList.add('has-expanded');
+            
+            // Expand and hold this one
             band.classList.add('expanded');
-          } else {
-            // If already expanded, tap to collapse
-            band.classList.remove('expanded');
+            band.classList.add('holding');
+            
+            // Navigate after 2.5s hold animation
+            setTimeout(() => {
+              const href = band.getAttribute('data-href');
+              if (href && href !== '#') {
+                window.location.href = href;
+              }
+            }, 2500);
           }
         } else {
           // Desktop: Click anywhere on band to navigate
@@ -258,6 +281,9 @@ const anchorMap = {
     color: var(--color-warm-cream);
     text-decoration: none;
     opacity: 0; /* The masks carve the rect into topographic shapes. No ::after needed! */
+    /* Add 3D feel with drop shadow that respects the SVG mask! */
+    filter: drop-shadow(0px -8px 15px rgba(0, 0, 0, 0.7));
+    z-index: calc(10 - var(--index)); /* Ensure upper plates cast shadow onto lower plates properly if needed, though default stacking handles it */
   }
   
   @media (min-width: 768px) {
@@ -321,8 +347,8 @@ const anchorMap = {
   
   .origin-name {
     font-family: var(--font-institutional);
-    /* Scale down even smaller on mobile to fit THIRUVANANTHAPURAM perfectly */
-    font-size: clamp(0.6rem, 3.5vw, var(--text-size-stratum-title));
+    /* Scale down perfectly for thiruvananthapuram */
+    font-size: clamp(0.7rem, 3.8vw, var(--text-size-stratum-title));
     line-height: 1.1;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -330,6 +356,21 @@ const anchorMap = {
     font-weight: 400;
     text-align: center;
     word-break: break-word;
+    transition: transform 0.6s var(--ease-settle), opacity 0.6s ease;
+    transform-origin: center;
+  }
+  
+  /* When a plate expands, shrink and dim the text of the COMPRESSED plates so they never bleed */
+  .matrix-bands.has-expanded .matrix-band:not(.expanded) .origin-name {
+    transform: scale(0.65);
+    opacity: 0.4;
+  }
+  
+  .matrix-bands:hover .matrix-band:not(:hover) .origin-name {
+    @media (hover: hover) {
+      transform: scale(0.65);
+      opacity: 0.4;
+    }
   }
   
   .elevation-sup {
@@ -426,13 +467,70 @@ const anchorMap = {
 
   .matrix-mark-wrapper {
     position: absolute;
-    right: 2rem;
     top: 50%;
-    transform: translateY(-50%);
+    left: 50%;
+    transform: translate(-50%, -50%);
     pointer-events: none;
-    z-index: 10;
+    z-index: 5000;
+    transition: opacity var(--duration-standard) ease;
   }
 
+  /* Mobile Hold Indicator Styles */
+  .mobile-hold-indicator {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 100;
+  }
+  
+  .matrix-band.expanded.holding .mobile-hold-indicator {
+    opacity: 1;
+  }
+  
+  .hold-svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg); /* Start circle draw from top */
+  }
+  
+  .hold-circle {
+    fill: none;
+    stroke: var(--color-gold);
+    stroke-width: 2;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+  }
+  
+  .hold-dot {
+    fill: var(--color-gold);
+    opacity: 0;
+  }
+  
+  .matrix-band.expanded.holding .hold-circle {
+    animation: drawCircle 2.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+  
+  .matrix-band.expanded.holding .hold-dot {
+    animation: pulseDot 2.4s ease-in-out forwards;
+  }
+  
+  @keyframes drawCircle {
+    0% { stroke-dashoffset: 100; }
+    100% { stroke-dashoffset: 0; }
+  }
+  
+  @keyframes pulseDot {
+    0% { opacity: 0; transform: scale(0); }
+    20% { opacity: 1; transform: scale(1); }
+    80% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(0); }
+  }
+  
   .matrix-mark-wrapper.initial-center {
     right: 50%;
     transform: translate(50%, -50%) scale(2.5);
