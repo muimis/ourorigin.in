@@ -359,7 +359,13 @@ const sizes = product ? product.data.sizes : [];
         const prevTitle = prevStratum.querySelector('.stratum-title');
         const prevSelector = prevStratum.querySelector('.size-selector'); 
 
-        const topOffset = index * 2; // Halved distance (2vh down)
+        let topOffset = index * 2; // Halved distance (2vh down)
+        
+        // The offering page shouldn't be stacked; it should cover the full screen
+        if (stratum.classList.contains('stratum-offering')) {
+          topOffset = 0;
+        }
+
         const label = `step${index}`;
 
         // 1. Current stratum slides straight up to its designated resting offset (top-stacking)
