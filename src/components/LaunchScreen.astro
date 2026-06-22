@@ -3,13 +3,16 @@
 ---
 <div id="launch-screen" class="launch-screen hidden">
   <div class="launch-text-container">
-    <div class="launch-item">From the <span class="cream">Source.</span></div>
-    <div class="launch-item">From the <span class="gold">Western Ghats.</span></div>
-    <div class="launch-item">From the <span class="cream">Nilgiris.</span></div>
-    <div class="launch-item">From <span class="cream">Idukki.</span></div>
-    <div class="launch-item">From <span class="cream">Wayanad.</span></div>
-    <div class="launch-item">From <span class="cream">Thiruvananthapuram.</span></div>
-    <div class="launch-item">From the <span class="cream">Malabar Coast.</span></div>
+    <div class="static-prefix">From the&nbsp;</div>
+    <div class="dynamic-suffix-container">
+      <div class="launch-item cream">Source.</div>
+      <div class="launch-item gold">Western Ghats.</div>
+      <div class="launch-item cream">Nilgiris.</div>
+      <div class="launch-item cream">Idukki.</div>
+      <div class="launch-item cream">Wayanad.</div>
+      <div class="launch-item cream">Thiruvananthapuram.</div>
+      <div class="launch-item cream">Malabar Coast.</div>
+    </div>
   </div>
 </div>
 
@@ -36,21 +39,23 @@
     opacity: 0;
   }
   .launch-text-container {
-    position: relative;
-    width: 100%;
-    height: 3rem; /* Fixed height to allow absolute centering of items */
     display: flex;
-    justify-content: center;
     align-items: center;
-  }
-  .launch-item {
-    position: absolute;
+    justify-content: center;
     font-family: 'Cormorant Garamond', serif;
-    /* Scale down for Thiruvananthapuram to fit mobile */
     font-size: clamp(1.1rem, 4vw, 2.2rem);
     color: var(--color-warm-cream);
+  }
+  .static-prefix {
+    white-space: nowrap;
+  }
+  .dynamic-suffix-container {
+    display: inline-grid;
+    text-align: left;
+  }
+  .launch-item {
+    grid-area: 1/1; /* Stacks all items perfectly on top of each other */
     opacity: 0;
-    text-align: center;
     white-space: nowrap;
   }
   .gold {
