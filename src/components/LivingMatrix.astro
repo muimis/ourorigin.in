@@ -79,7 +79,7 @@ const anchorMap = {
       bandStyle += ` --index: ${index};`;
       
       return (
-        <a href={linkHref} class={`matrix-band ${origin.data.slug === 'malabar-coast' ? 'empty-state' : ''}`} style={bandStyle}>
+        <div data-href={linkHref} class={`matrix-band ${origin.data.slug === 'malabar-coast' ? 'empty-state' : ''}`} style={bandStyle} tabindex="0">
           <TopographicMap index={index} />
           <div class="band-content">
             <div class="title-group">
@@ -93,11 +93,11 @@ const anchorMap = {
               <p class="origin-subline">{copy.subLine}</p>
               <div class="origin-live-telemetry"></div>
               
-              <p class="origin-action">{copy.cta}</p>
+              <a href={linkHref} class="origin-action">{copy.cta}</a>
               <p class="carousel-trigger" data-origin={origin.id}>Browse all yields from this origin</p>
             </div>
           </div>
-        </a>
+        </div>
       )
     })}
   </div>
@@ -176,6 +176,38 @@ const anchorMap = {
         window.dispatchEvent(new CustomEvent('open-carousel', { detail: { originId } }));
       });
     });
+
+    // Mobile tap-to-expand & Desktop click-to-navigate logic
+    document.querySelectorAll('.matrix-band').forEach(band => {
+      band.addEventListener('click', (e) => {
+        // Prevent triggering if clicking carousel
+        if (e.target.closest('.carousel-trigger')) return;
+        
+        // Let the origin-action anchor act naturally
+        if (e.target.closest('.origin-action')) return;
+
+        const hasHover = window.matchMedia('(hover: hover)').matches;
+        
+        if (!hasHover) {
+          // Mobile: Tap to expand
+          if (!band.classList.contains('expanded')) {
+            // Collapse others
+            document.querySelectorAll('.matrix-band.expanded').forEach(b => b.classList.remove('expanded'));
+            // Expand this one
+            band.classList.add('expanded');
+          } else {
+            // If already expanded, tap to collapse
+            band.classList.remove('expanded');
+          }
+        } else {
+          // Desktop: Click anywhere on band to navigate
+          const href = band.getAttribute('data-href');
+          if (href && href !== '#') {
+            window.location.href = href;
+          }
+        }
+      });
+    });
   });
 </script>
 
@@ -212,8 +244,8 @@ const anchorMap = {
     justify-content: center;
     box-sizing: border-box; /* Crucial so inline padding doesn't break perfect vh math! */
     /* padding-top is dynamic via inline styles */
-    padding-left: 4rem;
-    padding-right: 4rem;
+    padding-left: 1.5rem; /* Reduced for mobile */
+    padding-right: 1.5rem; /* Reduced for mobile */
     padding-bottom: 0;
     cursor: pointer;
     background-color: var(--color-forest-deep);
@@ -226,8 +258,16 @@ const anchorMap = {
     color: var(--color-warm-cream);
     text-decoration: none;
     opacity: 0; /* The masks carve the rect into topographic shapes. No ::after needed! */
+    overflow: hidden; /* CRITICAL: prevent text bleeding across plates */
   }
   
+  @media (min-width: 768px) {
+    .matrix-band {
+      padding-left: 4rem;
+      padding-right: 4rem;
+    }
+  }
+
   .matrix-band:last-child {
     border-bottom: none;
   }
@@ -237,13 +277,24 @@ const anchorMap = {
     flex: var(--base-flex);
   }
   
-  .matrix-band:hover, .matrix-band:focus {
-    /* Gentle expansion to prevent overlapping text while maintaining focus */
-    flex-grow: 1.5 !important;
-    background-color: #121d0e; /* Solid background to prevent seeing layers underneath! */
+  /* Universal expanded class (triggered by JS tap on mobile) */
+  .matrix-band.expanded {
+    flex-grow: 2.5 !important; /* Huge expansion on mobile so text fits vertically */
+    background-color: #121d0e;
     color: var(--color-pure-white);
     outline: none;
     animation-play-state: paused;
+  }
+
+  @media (hover: hover) {
+    .matrix-band:hover, .matrix-band:focus-visible {
+      /* Gentle expansion to prevent overlapping text while maintaining focus */
+      flex-grow: 1.5 !important;
+      background-color: #121d0e; /* Solid background to prevent seeing layers underneath! */
+      color: var(--color-pure-white);
+      outline: none;
+      animation-play-state: paused;
+    }
   }
   
   .band-content {
@@ -252,6 +303,7 @@ const anchorMap = {
     align-items: center;
     justify-content: center;
     text-align: center;
+    overflow: hidden; /* Guarantee internal text cannot spill out */
   }
   
   .title-group {
@@ -268,8 +320,9 @@ const anchorMap = {
   
   .origin-name {
     font-family: var(--font-institutional);
-    /* Allow small mobile screens to scale down further, or wrap if needed */
-    font-size: clamp(0.9rem, 4.5vw, var(--text-size-stratum-title));
+    /* Scale down even smaller on mobile to fit THIRUVANANTHAPURAM */
+    font-size: clamp(0.7rem, 3.8vw, var(--text-size-stratum-title));
+    line-height: 1.1;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     margin: 0;
@@ -285,6 +338,7 @@ const anchorMap = {
     font-family: var(--font-evidence);
     letter-spacing: 0.1em;
     opacity: 0.7;
+    display: inline-block; /* Prevent separation from word */
   }
   
   .band-reveal {
@@ -295,32 +349,42 @@ const anchorMap = {
     transition: height var(--duration-slow) var(--ease-settle), opacity var(--duration-slow) var(--ease-settle), margin var(--duration-slow) var(--ease-settle);
   }
   
-  .matrix-band:hover .band-reveal, .matrix-band:focus .band-reveal {
+  .matrix-band.expanded .band-reveal {
     height: auto;
     opacity: 1;
-    margin-top: 1.5rem;
+    margin-top: clamp(0.5rem, 2vh, 1.5rem);
+  }
+  
+  @media (hover: hover) {
+    .matrix-band:hover .band-reveal, .matrix-band:focus-visible .band-reveal {
+      height: auto;
+      opacity: 1;
+      margin-top: 1.5rem;
+    }
   }
   
   .origin-meta {
     font-family: var(--font-narrative);
-    font-size: 1.1rem;
+    font-size: clamp(0.9rem, 3vw, 1.1rem);
     line-height: 1.4;
-    margin: 0 0 0.2rem 0;
+    margin: 0 0 0.4rem 0;
   }
   
   .origin-subline {
     font-family: var(--font-evidence);
-    font-size: 0.85rem;
+    font-size: clamp(0.7rem, 2.5vw, 0.85rem);
     letter-spacing: 0.05em;
     opacity: 0.6;
-    margin: 0 0 1rem 0;
+    margin: 0 0 0.8rem 0;
   }
   
   .origin-action {
+    display: inline-block;
     font-family: var(--font-narrative);
     font-size: 1rem;
     font-style: italic;
     color: var(--color-gold);
+    text-decoration: none;
     margin: 0;
     opacity: 0;
     transform: translateY(5px);
@@ -329,9 +393,9 @@ const anchorMap = {
 
   .carousel-trigger {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 1.1rem;
+    font-size: clamp(0.9rem, 3vw, 1.1rem);
     color: var(--color-warm-cream);
-    margin: 1.5rem 0 0 0;
+    margin: 1rem 0 0 0;
     text-decoration: underline;
     text-underline-offset: 4px;
     cursor: pointer;
@@ -342,13 +406,21 @@ const anchorMap = {
     opacity: 1;
   }
   
-  .matrix-band:hover .origin-action, .matrix-band:focus .origin-action {
+  .matrix-band.expanded .origin-action {
     opacity: 1;
     transform: translateY(0);
+  }
+  
+  @media (hover: hover) {
+    .matrix-band:hover .origin-action, .matrix-band:focus-visible .origin-action {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .matrix-band.empty-state .origin-action {
     color: rgba(245, 237, 216, 0.6);
+    pointer-events: none;
   }
 
   .matrix-mark-wrapper {
