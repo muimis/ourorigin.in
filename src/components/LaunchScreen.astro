@@ -3,7 +3,7 @@
 ---
 <div id="launch-screen" class="launch-screen hidden">
   <div class="launch-text-container">
-    <div class="static-prefix">From the&nbsp;</div>
+    <div class="static-prefix"><i>From the</i>&nbsp;</div>
     <div class="dynamic-suffix-container">
       <div class="launch-item cream">Source.</div>
       <div class="launch-item gold">Western Ghats.</div>
@@ -24,13 +24,13 @@
     width: 100vw;
     height: 100vh;
     height: 100dvh;
-    background-color: #000;
+    background-color: var(--color-forest-deep); /* Use brand deep forest instead of flat black for richness */
     z-index: 9999;
     display: flex;
     justify-content: center;
     align-items: center;
-    pointer-events: auto; /* Block clicks behind it during initial load */
-    transition: opacity 1s ease;
+    pointer-events: auto;
+    transition: opacity 1.5s ease;
   }
   .launch-screen.hidden {
     display: none;
@@ -43,26 +43,31 @@
     align-items: center;
     justify-content: center;
     font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(1.1rem, 4vw, 2.2rem);
+    font-size: clamp(1.4rem, 5vw, 2.8rem); /* Slightly larger for richness */
     color: var(--color-warm-cream);
+    letter-spacing: 0.02em;
   }
   .static-prefix {
     white-space: nowrap;
+    opacity: 0.8; /* Subtle hierarchy */
   }
   .dynamic-suffix-container {
     display: inline-grid;
     text-align: left;
   }
   .launch-item {
-    grid-area: 1/1; /* Stacks all items perfectly on top of each other */
+    grid-area: 1/1;
     opacity: 0;
     white-space: nowrap;
+    will-change: transform, opacity, filter;
   }
   .gold {
     color: var(--color-gold);
+    text-shadow: 0 0 12px rgba(166, 124, 60, 0.4); /* Luxurious subtle glow */
   }
   .cream {
     color: var(--color-warm-cream);
+    text-shadow: 0 0 10px rgba(245, 237, 216, 0.2);
   }
 </style>
 
@@ -70,7 +75,6 @@
   import { gsap } from 'gsap';
 
   document.addEventListener('DOMContentLoaded', () => {
-    // Check if this is the first visit
     const hasVisited = sessionStorage.getItem('ourorigin_visited');
     const launchScreen = document.getElementById('launch-screen');
     
@@ -78,31 +82,36 @@
       launchScreen.classList.remove('hidden');
       
       const items = gsap.utils.toArray('.launch-item');
+      const prefix = document.querySelector('.static-prefix');
       
-      // Set initial positions below the center
-      gsap.set(items, { y: 20, opacity: 0 });
+      // Cinematic initial state
+      gsap.set(items, { y: 25, opacity: 0, filter: 'blur(4px)' });
+      gsap.set(prefix, { opacity: 0, filter: 'blur(4px)' });
       
       const tl = gsap.timeline({
         onComplete: () => {
-          launchScreen.style.pointerEvents = 'none'; // Allow clicks to pass through once fading
+          launchScreen.style.pointerEvents = 'none';
           launchScreen.classList.add('fade-out');
           setTimeout(() => {
             launchScreen.classList.add('hidden');
             sessionStorage.setItem('ourorigin_visited', 'true');
-          }, 1000); // Wait for CSS fade out
+          }, 1500); // Slower, richer fade out into the site
         }
       });
       
-      const durationIn = 0.3;
+      // Fade in the static prefix slowly
+      tl.to(prefix, { opacity: 0.9, filter: 'blur(0px)', duration: 1.5, ease: "power2.out" }, 0);
+      
+      const durationIn = 0.5;
       const hold = 0.4;
-      const durationOut = 0.3;
+      const durationOut = 0.4;
       
       items.forEach((item, i) => {
-        // First item starts immediately, subsequent items start exactly as previous item animates out
-        const startTime = i === 0 ? 0 : `-=${durationOut}`;
+        // Stagger so items overlap perfectly in motion
+        const startTime = i === 0 ? 0.2 : `-=${durationOut - 0.1}`;
         
-        tl.to(item, { y: 0, opacity: 1, duration: durationIn, ease: "power2.out" }, startTime)
-          .to(item, { y: -20, opacity: 0, duration: durationOut, ease: "power2.in" }, `+=${hold}`);
+        tl.to(item, { y: 0, opacity: 1, filter: 'blur(0px)', duration: durationIn, ease: "power3.out" }, startTime)
+          .to(item, { y: -25, opacity: 0, filter: 'blur(4px)', duration: durationOut, ease: "power3.in" }, `+=${hold}`);
       });
         
     } else if (launchScreen) {
