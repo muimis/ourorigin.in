@@ -27,6 +27,11 @@ function getFirstSentence(text) {
     </div>
     
     <div class="carousel-track" id="carousel-track">
+      <!-- Empty State Card -->
+      <div id="carousel-empty-state" class="carousel-card hidden-by-filter" style="justify-content: center; text-align: center; border: 1px dashed rgba(244, 241, 235, 0.3);">
+         <p class="observation-line" style="margin: 0; opacity: 0.6;">No companion yields have been documented for this origin yet.</p>
+      </div>
+
       {products.map(product => {
         const isAnchor = product.data.isAnchorProduct;
         const originId = typeof product.data.originSlug === 'object' ? product.data.originSlug.id : product.data.originSlug;
@@ -302,6 +307,13 @@ function getFirstSentence(text) {
           card.classList.add('hidden-by-filter');
         }
       });
+      
+      const emptyStateCard = document.getElementById('carousel-empty-state');
+      if (visibleCount === 0) {
+        emptyStateCard.classList.remove('hidden-by-filter');
+      } else {
+        emptyStateCard.classList.add('hidden-by-filter');
+      }
       
       title.textContent = originName ? `${originName} Yields` : 'Products';
       overlay.classList.remove('hidden');

@@ -169,6 +169,7 @@ const anchorMap = {
     // Wire up carousel triggers
     document.querySelectorAll('.carousel-trigger').forEach(trigger => {
       trigger.addEventListener('click', (e) => {
+        e.preventDefault(); // Stop navigation!
         e.stopPropagation(); // Don't collapse the band
         const originId = trigger.getAttribute('data-origin');
         window.dispatchEvent(new CustomEvent('open-carousel', { detail: { originId } }));

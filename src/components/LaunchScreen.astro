@@ -20,7 +20,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    pointer-events: none;
+    pointer-events: auto; /* Block clicks behind it during initial load */
     transition: opacity 1s ease;
   }
   .launch-screen.hidden {
@@ -53,6 +53,7 @@
       
       const tl = gsap.timeline({
         onComplete: () => {
+          launchScreen.style.pointerEvents = 'none'; // Allow clicks to pass through once fading
           launchScreen.classList.add('fade-out');
           setTimeout(() => {
             launchScreen.classList.add('hidden');

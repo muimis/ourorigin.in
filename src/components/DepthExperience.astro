@@ -377,11 +377,9 @@ const sizes = product ? product.data.sizes : [];
           };
           window.dispatchEvent(new CustomEvent('add-to-ledger', { detail: item }));
           
-          // Open WhatsApp
-          const message = `Hi — I'd like to order ${productData.name} (${size}) from OurOrigin. I found you at ourorigin.in.`;
-          const encodedMessage = encodeURIComponent(message);
-          const waUrl = `https://wa.me/919645555668?text=${encodedMessage}`;
-          window.open(waUrl, '_blank');
+          // Open Ledger to show the cart
+          const trigger = document.getElementById('ledger-trigger');
+          if (trigger) trigger.click();
         });
       }
       
