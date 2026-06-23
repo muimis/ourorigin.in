@@ -31,7 +31,7 @@ const companionsJson = JSON.stringify(companionProductsMap);
   <div class="ledger-backdrop" id="ledger-close-backdrop"></div>
   <div class="ledger-panel">
     <div class="ledger-header">
-      <h2 class="ledger-title">What you're holding</h2>
+      <h2 class="ledger-title">Your Ledger</h2>
       <button id="ledger-close-btn" class="ledger-close">Close</button>
     </div>
     
@@ -41,7 +41,7 @@ const companionsJson = JSON.stringify(companionProductsMap);
       </div>
       
       <div id="ledger-empty-state" class="ledger-empty hidden">
-        Nothing held yet.
+        The ledger is empty. Explore the origins.
       </div>
       
       <div id="ledger-footer" class="ledger-footer hidden">
@@ -49,7 +49,7 @@ const companionsJson = JSON.stringify(companionProductsMap);
           <span>Total</span>
           <span id="ledger-total-price" class="price-font">₹0</span>
         </div>
-        <button id="ledger-checkout-btn" class="ledger-checkout">Continue to the Source</button>
+        <button id="ledger-connect-btn" class="ledger-connect">Connect via WhatsApp</button>
       </div>
       
       <!-- Secondary Discovery -->
@@ -75,7 +75,7 @@ const companionsJson = JSON.stringify(companionProductsMap);
     const totalPriceDisplay = document.getElementById('ledger-total-price');
     const discoverySection = document.getElementById('ledger-discovery');
     const discoveryText = document.getElementById('discovery-text');
-    const checkoutBtn = document.getElementById('ledger-checkout-btn');
+    const connectBtn = document.getElementById('ledger-connect-btn');
     
     let ledgerItems = JSON.parse(localStorage.getItem('ourorigin_ledger') || '[]');
     
@@ -196,8 +196,8 @@ const companionsJson = JSON.stringify(companionProductsMap);
       }
     }
     
-    // Checkout logic
-    checkoutBtn.addEventListener('click', () => {
+    // Connection logic
+    connectBtn.addEventListener('click', () => {
       let message = '';
       if (ledgerItems.length === 1 && ledgerItems[0].quantity === 1) {
         const item = ledgerItems[0];
@@ -416,7 +416,7 @@ const companionsJson = JSON.stringify(companionProductsMap);
     font-family: 'Cinzel', serif;
     font-size: 1.2rem;
   }
-  .ledger-checkout {
+  .ledger-connect {
     background: var(--color-warm-cream);
     color: var(--color-forest-deep);
     border: none;
