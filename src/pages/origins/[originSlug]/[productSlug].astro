@@ -1,5 +1,6 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
+import GlobalNav from '../../../components/GlobalNav.astro';
 import DepthExperience from '../../../components/DepthExperience.astro';
 import Carousel from '../../../components/Carousel.astro';
 import Ledger from '../../../components/Ledger.astro';
@@ -67,6 +68,7 @@ if (!origin) {
     </style>
 </head>
 <body>
+    <GlobalNav />
     <DepthExperience origin={origin} product={product} />
     <Carousel />
     <Ledger />

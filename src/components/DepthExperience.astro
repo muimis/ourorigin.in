@@ -84,6 +84,7 @@ const sizes = product ? product.data.sizes : [];
               originId: origin.id
             })}>Continue to the Source</button>
             <button class="more-from-origin-btn" data-origin={origin.id}>More from this origin</button>
+            <a href="/" class="return-matrix-link">Return to the Matrix</a>
           </div>
         ) : (
           <p>OFFERING — [product.sizes]</p>
@@ -160,12 +161,7 @@ const sizes = product ? product.data.sizes : [];
     pointer-events: none;
   }
   
-  /* Hand stratum archival treatment */
-  .stratum-hand .stratum-image {
-    filter: sepia(0.3) contrast(1.5);
-    mix-blend-mode: multiply;
-    opacity: 0.7;
-  }
+  /* Hand stratum uses default or preserve-people styling */
 
   /* Terrain Cuts / Map Borders - Dynamically injected via --mask-url to match the active origin */
   .stratum-canopy, .stratum-land, .stratum-hand, .stratum-specimen {
@@ -337,6 +333,22 @@ const sizes = product ? product.data.sizes : [];
   .more-from-origin-btn:hover {
     opacity: 1;
   }
+
+  .return-matrix-link {
+    display: inline-block;
+    color: var(--color-warm-cream);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+  }
+  .return-matrix-link:hover {
+    opacity: 1;
+  }
 </style>
 
 <script>
@@ -494,7 +506,7 @@ const sizes = product ? product.data.sizes : [];
         );
 
         gauge.addEventListener('click', () => {
-          console.log('open spatial overlay - future direction');
+          window.location.href = '/';
         });
 
         document.dispatchEvent(new CustomEvent('play-origin-mark-entrance'));

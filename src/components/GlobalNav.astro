@@ -1,0 +1,44 @@
+---
+// src/components/GlobalNav.astro
+---
+
+<nav class="global-nav">
+  <a href="/observations">Observations</a> &middot; 
+  <a href="/why">Why this exists.</a> &middot; 
+  <a href="/contact">Contact</a>
+</nav>
+
+<style>
+  .global-nav {
+    position: fixed;
+    top: 2rem;
+    left: 2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--color-warm-cream);
+    z-index: 9000;
+    opacity: 0.8;
+  }
+  
+  .global-nav a {
+    color: var(--color-warm-cream);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: opacity 0.2s ease;
+  }
+  
+  .global-nav a:hover {
+    opacity: 1;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  @media (max-width: 768px) {
+    .global-nav {
+      top: 1.5rem;
+      left: 1.5rem;
+      font-size: 0.75rem;
+    }
+  }
+</style>

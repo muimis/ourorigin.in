@@ -1,9 +1,9 @@
 {
-  "slug": "single-origin-clove",
+  "slug": "clove",
   "name": "Single Origin Clove",
   "botanicalName": "Syzygium aromaticum",
   "originSlug": "wayanad",
-  "isAnchorProduct": true,
+  "isAnchorProduct": false,
   "batchRef": "WYD-CLV-001",
   "harvestMonth": "Seasonal",
   "sizes": [
