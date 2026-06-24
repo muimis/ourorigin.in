@@ -4,6 +4,7 @@ import GlobalNav from '../components/GlobalNav.astro';
 import LivingMatrix from '../components/LivingMatrix.astro';
 import Carousel from '../components/Carousel.astro';
 import LaunchScreen from '../components/LaunchScreen.astro';
+import AllYieldsPanel from '../components/AllYieldsPanel.astro';
 ---
 
 <!DOCTYPE html>
@@ -12,6 +13,43 @@ import LaunchScreen from '../components/LaunchScreen.astro';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OurOrigin | The Living Matrix</title>
+    
+    <meta name="description" content="OurOrigin sources spices and natural ingredients from the Western Ghats — Nilgiris, Idukki, Wayanad, and beyond. From the Source.">
+    <link rel="canonical" href="https://ourorigin.in/">
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="OurOrigin — From the Western Ghats">
+    <meta property="og:description" content="Five origins. Twelve yields. The Western Ghats, made experienceable.">
+    <meta property="og:url" content="https://ourorigin.in/">
+    <meta property="og:image" content="https://ourorigin.in/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="OurOrigin">
+    
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="OurOrigin — From the Western Ghats">
+    <meta name="twitter:description" content="Five origins. Twelve yields. The Western Ghats, made experienceable.">
+    <meta name="twitter:image" content="https://ourorigin.in/og-image.jpg">
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "OurOrigin",
+      "url": "https://ourorigin.in",
+      "logo": "https://ourorigin.in/og-image.jpg",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+91-96455-55668",
+        "contactType": "customer service",
+        "availableLanguage": ["English", "Malayalam"]
+      },
+      "description": "OurOrigin sources spices and natural ingredients from the Western Ghats of India."
+    }
+    </script>
+    
     <!-- Google Fonts with display=swap as explicitly requested -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,12 +61,54 @@ import LaunchScreen from '../components/LaunchScreen.astro';
             background-color: var(--color-forest-deep);
             color: var(--color-warm-cream);
         }
+        
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        .skip-nav {
+            position: absolute;
+            top: -100%;
+            left: 0;
+            background: var(--color-warm-cream);
+            color: var(--color-forest-deep);
+            padding: 0.5rem 1rem;
+            font-family: var(--font-evidence);
+            font-size: 0.875rem;
+            z-index: 9999;
+        }
+        .skip-nav:focus {
+            top: 0;
+        }
     </style>
 </head>
 <body>
+    <a href="#main-content" class="skip-nav">Skip to main content</a>
     <GlobalNav />
     <LaunchScreen />
-    <LivingMatrix />
-    <Carousel />
+    
+    <main id="main-content">
+      <h1 class="sr-only">OurOrigin — The Living Matrix — From the Western Ghats</h1>
+      <LivingMatrix />
+      <Carousel />
+      <AllYieldsPanel />
+    </main>
+
+    <footer>
+      <p class="sr-only">OurOrigin — FSSAI Reg. No. 21326135000354</p>
+      <nav aria-label="Site navigation" style="display:none;">
+        <a href="/observations">Observations</a>
+        <a href="/why">Why this exists.</a>
+        <a href="/contact">Contact</a>
+      </nav>
+    </footer>
 </body>
 </html>

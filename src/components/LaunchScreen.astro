@@ -1,10 +1,11 @@
 ---
 // LaunchScreen.astro
+import OriginMark from './OriginMark.astro';
 ---
 <div id="launch-screen" class="launch-screen hidden">
-  <div class="source-glow"></div>
-  <div class="launch-text-container">
-    <div class="launch-text"><i>From the</i> <span class="cream">Source.</span></div>
+  <div class="launch-content">
+    <OriginMark variant="primary" size={120} id="launch-mark" animate={true} />
+    <div class="launch-text"><span class="cream">From the Source.</span></div>
   </div>
 </div>
 
@@ -22,7 +23,7 @@
     justify-content: center;
     align-items: center;
     pointer-events: auto;
-    transition: opacity 1.5s ease, background-color 1.5s ease;
+    transition: opacity 0.7s ease, background-color 0.7s ease;
   }
   .launch-screen.hidden {
     display: none;
@@ -31,44 +32,26 @@
     opacity: 0;
   }
   
-  .source-glow {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0.8);
-    width: 90vw;
-    height: 90vw;
-    max-width: 800px;
-    max-height: 800px;
-    background: radial-gradient(circle, rgba(166, 124, 60, 0.15) 0%, rgba(166, 124, 60, 0.05) 40%, transparent 70%);
-    border-radius: 50%;
-    pointer-events: none;
-    opacity: 0;
-    will-change: transform, opacity;
-  }
-
-  .launch-text-container {
+  .launch-content {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    position: relative;
-    z-index: 2;
   }
+
   .launch-text {
     font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(1.6rem, 6vw, 3.2rem); /* Slightly larger again for the void */
+    font-size: 16px;
+    font-style: italic;
     color: var(--color-warm-cream);
-    letter-spacing: 0.04em;
+    letter-spacing: 0.12em;
     opacity: 0;
-    will-change: transform, opacity, filter;
+    margin-top: 1.5rem;
+    will-change: opacity;
   }
-  .launch-text i {
-    opacity: 0.7;
-    font-weight: 300;
-  }
+  
   .cream {
     color: var(--color-warm-cream);
-    text-shadow: 0 0 15px rgba(245, 237, 216, 0.25);
   }
 </style>
 
@@ -83,40 +66,30 @@
       launchScreen.classList.remove('hidden');
       
       const text = document.querySelector('.launch-text');
-      const glow = document.querySelector('.source-glow');
       
-      // Starting positions (deep in the void)
-      gsap.set(text, { y: 15, opacity: 0, filter: 'blur(8px)', scale: 0.95 });
-      gsap.set(glow, { opacity: 0, scale: 0.7 });
-      
+      // The mark draws on automatically via its internal logic (takes ~2.5s to finish the dot)
+      // So we wait for 2.5s + 0.5s = 3.0s total before fading in text.
       const tl = gsap.timeline({
+        delay: 3.0, // Delay matching mark completion + 0.5s
         onComplete: () => {
-          launchScreen.style.pointerEvents = 'none';
-          
-          // Fade to transparent (revealing the matrix beneath)
-          launchScreen.style.backgroundColor = 'transparent';
-          launchScreen.classList.add('fade-out');
-          
-          sessionStorage.setItem('ourorigin_visited', 'true');
-          // Allow LivingMatrix orchestrator to begin its sequence IMMEDIATELY while fading
-          window.dispatchEvent(new Event('launch-sequence-complete'));
-          
+          // Hold the text for 1.5s
           setTimeout(() => {
-            launchScreen.classList.add('hidden');
+            launchScreen.style.pointerEvents = 'none';
+            launchScreen.style.backgroundColor = 'transparent';
+            launchScreen.classList.add('fade-out');
+            
+            sessionStorage.setItem('ourorigin_visited', 'true');
+            window.dispatchEvent(new Event('launch-sequence-complete'));
+            
+            setTimeout(() => {
+              launchScreen.classList.add('hidden');
+            }, 700); // Wait for transition out
           }, 1500); 
         }
       });
       
-      // 1. The Glow breathes in
-      tl.to(glow, { opacity: 1, scale: 1.1, duration: 3.0, ease: "power1.out" }, 0);
-      
-      // 2. The Text emerges from the glow, scaling up slowly towards the viewer
-      tl.to(text, { y: 0, opacity: 1, filter: 'blur(0px)', scale: 1, duration: 1.8, ease: "power2.out" }, 0.5)
-        // 3. The Text holds, then drifts up and dissolves
-        .to(text, { y: -15, opacity: 0, filter: 'blur(8px)', scale: 1.05, duration: 1.2, ease: "power2.in" }, "+=1.2");
-        
-      // 4. The Glow breathes out as the text leaves
-      tl.to(glow, { opacity: 0, scale: 1.3, duration: 1.5, ease: "power1.in" }, "-=1.0");
+      // Fade in text over 600ms
+      tl.to(text, { opacity: 1, duration: 0.6, ease: "power2.out" });
         
     } else if (launchScreen) {
       launchScreen.classList.add('hidden');

@@ -63,6 +63,7 @@ const products = defineCollection({
       })
     ).min(1),
     methodDescription: z.string(),
+    packagingImage: z.string().optional(),
     specimenCopy: z.string(),
     offeringCopy: z.string().optional()
   })

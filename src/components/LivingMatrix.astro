@@ -72,14 +72,26 @@ const anchorMap = {
         ][index];
         const maskCss = `mask-image: ${maskSvg}, linear-gradient(white, white); mask-position: top center, bottom center; mask-size: 100% 100px, 100% calc(100% - 99px); mask-repeat: no-repeat;`;
         const webkitMaskCss = `-webkit-mask-image: ${maskSvg}, linear-gradient(white, white); -webkit-mask-position: top center, bottom center; -webkit-mask-size: 100% 100px, 100% calc(100% - 99px); -webkit-mask-repeat: no-repeat;`;
-        // Removed padding-top so text naturally centers in the flexbox without overlapping boundaries
         bandStyle += ` margin-top: -100px; ${maskCss} ${webkitMaskCss}`;
       }
       
       bandStyle += ` --index: ${index};`;
       
       return (
-        <div data-href={linkHref} class={`matrix-band ${origin.data.slug === 'malabar-coast' ? 'empty-state' : ''}`} style={bandStyle} tabindex="0">
+        <div 
+          data-href={linkHref} 
+          class={`matrix-band ${origin.data.slug === 'malabar-coast' ? 'empty-state' : ''}`} 
+          style={bandStyle} 
+          tabindex="0"
+          role="button"
+          aria-expanded="false"
+          aria-label={`${origin.data.name}, ${getHighestElevation(origin.data.elevation)}M. Tap to expand.`}
+        >
+          <div class="plate-origin-mark" style={`opacity: ${origin.data.slug === 'malabar-coast' ? '0.3' : '0.9'}`}>
+            <OriginMark variant="primary" size={24} animate={false} />
+          </div>
+          <div class="tap-pulse-indicator"></div>
+          
           <TopographicMap index={index} />
           
           <!-- Mobile Hold Indicator -->
@@ -100,10 +112,13 @@ const anchorMap = {
             <div class="band-reveal">
               <p class="origin-meta">{copy.fragment}</p>
               <p class="origin-subline">{copy.subLine}</p>
+              {origin.data.slug === 'wayanad' && (
+                <p class="commerce-signal">From ₹109</p>
+              )}
               <div class="origin-live-telemetry"></div>
               
-              <a href={linkHref} class="origin-action">{copy.cta}</a>
-              <p class="carousel-trigger" data-origin={origin.id}>Browse all yields from this origin</p>
+              <a href={linkHref} class="origin-action" aria-label={`Enter ${origin.data.name} — descend through ${origin.data.method || 'the origin'}`}>{copy.cta}</a>
+              <p class="carousel-trigger" data-origin={origin.id} aria-label={`Browse all yields from ${origin.data.name}`} role="button" tabindex="0">Browse all yields from this origin</p>
             </div>
           </div>
         </div>
@@ -111,8 +126,13 @@ const anchorMap = {
     })}
   </div>
   
-  <div class="matrix-mark-wrapper initial-center">
-    <OriginMark animate={true} size="var(--origin-mark-gauge-size)" />
+  <div class="matrix-mark-wrapper initial-center" id="living-matrix-mark">
+    <OriginMark 
+      variant="gold" 
+      size={48} 
+      id="matrix-gauge-mark" 
+      aria-label="Open the spatial overlay — navigate between origins"
+    />
   </div>
 </div>
 
@@ -125,20 +145,16 @@ const anchorMap = {
     }
 
     init() {
-      // The half-second of nothing, then the mark, then the bands.
       const bands = document.querySelectorAll('.matrix-band');
       const originNames = document.querySelectorAll('.title-group');
       const markWrapper = document.querySelector('.matrix-mark-wrapper');
       
-      // Hide initially
       gsap.set(bands, { opacity: 0 });
       gsap.set(originNames, { y: 10, opacity: 0 });
 
-      // Orchestrate the arrival
       const tl = gsap.timeline({ delay: 0.5 });
 
       tl.call(() => {
-        // Fire the origin mark entrance animation
         const event = new Event('play-origin-mark-entrance');
         document.dispatchEvent(event);
       })
@@ -146,13 +162,13 @@ const anchorMap = {
         scale: 1,
         duration: 1.5,
         ease: 'power3.inOut'
-      }, "+=1.5") // Wait for the draw to finish before moving to the side
+      }, "+=1.5")
       .to(bands, {
         opacity: 1,
         duration: 2,
         stagger: 0.15,
         ease: 'power2.inOut'
-      }, "-=0.8") // Fade in bands as the mark slides over
+      }, "-=0.8")
       .to(originNames, {
         y: 0,
         opacity: 1,
@@ -163,7 +179,6 @@ const anchorMap = {
     }
   }
 
-  // Run orchestrator on load
   document.addEventListener('DOMContentLoaded', () => {
     const hasVisited = sessionStorage.getItem('ourorigin_visited');
     if (hasVisited === 'true') {
@@ -174,54 +189,55 @@ const anchorMap = {
       });
     }
     
-    // Wire up carousel triggers
     document.querySelectorAll('.carousel-trigger').forEach(trigger => {
       trigger.addEventListener('click', (e) => {
-        e.preventDefault(); // Stop navigation!
-        e.stopPropagation(); // Don't collapse the band
+        e.preventDefault();
+        e.stopPropagation();
         const originId = trigger.getAttribute('data-origin');
         window.dispatchEvent(new CustomEvent('open-carousel', { detail: { originId } }));
       });
     });
 
-    // Mobile tap-to-expand & Desktop click-to-navigate logic
     document.querySelectorAll('.matrix-band').forEach(band => {
       band.addEventListener('click', (e) => {
-        // Prevent triggering if clicking carousel
         if (e.target.closest('.carousel-trigger')) return;
-        
-        // Let the origin-action anchor act naturally
         if (e.target.closest('.origin-action')) return;
 
         const hasHover = window.matchMedia('(hover: hover)').matches;
         
         if (!hasHover) {
           e.preventDefault();
-          // Mobile: Tap to expand, hold, and navigate
           const bandsContainer = document.querySelector('.matrix-bands');
           
           if (!band.classList.contains('expanded')) {
-            // Collapse others
+            // Pulse animation
+            const pulse = band.querySelector('.tap-pulse-indicator');
+            if (pulse) {
+              pulse.classList.add('pulse-active');
+              setTimeout(() => pulse.classList.remove('pulse-active'), 300);
+            }
+
             document.querySelectorAll('.matrix-band.expanded').forEach(b => {
               b.classList.remove('expanded');
-              b.classList.remove('holding');
+              b.setAttribute('aria-expanded', 'false');
             });
             bandsContainer.classList.add('has-expanded');
             
-            // Expand and hold this one
             band.classList.add('expanded');
             band.classList.add('holding');
+            band.setAttribute('aria-expanded', 'true');
             
-            // Navigate after 2.5s hold animation
             setTimeout(() => {
               const href = band.getAttribute('data-href');
               if (href && href !== '#') {
                 window.location.href = href;
               }
             }, 2500);
+          } else {
+            band.classList.remove('expanded');
+            band.setAttribute('aria-expanded', 'false');
           }
         } else {
-          // Desktop: Click anywhere on band to navigate
           const href = band.getAttribute('data-href');
           if (href && href !== '#') {
             window.location.href = href;
@@ -240,9 +256,8 @@ const anchorMap = {
     background-color: var(--color-forest-deep);
     position: relative;
     overflow: hidden;
-    /* Shifted up slightly (~3mm / 1.5vh) while keeping total 10vh padding to maintain the 90vh internal plate math */
     padding: 3.5vh 0 6.5vh 0; 
-    box-sizing: border-box; /* Crucial so padding doesn't overflow 100vh */
+    box-sizing: border-box;
   }
   
   .matrix-bands {
@@ -263,25 +278,24 @@ const anchorMap = {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-sizing: border-box; /* Crucial so inline padding doesn't break perfect vh math! */
-    /* padding-top is dynamic via inline styles */
-    padding-left: 1.5rem; /* Reduced for mobile */
-    padding-right: 1.5rem; /* Reduced for mobile */
+    box-sizing: border-box;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
     padding-bottom: 0;
     cursor: pointer;
     background-color: var(--color-forest-deep);
     transition: flex var(--duration-deep) var(--ease-settle), 
                 background-color var(--duration-standard) ease;
     position: relative;
-    /* Static background, add subtleBreathe idle animation */
     animation: subtleBreathe 10s ease-in-out infinite;
-    animation-delay: calc(var(--index, 0) * -2s); /* Stagger the breathing */
+    animation-delay: calc(var(--index, 0) * -2s);
     color: var(--color-warm-cream);
     text-decoration: none;
-    opacity: 0; /* The masks carve the rect into topographic shapes. No ::after needed! */
-    /* Add 3D feel with drop shadow that respects the SVG mask! */
+    opacity: 0;
     filter: drop-shadow(0px -8px 15px rgba(0, 0, 0, 0.7));
-    z-index: calc(10 - var(--index)); /* Ensure upper plates cast shadow onto lower plates properly if needed, though default stacking handles it */
+    z-index: calc(10 - var(--index));
+    overflow: hidden;
+    contain: layout paint;
   }
   
   @media (min-width: 768px) {
@@ -295,14 +309,8 @@ const anchorMap = {
     border-bottom: none;
   }
   
-  .matrix-band {
-    /* Base configuration for hover expansion */
-    flex: var(--base-flex);
-  }
-  
-  /* Universal expanded class (triggered by JS tap on mobile) */
   .matrix-band.expanded {
-    flex-grow: 1.5 !important; /* Huge expansion on mobile removed, restore to original 1.5 to prevent squishing others into lines */
+    flex-grow: 1.5 !important;
     background-color: #121d0e;
     color: var(--color-pure-white);
     outline: none;
@@ -311,9 +319,8 @@ const anchorMap = {
 
   @media (hover: hover) {
     .matrix-band:hover, .matrix-band:focus-visible {
-      /* Gentle expansion to prevent overlapping text while maintaining focus */
       flex-grow: 1.5 !important;
-      background-color: #121d0e; /* Solid background to prevent seeing layers underneath! */
+      background-color: #121d0e;
       color: var(--color-pure-white);
       outline: none;
       animation-play-state: paused;
@@ -328,8 +335,8 @@ const anchorMap = {
     text-align: center;
     height: 100%;
     width: 100%;
-    overflow: hidden; /* Guarantee internal text cannot spill out past the 18vh vertical space */
-    padding: 2vh 0; /* buffer to keep text away from absolute wavy edges */
+    overflow: hidden;
+    padding: 2vh 0;
     box-sizing: border-box;
   }
   
@@ -345,7 +352,6 @@ const anchorMap = {
   
   .origin-name {
     font-family: var(--font-institutional);
-    /* Scale down perfectly for thiruvananthapuram */
     font-size: clamp(0.7rem, 3.8vw, var(--text-size-stratum-title));
     line-height: 1.1;
     letter-spacing: 0.1em;
@@ -358,7 +364,6 @@ const anchorMap = {
     transform-origin: center;
   }
   
-  /* When a plate expands, shrink and dim the text of the COMPRESSED plates so they never bleed */
   .matrix-bands.has-expanded .matrix-band:not(.expanded) .origin-name {
     transform: scale(0.65);
     opacity: 0.4;
@@ -373,19 +378,18 @@ const anchorMap = {
   
   .elevation-sup {
     vertical-align: super;
-    font-size: 0.35em; /* True superscript sizing */
+    font-size: 0.35em;
     margin-left: 0.2rem;
     font-family: var(--font-evidence);
     letter-spacing: 0.1em;
     opacity: 0.7;
-    display: inline-block; /* Prevent separation from word */
+    display: inline-block;
   }
   
   .band-reveal {
     height: 0;
     opacity: 0;
     overflow: hidden;
-    /* Use slower, more deliberate timing for the reveal to match the "opening" feel */
     transition: height var(--duration-slow) var(--ease-settle), opacity var(--duration-slow) var(--ease-settle), margin var(--duration-slow) var(--ease-settle);
   }
   
@@ -418,6 +422,15 @@ const anchorMap = {
     margin: 0 0 0.6rem 0;
   }
   
+  .commerce-signal {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--color-gold);
+    opacity: 0.65;
+    margin-top: 0.5rem;
+    text-transform: uppercase;
+  }
+  
   .origin-action {
     display: inline-block;
     font-family: var(--font-narrative);
@@ -439,16 +452,47 @@ const anchorMap = {
     text-decoration: underline;
     text-underline-offset: 4px;
     cursor: pointer;
-    opacity: 0.8;
-    transition: opacity 0.2s ease;
+    transition: color 0.2s ease;
   }
   .carousel-trigger:hover {
-    opacity: 1;
+    color: var(--color-gold);
+  }
+
+  /* Plate static Origin Mark */
+  .plate-origin-mark {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  /* Tap Pulse Indicator */
+  .tap-pulse-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.5);
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, var(--color-gold) 0%, transparent 70%);
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 4;
+  }
+  .tap-pulse-indicator.pulse-active {
+    animation: tapPulse 300ms ease-out forwards;
+  }
+  
+  @keyframes tapPulse {
+    0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0.6; }
+    100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
   }
   
   .matrix-band.expanded .origin-action {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(20px);
   }
   
   @media (hover: hover) {

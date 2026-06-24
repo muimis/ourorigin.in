@@ -1,0 +1,211 @@
+---
+import { getCollection } from 'astro:content';
+
+const products = await getCollection('products');
+
+// Group products by origin
+const origins = await getCollection('origins');
+const originMap = new Map();
+origins.forEach(o => originMap.set(o.id, o.data.name));
+
+const groupedProducts: Record<string, any[]> = {};
+products.forEach(p => {
+  const originId = typeof p.data.originSlug === 'object' ? p.data.originSlug.id : p.data.originSlug;
+  const originName = originMap.get(originId) || originId;
+  
+  if (!groupedProducts[originName]) {
+    groupedProducts[originName] = [];
+  }
+  groupedProducts[originName].push({
+    name: p.data.name,
+    href: `/origins/${originId}/${p.id}`
+  });
+});
+
+// Sort origins alphabetically
+const sortedOriginNames = Object.keys(groupedProducts).sort();
+---
+
+<!-- Trigger -->
+<button id="all-yields-trigger" class="all-yields-trigger" aria-label="Open All Yields">All yields</button>
+
+<!-- Slide-in Panel -->
+<div id="all-yields-panel" class="all-yields-panel hidden" aria-hidden="true">
+  <div class="yields-header">
+    <h2>All Yields</h2>
+    <button id="all-yields-close" aria-label="Close All Yields">✕</button>
+  </div>
+  <div class="yields-content">
+    {sortedOriginNames.map(origin => (
+      <div class="yield-group">
+        <h3>{origin}</h3>
+        <ul>
+          {groupedProducts[origin].sort((a, b) => a.name.localeCompare(b.name)).map(product => (
+            <li><a href={product.href}>{product.name}</a></li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+</div>
+
+<div id="all-yields-backdrop" class="yields-backdrop hidden"></div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const trigger = document.getElementById('all-yields-trigger');
+    const panel = document.getElementById('all-yields-panel');
+    const closeBtn = document.getElementById('all-yields-close');
+    const backdrop = document.getElementById('all-yields-backdrop');
+
+    const openPanel = () => {
+      panel.classList.remove('hidden');
+      // Trigger reflow
+      void panel.offsetWidth;
+      panel.classList.add('open');
+      backdrop.classList.remove('hidden');
+      void backdrop.offsetWidth;
+      backdrop.classList.add('visible');
+      panel.setAttribute('aria-hidden', 'false');
+    };
+
+    const closePanel = () => {
+      panel.classList.remove('open');
+      backdrop.classList.remove('visible');
+      panel.setAttribute('aria-hidden', 'true');
+      setTimeout(() => {
+        panel.classList.add('hidden');
+        backdrop.classList.add('hidden');
+      }, 400); // match transition
+    };
+
+    if (trigger) trigger.addEventListener('click', openPanel);
+    if (closeBtn) closeBtn.addEventListener('click', closePanel);
+    if (backdrop) backdrop.addEventListener('click', closePanel);
+  });
+</script>
+
+<style>
+  .all-yields-trigger {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 900;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--color-warm-cream);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+  }
+  .all-yields-trigger:hover {
+    opacity: 1;
+  }
+
+  .all-yields-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    max-width: 400px;
+    height: 100vh;
+    height: 100dvh;
+    background-color: var(--color-forest-deep);
+    border-left: 1px solid rgba(245, 237, 216, 0.1);
+    z-index: 1100;
+    transform: translateX(100%);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    color: var(--color-warm-cream);
+  }
+  .all-yields-panel.open {
+    transform: translateX(0);
+  }
+
+  .yields-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(12, 21, 9, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 1050;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+  .yields-backdrop.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .yields-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem;
+    border-bottom: 1px solid rgba(245, 237, 216, 0.1);
+  }
+  .yields-header h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin: 0;
+  }
+  .yields-header button {
+    background: none;
+    border: none;
+    color: var(--color-warm-cream);
+    font-size: 1.2rem;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.3s;
+  }
+  .yields-header button:hover {
+    opacity: 1;
+  }
+
+  .yields-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 2rem;
+  }
+  
+  .yield-group {
+    margin-bottom: 2rem;
+  }
+  .yield-group h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-style: italic;
+    font-weight: 300;
+    color: rgba(245, 237, 216, 0.6);
+    margin: 0 0 1rem 0;
+    border-bottom: 1px solid rgba(245, 237, 216, 0.1);
+    padding-bottom: 0.5rem;
+  }
+  .yield-group ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .yield-group li {
+    margin-bottom: 0.8rem;
+  }
+  .yield-group a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--color-warm-cream);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .yield-group a:hover {
+    color: var(--color-gold);
+  }
+</style>

@@ -74,7 +74,6 @@ function getFirstSentence(text) {
                       originId: originId
                     })}>Record in Ledger</button>
                   </div>
-                  <p class="add-confirm hidden">Added.</p>
                 </>
               )}
             </div>
@@ -248,17 +247,6 @@ function getFirstSentence(text) {
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
-  .add-confirm {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 0.9rem;
-    color: rgba(244, 241, 235, 0.7);
-    margin: 0;
-    text-align: right;
-    height: 1rem;
-  }
-  .add-confirm.hidden {
-    opacity: 0;
-  }
 </style>
 
 <script>
@@ -342,7 +330,6 @@ function getFirstSentence(text) {
       
       // Add to Ledger logic
       const addBtn = card.querySelector('.add-to-ledger-btn');
-      const addConfirm = card.querySelector('.add-confirm');
       
       addBtn.addEventListener('click', () => {
         const productData = JSON.parse(addBtn.getAttribute('data-product'));
@@ -363,12 +350,6 @@ function getFirstSentence(text) {
         
         // Dispatch to Ledger
         window.dispatchEvent(new CustomEvent('add-to-ledger', { detail: item }));
-        
-        // Show confirmation
-        addConfirm.classList.remove('hidden');
-        setTimeout(() => {
-          addConfirm.classList.add('hidden');
-        }, 2000);
       });
     });
   });
