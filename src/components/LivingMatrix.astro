@@ -87,7 +87,7 @@ const anchorMap = {
           aria-expanded="false"
           aria-label={`${origin.data.name}, ${getHighestElevation(origin.data.elevation)}M. Tap to expand.`}
         >
-          <div class="plate-origin-mark" style={`opacity: ${origin.data.slug === 'malabar-coast' ? '0.3' : '0.9'}; top: ${index > 0 ? 'calc(50px + 0.75rem)' : '0.75rem'};`}>
+          <div class="plate-origin-mark" style={`opacity: ${origin.data.slug === 'malabar-coast' ? '0.3' : '0.9'}; top: 0.75rem; right: 0.75rem;`}>
             <OriginMark variant="primary" size={24} animate={false} />
           </div>
           <div class="tap-pulse-indicator"></div>
@@ -213,11 +213,19 @@ const anchorMap = {
           const bandsContainer = document.querySelector('.matrix-bands');
           
           if (!band.classList.contains('expanded')) {
-            // Pulse animation
+            // Pulse animation centered on tap coordinates
             const pulse = band.querySelector('.tap-pulse-indicator');
             if (pulse) {
+              const rect = band.getBoundingClientRect();
+              const x = e.clientX - rect.left;
+              const y = e.clientY - rect.top;
+              pulse.style.left = `${x}px`;
+              pulse.style.top = `${y}px`;
+              
               pulse.classList.add('pulse-active');
-              setTimeout(() => pulse.classList.remove('pulse-active'), 300);
+              setTimeout(() => {
+                pulse.classList.remove('pulse-active');
+              }, 300);
             }
 
             document.querySelectorAll('.matrix-band.expanded').forEach(b => {

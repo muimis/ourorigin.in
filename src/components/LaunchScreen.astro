@@ -34,14 +34,16 @@ import OriginMark from './OriginMark.astro';
 
 
   .launch-text {
+    position: absolute;
+    bottom: calc(50% - 90px); /* Position it explicitly below the mark without affecting the mark's true center */
     font-family: 'Cormorant Garamond', serif;
     font-size: 16px;
     font-style: italic;
     color: var(--color-warm-cream);
     letter-spacing: 0.12em;
     opacity: 0;
-    margin-top: 1.5rem;
     will-change: opacity;
+    text-align: center;
   }
   
   .cream {
