@@ -35,6 +35,14 @@ const anchorMap = {
   'thiruvananthapuram': '/origins/thiruvananthapuram/dry-ginger',
   'malabar-coast': '#'
 };
+const originMarks = {
+  'wayanad': 'gold',
+  'idukki': 'ruby',
+  'thiruvananthapuram': 'copper',
+  'nilgiris': 'forest',
+  'kollam': 'silver',
+  'malabar-coast': 'primary'
+};
 ---
 
 <div class="living-matrix-container" id="living-matrix">
@@ -87,8 +95,8 @@ const anchorMap = {
           aria-expanded="false"
           aria-label={`${origin.data.name}, ${getHighestElevation(origin.data.elevation)}M. Tap to expand.`}
         >
-          <div class="plate-origin-mark" style={`opacity: ${origin.data.slug === 'malabar-coast' ? '0.3' : '0.9'}; top: 0.75rem; right: 0.75rem;`}>
-            <OriginMark variant="primary" size={24} animate={false} />
+          <div class="plate-origin-mark" style={`opacity: ${origin.data.slug === 'malabar-coast' ? '0.3' : '0.9'}; top: ${index === 0 ? '0.75rem' : 'calc(50px + 0.75rem)'}; right: 0.75rem;`}>
+            <OriginMark variant={originMarks[origin.data.slug] || 'primary'} size={24} animate={false} />
           </div>
           <div class="tap-pulse-indicator"></div>
           
