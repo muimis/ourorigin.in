@@ -43,20 +43,20 @@ if (!origin) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>{product.data.name} from {origin.data.name} | OurOrigin</title>
+    <title>{product.data.name} from {origin.data.name} — OurOrigin</title>
 
     <meta name="description" content={`${product.data.name} from ${origin.data.name} — ${origin.data.elevation}, ${origin.data.bioregion}. OurOrigin.`}>
     <link rel="canonical" href={`https://ourorigin.in/origins/${origin.id}/${product.id}`}>
 
     <meta property="og:type" content="product">
-    <meta property="og:title" content={`${product.data.name} from ${origin.data.name} | OurOrigin`}>
+    <meta property="og:title" content={`${product.data.name} from ${origin.data.name} — OurOrigin`}>
     <meta property="og:description" content={product.data.specimenCopy?.slice(0, 160)}>
     <meta property="og:url" content={`https://ourorigin.in/origins/${origin.id}/${product.id}`}>
     <meta property="og:image" content={`https://ourorigin.in${origin.data.images?.specimen || '/og-image.jpg'}`}>
     <meta property="og:site_name" content="OurOrigin">
 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content={`${product.data.name} from ${origin.data.name} | OurOrigin`}>
+    <meta name="twitter:title" content={`${product.data.name} from ${origin.data.name} — OurOrigin`}>
     <meta name="twitter:description" content={product.data.specimenCopy?.slice(0, 160)}>
     <meta name="twitter:image" content={`https://ourorigin.in${origin.data.images?.specimen || '/og-image.jpg'}`}>
 
@@ -118,13 +118,28 @@ if (!origin) {
             clip: rect(0, 0, 0, 0);
             border: 0;
         }
+        .skip-nav {
+            position: absolute;
+            top: -100%;
+            left: 0;
+            background: var(--color-warm-cream);
+            color: var(--color-forest-deep);
+            padding: 0.5rem 1rem;
+            font-family: var(--font-evidence);
+            font-size: 0.875rem;
+            z-index: 9999;
+        }
+        .skip-nav:focus {
+            top: 0;
+        }
     </style>
 </head>
 <body>
+    <a href="#main-content" class="skip-nav">Skip to content</a>
     <GlobalNav variant="dark" />
     
     <main id="main-content">
-      <h1 class="sr-only">{product.data.name} from {origin.data.name} | OurOrigin</h1>
+      <h1 class="sr-only">{product.data.name} from {origin.data.name} — OurOrigin</h1>
       <DepthExperience origin={origin} product={product} />
       <AllYieldsPanel />
     </main>

@@ -11,10 +11,35 @@ const { origin, product } = Astro.props;
 
 // Build the content for the first 4 strata
 const strata = [
-  { id: 'canopy', title: origin ? `CANOPY — ${origin.data.elevation || ''}` : 'CANOPY', image: origin ? origin.data.images.canopy : null, hasWeather: true },
-  { id: 'land', title: origin ? `LAND — ${origin.data.soil || 'Rich Soil'}` : 'LAND', image: origin ? origin.data.images.land : null, hasWeather: false },
-  { id: 'hand', title: origin && product ? `HAND — ${origin.data.method || 'Artisanal'} / ${product.data.methodDescription || 'Sourced with care'}` : 'HAND', image: origin ? origin.data.images.hand : null, hasWeather: false },
-  { id: 'specimen', title: product ? `SPECIMEN — ${product.data.botanicalName || ''}` : 'SPECIMEN', image: origin ? origin.data.images.specimen : null, hasWeather: false }
+  { 
+    id: 'canopy', 
+    evidence: origin ? `${origin.data.elevation} · ${origin.data.bioregion}`.toUpperCase() : '',
+    narrative: origin ? origin.data.narrative.canopy : '',
+    image: origin ? origin.data.images.canopy : null, 
+    hasWeather: true 
+  },
+  { 
+    id: 'land', 
+    evidence: origin ? origin.data.soil.toUpperCase() : '',
+    narrative: origin ? origin.data.narrative.land : '',
+    image: origin ? origin.data.images.land : null, 
+    hasWeather: false 
+  },
+  { 
+    id: 'hand', 
+    evidence: origin ? origin.data.method.toUpperCase() : '',
+    narrative: origin ? origin.data.narrative.hand : '',
+    image: origin ? origin.data.images.hand : null, 
+    hasWeather: false 
+  },
+  { 
+    id: 'specimen', 
+    evidence: product ? `${product.data.botanicalName} · BATCH ${product.data.batchRef}${product.data.harvestMonth && !['Seasonal', 'Ongoing'].includes(product.data.harvestMonth) ? ' · ' + product.data.harvestMonth : ''}`.toUpperCase() : '',
+    narrative: product ? product.data.specimenCopy : '',
+    botanicalName: product ? product.data.botanicalName : null,
+    image: origin ? origin.data.images.specimen : null, 
+    hasWeather: false 
+  }
 ];
 
 // Dynamically fetch the origin mask URL, but for Wayanad use the new solid SVG based on the uploaded border
@@ -42,10 +67,16 @@ const sizes = product ? product.data.sizes : [];
             <div class={`stratum-image ${s.id === 'hand' ? 'image-preserve-people' : ''}`} style={`background-image: url('${s.image}')`}></div>
           )}
           <div class="stratum-shadow"></div>
-          <h2 class="stratum-title">
-            {s.title}
-            {s.hasWeather && origin && <LiveWeather coordinates={origin.data.coordinates} />}
-          </h2>
+          <div class="stratum-text-container">
+            <h2 class="stratum-evidence">
+              {s.evidence}
+              {s.hasWeather && origin && <><span class="weather-separator">·</span><LiveWeather coordinates={origin.data.coordinates} /></>}
+            </h2>
+            {s.id === 'specimen' && s.botanicalName && (
+              <p class="specimen-botanical-name">{s.botanicalName}</p>
+            )}
+            <p class="stratum-narrative">{s.narrative}</p>
+          </div>
         </div>
       </section>
     ))}
@@ -57,7 +88,7 @@ const sizes = product ? product.data.sizes : [];
       )}
       <div class="stratum-content offering-content">
         <div class="stratum-shadow"></div>
-        <h2 class="stratum-title">OFFERING</h2>
+        <h2 class="stratum-evidence">OFFERING</h2>
         
         {product.data.offeringCopy && (
           <p class="offering-copy">{product.data.offeringCopy}</p>
@@ -80,17 +111,18 @@ const sizes = product ? product.data.sizes : [];
                 </label>
               ))}
             </div>
+            <div class="shipping-note">Free shipping above ₹399</div>
             <button class="checkout-btn" data-product={JSON.stringify({
               id: product.id,
               name: product.data.name,
               origin: origin.data.name,
               originId: origin.id
-            })}>Record in Ledger</button>
+            })}>Add to Ledger</button>
             <button class="more-from-origin-btn" data-origin={origin.id}>More from this origin</button>
             <a href="/" class="return-matrix-link">Return to the Matrix</a>
           </div>
         ) : (
-          <p>OFFERING — [product.sizes]</p>
+          <p class="stratum-evidence">OFFERING — [product.sizes]</p>
         )}
       </div>
     </section>
@@ -206,20 +238,53 @@ const sizes = product ? product.data.sizes : [];
   }
 
   /* Basic typographic styling */
-  .stratum-title {
-    font-family: var(--font-narrative);
-    /* Fluid typography prevents long botanical names from wrapping ungracefully on mobile */
-    font-size: clamp(1.5rem, 5vw, var(--text-size-stratum-title));
-    font-weight: 300;
-    letter-spacing: 0.05em;
-    margin: 0 0 1rem 0;
+  .stratum-text-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
     z-index: 10;
     position: relative;
-    text-align: center;
-    max-width: 75vw;
+    max-width: 480px;
     padding: 0 2rem;
-    line-height: 1.4;
-    overflow-wrap: break-word;
+    text-align: center;
+  }
+
+  .stratum-evidence {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    color: var(--color-warm-cream);
+    margin: 0;
+    opacity: 0.8;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .stratum-narrative {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--color-warm-cream);
+    line-height: 1.5;
+    margin: 0;
+  }
+  
+  .specimen-botanical-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--color-gold);
+    margin: -1rem 0 0 0;
+  }
+
+  .weather-separator {
+    margin: 0 0.2rem;
   }
 
   .offering-content {
@@ -295,28 +360,41 @@ const sizes = product ? product.data.sizes : [];
   }
   .offering-copy {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 1.2rem;
-    color: rgba(244, 241, 235, 0.8);
+    font-style: italic;
+    font-size: 16px;
+    color: rgba(245, 237, 216, 0.7);
     margin-bottom: 2rem;
     line-height: 1.5;
-    max-width: 600px;
+    max-width: 480px;
     text-align: center;
+  }
+  
+  .shipping-note {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: rgba(245, 237, 216, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: -1rem;
+    margin-bottom: 0.5rem;
   }
 
   .checkout-btn {
     width: 100%;
-    background: var(--color-warm-cream);
-    color: var(--color-forest-deep);
-    border: none;
-    font-family: 'DM Mono', monospace;
-    font-size: 1rem;
+    background: transparent;
+    color: var(--color-warm-cream);
+    border: 1px solid rgba(245, 237, 216, 0.3);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
     padding: 1.2rem;
     cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
     border-radius: 4px;
-    margin-top: 1rem;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
+  }
+  
+  .checkout-btn:hover {
+    background: rgba(245, 237, 216, 0.1);
+    border-color: rgba(245, 237, 216, 0.8);
   }
   
   .more-from-origin-btn {
@@ -471,7 +549,7 @@ const sizes = product ? product.data.sizes : [];
         }, label)
         
         // 3. Previous stratum text transforms into a large, faint watermark behind the organic terrain cut
-        .to(prevTitle, {
+        .to(prevStratum.querySelector('.stratum-text-container'), {
           y: "-30dvh",
           scale: 1.8,
           opacity: 0.08,

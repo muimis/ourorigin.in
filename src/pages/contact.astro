@@ -1,5 +1,7 @@
 ---
 import '../styles/tokens.css';
+import GlobalNav from '../components/GlobalNav.astro';
+import AllYieldsPanel from '../components/AllYieldsPanel.astro';
 ---
 
 <!DOCTYPE html>
@@ -7,7 +9,7 @@ import '../styles/tokens.css';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact | OurOrigin</title>
+    <title>Contact — OurOrigin</title>
     
     <meta name="description" content="Reach out to OurOrigin for inquiries, ledger fulfillment, or journal questions.">
     <link rel="canonical" href="https://ourorigin.in/contact">
@@ -37,7 +39,7 @@ import '../styles/tokens.css';
         }
         h1 {
             font-family: 'Cinzel', serif;
-            font-size: 2.5rem;
+            font-size: 24px;
             margin: 0 0 1rem 0;
             font-weight: 400;
         }
@@ -123,15 +125,23 @@ import '../styles/tokens.css';
         }
         .contact-details p {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 1.5rem;
+            font-size: 20px;
             line-height: 1.6;
-            margin: 0 0 1.5rem 0;
+            margin: 0 0 2rem 0;
             opacity: 0.9;
         }
-        .contact-details strong {
+        .contact-link {
             font-family: 'DM Mono', monospace;
-            font-size: 1.2rem;
-            font-weight: normal;
+            font-size: 14px;
+            color: var(--color-warm-cream);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+        .contact-link:hover {
+            opacity: 1;
         }
         .fssai-footer {
             margin-top: auto;
@@ -146,14 +156,14 @@ import '../styles/tokens.css';
 </head>
 <body>
     <GlobalNav />
+    <AllYieldsPanel />
     <main id="main-content" class="page-container">
-        <h1>Reach us directly.</h1>
+        <h1>Contact</h1>
         
         <div class="contact-details">
-            <p><strong>+91 96455 55668</strong><br>This is the fastest way to reach us. We respond personally, not through a bot.</p>
-            <p>ourorigin.in@gmail.com</p>
-            <p>@ourorigin.in on Instagram</p>
-            <p>We are based in Thiruvananthapuram, Kerala. We source, we pack, we ship. If you have a question about where something comes from, we'll tell you everything we know.</p>
+            <p>We operate from Thiruvananthapuram, Kerala. If you have a question about where a yield comes from, or how it is grown, we will tell you everything we know.</p>
+            <a href="https://wa.me/919645555668" class="contact-link" target="_blank" rel="noopener noreferrer">+91 96455 55668</a>
+            <a href="mailto:ourorigin.in@gmail.com" class="contact-link">ourorigin.in@gmail.com</a>
         </div>
         
         <a href="/" class="nav-link">Return to the Matrix</a>

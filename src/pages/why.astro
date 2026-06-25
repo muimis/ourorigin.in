@@ -1,5 +1,7 @@
 ---
 import '../styles/tokens.css';
+import GlobalNav from '../components/GlobalNav.astro';
+import AllYieldsPanel from '../components/AllYieldsPanel.astro';
 ---
 
 <!DOCTYPE html>
@@ -7,7 +9,7 @@ import '../styles/tokens.css';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Why this exists. | OurOrigin</title>
+    <title>Why this exists. — OurOrigin</title>
     
     <meta name="description" content="OurOrigin exists because the people and places behind real products deserve to be seen, not kept in the background of a marketing story.">
     <link rel="canonical" href="https://ourorigin.in/why">
@@ -35,16 +37,15 @@ import '../styles/tokens.css';
             display: flex;
             flex-direction: column;
             gap: 2rem;
-        }
         h1 {
             font-family: 'Cinzel', serif;
-            font-size: 2.5rem;
+            font-size: 24px;
             margin: 0 0 2rem 0;
             font-weight: 400;
         }
         p {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 1.5rem;
+            font-size: 20px;
             line-height: 1.6;
             margin: 0 0 1.5rem 0;
             opacity: 0.9;
@@ -78,16 +79,15 @@ import '../styles/tokens.css';
 </head>
 <body>
     <GlobalNav />
+    <AllYieldsPanel />
     <main id="main-content" class="page-container">
         <h1>Why this exists.</h1>
         
-        <p>Most products arrive with a label. A label says what something is. It rarely says where — not really. Not the place, the soil, the season, the person. Not the thing behind the thing. OurOrigin exists because we believe those hidden layers are the most interesting part. And because we think the people and places behind real products deserve to be seen, not kept in the background of a marketing story.</p>
+        <p>A label says what something is. It rarely says where — not the place, not the soil, not the season, not the person. Not the thing behind the thing.</p>
         
-        <p>We source from the Western Ghats — the forests, hills, and homesteads of Kerala and Tamil Nadu. Five origins, different in altitude and character, connected by the same ridge of forest running down the spine of peninsular India. Each product we sell is traceable to a place we can name, a community we can describe, and a method we can document. We don't make claims about sustainability or ethics or purity. We show you the origin and let you reach your own conclusions.</p>
+        <p>We source from the Western Ghats because we believe those hidden layers are the most interesting part. The people and places behind real products deserve to be seen, not kept in the background of a marketing story.</p>
         
-        <p>We are a small business. We don't have a warehouse. We pack and ship directly. When you buy from us, you talk to us directly — via WhatsApp, the way a person talks to a person. That's not a feature. It's just how this works when you haven't automated the part that shouldn't be automated.</p>
-        
-        <p style="font-family: 'Cinzel', serif; font-size: 1rem; color: var(--color-gold); margin-top: 1rem;">From the Source.</p>
+        <p>We don't make claims about sustainability or ethics or purity. We show you the origin and let you reach your own conclusions.</p>
         
         <a href="/" class="nav-link">Return to the Matrix</a>
         

@@ -7,7 +7,7 @@ import '../styles/tokens.css';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lost | OurOrigin</title>
+    <title>Not Found — OurOrigin</title>
     <!-- Google Fonts with display=swap as explicitly requested -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -40,14 +40,15 @@ import '../styles/tokens.css';
         }
         p {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 1.8rem;
+            font-size: 24px;
             line-height: 1.4;
             margin: 0;
             z-index: 1;
         }
         .nav-link {
             font-family: 'DM Mono', monospace;
-            color: var(--color-warm-cream);
+            font-size: 10px;
+            color: rgba(245, 237, 216, 0.4);
             text-decoration: none;
             text-transform: uppercase;
             letter-spacing: 0.1em;
@@ -59,6 +60,7 @@ import '../styles/tokens.css';
             z-index: 1;
         }
         .nav-link:hover {
+            color: var(--color-warm-cream);
             border-bottom-color: var(--color-warm-cream);
         }
     </style>
@@ -66,7 +68,7 @@ import '../styles/tokens.css';
 <body>
     <div class="page-container">
         <h1>404</h1>
-        <p>You are outside the map.</p>
+        <p>You are off the map.</p>
         <a href="/" class="nav-link">Return to the Matrix</a>
     </div>
 </body>

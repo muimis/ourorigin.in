@@ -5,12 +5,12 @@
   "bioregion": "Western Ghats",
   "coordinates": "11.41°N, 76.70°E",
   "rainfall": "[LIVE DATA REQUIRED] Heavy monsoon rainfall",
-  "soil": "[LIVE DATA REQUIRED] Forest loam",
+  "soil": "SHOLA MOSAIC · LATERITE",
   "community": {
     "description": "Indigenous farming communities, Nilgiris",
     "verified": false
   },
-  "method": "Forest Polyculture",
+  "method": "FOREST POLYCULTURE · CONTINUOUS HARVEST",
   "images": {
     "canopy": "/assets/origins/nilgiris-canopy.webp",
     "land": "",
@@ -19,8 +19,8 @@
     "isPlaceholderImagery": false
   },
   "narrative": {
-    "canopy": "At 2,600 metres, the air doesn't behave the way it does anywhere else in peninsular India. Cold enough for frost in January — a cold the rest of South India has never experienced. Mist sits in the valleys most mornings and dissolves by ten. The light when it comes is thin, almost northern.",
-    "land": "The Nilgiris aren't solid forest the way the Western Ghats lower down are. They're a mosaic — open grassland breaking into pockets of stunted, wind-bent shola forest, then back to open ground. Tea was planted into this mosaic, not instead of it.",
-    "hand": "Tea is picked, not harvested — two leaves and a bud, by hand, repeated through the growing season rather than once a year. A picker works the same rows for years and can identify, before a leaf is processed, which part of which garden it came from."
+    "canopy": "Cold enough for frost in January — a cold the rest of South India doesn't experience. The mist sits in the valleys most mornings and dissolves by ten. When it clears, the light is thin and almost northern.",
+    "land": "Not solid forest — a mosaic of open grassland and pockets of stunted shola. Tea was planted into this mosaic, not instead of it. The grasslands were kept, because removing them would change what the garden is growing inside.",
+    "hand": "Two leaves and a bud, by hand, repeated through the season rather than once a year. A picker works the same rows for years and can tell, before a leaf is processed, which section it came from. Not a claim. The result of repetition, until knowledge becomes instinct."
   }
 }

@@ -2,28 +2,47 @@
 import { getCollection } from 'astro:content';
 
 const products = await getCollection('products');
-
-// Group products by origin
 const origins = await getCollection('origins');
 const originMap = new Map();
-origins.forEach(o => originMap.set(o.id, o.data.name));
-
-const groupedProducts: Record<string, any[]> = {};
-products.forEach(p => {
-  const originId = typeof p.data.originSlug === 'object' ? p.data.originSlug.id : p.data.originSlug;
-  const originName = originMap.get(originId) || originId;
-  
-  if (!groupedProducts[originName]) {
-    groupedProducts[originName] = [];
-  }
-  groupedProducts[originName].push({
-    name: p.data.name,
-    href: `/origins/${originId}/${p.id}`
+origins.forEach(o => {
+  originMap.set(o.id, {
+    name: o.data.name,
+    elevation: o.data.elevation
   });
 });
 
-// Sort origins alphabetically
-const sortedOriginNames = Object.keys(groupedProducts).sort();
+const groupedProducts: Record<string, any> = {};
+
+// We want to sort origins by elevation, same as LivingMatrix.
+const orderedSlugs = ['nilgiris', 'idukki', 'wayanad', 'malabar-coast', 'thiruvananthapuram'];
+const orderedOriginIds = orderedSlugs.map(slug => origins.find(o => o.data.slug === slug)?.id).filter(Boolean);
+
+orderedOriginIds.forEach(originId => {
+  if(originId) {
+    groupedProducts[originId] = {
+      originInfo: originMap.get(originId),
+      products: []
+    };
+  }
+});
+
+products.forEach(p => {
+  const originId = typeof p.data.originSlug === 'object' ? p.data.originSlug.id : p.data.originSlug;
+  if (groupedProducts[originId]) {
+    groupedProducts[originId].products.push(p);
+  }
+});
+
+// Helper to get highest elevation from string like "100m - 1500m"
+function getHighestElevation(elevationString: string) {
+  if (!elevationString) return '';
+  const cleanStr = elevationString.replace(/,/g, '');
+  const matches = cleanStr.match(/\d+/g);
+  if (matches) {
+    return Math.max(...matches.map(Number));
+  }
+  return cleanStr.replace(/[^0-9]/g, '');
+}
 ---
 
 <!-- Trigger -->
@@ -32,20 +51,51 @@ const sortedOriginNames = Object.keys(groupedProducts).sort();
 <!-- Slide-in Panel -->
 <div id="all-yields-panel" class="all-yields-panel hidden" aria-hidden="true">
   <div class="yields-header">
-    <h2>All Yields</h2>
-    <button id="all-yields-close" aria-label="Close All Yields">✕</button>
+    <h2>ALL YIELDS</h2>
+    <button id="all-yields-close" aria-label="Close all yields panel">✕</button>
   </div>
   <div class="yields-content">
-    {sortedOriginNames.map(origin => (
-      <div class="yield-group">
-        <h3>{origin}</h3>
-        <ul>
-          {groupedProducts[origin].sort((a, b) => a.name.localeCompare(b.name)).map(product => (
-            <li><a href={product.href}>{product.name}</a></li>
-          ))}
-        </ul>
-      </div>
-    ))}
+    {orderedOriginIds.map(originId => {
+      if(!originId) return null;
+      const group = groupedProducts[originId];
+      if (!group || group.products.length === 0) return null;
+      
+      const elevation = getHighestElevation(group.originInfo.elevation);
+      
+      return (
+        <div class="yield-group">
+          <h3>{group.originInfo.name.toUpperCase()} &nbsp;·&nbsp; {elevation}M</h3>
+          <div class="yield-products">
+            {group.products.sort((a, b) => a.data.name.localeCompare(b.data.name)).map((product) => (
+              <div class="yield-product-row">
+                <div class="yield-product-name">{product.data.name}</div>
+                <div class="yield-product-sizes">
+                  {product.data.sizes.map((sizeObj) => (
+                    <div class="yield-size-row">
+                      <div class="yield-size-price">
+                        {sizeObj.label} &nbsp;₹{sizeObj.priceINR}
+                      </div>
+                      {product.data.isAnchorProduct ? (
+                        <a href={`/origins/${originId}/${product.id}`} class="yield-action-btn">Enter</a>
+                      ) : (
+                        <button class="yield-action-btn add-to-ledger-btn" data-product={JSON.stringify({
+                          id: product.id,
+                          name: product.data.name,
+                          origin: group.originInfo.name,
+                          originId: originId,
+                          size: sizeObj.label,
+                          price: sizeObj.priceINR
+                        })}>Add</button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    })}
   </div>
 </div>
 
@@ -60,7 +110,6 @@ const sortedOriginNames = Object.keys(groupedProducts).sort();
 
     const openPanel = () => {
       panel.classList.remove('hidden');
-      // Trigger reflow
       void panel.offsetWidth;
       panel.classList.add('open');
       backdrop.classList.remove('hidden');
@@ -76,12 +125,32 @@ const sortedOriginNames = Object.keys(groupedProducts).sort();
       setTimeout(() => {
         panel.classList.add('hidden');
         backdrop.classList.add('hidden');
-      }, 400); // match transition
+      }, 400); 
     };
 
     if (trigger) trigger.addEventListener('click', openPanel);
     if (closeBtn) closeBtn.addEventListener('click', closePanel);
     if (backdrop) backdrop.addEventListener('click', closePanel);
+    
+    // Wiring Add buttons
+    document.querySelectorAll('.add-to-ledger-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const productData = JSON.parse(btn.getAttribute('data-product') || '{}');
+        
+        const item = {
+          id: productData.id + '-' + productData.size,
+          productId: productData.id,
+          name: productData.name,
+          origin: productData.origin,
+          originId: productData.originId,
+          size: productData.size,
+          price: productData.price,
+          quantity: 1
+        };
+        
+        window.dispatchEvent(new CustomEvent('add-to-ledger', { detail: item }));
+      });
+    });
   });
 </script>
 
@@ -92,18 +161,17 @@ const sortedOriginNames = Object.keys(groupedProducts).sort();
     right: 2rem;
     z-index: 900;
     font-family: 'DM Mono', monospace;
-    font-size: 0.9rem;
-    color: var(--color-warm-cream);
+    font-size: 10px;
+    color: rgba(245, 237, 216, 0.5);
     background: transparent;
     border: none;
     cursor: pointer;
-    text-decoration: underline;
-    text-underline-offset: 4px;
-    opacity: 0.8;
-    transition: opacity 0.3s ease;
+    text-transform: none;
+    padding: 0;
+    transition: color 0.3s ease;
   }
   .all-yields-trigger:hover {
-    opacity: 1;
+    color: rgba(245, 237, 216, 1);
   }
 
   .all-yields-panel {
@@ -111,7 +179,7 @@ const sortedOriginNames = Object.keys(groupedProducts).sort();
     top: 0;
     right: 0;
     width: 100%;
-    max-width: 400px;
+    max-width: 360px;
     height: 100vh;
     height: 100dvh;
     background-color: var(--color-forest-deep);
@@ -123,6 +191,13 @@ const sortedOriginNames = Object.keys(groupedProducts).sort();
     flex-direction: column;
     color: var(--color-warm-cream);
   }
+  
+  @media (max-width: 768px) {
+    .all-yields-panel {
+      max-width: 70vw;
+    }
+  }
+  
   .all-yields-panel.open {
     transform: translateX(0);
   }
@@ -149,12 +224,13 @@ const sortedOriginNames = Object.keys(groupedProducts).sort();
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 2rem;
+    padding: 2rem 1.5rem;
     border-bottom: 1px solid rgba(245, 237, 216, 0.1);
   }
   .yields-header h2 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: rgba(245, 237, 216, 0.4);
     font-weight: 400;
     margin: 0;
   }
@@ -162,10 +238,11 @@ const sortedOriginNames = Object.keys(groupedProducts).sort();
     background: none;
     border: none;
     color: var(--color-warm-cream);
-    font-size: 1.2rem;
+    font-size: 1rem;
     cursor: pointer;
     opacity: 0.6;
     transition: opacity 0.3s;
+    padding: 0;
   }
   .yields-header button:hover {
     opacity: 1;
@@ -174,38 +251,75 @@ const sortedOriginNames = Object.keys(groupedProducts).sort();
   .yields-content {
     flex: 1;
     overflow-y: auto;
-    padding: 2rem;
+    padding: 1.5rem;
   }
   
   .yield-group {
     margin-bottom: 2rem;
   }
   .yield-group h3 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.2rem;
-    font-style: italic;
-    font-weight: 300;
-    color: rgba(245, 237, 216, 0.6);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: rgba(245, 237, 216, 0.5);
     margin: 0 0 1rem 0;
-    border-bottom: 1px solid rgba(245, 237, 216, 0.1);
-    padding-bottom: 0.5rem;
+    font-weight: 400;
   }
-  .yield-group ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+  
+  .yield-products {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
   }
-  .yield-group li {
-    margin-bottom: 0.8rem;
+  
+  .yield-product-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
   }
-  .yield-group a {
+  
+  .yield-product-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    color: rgba(245, 237, 216, 0.9);
+    flex: 1;
+    padding-right: 1rem;
+    line-height: 1.2;
+  }
+  
+  .yield-product-sizes {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 140px;
+  }
+  
+  .yield-size-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  
+  .yield-size-price {
     font-family: 'DM Mono', monospace;
-    font-size: 0.9rem;
-    color: var(--color-warm-cream);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-  .yield-group a:hover {
+    font-size: 11px;
     color: var(--color-gold);
+    white-space: pre;
+  }
+  
+  .yield-action-btn {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 12px;
+    font-style: italic;
+    color: rgba(245, 237, 216, 0.6);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .yield-action-btn:hover {
+    color: var(--color-warm-cream);
   }
 </style>

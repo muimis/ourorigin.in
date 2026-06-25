@@ -21,11 +21,11 @@ function getHighestElevation(elevationString) {
 }
 
 const matrixCopy = {
-  'nilgiris': { fragment: 'This high, India has frost.', subLine: 'Western Ghats · Forest Polyculture', cta: 'Enter this origin' },
-  'idukki': { fragment: 'These hills were named for what grows here.', subLine: 'Western Ghats · Shade-Grown Wild Harvest', cta: 'Enter this origin' },
-  'wayanad': { fragment: 'The vine doesn\'t stand. It climbs.', subLine: 'Western Ghats · Traditional Agrarian', cta: 'Enter this origin' },
-  'thiruvananthapuram': { fragment: 'The root that becomes dry ginger is dug up, not picked.', subLine: 'Western Ghats · Lowland Homesteading', cta: 'Enter this origin' },
-  'malabar-coast': { fragment: 'This origin is still being documented.', subLine: 'Western Ghats · Smallholder Hand Harvest', cta: '' }
+  'nilgiris': { fragment: 'This high, India has frost.', subLine: 'Western Ghats · Forest Polyculture', cta: 'Enter this origin →' },
+  'idukki': { fragment: 'Named for what grows here.', subLine: 'Western Ghats · Shade-Grown Wild Harvest', cta: 'Enter this origin →' },
+  'wayanad': { fragment: 'The vine doesn\'t stand. It climbs.', subLine: 'Western Ghats · Traditional Agrarian', cta: 'Enter this origin →' },
+  'thiruvananthapuram': { fragment: 'The root is dug up, not picked.', subLine: 'Western Ghats · Lowland Homesteading', cta: 'Enter this origin →' },
+  'malabar-coast': { fragment: 'This coastline named the trade routes.', subLine: 'Western Ghats · Smallholder Hand Harvest', cta: 'This origin is still being documented.' }
 };
 
 const anchorMap = {
@@ -87,7 +87,7 @@ const anchorMap = {
           aria-expanded="false"
           aria-label={`${origin.data.name}, ${getHighestElevation(origin.data.elevation)}M. Tap to expand.`}
         >
-          <div class="plate-origin-mark" style={`opacity: ${origin.data.slug === 'malabar-coast' ? '0.3' : '0.9'}`}>
+          <div class="plate-origin-mark" style={`opacity: ${origin.data.slug === 'malabar-coast' ? '0.3' : '0.9'}; top: ${index > 0 ? 'calc(50px + 0.75rem)' : '0.75rem'};`}>
             <OriginMark variant="primary" size={24} animate={false} />
           </div>
           <div class="tap-pulse-indicator"></div>
@@ -112,13 +112,16 @@ const anchorMap = {
             <div class="band-reveal">
               <p class="origin-meta">{copy.fragment}</p>
               <p class="origin-subline">{copy.subLine}</p>
-              {origin.data.slug === 'wayanad' && (
-                <p class="commerce-signal">From ₹109</p>
-              )}
               <div class="origin-live-telemetry"></div>
               
-              <a href={linkHref} class="origin-action" aria-label={`Enter ${origin.data.name} — descend through ${origin.data.method || 'the origin'}`}>{copy.cta}</a>
-              <p class="carousel-trigger" data-origin={origin.id} aria-label={`Browse all yields from ${origin.data.name}`} role="button" tabindex="0">Browse all yields from this origin</p>
+              {origin.data.slug === 'malabar-coast' ? (
+                <p class="origin-action malabar-documented">{copy.cta}</p>
+              ) : (
+                <>
+                  <a href={linkHref} class="origin-action" aria-label={`Enter ${origin.data.name} — descend through ${origin.data.method || 'the origin'}`}>{copy.cta}</a>
+                  <p class="carousel-trigger" data-origin={origin.id} aria-label={`Browse all yields from ${origin.data.name}`} role="button" tabindex="0">Browse all yields</p>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -224,15 +227,7 @@ const anchorMap = {
             bandsContainer.classList.add('has-expanded');
             
             band.classList.add('expanded');
-            band.classList.add('holding');
             band.setAttribute('aria-expanded', 'true');
-            
-            setTimeout(() => {
-              const href = band.getAttribute('data-href');
-              if (href && href !== '#') {
-                window.location.href = href;
-              }
-            }, 2500);
           } else {
             band.classList.remove('expanded');
             band.setAttribute('aria-expanded', 'false');
@@ -415,47 +410,39 @@ const anchorMap = {
   }
   
   .origin-subline {
-    font-family: var(--font-evidence);
-    font-size: clamp(0.6rem, 2.2vw, 0.85rem);
-    letter-spacing: 0.05em;
-    opacity: 0.6;
-    margin: 0 0 0.6rem 0;
-  }
-  
-  .commerce-signal {
     font-family: 'DM Mono', monospace;
     font-size: 10px;
-    color: var(--color-gold);
-    opacity: 0.65;
-    margin-top: 0.5rem;
-    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.45;
+    margin: 0 0 0.6rem 0;
   }
   
   .origin-action {
     display: inline-block;
     font-family: var(--font-narrative);
-    font-size: clamp(0.8rem, 3vw, 1rem);
-    font-style: italic;
-    color: var(--color-gold);
+    font-size: 12px;
+    color: rgba(245, 237, 216, 0.55);
     text-decoration: none;
     margin: 0;
     opacity: 0;
     transform: translateY(5px);
     transition: opacity 0.3s ease;
   }
+  
+  .origin-action.malabar-documented {
+    color: rgba(245, 237, 216, 0.35);
+  }
 
   .carousel-trigger {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(0.8rem, 3vw, 1.1rem);
-    color: var(--color-warm-cream);
-    margin: 0.8rem 0 0 0;
-    text-decoration: underline;
-    text-underline-offset: 4px;
+    font-family: var(--font-narrative);
+    font-size: 12px;
+    color: rgba(245, 237, 216, 0.40);
+    margin: 0.2rem 0 0 0;
     cursor: pointer;
     transition: color 0.2s ease;
   }
   .carousel-trigger:hover {
-    color: var(--color-gold);
+    color: rgba(245, 237, 216, 0.80);
   }
 
   /* Plate static Origin Mark */
@@ -467,15 +454,15 @@ const anchorMap = {
     pointer-events: none;
   }
 
-  /* Tap Pulse Indicator */
   .tap-pulse-indicator {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) scale(0.5);
+    transform: translate(-50%, -50%) scale(0);
     width: 60px;
     height: 60px;
-    background: radial-gradient(circle, var(--color-gold) 0%, transparent 70%);
+    background: transparent;
+    border: 2px solid var(--color-gold);
     border-radius: 50%;
     opacity: 0;
     pointer-events: none;

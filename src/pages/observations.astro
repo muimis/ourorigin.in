@@ -1,5 +1,7 @@
 ---
 import '../styles/tokens.css';
+import GlobalNav from '../components/GlobalNav.astro';
+import AllYieldsPanel from '../components/AllYieldsPanel.astro';
 ---
 
 <!DOCTYPE html>
@@ -7,7 +9,7 @@ import '../styles/tokens.css';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Observations | OurOrigin</title>
+    <title>Observations — OurOrigin</title>
     
     <meta name="description" content="Things noticed in the growing, harvesting, drying, and the distance between origin and kitchen. The OurOrigin evidence archive.">
     <link rel="canonical" href="https://ourorigin.in/observations">
@@ -38,16 +40,16 @@ import '../styles/tokens.css';
         }
         h1 {
             font-family: 'Cinzel', serif;
-            font-size: 2.5rem;
+            font-size: 24px;
             margin: 0 0 1rem 0;
             font-weight: 400;
         }
         .subtitle {
             font-family: 'DM Mono', monospace;
-            font-size: 0.9rem;
+            font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            opacity: 0.6;
+            opacity: 0.4;
             margin: 0 0 3rem 0;
         }
         .empty-state {
@@ -88,51 +90,54 @@ import '../styles/tokens.css';
             padding-left: 2rem;
         }
         .obs-title {
-            font-family: 'Cinzel', serif;
-            font-size: 1.3rem;
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
             font-weight: 400;
             margin: 0 0 1rem 0;
             color: var(--color-gold);
         }
         .obs-body {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 1.3rem;
+            font-size: 18px;
             line-height: 1.6;
             margin: 0 0 1rem 0;
             opacity: 0.9;
         }
         .obs-meta {
             font-family: 'DM Mono', monospace;
-            font-size: 0.8rem;
+            font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            opacity: 0.5;
+            opacity: 0.4;
             margin: 0;
         }
     </style>
 </head>
 <body>
     <GlobalNav />
+    <AllYieldsPanel />
     <main id="main-content" class="page-container">
         <h1>Observations</h1>
-        <p class="subtitle">Field notes, logs, and tracking</p>
+        <p class="subtitle">Field notes and tracking</p>
         
         <div class="observation">
-            <h2 class="obs-title">Observation 01: "The berry that turned black was never black"</h2>
-            <p class="obs-body">Every batch of black pepper starts green. The colour change happens entirely after harvest, during sun-drying. Picked green, dried black. The colour you've associated with pepper your entire life is not the colour of the plant. It's the colour of what happens to the plant after it's picked. This is one of the oldest continuous misunderstandings in the kitchen.</p>
-            <p class="obs-meta">Related: Forest Black Pepper — Wayanad & Nilgiris, 900–1,100m</p>
+            <h2 class="obs-title">01 · THE BERRY WAS NEVER BLACK</h2>
+            <p class="obs-body">Black pepper starts green. The colour change happens entirely after harvest, during sun-drying. The colour you've associated with pepper your entire life is the colour of what happens to the plant after it's picked.</p>
+            <p class="obs-meta">REFERENCE: FOREST BLACK PEPPER</p>
         </div>
         
         <div class="observation">
-            <h2 class="obs-title">Observation 02: "Cardamom grows in shade by preference, not by accident"</h2>
-            <p class="obs-body">Most spice plants are planted in cleared, open ground. Cardamom is not. It grows under a canopy — deliberately left intact, because Elettaria cardamomum produces better pods when it receives filtered light rather than direct sun. The tall trees above a cardamom garden are not vestiges of forest that wasn't fully cleared. They are part of the cultivation. Shade is a production input, not an oversight.</p>
-            <p class="obs-meta">Related: Cardamom — Idukki, 1,200m</p>
+            <h2 class="obs-title">02 · SHADE IS AN INPUT</h2>
+            <p class="obs-body">Most spice plants are planted in cleared ground. Cardamom is not. It grows under a canopy — deliberately left intact, because Elettaria cardamomum produces better pods when it receives filtered light. The tall trees above a cardamom garden are not vestiges of forest. They are part of the cultivation.</p>
+            <p class="obs-meta">REFERENCE: CARDAMOM</p>
         </div>
         
         <div class="observation">
-            <h2 class="obs-title">Observation 03: "Mace and nutmeg come from the same tree"</h2>
-            <p class="obs-body">Most people have bought both mace and nutmeg at some point. Most people do not know they come from the same plant — or more precisely, the same fruit. Myristica fragrans produces a fleshy outer fruit that splits when ripe to reveal a seed (nutmeg) wrapped in a lace-like red covering (mace). Both are harvested from the same tree, in the same moment, from the same fruit. The culinary world treats them as entirely separate spices. The tree doesn't make that distinction.</p>
-            <p class="obs-meta">Related: Mace — Idukki, 1,200m</p>
+            <h2 class="obs-title">03 · ONE FRUIT, TWO SPICES</h2>
+            <p class="obs-body">Myristica fragrans produces a fleshy fruit that splits when ripe to reveal a seed (nutmeg) wrapped in a lace-like red covering (mace). Both are harvested in the same moment. The culinary world treats them as separate spices. The tree makes no such distinction.</p>
+            <p class="obs-meta">REFERENCE: MACE</p>
         </div>
         
         <a href="/" class="nav-link">Return to the Matrix</a>

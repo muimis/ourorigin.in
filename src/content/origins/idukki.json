@@ -5,12 +5,12 @@
   "bioregion": "Western Ghats",
   "coordinates": "9.85°N, 76.97°E",
   "rainfall": "[LIVE DATA REQUIRED] Heavy monsoon rainfall",
-  "soil": "[LIVE DATA REQUIRED] Forest loam",
+  "soil": "DEEP WET SOIL · CANOPY INTACT",
   "community": {
     "description": "Indigenous farming communities, Idukki",
     "verified": false
   },
-  "method": "Shade-Grown Wild Harvest",
+  "method": "SHADE-GROWN WILD HARVEST · MULTIPLE PASSES",
   "images": {
     "canopy": "/assets/origins/idukki-canopy.webp",
     "land": "",
@@ -19,8 +19,8 @@
     "isPlaceholderImagery": false
   },
   "narrative": {
-    "canopy": "Idukki is steep in a way the other origins aren't — mostly slope, rarely flat. The terrain here doesn't allow large machinery or clear sight lines across the growing area. What grows here grows because this particular combination of altitude, shade, and rainfall suits it precisely, not because it was chosen for convenience.",
-    "land": "Almost nothing grows in Idukki at scale except what wants to be here. The soil is deep and wet. The canopy is deliberately intact — not because anyone decided to protect it, but because cardamom grows better underneath something tall. The trees above the plants are left standing on purpose.",
-    "hand": "Harvest follows the plant's own timing, not a fixed calendar date. Cardamom produces ripening pods over an extended period — pickers return to the same plants multiple times through a season, taking only what's ready. The knowledge involved isn't written down anywhere. It's acquired through years of watching."
+    "canopy": "Steep in a way the other origins aren't — mostly slope. What grows here grows because this exact combination of altitude, shade, and rainfall suits it, not because it was convenient.",
+    "land": "The trees above the cardamom are left standing on purpose. Shade is a production input here, not an oversight. This is cultivation that works with its conditions rather than against them.",
+    "hand": "Harvest follows the plant's own timing. Cardamom ripens unevenly — pickers return to the same plants multiple times through a season, taking only what's ready. The knowledge of what ready looks like is acquired through years of watching, not written down."
   }
 }

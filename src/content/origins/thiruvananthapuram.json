@@ -5,12 +5,12 @@
   "bioregion": "Western Ghats",
   "coordinates": "8.52°N, 76.94°E",
   "rainfall": "[LIVE DATA REQUIRED] Tropical monsoon rainfall",
-  "soil": "[LIVE DATA REQUIRED] Coastal laterite",
+  "soil": "SANDY LOAM · HOMESTEAD CULTIVATION",
   "community": {
     "description": "Indigenous farming communities, Thiruvananthapuram",
     "verified": false
   },
-  "method": "Lowland Homesteading",
+  "method": "LOWLAND HOMESTEADING · LIFTED, NOT PICKED",
   "images": {
     "canopy": "/assets/origins/thiruvananthapuram-canopy.webp",
     "land": "",
@@ -19,8 +19,8 @@
     "isPlaceholderImagery": false
   },
   "narrative": {
-    "canopy": "At 10 metres above sea level, this is the lowest of all five origins and the flattest. No altitude to shape the growing conditions. Warm and humid nearly year-round — cultivation works differently here, not against cold and mist, but with heat and wet.",
-    "land": "Ginger here is grown at homestead scale — small household plots, ginger grown alongside whatever else a family is already raising, not as a single dedicated crop. This mixed, small-plot character is partly why the ginger tastes the way it does: grown without the uniformity a plantation tries to impose.",
-    "hand": "Unlike most of what we source, ginger isn't picked — it's dug up. The whole rhizome is lifted from the soil, then boiled briefly, then sun-dried over several days until most of the water is gone. The drying is the defining act: fresh ginger and dry ginger are not the same thing one dried out. They are different materials."
+    "canopy": "The lowest of the five origins. No altitude to shape the growing conditions, no elevation to create a microclimate. Warm and humid nearly year-round. Cultivation here works with heat and wet, not against them.",
+    "land": "Small household plots, ginger grown alongside whatever else is already being raised. Not a monoculture. One of several things in the same ground at the same time. This mixed character is partly why it tastes the way it does.",
+    "hand": "The whole rhizome is dug up, then boiled briefly, then sun-dried over several days. Fresh ginger and dry ginger are not the same thing one dried out. The drying is a transformation. The concentration is the point."
   }
 }

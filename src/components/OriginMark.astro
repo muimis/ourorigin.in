@@ -110,16 +110,13 @@ const strokeColor = colorMap[variant];
         gsap.set(dot, { scale: 0, opacity: 0 });
 
         const tl = gsap.timeline();
-        const dur = 1.0; 
-        const easeSettle = "power3.out";
+        const dur = 0.8; 
+        const easeSettle = "power2.out";
 
-        // Dot scales in completely first
-        tl.to(dot, { scale: 1, opacity: 1, duration: 0.32, ease: "back.out(1.5)" })
-          // Strictly AFTER the dot finishes, the lines begin to draw
-          .add("drawOutward", "+=0.05")
-          .to(inner, { strokeDashoffset: 0, opacity: 1, duration: dur, ease: easeSettle }, "drawOutward")
-          .to([mainLines, diagLines], { strokeDashoffset: 0, opacity: 1, duration: dur, ease: easeSettle, stagger: 0 }, "drawOutward+=0.1")
-          .to(outer, { strokeDashoffset: 0, opacity: 1, duration: dur, ease: easeSettle }, "drawOutward+=0.2");
+        tl.to(outer, { strokeDashoffset: 0, opacity: 1, duration: dur, ease: easeSettle })
+          .to([mainLines, diagLines], { strokeDashoffset: 0, opacity: 1, duration: dur, ease: easeSettle, stagger: 0 }, "-=0.4")
+          .to(inner, { strokeDashoffset: 0, opacity: 1, duration: dur, ease: easeSettle }, "-=0.4")
+          .to(dot, { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(1.5)" }, "-=0.2");
       });
     }
   }

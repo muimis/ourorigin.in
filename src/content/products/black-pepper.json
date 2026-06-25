@@ -4,8 +4,8 @@
   "botanicalName": "Piper nigrum",
   "originSlug": "wayanad",
   "isAnchorProduct": true,
-  "batchRef": "WYD-FBP-001",
-  "harvestMonth": "January - March",
+  "batchRef": "WYD-BP-001",
+  "harvestMonth": "JAN 2026",
   "sizes": [
     {
       "label": "50g",
@@ -24,6 +24,6 @@
     }
   ],
   "methodDescription": "Harvested by hand, sun-dried on traditional mats.",
-  "specimenCopy": "The berries are picked green. They only turn black in the drying — which means the colour you've always known as black pepper isn't the colour it grew. It's the colour of what happened to it afterward. What's sealed in this packet is the same fruit, transformed by sun and time, at the exact moment that transformation was considered complete.",
+  "specimenCopy": "The berries are picked green — they only turn black in the drying. The colour you've always known as black pepper isn't the colour it grew. It's the colour of what happened to it afterward.",
   "offeringCopy": "If you've read this far, you already know more about this pepper than its label could tell you."
 }

@@ -46,7 +46,7 @@ const companionsJson = JSON.stringify(companionProductsMap);
       </div>
       
       <div id="ledger-empty-state" class="ledger-empty hidden">
-        The ledger is empty. Explore the origins.
+        The ledger is empty.<br>Explore the origins.
       </div>
       
       <div id="ledger-footer" class="ledger-footer hidden">
@@ -57,15 +57,15 @@ const companionsJson = JSON.stringify(companionProductsMap);
         
         <!-- Shipping Form -->
         <form id="shipping-form" class="shipping-form">
-          <input type="text" id="ship-name" name="name" placeholder="Your name" required />
-          <input type="text" id="ship-house" name="house" placeholder="House / Flat number" required />
-          <input type="text" id="ship-street" name="street" placeholder="Street / Area / Locality" required />
+          <input type="text" id="ship-name" name="name" placeholder="Full name" required />
+          <input type="text" id="ship-house" name="house" placeholder="House/Flat number" required />
+          <input type="text" id="ship-street" name="street" placeholder="Street/Locality" required />
           <div class="form-row">
             <input type="text" id="ship-city" name="city" placeholder="City" required />
             <input type="text" id="ship-state" name="state" placeholder="State" required />
           </div>
           <div class="form-row">
-            <input type="text" id="ship-pin" name="pin" placeholder="PIN code" required />
+            <input type="text" id="ship-pin" name="pin" placeholder="PIN Code" required />
             <input type="tel" id="ship-phone" name="phone" placeholder="Phone (for delivery updates)" required />
           </div>
           <div class="shipping-actions">
@@ -78,7 +78,7 @@ const companionsJson = JSON.stringify(companionProductsMap);
         <div class="ledger-upi-section">
           <p class="upi-prompt">Prefer to pay directly?</p>
           <p class="upi-id">UPI: <span id="upi-text">ourorigin@ybl</span> <button type="button" id="copy-upi-btn" class="copy-upi-btn" aria-label="Copy UPI ID">Copy</button></p>
-          <p class="upi-note">After payment, send your order details via WhatsApp — we'll confirm your order.</p>
+          <p class="upi-note">After payment, send your order details via WhatsApp.</p>
         </div>
 
         <button id="ledger-connect-btn" class="ledger-connect">Connect via WhatsApp</button>
@@ -277,17 +277,11 @@ const companionsJson = JSON.stringify(companionProductsMap);
       savedNote.classList.remove('hidden');
       clearBtn.classList.remove('hidden');
 
-      let message = '';
-      if (ledgerItems.length === 1 && ledgerItems[0].quantity === 1) {
-        const item = ledgerItems[0];
-        message = `Hi — I'd like to order ${item.name} (${item.size}) from OurOrigin. I found you at ourorigin.in.\n\nShipping Details:\nName: ${data.name}\nAddress: ${data.house}, ${data.street}, ${data.city}, ${data.state} - ${data.pin}\nPhone: ${data.phone}`;
-      } else {
-        message = `Hi — I'd like to order:\n`;
-        ledgerItems.forEach(item => {
-          message += `- ${item.name} (${item.size}) x${item.quantity}\n`;
-        });
-        message += `\nfrom OurOrigin. I found you at ourorigin.in.\n\nShipping Details:\nName: ${data.name}\nAddress: ${data.house}, ${data.street}, ${data.city}, ${data.state} - ${data.pin}\nPhone: ${data.phone}`;
-      }
+      let message = `Hi — I'd like to order:\n`;
+      ledgerItems.forEach(item => {
+        message += `- ${item.quantity}x ${item.name} (${item.size})\n`;
+      });
+      message += `\nShipping Details:\n${data.name}\n${data.house}, ${data.street}\n${data.city}, ${data.state} ${data.pin}\n${data.phone}\n\nI've paid via UPI.`;
       
       const encodedMessage = encodeURIComponent(message);
       const phone = '919645555668'; // The contact number
@@ -316,7 +310,7 @@ const companionsJson = JSON.stringify(companionProductsMap);
       }, 2500);
 
       // Pulse trigger
-      trigger.style.transform = 'scale(1.3)';
+      trigger.style.transform = 'scale(1.2)';
       setTimeout(() => {
         trigger.style.transform = 'scale(1)';
       }, 300);
@@ -343,9 +337,8 @@ const companionsJson = JSON.stringify(companionProductsMap);
 <style>
   .ledger-toast {
     position: fixed;
-    top: 1rem;
-    left: 50%;
-    transform: translateX(-50%);
+    bottom: 4rem;
+    left: 2rem;
     z-index: 1000;
     font-family: 'DM Mono', monospace;
     font-size: 11px;
@@ -353,13 +346,15 @@ const companionsJson = JSON.stringify(companionProductsMap);
     color: var(--color-warm-cream);
     padding: 0.5rem 1rem;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
     pointer-events: none;
     border: 1px solid rgba(245, 237, 216, 0.2);
     border-radius: 4px;
   }
   .ledger-toast.visible {
     opacity: 1;
+    transform: translateY(0);
   }
 
   .ledger-trigger {

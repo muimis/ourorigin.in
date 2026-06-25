@@ -5,12 +5,12 @@
   "bioregion": "Western Ghats",
   "coordinates": "11°36′N, 76°04′E",
   "rainfall": "2,500–3,000mm annually",
-  "soil": "Forest Loam",
+  "soil": "FOREST LOAM · LATERITE TRANSITION",
   "community": {
     "description": "Indigenous farming communities, Wayanad",
     "verified": false
   },
-  "method": "Traditional Agrarian",
+  "method": "TRADITIONAL AGRARIAN · HARVEST JAN",
   "images": {
     "canopy": "/assets/origins/wayanad-canopy.webp",
     "land": "",
@@ -19,8 +19,8 @@
     "isPlaceholderImagery": false
   },
   "narrative": {
-    "canopy": "Between 900 and 1,100 metres across the Western Ghats — on Wayanad's slopes and higher still where the Nilgiris shoulder begins. At this altitude the monsoon doesn't simply fall; it moves through in layers, soaking the canopy first, then the vine below, then the soil in a sequence that repeats for months.",
-    "land": "Forest loam — dark, loose, built up over years by leaf litter that no one cleared. It holds water the way a forest holds water: slowly, deeply, and for longer than cleared ground ever could. The farms where this pepper grows are not farms in the industrial sense — they are managed sections of a forest that is still, largely, a forest.",
-    "hand": "The vines climb living trees, not manufactured poles — the older way, before plantations introduced a tidier geometry. Harvest comes once a year, in January, done by hand from trees that have been climbed by the same families across generations. After picking, the berries are laid on traditional mats and sun-dried over several days until they reach the weight and colour and hardness that means they are done."
+    "canopy": "The monsoon doesn't simply fall here. It moves through in layers — canopy first, then the vine, then the soil — in a sequence that repeats for months. The humidity that results is not incidental to what pepper becomes. It is, partly, what pepper is.",
+    "land": "Dark, loose, built from years of leaf litter no one cleared. It holds water the way a forest holds water: slowly, and for a long time. Pepper doesn't establish well in open ground. It prefers what's been left alone.",
+    "hand": "The vines climb living trees, not poles — the older way, before plantations introduced a tidier geometry. Harvest comes once a year, in January. After picking, the berries go onto mats and the sun finishes the work, over several days, until they reach the weight and colour and hardness that means they are done."
   }
 }
