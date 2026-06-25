@@ -45,8 +45,6 @@ function getHighestElevation(elevationString: string) {
 }
 ---
 
-<!-- Trigger -->
-<button id="all-yields-trigger" class="all-yields-trigger" aria-label="Open All Yields">All yields</button>
 
 <!-- Slide-in Panel -->
 <div id="all-yields-panel" class="all-yields-panel hidden" aria-hidden="true">
@@ -103,7 +101,6 @@ function getHighestElevation(elevationString: string) {
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const trigger = document.getElementById('all-yields-trigger');
     const panel = document.getElementById('all-yields-panel');
     const closeBtn = document.getElementById('all-yields-close');
     const backdrop = document.getElementById('all-yields-backdrop');
@@ -158,25 +155,6 @@ function getHighestElevation(elevationString: string) {
 </script>
 
 <style>
-  .all-yields-trigger {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    z-index: 900;
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    color: rgba(245, 237, 216, 0.5);
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    text-transform: none;
-    padding: 0;
-    transition: color 0.3s ease;
-  }
-  .all-yields-trigger:hover {
-    color: rgba(245, 237, 216, 1);
-  }
-
   .all-yields-panel {
     position: fixed;
     top: 0;
@@ -209,7 +187,7 @@ function getHighestElevation(elevationString: string) {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
+    width: 100%;
     height: 100vh;
     background: rgba(12, 21, 9, 0.6);
     backdrop-filter: blur(4px);

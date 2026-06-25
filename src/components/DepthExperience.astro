@@ -108,6 +108,7 @@ const sizes = product ? product.data.sizes : [];
 <style>
   .depth-experience-container {
     position: relative;
+    width: 100%;
     background-color: var(--color-forest-deep);
     color: var(--color-warm-cream);
     /* GSAP will pin this container */
@@ -451,6 +452,13 @@ const sizes = product ? product.data.sizes : [];
 
         gauge.addEventListener('click', () => {
           window.location.href = '/';
+        });
+      }
+
+      const yieldsBtn = document.getElementById('open-yields-btn');
+      if (yieldsBtn) {
+        yieldsBtn.addEventListener('click', () => {
+          window.dispatchEvent(new Event('open-all-yields-panel'));
         });
       }
     }
