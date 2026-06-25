@@ -2,10 +2,18 @@
 // LaunchScreen.astro
 import OriginMark from './OriginMark.astro';
 ---
-<div id="launch-screen" class="launch-screen hidden">
+<div id="launch-screen" class="launch-screen">
   <OriginMark variant="primary" size={120} id="launch-mark" animate={true} />
   <div class="launch-text"><span class="cream">From the Source.</span></div>
 </div>
+
+<script is:inline>
+  // Execute immediately during HTML parsing to prevent FOUC
+  if (sessionStorage.getItem('ourorigin_visited')) {
+    const ls = document.getElementById('launch-screen');
+    if (ls) ls.style.display = 'none';
+  }
+</script>
 
 <style>
   .launch-screen {
@@ -25,17 +33,15 @@ import OriginMark from './OriginMark.astro';
     transition: opacity 0.7s ease, background-color 0.7s ease;
   }
   .launch-screen.hidden {
-    display: none;
+    display: none !important;
   }
   .launch-screen.fade-out {
     opacity: 0;
   }
   
-
-
   .launch-text {
     position: absolute;
-    bottom: calc(50% - 90px); /* Position it explicitly below the mark without affecting the mark's true center */
+    bottom: calc(50% - 90px);
     font-family: 'Cormorant Garamond', serif;
     font-size: 16px;
     font-style: italic;
@@ -59,8 +65,6 @@ import OriginMark from './OriginMark.astro';
     const launchScreen = document.getElementById('launch-screen');
     
     if (!hasVisited && launchScreen) {
-      launchScreen.classList.remove('hidden');
-      
       const text = document.querySelector('.launch-text');
       
       // Dispatch the mark animation immediately so it draws on the black screen
