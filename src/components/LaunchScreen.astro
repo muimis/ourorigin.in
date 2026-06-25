@@ -61,10 +61,10 @@ import OriginMark from './OriginMark.astro';
       
       const text = document.querySelector('.launch-text');
       
-      // The mark draws on automatically via its internal logic (takes ~2.5s to finish the dot)
-      // So we wait for 2.5s + 0.5s = 3.0s total before fading in text.
+      // The mark draws on automatically via its internal logic (takes ~1.8s to finish)
+      // So we wait for 1.8s + 0.5s = 2.3s total before fading in text.
       const tl = gsap.timeline({
-        delay: 3.0, // Delay matching mark completion + 0.5s
+        delay: 2.3, // Delay matching mark completion + 0.5s
         onComplete: () => {
           // Hold the text for 1.5s
           setTimeout(() => {
