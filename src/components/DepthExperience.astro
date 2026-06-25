@@ -94,36 +94,12 @@ const sizes = product ? product.data.sizes : [];
           <p class="offering-copy">{product.data.offeringCopy}</p>
         )}
         
-        {sizes.length > 0 ? (
-          <div class="size-selector">
-            <div class="size-options">
-              {sizes.map((sizeObj: any, idx: number) => (
-                <label class="size-option">
-                  <input 
-                    type="radio" 
-                    name="product-size" 
-                    value={sizeObj.label} 
-                    data-price={sizeObj.priceINR}
-                    checked={idx === 0}
-                  />
-                  <span class="size-label">{sizeObj.label}</span>
-                  <span class="size-price">₹{sizeObj.priceINR}</span>
-                </label>
-              ))}
-            </div>
-            <div class="shipping-note">Free shipping above ₹399</div>
-            <button class="checkout-btn" data-product={JSON.stringify({
-              id: product.id,
-              name: product.data.name,
-              origin: origin.data.name,
-              originId: origin.id
-            })}>Add to Ledger</button>
-            <button class="more-from-origin-btn" data-origin={origin.id}>More from this origin</button>
-            <a href="/" class="return-matrix-link">Return to the Matrix</a>
-          </div>
-        ) : (
-          <p class="stratum-evidence">OFFERING — [product.sizes]</p>
-        )}
+        <div class="offering-actions">
+          <button class="view-all-yields-btn" id="open-yields-btn" aria-label="Open all yields panel">
+            View All Yields & Procure
+          </button>
+          <a href="/" class="return-matrix-link">Return to the Matrix</a>
+        </div>
       </div>
     </section>
   </div>
@@ -291,95 +267,19 @@ const sizes = product ? product.data.sizes : [];
     flex-direction: column;
   }
 
-  /* Size Selector Styles */
-  .size-selector {
+  /* Action Styles */
+  .offering-actions {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
     align-items: center;
+    gap: 1.5rem;
     z-index: 10;
     position: relative;
+    width: 100%;
+    max-width: 320px;
   }
 
-  .size-options {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .size-option {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 1rem 1.5rem;
-    border: 1px solid rgba(245, 237, 216, 0.2);
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .size-option:has(input:checked) {
-    border-color: var(--color-gold);
-    background-color: rgba(166, 124, 60, 0.1);
-  }
-
-  .size-option input {
-    display: none;
-  }
-
-  .size-label {
-    font-family: var(--font-evidence);
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: 0.5rem;
-  }
-
-  .size-price {
-    font-family: var(--font-narrative);
-    font-size: 1.2rem;
-    color: var(--color-gold);
-  }
-
-  .primary-btn {
-    background-color: var(--color-gold);
-    color: var(--color-forest-deep);
-    border: none;
-    padding: 1rem 3rem;
-    font-family: var(--font-institutional);
-    font-size: 1rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-  }
-
-  .primary-btn:hover {
-    background-color: var(--color-warm-cream);
-  }
-  .offering-copy {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 16px;
-    color: rgba(245, 237, 216, 0.7);
-    margin-bottom: 2rem;
-    line-height: 1.5;
-    max-width: 480px;
-    text-align: center;
-  }
-  
-  .shipping-note {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    color: rgba(245, 237, 216, 0.4);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-top: -1rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .checkout-btn {
+  .view-all-yields-btn {
     width: 100%;
     background: transparent;
     color: var(--color-warm-cream);
@@ -392,27 +292,9 @@ const sizes = product ? product.data.sizes : [];
     transition: all 0.3s ease;
   }
   
-  .checkout-btn:hover {
+  .view-all-yields-btn:hover {
     background: rgba(245, 237, 216, 0.1);
     border-color: rgba(245, 237, 216, 0.8);
-  }
-  
-  .more-from-origin-btn {
-    width: 100%;
-    background: none;
-    border: none;
-    color: var(--color-warm-cream);
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.2rem;
-    cursor: pointer;
-    margin-top: 1.5rem;
-    text-decoration: underline;
-    text-underline-offset: 4px;
-    opacity: 0.8;
-    transition: opacity 0.2s ease;
-  }
-  .more-from-origin-btn:hover {
-    opacity: 1;
   }
 
   .return-matrix-link {
@@ -450,30 +332,11 @@ const sizes = product ? product.data.sizes : [];
     }
 
     initPurchaseAction() {
-      const checkoutBtn = document.querySelector('.checkout-btn');
-      if (checkoutBtn) {
-        checkoutBtn.addEventListener('click', () => {
-          const productData = JSON.parse(checkoutBtn.getAttribute('data-product') || '{}');
-          const selectedSizeInput = document.querySelector('input[name="product-size"]:checked') as HTMLInputElement;
-          const size = selectedSizeInput ? selectedSizeInput.value : '';
-          const price = selectedSizeInput ? parseInt(selectedSizeInput.dataset.price || '0', 10) : 0;
-          
-          // Add to Ledger
-          const item = {
-            id: productData.id + '-' + size,
-            productId: productData.id,
-            name: productData.name,
-            origin: productData.origin,
-            originId: productData.originId,
-            size: size,
-            price: price,
-            quantity: 1
-          };
-          window.dispatchEvent(new CustomEvent('add-to-ledger', { detail: item }));
-          
-          // Open Ledger to show the cart
-          const trigger = document.getElementById('ledger-trigger');
-          if (trigger) trigger.click();
+      const openYieldsBtn = document.getElementById('open-yields-btn');
+      if (openYieldsBtn) {
+        openYieldsBtn.addEventListener('click', () => {
+          // Open All Yields panel
+          window.dispatchEvent(new Event('open-all-yields-panel'));
         });
       }
       
@@ -589,8 +452,6 @@ const sizes = product ? product.data.sizes : [];
         gauge.addEventListener('click', () => {
           window.location.href = '/';
         });
-
-        document.dispatchEvent(new CustomEvent('play-origin-mark-entrance'));
       }
     }
   }

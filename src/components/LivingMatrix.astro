@@ -157,15 +157,11 @@ const anchorMap = {
 
       const tl = gsap.timeline({ delay: 0.5 });
 
-      tl.call(() => {
-        const event = new Event('play-origin-mark-entrance');
-        document.dispatchEvent(event);
-      })
-      .to(markWrapper, {
+      tl.to(markWrapper, {
         scale: 1,
         duration: 1.5,
         ease: 'power3.inOut'
-      }, "+=1.5")
+      })
       .to(bands, {
         opacity: 1,
         duration: 2,

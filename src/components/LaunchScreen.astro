@@ -63,7 +63,10 @@ import OriginMark from './OriginMark.astro';
       
       const text = document.querySelector('.launch-text');
       
-      // The mark draws on automatically via its internal logic (takes ~1.8s to finish)
+      // Dispatch the mark animation immediately so it draws on the black screen
+      document.dispatchEvent(new CustomEvent('play-origin-mark-entrance'));
+      
+      // The mark takes ~1.8s to finish its draw sequence.
       // So we wait for 1.8s + 0.5s = 2.3s total before fading in text.
       const tl = gsap.timeline({
         delay: 2.3, // Delay matching mark completion + 0.5s

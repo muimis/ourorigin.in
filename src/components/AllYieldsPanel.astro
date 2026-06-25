@@ -132,6 +132,9 @@ function getHighestElevation(elevationString: string) {
     if (closeBtn) closeBtn.addEventListener('click', closePanel);
     if (backdrop) backdrop.addEventListener('click', closePanel);
     
+    // Listen for global event from DepthExperience
+    window.addEventListener('open-all-yields-panel', openPanel);
+    
     // Wiring Add buttons
     document.querySelectorAll('.add-to-ledger-btn').forEach(btn => {
       btn.addEventListener('click', () => {
