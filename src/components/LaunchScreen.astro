@@ -93,12 +93,12 @@ import OriginMark from './OriginMark.astro';
       });
       
       // Scene 1: Mark is drawn (0 to 1.8s)
-      // Scene 2: Mark fades out
-      tl.to(mark, { opacity: 0, duration: 0.6, ease: "power2.inOut", delay: 2.0 })
-        // Scene 3: Text fades in (never on screen at the same time as the mark)
-        .to(text2, { opacity: 0.9, duration: 1.0, ease: "power2.out" })
-        // Scene 4: Text fades out
-        .to(text2, { opacity: 0, duration: 0.6, ease: "power2.inOut", delay: 1.2 });
+      // Scene 2: Text fades in below the mark
+      tl.to(text2, { opacity: 0.9, duration: 1.0, ease: "power2.out", delay: 2.0 })
+        // Scene 3: Text fades out
+        .to(text2, { opacity: 0, duration: 0.6, ease: "power2.inOut", delay: 1.2 })
+        // Scene 4: Background turns to Forest Deep
+        .to(launchScreen, { backgroundColor: '#0c1509', duration: 0.8, ease: "power2.inOut" });
         
     } else if (launchScreen) {
       launchScreen.classList.add('hidden');

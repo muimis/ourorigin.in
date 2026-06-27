@@ -84,7 +84,7 @@ const originMarks = {
           aria-label={`${origin.data.name}, ${getHighestElevation(origin.data.elevation)}M. Tap to expand.`}
         >
           <div class="plate-origin-mark" style={`opacity: ${origin.data.slug === 'malabar-coast' ? '0.3' : '0.9'};`}>
-            <OriginMark variant="primary" size={24} animate={false} />
+            <OriginMark variant="gold" size={24} animate={false} />
           </div>
           <div class="tap-pulse-indicator"></div>
           
@@ -125,16 +125,6 @@ const originMarks = {
         </div>
       )
     })}
-  </div>
-  
-  <div class="matrix-mark-wrapper initial-center" id="living-matrix-mark">
-    <OriginMark 
-      variant="gold" 
-      size={48} 
-      id="matrix-gauge-mark" 
-      aria-label="Open the spatial overlay — navigate between origins"
-    />
-  </div>
 </div>
 
 <script>
@@ -148,24 +138,18 @@ const originMarks = {
     init() {
       const bands = document.querySelectorAll('.matrix-band');
       const originNames = document.querySelectorAll('.title-group');
-      const markWrapper = document.querySelector('.matrix-mark-wrapper');
       
       gsap.set(bands, { opacity: 0 });
       gsap.set(originNames, { y: 10, opacity: 0 });
 
       const tl = gsap.timeline({ delay: 0.5 });
 
-      tl.to(markWrapper, {
-        scale: 1,
-        duration: 1.5,
-        ease: 'power3.inOut'
-      })
-      .to(bands, {
+      tl.to(bands, {
         opacity: 1,
         duration: 2,
         stagger: 0.15,
         ease: 'power2.inOut'
-      }, "-=0.8")
+      })
       .to(originNames, {
         y: 0,
         opacity: 1,
