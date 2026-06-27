@@ -277,9 +277,19 @@ const originMarks = {
   
   .plate-origin-mark {
     position: absolute;
-    top: 2rem;
-    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 1rem;
     z-index: 5;
+    pointer-events: none;
+  }
+  
+  @media (min-width: 768px) {
+    .plate-origin-mark {
+      top: 2rem;
+      right: 2rem;
+      transform: none;
+    }
   }
   
   @media (min-width: 768px) {
@@ -350,7 +360,14 @@ const originMarks = {
   
   @media (max-width: 768px) {
     .origin-name {
-      font-size: 12px;
+      font-size: 14px;
+    }
+    .matrix-bands.has-expanded .matrix-band:not(.expanded) .origin-name {
+      transform: none !important;
+      opacity: 0.5;
+    }
+    .matrix-bands:hover .matrix-band:not(:hover) .origin-name {
+      transform: none !important;
     }
   }
   
@@ -418,7 +435,7 @@ const originMarks = {
   
   .origin-subline {
     font-family: 'DM Mono', monospace;
-    font-size: 9px;
+    font-size: 11px;
     letter-spacing: 0.05em;
     opacity: 0.45;
     margin: 0 0 0.6rem 0;
@@ -436,7 +453,7 @@ const originMarks = {
   
   .commerce-signal {
     font-family: 'DM Mono', monospace;
-    font-size: 10px;
+    font-size: 11px;
     color: rgba(166, 124, 60, 0.65); /* gold at 65% */
     margin: -0.2rem 0 0.6rem 0;
     opacity: 0;
@@ -481,14 +498,7 @@ const originMarks = {
     .carousel-trigger { font-size: 12px; }
   }
 
-  /* Plate static Origin Mark */
-  .plate-origin-mark {
-    position: absolute;
-    top: 0.75rem;
-    right: 0.75rem;
-    z-index: 5;
-    pointer-events: none;
-  }
+  /* Plate static Origin Mark (Removed duplicate block from here) */
 
   .tap-pulse-indicator {
     position: absolute;
@@ -563,11 +573,11 @@ const originMarks = {
   /* Mobile Hold Indicator Styles */
   .mobile-hold-indicator {
     position: absolute;
-    left: 1rem;
+    left: 0.5rem;
     top: 50%;
     transform: translateY(-50%);
-    width: 30px;
-    height: 30px;
+    width: 24px;
+    height: 24px;
     opacity: 0;
     pointer-events: none;
     z-index: 100;

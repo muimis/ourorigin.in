@@ -60,6 +60,12 @@ const patternOffsetX = index * 10;
     opacity: 0.6; /* Slightly fade the pattern so text remains readable */
   }
 
+  @media (max-width: 768px) {
+    .topographic-pattern {
+      opacity: 0.25; /* Severely reduce on mobile to prevent text clash */
+    }
+  }
+
   .topographic-border {
     position: absolute;
     top: 0;
@@ -73,5 +79,11 @@ const patternOffsetX = index * 10;
     stroke: rgba(245, 237, 216, 0.4); /* Visible edge of the plate */
     stroke-width: 2;
     vector-effect: non-scaling-stroke;
+  }
+
+  @media (max-width: 768px) {
+    .plate-border {
+      stroke: rgba(245, 237, 216, 0.15);
+    }
   }
 </style>
