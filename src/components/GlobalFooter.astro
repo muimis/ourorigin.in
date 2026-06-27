@@ -1,0 +1,115 @@
+---
+import OriginMark from './OriginMark.astro';
+---
+
+<footer class="global-footer">
+  <div class="footer-left">
+    <span class="brand-text">OURORIGIN</span>
+  </div>
+  
+  <div class="footer-center">
+    <OriginMark variant="gold" size={24} animate={true} />
+  </div>
+
+  <div class="footer-right">
+    <p class="sr-only">OurOrigin — FSSAI Reg. No. 21326135000354</p>
+    <nav aria-label="Site navigation">
+      <a href="/observations">Observations</a>
+      <a href="/why">Why this exists.</a>
+      <a href="/contact">Contact</a>
+    </nav>
+  </div>
+</footer>
+
+<style>
+  .global-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 1.5rem 2rem;
+    z-index: 9000;
+    background: linear-gradient(to top, rgba(12, 21, 9, 1) 0%, rgba(12, 21, 9, 0) 100%);
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-left, .footer-center, .footer-right {
+    pointer-events: auto;
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+
+  .footer-left {
+    justify-content: flex-start;
+  }
+
+  .footer-center {
+    justify-content: center;
+  }
+
+  .footer-right {
+    justify-content: flex-end;
+  }
+
+  .brand-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: rgba(245, 237, 216, 0.6); /* Secondary brand color (muted cream) */
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+
+  nav {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  nav a {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: rgba(220, 220, 220, 0.5); /* Subtle silver */
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    transition: color 0.3s ease;
+    white-space: nowrap;
+  }
+
+  nav a:hover {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+  }
+  
+  @media (max-width: 768px) {
+    .global-footer {
+      padding: 1rem;
+    }
+    
+    .brand-text {
+      display: none; /* Hide on mobile to save space */
+    }
+    
+    .footer-left {
+      flex: 0;
+    }
+    
+    .footer-center {
+      flex: 0;
+      margin-right: auto;
+    }
+
+    nav {
+      gap: 1rem;
+    }
+
+    nav a {
+      font-size: 8px;
+    }
+  }
+</style>

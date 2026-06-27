@@ -6,6 +6,7 @@ import LivingMatrix from '../components/LivingMatrix.astro';
 import Carousel from '../components/Carousel.astro';
 import LaunchScreen from '../components/LaunchScreen.astro';
 import AllYieldsPanel from '../components/AllYieldsPanel.astro';
+import GlobalFooter from '../components/GlobalFooter.astro';
 ---
 
 <!DOCTYPE html>
@@ -90,37 +91,6 @@ import AllYieldsPanel from '../components/AllYieldsPanel.astro';
             top: 0;
         }
     
-        footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            padding: 1.5rem 3rem;
-            z-index: 9000;
-            background: linear-gradient(to top, rgba(12, 21, 9, 1) 0%, rgba(12, 21, 9, 0) 100%);
-            pointer-events: none;
-        }
-        footer nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            pointer-events: auto;
-        }
-        footer nav a {
-            font-family: 'DM Mono', monospace;
-            font-size: 10px;
-            color: rgba(166, 124, 60, 0.7);
-            text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            transition: color 0.3s ease;
-        }
-        footer nav a:hover {
-            color: rgba(166, 124, 60, 1);
-            text-decoration: none;
-        }
-        
         /* Hide scrollbar but allow scroll if needed, though matrix is 100vh */
         body { overflow: hidden; }
     </style>
@@ -136,16 +106,6 @@ import AllYieldsPanel from '../components/AllYieldsPanel.astro';
       <AllYieldsPanel />
     </main>
 
-    <footer>
-      <div class="footer-left">
-        <OriginMark variant="gold" size={24} animate={true} />
-      </div>
-      <p class="sr-only">OurOrigin — FSSAI Reg. No. 21326135000354</p>
-      <nav aria-label="Site navigation">
-        <a href="/observations">Observations</a>
-        <a href="/why">Why this exists.</a>
-        <a href="/contact">Contact</a>
-      </nav>
-    </footer>
+    <GlobalFooter />
 </body>
 </html>
