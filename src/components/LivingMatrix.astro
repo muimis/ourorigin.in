@@ -398,24 +398,16 @@ const hudData = {
       font-size: 16px !important; /* Bumped to 16px to be definitively readable and larger than clamp */
     }
     .matrix-bands.has-expanded .matrix-band:not(.expanded) .origin-name {
-      transform: none !important;
-      opacity: 0.5;
-    }
-    .matrix-bands:hover .matrix-band:not(:hover) .origin-name {
-      transform: none !important;
-    }
-  }
-  
-  .matrix-bands.has-expanded .matrix-band:not(.expanded) .origin-name {
     transform: scale(0.65);
-    opacity: 0.4;
+    opacity: 0.2;
   }
   
   .matrix-bands:hover .matrix-band:not(:hover) .origin-name {
     @media (hover: hover) {
       transform: scale(0.65);
-      opacity: 0.4;
+      opacity: 0.2;
     }
+  }
   }
   
   .elevation-sup {
@@ -682,13 +674,11 @@ const hudData = {
     height: 1px;
     z-index: 4;
     pointer-events: none;
-    opacity: 0.6;
+    opacity: 1;
     transition: opacity 0.4s ease;
   }
   
-  .matrix-band:hover .yield-hud-callout {
-    opacity: 1;
-  }
+  
   
   .hud-tether-container {
     position: absolute;
@@ -747,12 +737,29 @@ const hudData = {
 
   @media (max-width: 768px) {
     .yield-hud-callout {
-      opacity: 0.4;
+      opacity: 0.8;
     }
     .hud-tag {
       right: 1.5rem;
       font-size: 9px;
     }
+  }
+
+
+  /* Topographic map fading for non-focused plates */
+  .topographic-map-container {
+    transition: opacity 0.6s var(--ease-settle);
+  }
+  
+  .matrix-bands:hover .matrix-band:not(:hover) .topographic-map-container,
+  .matrix-bands.has-expanded .matrix-band:not(.expanded) .topographic-map-container {
+    opacity: 0.2;
+  }
+
+  /* HUD fading for non-focused plates */
+  .matrix-bands:hover .matrix-band:not(:hover) .yield-hud-callout,
+  .matrix-bands.has-expanded .matrix-band:not(.expanded) .yield-hud-callout {
+    opacity: 0;
   }
 
 </style>
