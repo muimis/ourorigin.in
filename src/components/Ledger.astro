@@ -65,8 +65,8 @@ const companionsJson = JSON.stringify(companionProductsMap);
             <input type="text" id="ship-state" name="state" placeholder="State" required />
           </div>
           <div class="form-row">
-            <input type="text" id="ship-pin" name="pin" placeholder="PIN Code" required />
-            <input type="tel" id="ship-phone" name="phone" placeholder="Phone (for delivery updates)" required />
+            <input type="text" id="ship-pin" name="pin" placeholder="PIN Code (6 digits)" pattern="[0-9]{6}" required />
+            <input type="tel" id="ship-phone" name="phone" placeholder="Phone (for delivery updates)" pattern="[0-9]{10,12}" required />
           </div>
           <div class="shipping-actions">
             <p id="shipping-saved-note" class="shipping-saved-note hidden">Saved from your last order. Tap any field to change.</p>
@@ -267,12 +267,16 @@ const companionsJson = JSON.stringify(companionProductsMap);
     
     // Connection logic
     connectBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      
+      if (ledgerItems.length === 0) return;
+      
+      // Native HTML5 Validation
       if (!shippingForm.checkValidity()) {
         shippingForm.reportValidity();
         return;
       }
       
-      // Save shipping details
       const formData = new FormData(shippingForm);
       const data = Object.fromEntries(formData.entries());
       localStorage.setItem('ourorigin_shipping_v1', JSON.stringify(data));
@@ -425,7 +429,7 @@ const companionsJson = JSON.stringify(companionProductsMap);
   .ledger-panel {
     position: relative;
     width: 100%;
-    height: 70dvh;
+    height: 75dvh;
     background: var(--color-forest-deep);
     border-top: 1px solid rgba(244, 241, 235, 0.2);
     border-radius: 20px 20px 0 0;
@@ -433,7 +437,8 @@ const companionsJson = JSON.stringify(companionProductsMap);
     display: flex;
     flex-direction: column;
     transform: translateY(0);
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    padding-bottom: env(safe-area-inset-bottom);
   }
   .ledger-overlay.hidden .ledger-panel {
     transform: translateY(100%);
@@ -597,10 +602,15 @@ const companionsJson = JSON.stringify(companionProductsMap);
     padding: 0.5rem 0;
     width: 100%;
     box-sizing: border-box;
+    transition: border-color 0.2s ease, background 0.2s ease;
   }
   .shipping-form input:focus {
     outline: none;
-    border-bottom-color: var(--color-warm-cream);
+    border-color: rgba(244, 241, 235, 0.6);
+    background: transparent;
+  }
+  .shipping-form input:user-invalid {
+    border-color: rgba(255, 100, 100, 0.5);
   }
   .form-row {
     display: flex;

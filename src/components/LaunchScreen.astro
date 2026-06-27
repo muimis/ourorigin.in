@@ -3,10 +3,9 @@
 import OriginMark from './OriginMark.astro';
 ---
 <div id="launch-screen" class="launch-screen">
-  <OriginMark variant="primary" size={120} id="launch-mark" animate={false} />
+  <OriginMark variant="primary" size={120} id="launch-mark" animate={true} />
   <div class="launch-text-container">
-    <p class="launch-text-1">From the Western Ghats.</p>
-    <p class="launch-text-2">FROM THE SOURCE.</p>
+    <p class="launch-text-2">from the source...</p>
   </div>
 </div>
 
@@ -51,23 +50,13 @@ import OriginMark from './OriginMark.astro';
     gap: 0.8rem;
     align-items: center;
   }
-  
-  .launch-text-1 {
-    margin: 0;
-    font-family: var(--font-narrative);
-    font-style: italic;
-    font-size: 16px;
-    letter-spacing: 0.12em;
-    color: var(--color-warm-cream);
-    opacity: 0;
-    will-change: opacity;
-  }
 
   .launch-text-2 {
     margin: 0;
-    font-family: var(--font-institutional);
-    font-size: 12px;
-    letter-spacing: 0.4em;
+    font-family: var(--font-narrative);
+    font-size: 20px;
+    font-style: italic;
+    letter-spacing: 0.15em;
     color: var(--color-warm-cream);
     opacity: 0;
     will-change: opacity;
@@ -82,33 +71,34 @@ import OriginMark from './OriginMark.astro';
     const launchScreen = document.getElementById('launch-screen');
     
     if (!hasVisited && launchScreen) {
-      const text1 = document.querySelector('.launch-text-1');
       const text2 = document.querySelector('.launch-text-2');
+      const mark = document.getElementById('origin-mark-launch-mark');
       
-      // Mark takes ~1.8s, but since it's static now, we just proceed.
-      // document.dispatchEvent(new CustomEvent('play-origin-mark-entrance'));
+      // Trigger SVG draw animation (takes ~1.4s)
+      document.dispatchEvent(new CustomEvent('play-origin-mark-entrance'));
       
       const tl = gsap.timeline({
         onComplete: () => {
+          launchScreen.style.pointerEvents = 'none';
+          launchScreen.style.backgroundColor = 'transparent';
+          launchScreen.classList.add('fade-out');
+          
+          sessionStorage.setItem('ourorigin_visited', 'true');
+          window.dispatchEvent(new Event('launch-sequence-complete'));
+          
           setTimeout(() => {
-            launchScreen.style.pointerEvents = 'none';
-            launchScreen.style.backgroundColor = 'transparent';
-            launchScreen.classList.add('fade-out');
-            
-            sessionStorage.setItem('ourorigin_visited', 'true');
-            window.dispatchEvent(new Event('launch-sequence-complete'));
-            
-            setTimeout(() => {
-              launchScreen.classList.add('hidden');
-            }, 700); 
-          }, 300); // reduced hold time so total sequence is < 4s
+            launchScreen.classList.add('hidden');
+          }, 700); 
         }
       });
       
-      // Mark takes ~1.8s. Line 1 at 0.3s after mark = 2.1s
-      tl.to(text1, { opacity: 1, duration: 0.6, ease: "power2.out", delay: 2.1 })
-        // Line 2 at 0.8s after Line 1 starts => absolute time 2.9s => offset relative to previous is -0.6 + 0.8 = +0.2s
-        .to(text2, { opacity: 1, duration: 0.6, ease: "power2.out" }, "2.9");
+      // Scene 1: Mark is drawn (0 to 1.8s)
+      // Scene 2: Mark fades out
+      tl.to(mark, { opacity: 0, duration: 0.6, ease: "power2.inOut", delay: 2.0 })
+        // Scene 3: Text fades in (never on screen at the same time as the mark)
+        .to(text2, { opacity: 0.9, duration: 1.0, ease: "power2.out" })
+        // Scene 4: Text fades out
+        .to(text2, { opacity: 0, duration: 0.6, ease: "power2.inOut", delay: 1.2 });
         
     } else if (launchScreen) {
       launchScreen.classList.add('hidden');
