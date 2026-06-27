@@ -82,11 +82,11 @@ const originMarks = {
         
         bandStyle += `
           -webkit-mask-image: ${encoded}, linear-gradient(black, black);
-          -webkit-mask-size: 100% 150px, 100% calc(100% - 149px);
+          -webkit-mask-size: 100% 60px, 100% calc(100% - 59px);
           -webkit-mask-position: top left, bottom left;
           -webkit-mask-repeat: no-repeat, no-repeat;
           mask-image: ${encoded}, linear-gradient(black, black);
-          mask-size: 100% 150px, 100% calc(100% - 149px);
+          mask-size: 100% 60px, 100% calc(100% - 59px);
           mask-position: top left, bottom left;
           mask-repeat: no-repeat, no-repeat;
         `;
@@ -282,7 +282,8 @@ const originMarks = {
     color: var(--color-warm-cream);
     text-decoration: none;
     opacity: 0;
-    z-index: calc(10 - var(--index));
+    /* Reversing Z-index so bottom plates overlap top plates, allowing negative margin masking to work */
+    z-index: var(--index);
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -292,6 +293,11 @@ const originMarks = {
     padding-right: 1.5rem;
     padding-bottom: 0;
     cursor: pointer;
+  }
+  
+  .matrix-band:not(:first-child) {
+    margin-top: -60px; /* Pulls the plate up to overlap the one above it */
+    padding-top: 60px; /* Offsets content so it remains visually centered in the unmasked area */
   }
   
   .plate-origin-mark {
