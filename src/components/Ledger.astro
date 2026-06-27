@@ -27,17 +27,17 @@ const companionsJson = JSON.stringify(companionProductsMap);
 </div>
 
 <!-- Persistent Trigger -->
-<div id="ledger-trigger" class="ledger-trigger hidden">
+<div id="ledger-trigger" class="ledger-trigger hidden" aria-live="polite" role="button" tabindex="0">
   <span id="ledger-count"></span> held
 </div>
 
 <!-- Slide-up Panel -->
 <div id="ledger-overlay" class="ledger-overlay hidden">
   <div class="ledger-backdrop" id="ledger-close-backdrop"></div>
-  <div class="ledger-panel">
+  <div class="ledger-panel" role="complementary" aria-label="Your Ledger">
     <div class="ledger-header">
       <h2 class="ledger-title">Your Ledger</h2>
-      <button id="ledger-close-btn" class="ledger-close">Close</button>
+      <button id="ledger-close-btn" class="ledger-close" aria-label="Close Ledger">Close</button>
     </div>
     
     <div class="ledger-content">
@@ -81,7 +81,7 @@ const companionsJson = JSON.stringify(companionProductsMap);
           <p class="upi-note">After payment, send your order details via WhatsApp.</p>
         </div>
 
-        <button id="ledger-connect-btn" class="ledger-connect">Connect via WhatsApp</button>
+        <button id="ledger-connect-btn" class="ledger-connect" aria-label="Continue to checkout via WhatsApp">Connect via WhatsApp</button>
       </div>
       
       <!-- Secondary Discovery -->
@@ -151,8 +151,10 @@ const companionsJson = JSON.stringify(companionProductsMap);
       if (count > 0) {
         countDisplay.textContent = count;
         trigger.classList.remove('hidden');
+        trigger.setAttribute('aria-label', `Open Ledger — ${count} items held`);
       } else {
         trigger.classList.add('hidden');
+        trigger.removeAttribute('aria-label');
       }
     }
     
@@ -192,9 +194,9 @@ const companionsJson = JSON.stringify(companionProductsMap);
           <div class="item-controls">
             <span class="price-font">₹${item.price}</span>
             <div class="qty-controls">
-              <button class="qty-btn dec" data-id="${item.id}">-</button>
+              <button class="qty-btn dec" data-id="${item.id}" aria-label="Decrease quantity of ${item.name}">-</button>
               <span class="qty-val price-font">${item.quantity}</span>
-              <button class="qty-btn inc" data-id="${item.id}">+</button>
+              <button class="qty-btn inc" data-id="${item.id}" aria-label="Increase quantity of ${item.name}">+</button>
             </div>
           </div>
         `;
@@ -237,7 +239,7 @@ const companionsJson = JSON.stringify(companionProductsMap);
           
           if (availableCompanions.length > 0) {
             const linksHtml = availableCompanions.map(c => 
-              `<a href="#" class="discovery-link" data-origin="${originId}" data-product="${c.id}">${c.name}</a>`
+              `<a href="#" class="discovery-link" data-origin="${originId}" data-product="${c.id}" aria-label="Browse more yields from ${originName}">${c.name}</a>`
             ).join(', ');
             
             discoveryHtmlChunks.push(`Also from ${originName}: ${linksHtml}`);

@@ -120,6 +120,7 @@ const originMarks = {
             <div class="band-reveal">
               <p class="origin-meta">{copy.fragment}</p>
               <p class="origin-subline">{copy.subLine}</p>
+              {origin.data.slug === 'wayanad' && <p class="commerce-signal">From ₹109</p>}
               <div class="origin-live-telemetry"></div>
               
               {origin.data.slug === 'malabar-coast' ? (
@@ -445,6 +446,19 @@ const originMarks = {
     letter-spacing: 0.05em;
     opacity: 0.45;
     margin: 0 0 0.6rem 0;
+  }
+  
+  .commerce-signal {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: rgba(166, 124, 60, 0.65); /* gold at 65% */
+    margin: -0.2rem 0 0.6rem 0;
+    opacity: 0;
+    transition: opacity var(--duration-standard) ease;
+  }
+  
+  .matrix-band.expanded .commerce-signal {
+    opacity: 1;
   }
   
   .origin-action {

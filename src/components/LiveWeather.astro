@@ -1,12 +1,13 @@
 ---
 export interface Props {
   coordinates: string; // e.g. "11.605° N, 76.083° E"
+  originName?: string;
 }
 
-const { coordinates } = Astro.props;
+const { coordinates, originName = 'origin' } = Astro.props;
 ---
 
-<live-weather data-coords={coordinates} class="live-weather-component">
+<live-weather data-coords={coordinates} class="live-weather-component" role="status" aria-live="polite" aria-label={`Current conditions at ${originName}`}>
   <span class="weather-text">· Reading conditions...</span>
 </live-weather>
 

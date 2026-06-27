@@ -70,7 +70,7 @@ const sizes = product ? product.data.sizes : [];
           <div class="stratum-text-container">
             <h2 class="stratum-evidence">
               {s.evidence}
-              {s.hasWeather && origin && <><span class="weather-separator">·</span><LiveWeather coordinates={origin.data.coordinates} /></>}
+              {s.hasWeather && origin && <><span class="weather-separator">·</span><LiveWeather coordinates={origin.data.coordinates} originName={origin.data.name} /></>}
             </h2>
             {s.id === 'specimen' && s.botanicalName && (
               <p class="specimen-botanical-name">{s.botanicalName}</p>

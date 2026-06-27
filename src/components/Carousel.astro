@@ -20,10 +20,10 @@ function getFirstSentence(text) {
 
 <div id="origin-carousel-overlay" class="carousel-overlay hidden">
   <div class="carousel-backdrop" id="carousel-close-backdrop"></div>
-  <div class="carousel-container">
+  <div class="carousel-container" id="carousel-main-container" role="region" aria-label="Yields">
     <div class="carousel-header">
       <h2 id="carousel-origin-title" class="carousel-title">Products</h2>
-      <button id="carousel-close-btn" class="carousel-close">Close</button>
+      <button id="carousel-close-btn" class="carousel-close" aria-label="Close carousel">Close</button>
     </div>
     
     <div class="carousel-track" id="carousel-track">
@@ -38,7 +38,7 @@ function getFirstSentence(text) {
         const originName = getOriginName(originId);
         
         return (
-          <div class={`carousel-card ${isAnchor ? 'anchor-card' : 'companion-card'}`} data-origin={originId} data-product-id={product.id}>
+          <div class={`carousel-card ${isAnchor ? 'anchor-card' : 'companion-card'}`} data-origin={originId} data-product-id={product.id} role="article" aria-label={`${product.data.name} from ${originName}`}>
             <div class="card-content">
               <h3 class="product-name">{product.data.name}</h3>
               <p class="botanical-name">{product.data.botanicalName}</p>
@@ -47,7 +47,7 @@ function getFirstSentence(text) {
                 <>
                   <p class="observation-line">{getFirstSentence(product.data.specimenCopy)}</p>
                   <div class="card-footer">
-                    <a href={`/origins/${originId}/${product.id}`} class="anchor-cta">Enter this origin</a>
+                    <a href={`/origins/${originId}/${product.id}`} class="anchor-cta" aria-label={`Enter ${product.data.name} — begin full origin descent`}>Enter this origin</a>
                   </div>
                 </>
               ) : (
@@ -59,7 +59,9 @@ function getFirstSentence(text) {
                       <button 
                         class={`size-btn ${index === 0 ? 'selected' : ''}`} 
                         data-size={size.label} 
-                        data-price={size.priceINR}>
+                        data-price={size.priceINR}
+                        aria-label={`${size.label}, ₹${size.priceINR}`}
+                        aria-pressed={index === 0 ? 'true' : 'false'}>
                         {size.label}
                       </button>
                     ))}
@@ -67,7 +69,7 @@ function getFirstSentence(text) {
                   
                   <div class="card-footer companion-footer">
                     <p class="price-display">₹<span class="price-val">{product.data.sizes[0].priceINR}</span></p>
-                    <button class="add-to-ledger-btn" data-product={JSON.stringify({
+                    <button class="add-to-ledger-btn" aria-label={`Add ${product.data.name} ${product.data.sizes[0].label} to Ledger`} data-product={JSON.stringify({
                       id: product.id,
                       name: product.data.name,
                       origin: originName,
@@ -303,6 +305,11 @@ function getFirstSentence(text) {
         emptyStateCard.classList.add('hidden-by-filter');
       }
       
+      const container = document.getElementById('carousel-main-container');
+      if (container) {
+        container.setAttribute('aria-label', `Yields from ${originName || 'all origins'}`);
+      }
+      
       title.textContent = originName ? `${originName} Yields` : 'Products';
       overlay.classList.remove('hidden');
       track.scrollLeft = 0;
@@ -322,9 +329,21 @@ function getFirstSentence(text) {
       
       sizeBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-          sizeBtns.forEach(b => b.classList.remove('selected'));
+          sizeBtns.forEach(b => {
+            b.classList.remove('selected');
+            b.setAttribute('aria-pressed', 'false');
+          });
           btn.classList.add('selected');
+          btn.setAttribute('aria-pressed', 'true');
           priceVal.textContent = btn.getAttribute('data-price');
+          
+          // Update add-to-ledger-btn aria-label
+          const addBtn = card.querySelector('.add-to-ledger-btn');
+          if (addBtn) {
+            const productData = JSON.parse(addBtn.getAttribute('data-product'));
+            const size = btn.getAttribute('data-size');
+            addBtn.setAttribute('aria-label', `Add ${productData.name} ${size} to Ledger`);
+          }
         });
       });
       
