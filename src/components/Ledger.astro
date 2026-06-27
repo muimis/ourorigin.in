@@ -51,9 +51,33 @@ const companionsJson = JSON.stringify(companionProductsMap);
       
       <div id="ledger-footer" class="ledger-footer hidden">
         <div class="ledger-total">
-          <span>Total</span>
-          <span id="ledger-total-price" class="price-font">₹0</span>
+          <span>Subtotal</span>
+          <span id="ledger-subtotal-price" class="price-font">₹0</span>
         </div>
+        
+        <!-- Order Summary (Gap 2) -->
+        <div id="ledger-order-summary" class="ledger-order-summary">
+          <p class="summary-heading">YOUR ORDER</p>
+          <div id="summary-items" class="summary-items"></div>
+          <hr class="summary-divider" />
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span id="summary-subtotal">₹0</span>
+          </div>
+          <div class="summary-row">
+            <span>Shipping</span>
+            <span id="summary-shipping">Free</span>
+          </div>
+          <div id="shipping-prompt-note" class="shipping-prompt-note hidden"></div>
+          <hr class="summary-divider-solid" />
+          <div class="summary-row total-row">
+            <span>Total</span>
+            <span id="summary-total">₹0</span>
+          </div>
+          <p class="dispatch-timeline">DISPATCH WITHIN 2–3 WORKING DAYS · THIRUVANANTHAPURAM</p>
+        </div>
+
+        <p class="summary-heading">WHERE TO SEND THIS</p>
         
         <!-- Shipping Form -->
         <form id="shipping-form" class="shipping-form">
@@ -74,14 +98,24 @@ const companionsJson = JSON.stringify(companionProductsMap);
           </div>
         </form>
 
+        <!-- What happens next (Gap 3) -->
+        <p class="human-note">We'll confirm your order on WhatsApp, usually within a few hours.</p>
+
         <!-- UPI Option -->
         <div class="ledger-upi-section">
           <p class="upi-prompt">Prefer to pay directly?</p>
           <p class="upi-id">UPI: <span id="upi-text">ourorigin@ybl</span> <button type="button" id="copy-upi-btn" class="copy-upi-btn" aria-label="Copy UPI ID">Copy</button></p>
-          <p class="upi-note">After payment, send your order details via WhatsApp.</p>
+          <p class="upi-note human-note-small">Paid via UPI? Include your payment reference in the message and we'll confirm immediately.</p>
         </div>
 
-        <button id="ledger-connect-btn" class="ledger-connect" aria-label="Continue to checkout via WhatsApp">Connect via WhatsApp</button>
+        <button id="ledger-connect-btn" class="ledger-connect" aria-label="Continue to checkout via WhatsApp">Continue to the Source</button>
+      </div>
+      
+      <!-- Post-checkout state (Gap 4) -->
+      <div id="ledger-post-checkout" class="ledger-post-checkout hidden">
+        <p class="post-title">Your order is on its way to us.</p>
+        <p class="post-subtitle">We'll reply on WhatsApp.</p>
+        <p id="post-reinvite" class="post-reinvite hidden">Four other origins are still waiting.</p>
       </div>
       
       <!-- Secondary Discovery -->
@@ -179,9 +213,11 @@ const companionsJson = JSON.stringify(companionProductsMap);
       
       let total = 0;
       let originsInLedger = new Set();
+      let summaryHtml = '';
       
       ledgerItems.forEach(item => {
-        total += item.price * item.quantity;
+        const lineTotal = item.price * item.quantity;
+        total += lineTotal;
         originsInLedger.add({id: item.originId, name: item.origin});
         
         const el = document.createElement('div');
@@ -189,21 +225,63 @@ const companionsJson = JSON.stringify(companionProductsMap);
         el.innerHTML = `
           <div class="item-info">
             <span class="item-name">${item.name}</span>
-            <span class="item-size">${item.size}</span>
-          </div>
-          <div class="item-controls">
-            <span class="price-font">₹${item.price}</span>
             <div class="qty-controls">
               <button class="qty-btn dec" data-id="${item.id}" aria-label="Decrease quantity of ${item.name}">-</button>
               <span class="qty-val price-font">${item.quantity}</span>
               <button class="qty-btn inc" data-id="${item.id}" aria-label="Increase quantity of ${item.name}">+</button>
             </div>
+            <span class="item-size">${item.size} · ₹${item.price}</span>
+            <span class="item-line-total price-font">${item.quantity} &times; ₹${item.price} = ₹${lineTotal}</span>
           </div>
         `;
         itemsContainer.appendChild(el);
+        
+        summaryHtml += `
+          <div class="summary-item-row">
+            <span>${item.name} (${item.size}) &times; ${item.quantity}</span>
+            <span>₹${lineTotal}</span>
+          </div>
+        `;
       });
       
-      totalPriceDisplay.textContent = `₹${total}`;
+      document.getElementById('ledger-subtotal-price').textContent = `₹${total}`;
+      
+      // Update Invoice Summary
+      const summaryItems = document.getElementById('summary-items');
+      const summarySub = document.getElementById('summary-subtotal');
+      const summaryShip = document.getElementById('summary-shipping');
+      const summaryTot = document.getElementById('summary-total');
+      const shipNote = document.getElementById('shipping-prompt-note');
+      
+      summaryItems.innerHTML = summaryHtml;
+      summarySub.textContent = `₹${total}`;
+      
+      const cityVal = (shippingForm.elements['city']?.value || '').toLowerCase();
+      const isLocal = cityVal.includes('thiruvananthapuram') || cityVal.includes('trivandrum');
+      
+      let shippingCost = 0;
+      let shippingText = '';
+      
+      if (isLocal) {
+        shippingText = 'Free — local delivery';
+        shipNote.classList.add('hidden');
+      } else if (total < 399) {
+        shippingCost = 60;
+        shippingText = `₹${shippingCost}`;
+        shipNote.textContent = `Add ₹${399 - total} more for free shipping.`;
+        shipNote.classList.remove('hidden');
+      } else {
+        shippingText = 'Free';
+        shipNote.classList.add('hidden');
+      }
+      
+      summaryShip.textContent = shippingText;
+      summaryTot.textContent = `₹${total + shippingCost}`;
+      
+      // We attach shipping cost to the form element so checkout logic can read it
+      shippingForm.setAttribute('data-shipping-cost', shippingCost.toString());
+      shippingForm.setAttribute('data-shipping-text', shippingText);
+      shippingForm.setAttribute('data-total', (total + shippingCost).toString());
       
       // Wire up qty buttons
       document.querySelectorAll('.qty-btn').forEach(btn => {
@@ -265,6 +343,12 @@ const companionsJson = JSON.stringify(companionProductsMap);
       }
     }
     
+    // Re-render when shipping city changes to update shipping logic instantly
+    const cityInput = document.getElementById('ship-city');
+    if (cityInput) {
+      cityInput.addEventListener('input', renderItems);
+    }
+    
     // Connection logic
     connectBtn.addEventListener('click', (e) => {
       e.preventDefault();
@@ -283,15 +367,52 @@ const companionsJson = JSON.stringify(companionProductsMap);
       savedNote.classList.remove('hidden');
       clearBtn.classList.remove('hidden');
 
-      let message = `Hi — I'd like to order:\n`;
-      ledgerItems.forEach(item => {
-        message += `- ${item.quantity}x ${item.name} (${item.size})\n`;
-      });
-      message += `\nShipping Details:\n${data.name}\n${data.house}, ${data.street}\n${data.city}, ${data.state} ${data.pin}\n${data.phone}\n\nI am ready to pay via UPI upon confirmation.`;
+      const shippingCost = parseInt(shippingForm.getAttribute('data-shipping-cost') || '0', 10);
+      const shippingText = shippingForm.getAttribute('data-shipping-text') || 'Free';
+      const orderTotal = shippingForm.getAttribute('data-total') || '0';
+
+      let message = '';
+      if (ledgerItems.length === 1 && ledgerItems[0].quantity === 1) {
+        const item = ledgerItems[0];
+        message = `Hi — I'd like to order ${item.name} (${item.size}) from OurOrigin.\nTotal: ₹${orderTotal}. Shipping: ${shippingText}.\n\nName: ${data.name}\nAddress: ${data.house}, ${data.street}, ${data.city}, ${data.state} – ${data.pin}\nPhone: ${data.phone}\n\nFound you at ourorigin.in.`;
+      } else {
+        message = `Hi — I'd like to order the following from OurOrigin.\n\n`;
+        ledgerItems.forEach(item => {
+          message += `– ${item.name} (${item.size}) × ${item.quantity} · ₹${item.price * item.quantity}\n`;
+        });
+        message += `\nTotal: ₹${orderTotal}\nShipping: ${shippingText}\n\nName: ${data.name}\nAddress: ${data.house}, ${data.street}, ${data.city}, ${data.state} – ${data.pin}\nPhone: ${data.phone}\n\nFound you at ourorigin.in.`;
+      }
       
       const encodedMessage = encodeURIComponent(message);
-      const phone = '919645555668'; // The contact number
+      const phone = '919645555668'; 
       window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
+      
+      // Post-checkout state (Gap 4)
+      itemsContainer.classList.add('hidden');
+      footer.classList.add('hidden');
+      discoverySection.classList.add('hidden');
+      const postCheckout = document.getElementById('ledger-post-checkout');
+      postCheckout.classList.remove('hidden');
+      
+      setTimeout(() => {
+        document.getElementById('post-reinvite').classList.remove('hidden');
+      }, 1500);
+      
+      // Clear cart
+      localStorage.removeItem('ourorigin_ledger');
+      ledgerItems = [];
+      updateTrigger();
+      
+      // Close after 3s
+      setTimeout(() => {
+        closeLedger();
+        // Reset DOM for future opens
+        setTimeout(() => {
+          postCheckout.classList.add('hidden');
+          itemsContainer.classList.remove('hidden');
+          document.getElementById('post-reinvite').classList.add('hidden');
+        }, 500);
+      }, 3000);
     });
     
     // Listen to add events
@@ -504,7 +625,11 @@ const companionsJson = JSON.stringify(companionProductsMap);
     font-family: 'DM Mono', monospace;
     font-size: 0.8rem;
     color: rgba(244, 241, 235, 0.6);
-    background-color: rgba(244, 241, 235, 0.05);
+  }
+  .item-line-total {
+    font-size: 0.75rem;
+    color: rgba(244, 241, 235, 0.4);
+    margin-top: 0.2rem;
   }
   .item-controls {
     display: flex;
@@ -547,6 +672,113 @@ const companionsJson = JSON.stringify(companionProductsMap);
     font-family: 'Cinzel', serif;
     font-size: 1.2rem;
   }
+  .ledger-order-summary {
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .summary-heading {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: rgba(244, 241, 235, 0.5);
+    margin: 0 0 1rem 0;
+    text-transform: uppercase;
+  }
+  .summary-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .summary-item-row {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--color-warm-cream);
+  }
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: rgba(244, 241, 235, 0.6);
+  }
+  .total-row {
+    color: var(--color-warm-cream);
+    font-weight: bold;
+  }
+  .summary-divider {
+    border: none;
+    border-top: 1px solid rgba(244, 241, 235, 0.15);
+    margin: 0.5rem 0;
+    width: 100%;
+  }
+  .summary-divider-solid {
+    border: none;
+    border-top: 1px solid rgba(244, 241, 235, 0.6);
+    margin: 0.5rem 0;
+    width: 100%;
+  }
+  .shipping-prompt-note {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 11px;
+    color: rgba(244, 241, 235, 0.4);
+    margin: 0;
+  }
+  .dispatch-timeline {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: rgba(244, 241, 235, 0.35);
+    margin: 1rem 0 0 0;
+    text-transform: uppercase;
+  }
+  .human-note {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: rgba(244, 241, 235, 0.5);
+    margin: 0 0 1.5rem 0;
+  }
+  .human-note-small {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 11px;
+    color: rgba(244, 241, 235, 0.4);
+    margin: 0;
+  }
+  .ledger-post-checkout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+  }
+  .post-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 22px;
+    color: rgba(244, 241, 235, 0.8);
+    margin: 0 0 0.5rem 0;
+  }
+  .post-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    color: rgba(244, 241, 235, 0.55);
+    margin: 0;
+  }
+  .post-reinvite {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    color: rgba(244, 241, 235, 0.4);
+    margin: 1.5rem 0 0 0;
+    transition: opacity 0.5s ease;
+  }
+  
   .ledger-connect {
     background: var(--color-warm-cream);
     color: var(--color-forest-deep);

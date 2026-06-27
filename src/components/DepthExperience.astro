@@ -56,7 +56,7 @@ const sizes = product ? product.data.sizes : [];
     <OriginMark variant="gold" size={48} id="depth-gauge-mark" />
   </div>
 
-  <div class="pin-container" data-origin-name={origin?.data.name} data-product-name={product?.data.name}>
+  <div class="pin-container" data-origin-slug={origin?.data.slug} data-product-slug={product?.id} data-origin-name={origin?.data.name} data-product-name={product?.data.name}>
     {strata.map((s, i) => (
       <section 
         class={`stratum stratum-${s.id} ${maskUrl ? 'has-terrain-mask' : ''}`} 
@@ -448,6 +448,33 @@ const sizes = product ? product.data.sizes : [];
       });
       
       tl.addLabel("step" + strata.length); // Final snap point
+      
+      // Gap 5: Mark as explored when reaching the Offering stratum
+      const pinContainer = document.querySelector('.pin-container');
+      const originSlug = pinContainer?.getAttribute('data-origin-slug');
+      const productSlug = pinContainer?.getAttribute('data-product-slug');
+      
+      if (originSlug && productSlug) {
+        ScrollTrigger.create({
+          trigger: ".stratum-offering",
+          start: "top center",
+          containerAnimation: tl, 
+          // Note: since we are animating the strata via timeline and pinning the container,
+          // it's easier to just use the timeline's progress.
+          // The offering stratum is the last index.
+        });
+        
+        // Wait, since we are doing manual y translates instead of x translates, ScrollTrigger containerAnimation doesn't apply to vertical y translations directly.
+        // We can just use the timeline's onUpdate or onComplete.
+        // When progress > 0.8, we assume they reached the end.
+      }
+      
+      // Update: we just attach an onUpdate to the main timeline.
+      tl.eventCallback('onUpdate', function() {
+        if (this.progress() > 0.8 && originSlug && productSlug) {
+          localStorage.setItem(`ourorigin_explored_${originSlug}_${productSlug}`, 'true');
+        }
+      });
     }
 
     initDepthGauge() {

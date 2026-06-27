@@ -68,14 +68,36 @@ function getHighestElevation(elevationString: string) {
               <div class="yield-product-row">
                 <div class="yield-product-name">{product.data.name}</div>
                 <div class="yield-product-sizes">
-                  {product.data.sizes.map((sizeObj) => (
-                    <div class="yield-size-row">
-                      <div class="yield-size-price">
-                        {sizeObj.label} &nbsp;₹{sizeObj.priceINR}
+                  {product.data.isAnchorProduct ? (
+                    <div class="anchor-product-wrapper" data-explore-key={`ourorigin_explored_${originId}_${product.id}`}>
+                      <div class="anchor-first-time">
+                        <a href={`/origins/${originId}/${product.id}`} class="yield-action-btn enter-origin-btn">Enter this origin &rarr;</a>
                       </div>
-                      {product.data.isAnchorProduct ? (
-                        <a href={`/origins/${originId}/${product.id}`} class="yield-action-btn">Enter</a>
-                      ) : (
+                      <div class="anchor-returning hidden">
+                        <p class="returning-note">You've been here before.</p>
+                        {product.data.sizes.map((sizeObj) => (
+                          <div class="yield-size-row">
+                            <div class="yield-size-price">
+                              {sizeObj.label} &nbsp;₹{sizeObj.priceINR}
+                            </div>
+                            <button class="yield-action-btn add-to-ledger-btn" data-product={JSON.stringify({
+                              id: product.id,
+                              name: product.data.name,
+                              origin: group.originInfo.name,
+                              originId: originId,
+                              size: sizeObj.label,
+                              price: sizeObj.priceINR
+                            })}>Add</button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    product.data.sizes.map((sizeObj) => (
+                      <div class="yield-size-row">
+                        <div class="yield-size-price">
+                          {sizeObj.label} &nbsp;₹{sizeObj.priceINR}
+                        </div>
                         <button class="yield-action-btn add-to-ledger-btn" data-product={JSON.stringify({
                           id: product.id,
                           name: product.data.name,
@@ -84,9 +106,9 @@ function getHighestElevation(elevationString: string) {
                           size: sizeObj.label,
                           price: sizeObj.priceINR
                         })}>Add</button>
-                      )}
-                    </div>
-                  ))}
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
             ))}
@@ -106,6 +128,18 @@ function getHighestElevation(elevationString: string) {
     const backdrop = document.getElementById('all-yields-backdrop');
 
     const openPanel = () => {
+      // Evaluate returning visitor state for anchor products
+      document.querySelectorAll('.anchor-product-wrapper').forEach(wrapper => {
+        const key = wrapper.getAttribute('data-explore-key');
+        if (localStorage.getItem(key) === 'true') {
+          wrapper.querySelector('.anchor-first-time').classList.add('hidden');
+          wrapper.querySelector('.anchor-returning').classList.remove('hidden');
+        } else {
+          wrapper.querySelector('.anchor-first-time').classList.remove('hidden');
+          wrapper.querySelector('.anchor-returning').classList.add('hidden');
+        }
+      });
+
       panel.classList.remove('hidden');
       void panel.offsetWidth;
       panel.classList.add('open');
@@ -302,5 +336,25 @@ function getHighestElevation(elevationString: string) {
   }
   .yield-action-btn:hover {
     color: var(--color-warm-cream);
+  }
+  
+  .anchor-first-time {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .anchor-returning {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .returning-note {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 11px;
+    color: rgba(245, 237, 216, 0.4);
+    margin: 0;
+    text-align: right;
   }
 </style>
