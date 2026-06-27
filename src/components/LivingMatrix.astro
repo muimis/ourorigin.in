@@ -56,11 +56,11 @@ const originMarks = {
 };
 
 const hudData = {
-  'nilgiris': { tag: 'YIELD // BEANS & LEAVES', top: '25%', rightDot: '25%' },
-  'idukki': { tag: 'YIELD // PODS & ARILS', top: '75%', rightDot: '22%' },
-  'wayanad': { tag: 'YIELD // BERRIES, BUDS & BARK', top: '25%', rightDot: '25%' },
-  'malabar-coast': { tag: '[ UNDOCUMENTED ]', top: '50%', rightDot: '20%' },
-  'thiruvananthapuram': { tag: 'YIELD // ROOTS & RHIZOMES', top: '75%', rightDot: '25%' }
+  'nilgiris': { tag: 'YIELD // BEANS & LEAVES', top: '50%', rightDot: '15%' },
+  'idukki': { tag: 'YIELD // PODS & ARILS', top: '50%', rightDot: '15%' },
+  'wayanad': { tag: 'YIELD // BERRIES, BUDS & BARK', top: '50%', rightDot: '15%' },
+  'malabar-coast': { tag: '[ UNDOCUMENTED ]', top: '50%', rightDot: '15%' },
+  'thiruvananthapuram': { tag: 'YIELD // ROOTS & RHIZOMES', top: '50%', rightDot: '15%' }
 };
 ---
 
@@ -784,6 +784,13 @@ const hudData = {
   .matrix-bands:hover .matrix-band:not(:hover) .yield-hud-callout,
   .matrix-bands.has-expanded .matrix-band:not(.expanded) .yield-hud-callout {
     opacity: 0.2;
+  }
+
+
+  @media (max-width: 768px) {
+    .yield-hud-callout {
+      display: none !important;
+    }
   }
 
 </style>
