@@ -283,7 +283,7 @@ const companionsJson = JSON.stringify(companionProductsMap);
       ledgerItems.forEach(item => {
         message += `- ${item.quantity}x ${item.name} (${item.size})\n`;
       });
-      message += `\nShipping Details:\n${data.name}\n${data.house}, ${data.street}\n${data.city}, ${data.state} ${data.pin}\n${data.phone}\n\nI've paid via UPI.`;
+      message += `\nShipping Details:\n${data.name}\n${data.house}, ${data.street}\n${data.city}, ${data.state} ${data.pin}\n${data.phone}\n\nI am ready to pay via UPI upon confirmation.`;
       
       const encodedMessage = encodeURIComponent(message);
       const phone = '919645555668'; // The contact number
@@ -312,10 +312,10 @@ const companionsJson = JSON.stringify(companionProductsMap);
       }, 2500);
 
       // Pulse trigger
-      trigger.style.transform = 'scale(1.2)';
+      trigger.classList.add('pulse-anim');
       setTimeout(() => {
-        trigger.style.transform = 'scale(1)';
-      }, 300);
+        trigger.classList.remove('pulse-anim');
+      }, 500);
     });
     
     const openLedger = () => {
@@ -339,24 +339,38 @@ const companionsJson = JSON.stringify(companionProductsMap);
 <style>
   .ledger-toast {
     position: fixed;
-    bottom: 4rem;
-    left: 2rem;
-    z-index: 1000;
+    top: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+    z-index: 10000;
     font-family: 'DM Mono', monospace;
     font-size: 11px;
     background-color: var(--color-forest-deep);
     color: var(--color-warm-cream);
-    padding: 0.5rem 1rem;
+    padding: 0.6rem 1.2rem;
     opacity: 0;
-    transform: translateY(10px);
     transition: opacity 0.3s ease, transform 0.3s ease;
     pointer-events: none;
-    border: 1px solid rgba(245, 237, 216, 0.2);
-    border-radius: 4px;
+    border: 1px solid rgba(245, 237, 216, 0.4);
+    border-radius: 40px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
   .ledger-toast.visible {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(-50%) translateY(0);
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 237, 216, 0.4); }
+    70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(245, 237, 216, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 237, 216, 0); }
+  }
+
+  .pulse-anim {
+    animation: pulse 0.5s ease-out;
   }
 
   .ledger-trigger {

@@ -28,13 +28,24 @@ const matrixCopy = {
   'malabar-coast': { fragment: 'This coastline named the trade routes.', subLine: 'Western Ghats · Smallholder Hand Harvest', cta: 'This origin is still being documented.' }
 };
 
-const anchorMap = {
-  'nilgiris': '/origins/nilgiris/tea',
-  'idukki': '/origins/idukki/cardamom',
-  'wayanad': '/origins/wayanad/black-pepper',
-  'thiruvananthapuram': '/origins/thiruvananthapuram/dry-ginger',
-  'malabar-coast': '#'
-};
+const products = await getCollection('products');
+
+const anchorMap: Record<string, string> = {};
+orderedOrigins.forEach(origin => {
+  if (origin.data.slug === 'malabar-coast') {
+    anchorMap[origin.data.slug] = '#';
+  } else {
+    const anchorProduct = products.find(p => {
+      const pOriginId = typeof p.data.originSlug === 'object' ? p.data.originSlug.id : p.data.originSlug;
+      return pOriginId === origin.id && p.data.isAnchorProduct;
+    });
+    const firstProduct = anchorProduct || products.find(p => {
+      const pOriginId = typeof p.data.originSlug === 'object' ? p.data.originSlug.id : p.data.originSlug;
+      return pOriginId === origin.id;
+    });
+    anchorMap[origin.data.slug] = firstProduct ? `/origins/${origin.id}/${firstProduct.id}` : '#';
+  }
+});
 const originMarks = {
   'wayanad': 'gold',
   'idukki': 'ruby',

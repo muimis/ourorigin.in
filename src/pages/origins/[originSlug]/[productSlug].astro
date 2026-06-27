@@ -52,13 +52,13 @@ if (!origin) {
     <meta property="og:title" content={`${product.data.name} from ${origin.data.name} — OurOrigin`}>
     <meta property="og:description" content={product.data.specimenCopy?.slice(0, 160)}>
     <meta property="og:url" content={`https://ourorigin.in/origins/${origin.id}/${product.id}`}>
-    <meta property="og:image" content={`https://ourorigin.in${origin.data.images?.specimen || '/og-image.jpg'}`}>
+    <meta property="og:image" content={`https://ourorigin.in${origin.data.images?.specimen?.endsWith('.webp') ? '/og-image.jpg' : (origin.data.images?.specimen || '/og-image.jpg')}`}>
     <meta property="og:site_name" content="OurOrigin">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content={`${product.data.name} from ${origin.data.name} — OurOrigin`}>
     <meta name="twitter:description" content={product.data.specimenCopy?.slice(0, 160)}>
-    <meta name="twitter:image" content={`https://ourorigin.in${origin.data.images?.specimen || '/og-image.jpg'}`}>
+    <meta name="twitter:image" content={`https://ourorigin.in${origin.data.images?.specimen?.endsWith('.webp') ? '/og-image.jpg' : (origin.data.images?.specimen || '/og-image.jpg')}`}>
 
     <script type="application/ld+json" set:html={`
     {
