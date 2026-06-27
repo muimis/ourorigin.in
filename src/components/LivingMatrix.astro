@@ -145,18 +145,13 @@ const originMarks = {
     }
   }
 
-  // Add an event listener to reveal the marks when the flying animation completes
+  // Add an event listener to reveal the marks when the launch animation completes
   window.addEventListener('origin-marks-arrived', () => {
     const marks = document.querySelectorAll('.plate-origin-mark');
-    marks.forEach((mark, index) => {
+    marks.forEach((mark) => {
       const targetOp = mark.getAttribute('data-target-opacity') || '0.9';
-      if (index === 0) {
-        // The top plate (Wayanad) is where the flying mark lands. It appears instantly as the flying mark is hidden by LaunchScreen fade.
-        gsap.set(mark, { opacity: parseFloat(targetOp) });
-      } else {
-        // The other 4 plates fade in with a live golden fade-in
-        gsap.to(mark, { opacity: parseFloat(targetOp), duration: 0.8, ease: 'power2.out' });
-      }
+      // All 5 plates fade in with a live golden fade-in simultaneously
+      gsap.to(mark, { opacity: parseFloat(targetOp), duration: 0.8, ease: 'power2.out' });
     });
   });
 

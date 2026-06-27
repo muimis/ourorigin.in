@@ -104,37 +104,23 @@ import OriginMark from './OriginMark.astro';
       // Scene 3: Text fades out quickly
       tl.to(text2, { opacity: 0, duration: 0.4, ease: "power2.inOut", delay: 0.4 });
       
-      // Scene 4: Mark flies to top right plate border (Nilgiris), shrinks, becomes golden. 
-      // launchBg fades to transparent revealing matrix instantly.
+      // Scene 4: Matrix Reveal
+      // launchBg fades to transparent revealing matrix. The launch mark simply shrinks and fades out in the center.
       tl.addLabel("fly");
       
       tl.to(launchBg, { opacity: 0, duration: 1.0 }, "fly");
       
-      // Explicit viewport calculation to target the Nilgiris origin mark perfectly
-      // Target is at right: 0.75rem, top: 3.5vh + 0.75rem. Target size is 24px (half is 12px).
-      // 0.75rem is approx 12px.
-      const vw = window.innerWidth / 100;
-      const vh = window.innerHeight / 100;
-      
-      const deltaX = (50 * vw) - 24;
-      const deltaY = (-46.5 * vh) + 24;
-
       tl.to(mark, {
-        x: deltaX,
-        y: deltaY,
-        scale: 0.2, // 24 / 120 = 0.2
+        scale: 0,
+        opacity: 0,
         transformOrigin: "50% 50%",
-        duration: 1.0,
-        ease: "power3.inOut"
+        duration: 0.8,
+        ease: "power2.inOut"
       }, "fly");
-      
-      tl.to(mark.querySelectorAll('circle, g, line'), { stroke: 'var(--color-gold)', duration: 1.0 }, "fly");
-      tl.to(mark.querySelectorAll('.om-dot'), { fill: 'var(--color-gold)', duration: 1.0 }, "fly");
       
       // Scene 5: Landed
       tl.call(() => {
-        // Hide the flying mark instantly to prevent a 0.7s crossfade overlap with the real matrix mark
-        mark.style.opacity = '0';
+        mark.style.display = 'none';
         window.dispatchEvent(new Event('origin-marks-arrived'));
       });
         
