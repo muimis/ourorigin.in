@@ -19,7 +19,7 @@ const curve = curves[index];
 
 // Distinct visual sections of the topographic map for each plate
 // By slightly scaling the background and shifting, we get variety without thick lines
-const patternOffsetY = index * 15; 
+const patternOffsetY = index === 0 ? 40 : index * 15; 
 const patternOffsetX = index * 20;
 ---
 
