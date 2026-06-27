@@ -3,7 +3,7 @@
 import OriginMark from './OriginMark.astro';
 ---
 <div id="launch-screen" class="launch-screen">
-  <OriginMark variant="primary" size={120} id="launch-mark" animate={true} />
+  <OriginMark variant="primary" size={120} id="launch-mark" animate={false} />
   <div class="launch-text-container">
     <p class="launch-text-1">From the Western Ghats.</p>
     <p class="launch-text-2">FROM THE SOURCE.</p>
@@ -43,7 +43,8 @@ import OriginMark from './OriginMark.astro';
   }
   
   .launch-text-container {
-    margin-top: 2rem;
+    position: absolute;
+    bottom: 25vh;
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -84,8 +85,8 @@ import OriginMark from './OriginMark.astro';
       const text1 = document.querySelector('.launch-text-1');
       const text2 = document.querySelector('.launch-text-2');
       
-      // Dispatch the mark animation immediately so it draws on the black screen
-      document.dispatchEvent(new CustomEvent('play-origin-mark-entrance'));
+      // Mark takes ~1.8s, but since it's static now, we just proceed.
+      // document.dispatchEvent(new CustomEvent('play-origin-mark-entrance'));
       
       const tl = gsap.timeline({
         onComplete: () => {

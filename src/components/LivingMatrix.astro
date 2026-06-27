@@ -192,6 +192,7 @@ const originMarks = {
         const hasHover = window.matchMedia('(hover: hover)').matches;
         
         if (!hasHover) {
+          if (band.classList.contains('empty-state')) return;
           e.preventDefault();
           const bandsContainer = document.querySelector('.matrix-bands');
           
@@ -200,8 +201,10 @@ const originMarks = {
             const pulse = band.querySelector('.tap-pulse-indicator');
             if (pulse) {
               const rect = band.getBoundingClientRect();
-              const x = e.clientX - rect.left;
-              const y = e.clientY - rect.top;
+              const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+              const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+              const x = clientX - rect.left;
+              const y = clientY - rect.top;
               pulse.style.left = `${x}px`;
               pulse.style.top = `${y}px`;
               
@@ -301,7 +304,7 @@ const originMarks = {
   }
   
   .matrix-band.expanded {
-    flex: 2.25 !important; /* 45dvh out of 100dvh */
+    flex: 4 !important; /* 45dvh out of 90dvh available (100dvh - 10dvh padding) */
     background-color: #121d0e;
     color: var(--color-pure-white);
     outline: none;
@@ -309,8 +312,8 @@ const originMarks = {
   }
 
   @media (hover: hover) {
-    .matrix-band:hover, .matrix-band:focus-visible {
-      flex: 2.25 !important;
+    .matrix-band:not(.empty-state):hover, .matrix-band:not(.empty-state):focus-visible {
+      flex: 4 !important;
       background-color: #121d0e;
       color: var(--color-pure-white);
       outline: none;

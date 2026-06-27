@@ -82,7 +82,7 @@ const sizes = product ? product.data.sizes : [];
     ))}
 
     <!-- Offering Stratum (Custom Layout) -->
-    <section class="stratum stratum-offering" style={`z-index: 5; height: 100dvh; width: 100%; transform: translateY(100dvh); ${maskUrl ? `--mask-url: url('${maskUrl}');` : ''}`}>
+    <section class="stratum stratum-offering" style={`z-index: 10000; height: 100dvh; width: 100%; transform: translateY(100dvh); ${maskUrl ? `--mask-url: url('${maskUrl}');` : ''}`}>
       {product.data.images?.packaging && product.data.images.packaging.trim() !== '' && (
         <div class="stratum-image" style={`background-image: url('${product.data.images.packaging}')`}></div>
       )}
@@ -93,6 +93,15 @@ const sizes = product ? product.data.sizes : [];
         {product.data.offeringCopy && (
           <p class="offering-copy">{product.data.offeringCopy}</p>
         )}
+        
+        <div class="offering-sizes-grid">
+          {sizes.map((size) => (
+            <div class="offering-size-row">
+              <span class="size-label">{size.label}</span>
+              <span class="size-price">₹{size.priceINR}</span>
+            </div>
+          ))}
+        </div>
         
         <div class="offering-actions">
           <button class="view-all-yields-btn" id="open-yields-btn" aria-label="Open all yields panel">
@@ -266,6 +275,30 @@ const sizes = product ? product.data.sizes : [];
 
   .offering-content {
     flex-direction: column;
+  }
+
+  .offering-sizes-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 2rem 0;
+    width: 100%;
+    max-width: 320px;
+    z-index: 10;
+  }
+
+  .offering-size-row {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(245, 237, 216, 0.2);
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    color: var(--color-warm-cream);
+  }
+
+  .size-price {
+    color: var(--color-gold);
   }
 
   /* Action Styles */
