@@ -63,39 +63,23 @@ const originMarks = {
     {orderedOrigins.map((origin, index) => {
       const linkHref = anchorMap[origin.data.slug];
       const copy = matrixCopy[origin.data.slug];
-      const curves = [
-        "", // Band 0 (Nilgiris) has a straight top to flush with the viewport padding
-        "M0,60 C150,60 200,10 300,20 C400,30 450,90 600,70 C750,50 850,10 1000,40",
-        "M0,40 C100,40 150,80 250,70 C350,60 400,20 550,30 C700,40 800,90 1000,60",
-        "M0,70 C200,70 250,20 400,30 C550,40 600,80 750,60 C900,40 950,20 1000,50",
-        "M0,30 C150,30 200,70 350,60 C500,50 600,10 750,30 C900,50 950,80 1000,40"
+      const clipPaths = [
+        "", // Band 0 (Nilgiris) has no top curve, so no clip-path needed
+        "polygon(0.0% 24.0px, 4.2% 23.6px, 7.9% 22.0px, 11.2% 19.6px, 14.2% 17.2px, 16.9% 14.4px, 19.4% 12.0px, 21.9% 9.6px, 24.5% 8.0px, 27.1% 7.6px, 30.0% 8.0px, 32.9% 9.6px, 35.5% 12.4px, 38.1% 15.6px, 40.6% 19.2px, 43.1% 22.4px, 45.8% 25.6px, 48.8% 28.0px, 52.1% 29.2px, 55.8% 29.6px, 60.0% 28.0px, 64.4% 25.2px, 68.5% 22.4px, 72.4% 19.6px, 76.2% 16.8px, 80.0% 14.4px, 83.8% 12.8px, 87.6% 11.6px, 91.5% 12.0px, 95.6% 13.2px, 100.0% 16.0px, 100% 100%, 0% 100%)",
+        "polygon(0.0% 16.0px, 2.9% 16.4px, 5.5% 17.6px, 7.9% 19.2px, 10.2% 21.2px, 12.5% 23.6px, 14.8% 25.6px, 17.1% 27.2px, 19.5% 28.4px, 22.1% 28.8px, 25.0% 28.0px, 27.9% 26.4px, 30.5% 24.4px, 33.1% 22.0px, 35.6% 19.6px, 38.1% 17.2px, 40.8% 14.8px, 43.8% 12.8px, 47.1% 11.6px, 50.8% 11.2px, 55.0% 12.0px, 59.4% 13.6px, 63.5% 16.0px, 67.6% 18.8px, 71.6% 21.6px, 75.6% 24.0px, 79.8% 26.0px, 84.3% 27.6px, 89.1% 27.6px, 94.3% 26.8px, 100.0% 24.0px, 100% 100%, 0% 100%)",
+        "polygon(0.0% 28.0px, 5.6% 27.6px, 10.4% 26.0px, 14.6% 23.6px, 18.4% 21.2px, 21.9% 18.4px, 25.2% 16.0px, 28.5% 13.6px, 32.0% 12.0px, 35.8% 11.6px, 40.0% 12.0px, 44.2% 13.6px, 48.0% 15.6px, 51.3% 18.0px, 54.5% 20.4px, 57.5% 22.4px, 60.5% 24.4px, 63.7% 25.6px, 67.0% 26.4px, 70.8% 25.6px, 75.0% 24.0px, 79.2% 21.6px, 82.9% 19.2px, 86.1% 17.2px, 88.8% 15.6px, 91.3% 14.4px, 93.4% 14.0px, 95.2% 14.0px, 96.9% 15.2px, 98.5% 16.8px, 100.0% 20.0px, 100% 100%, 0% 100%)",
+        "polygon(0.0% 12.0px, 4.2% 12.4px, 8.0% 13.6px, 11.3% 15.2px, 14.5% 17.2px, 17.5% 19.6px, 20.5% 21.6px, 23.7% 23.2px, 27.0% 24.4px, 30.8% 24.8px, 35.0% 24.0px, 39.4% 22.4px, 43.5% 20.4px, 47.4% 18.0px, 51.2% 15.6px, 55.0% 13.6px, 58.8% 11.6px, 62.6% 10.4px, 66.5% 9.6px, 70.6% 10.4px, 75.0% 12.0px, 79.2% 14.4px, 82.9% 17.2px, 86.1% 19.6px, 88.8% 21.6px, 91.3% 23.2px, 93.4% 24.0px, 95.2% 23.6px, 96.9% 22.4px, 98.5% 20.0px, 100.0% 16.0px, 100% 100%, 0% 100%)"
       ];
-      const curve = curves[index];
+      const clipPath = clipPaths[index];
       let bandStyle = `--index: ${index};`;
-      let maskStyle = '';
-      
-      if (curve) {
-        // Create an SVG mask that perfectly traces the topographic curve.
-        // We add a 4px stroke to the mask so it expands slightly outwards to prevent the visual 2px line from being half-clipped.
-        const svg = `<svg viewBox="0 0 1000 150" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="${curve} L1000,150 L0,150 Z" fill="black" stroke="black" stroke-width="4" vector-effect="non-scaling-stroke"/></svg>`;
-        const encoded = `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;
-        
-        maskStyle = `
-          -webkit-mask-image: ${encoded}, linear-gradient(black, black);
-          -webkit-mask-size: 100% 60px, 100% calc(100% - 59px);
-          -webkit-mask-position: top left, bottom left;
-          -webkit-mask-repeat: no-repeat, no-repeat;
-          mask-image: ${encoded}, linear-gradient(black, black);
-          mask-size: 100% 60px, 100% calc(100% - 59px);
-          mask-position: top left, bottom left;
-          mask-repeat: no-repeat, no-repeat;
-        `;
+      if (clipPath) {
+        bandStyle += `clip-path: ${clipPath}; -webkit-clip-path: ${clipPath};`;
       }
       
       return (
         <div 
           data-href={linkHref} 
-          class={`matrix-band ${origin.data.slug === 'malabar-coast' ? 'empty-state' : ''}`} 
+          class={`matrix-band ${origin.data.slug === 'malabar-coast' ? 'empty-state' : ''} ${index === 0 ? 'expanded' : ''}`} 
           style={bandStyle}
           data-index={index}
           data-slug={origin.data.slug}
@@ -104,9 +88,7 @@ const originMarks = {
           aria-expanded="false"
           aria-label={`${origin.data.name}, ${getHighestElevation(origin.data.elevation)}M. Tap to expand.`}
         >
-          <div class="band-visuals" style={maskStyle}>
-            <TopographicMap index={index} />
-          </div>
+          <TopographicMap index={index} />
 
           <div class="plate-origin-mark" style="opacity: 0;" data-target-opacity={origin.data.slug === 'malabar-coast' ? '0.3' : '0.9'}>
             <OriginMark variant="gold" size={24} animate={false} />
@@ -278,14 +260,15 @@ const originMarks = {
   .matrix-band {
     position: relative;
     width: 100%;
+    background-color: rgba(12, 21, 9, 0.4);
     flex: 1; /* evenly distributes space => roughly 20dvh */
-    transition: flex 700ms cubic-bezier(0.22, 1, 0.36, 1), color var(--duration-standard) ease, opacity var(--duration-standard) ease, transform var(--duration-standard) ease;
+    transition: flex 700ms cubic-bezier(0.22, 1, 0.36, 1), background-color var(--duration-standard) ease, color var(--duration-standard) ease, opacity var(--duration-standard) ease, transform var(--duration-standard) ease;
     animation: subtleBreathe 10s ease-in-out infinite;
     animation-delay: calc(var(--index, 0) * -2s);
     color: var(--color-warm-cream);
     text-decoration: none;
     opacity: 0;
-    /* Reversing Z-index so bottom plates overlap top plates, allowing negative margin masking to work */
+    /* Reversing Z-index so bottom plates overlap top plates, allowing negative margin overlap to work */
     z-index: var(--index);
     display: flex;
     align-items: center;
@@ -297,15 +280,9 @@ const originMarks = {
     cursor: pointer;
   }
   
-  .band-visuals {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: -60px; /* Extends underneath the plate below it to fill gaps without layout overlap */
-    z-index: -1;
-    background-color: rgba(12, 21, 9, 0.4);
-    transition: background-color var(--duration-standard) ease;
+  .matrix-band:not(:first-child) {
+    margin-top: -60px; /* Pulls the plate up to overlap the one above it */
+    padding-top: 60px; /* Offsets content so it remains visually centered */
   }
   
   .plate-origin-mark {
@@ -336,23 +313,18 @@ const originMarks = {
     border-bottom: none;
   }
   
-  .matrix-band.expanded .band-visuals {
-    background-color: #121d0e;
-  }
-  
   .matrix-band.expanded {
     flex: 4 !important; /* 45dvh out of 90dvh available (100dvh - 10dvh padding) */
+    background-color: #121d0e;
     color: var(--color-pure-white);
     outline: none;
     animation-play-state: paused;
   }
-
+  
   @media (hover: hover) {
-    .matrix-band:not(.empty-state):hover .band-visuals, .matrix-band:not(.empty-state):focus-visible .band-visuals {
-      background-color: #121d0e;
-    }
     .matrix-band:not(.empty-state):hover, .matrix-band:not(.empty-state):focus-visible {
       flex: 4 !important;
+      background-color: #121d0e;
       color: var(--color-pure-white);
       outline: none;
       animation-play-state: paused;
