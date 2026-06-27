@@ -15,5 +15,8 @@
   ],
   "methodDescription": "Wild-harvested, low-temperature drying.",
   "specimenCopy": "Picked before the pods split, dried at low temperature so the seeds keep the oils that define the flavour. Most cardamom loses a measurable amount of those oils in aggressive drying. This one doesn't.",
-  "offeringCopy": "From the hills named for it. Nowhere else grows this quite the same way."
+  "offeringCopy": "From the hills named for it. Nowhere else grows this quite the same way.",
+  "images": {
+    "packaging": "/assets/products/packaging-mockup.png"
+  }
 }

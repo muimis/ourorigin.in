@@ -14,5 +14,8 @@
     }
   ],
   "methodDescription": "Preserved green.",
-  "specimenCopy": "The same berry as Forest Black Pepper, picked at the same time — preserved green instead of dried black. Two different products from one harvest, caught at different stages."
+  "specimenCopy": "The same berry as Forest Black Pepper, picked at the same time — preserved green instead of dried black. Two different products from one harvest, caught at different stages.",
+  "images": {
+    "packaging": "/assets/products/packaging-mockup.png"
+  }
 }

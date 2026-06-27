@@ -25,5 +25,8 @@
   ],
   "methodDescription": "Harvested by hand, sun-dried on traditional mats.",
   "specimenCopy": "The berries are picked green — they only turn black in the drying. The colour you've always known as black pepper isn't the colour it grew. It's the colour of what happened to it afterward.",
-  "offeringCopy": "If you've read this far, you already know more about this pepper than its label could tell you."
+  "offeringCopy": "If you've read this far, you already know more about this pepper than its label could tell you.",
+  "images": {
+    "packaging": "/assets/products/packaging-mockup.png"
+  }
 }

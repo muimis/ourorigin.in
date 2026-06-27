@@ -83,8 +83,8 @@ const sizes = product ? product.data.sizes : [];
 
     <!-- Offering Stratum (Custom Layout) -->
     <section class="stratum stratum-offering" style={`z-index: 5; height: 100dvh; width: 100%; transform: translateY(100dvh); ${maskUrl ? `--mask-url: url('${maskUrl}');` : ''}`}>
-      {product.data.packagingImage && product.data.packagingImage.trim() !== '' && (
-        <div class="stratum-image" style={`background-image: url('${product.data.packagingImage}')`}></div>
+      {product.data.images?.packaging && product.data.images.packaging.trim() !== '' && (
+        <div class="stratum-image" style={`background-image: url('${product.data.images.packaging}')`}></div>
       )}
       <div class="stratum-content offering-content">
         <div class="stratum-shadow"></div>
