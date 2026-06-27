@@ -112,12 +112,16 @@ import OriginMark from './OriginMark.astro';
       
       // Explicit viewport calculation to target the Nilgiris origin mark perfectly
       // Target is at right: 0.75rem, top: 3.5vh + 0.75rem. Target size is 24px (half is 12px).
-      // Mark starts at center (50vw, 50vh).
-      // deltaX = 50vw - 0.75rem - 12px = 50vw - 24px (assuming 16px rem)
-      // deltaY = -50vh + 3.5vh + 0.75rem + 12px = -46.5vh + 24px
+      // 0.75rem is approx 12px.
+      const vw = window.innerWidth / 100;
+      const vh = window.innerHeight / 100;
+      
+      const deltaX = (50 * vw) - 24;
+      const deltaY = (-46.5 * vh) + 24;
+
       tl.to(mark, {
-        x: "calc(50vw - 24px)",
-        y: "calc(-46.5vh + 24px)",
+        x: deltaX,
+        y: deltaY,
         scale: 0.2, // 24 / 120 = 0.2
         transformOrigin: "50% 50%",
         duration: 1.0,
