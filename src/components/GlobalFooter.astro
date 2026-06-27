@@ -14,9 +14,9 @@ import OriginMark from './OriginMark.astro';
   <div class="footer-right">
     <p class="sr-only">OurOrigin — FSSAI Reg. No. 21326135000354</p>
     <nav aria-label="Site navigation">
-      <a href="/observations">OBSERVE</a>
-      <a href="/why">WHY</a>
-      <a href="/contact">CONTACT</a>
+      <a href="/observations">Observations</a>
+      <a href="/why">Why this exists.</a>
+      <a href="/contact">Contact</a>
     </nav>
   </div>
 </footer>
@@ -38,21 +38,14 @@ import OriginMark from './OriginMark.astro';
 
   .footer-left, .footer-center, .footer-right {
     pointer-events: auto;
-    flex: 1;
     display: flex;
     align-items: center;
   }
 
-  .footer-left {
-    justify-content: flex-start;
-  }
-
   .footer-center {
-    justify-content: center;
-  }
-
-  .footer-right {
-    justify-content: flex-end;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
   }
 
   .brand-text {
@@ -89,21 +82,33 @@ import OriginMark from './OriginMark.astro';
   @media (max-width: 768px) {
     .global-footer {
       padding: 1rem 1.5rem;
+      flex-wrap: wrap;
     }
     
-    .brand-text {
-      font-size: 8px;
-      /* Do not hide, keep the tripod anchor */
+    .footer-left {
+      order: 1;
     }
     
+    .footer-center {
+      position: static;
+      transform: none;
+      order: 2;
+    }
+    
+    .footer-right {
+      order: 3;
+      width: 100%;
+      margin-top: 1rem;
+    }
+
     nav {
-      gap: 0.75rem;
+      width: 100%;
+      justify-content: space-between;
+      gap: 0;
     }
 
     nav a {
-      font-size: 8px;
+      font-size: 9px;
     }
-
-    /* Keep footer-left, center, right as flex:1 so it remains perfectly centered */
   }
 </style>
