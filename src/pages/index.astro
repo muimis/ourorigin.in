@@ -90,32 +90,38 @@ import AllYieldsPanel from '../components/AllYieldsPanel.astro';
         }
     
         footer {
-            padding: 3rem 1.5rem;
-            text-align: center;
-            background-color: var(--color-forest-deep);
-            position: relative;
-            z-index: 10;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem 3rem;
+            z-index: 9000;
+            background: linear-gradient(to top, rgba(12, 21, 9, 1) 0%, rgba(12, 21, 9, 0) 100%);
+            pointer-events: none;
         }
         footer nav {
             display: flex;
-            justify-content: center;
-            gap: 2rem;
-            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            pointer-events: auto;
         }
         footer nav a {
             font-family: 'DM Mono', monospace;
-            font-size: 0.85rem;
-            color: rgba(166, 124, 60, 0.9); /* Golden color */
+            font-size: 10px;
+            color: rgba(166, 124, 60, 0.7);
             text-decoration: none;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.15em;
             transition: color 0.3s ease;
         }
         footer nav a:hover {
-            color: #d4af37;
-            text-decoration: underline;
-            text-underline-offset: 4px;
+            color: rgba(166, 124, 60, 1);
+            text-decoration: none;
         }
+        
+        /* Hide scrollbar but allow scroll if needed, though matrix is 100vh */
+        body { overflow: hidden; }
     </style>
 </head>
 <body>
