@@ -94,24 +94,64 @@ import OriginMark from './OriginMark.astro';
       
       // Scene 1: Mark draws (0 to 1.4s) - handled internally by play-origin-mark-entrance
       
-      // Scene 2: At 1.4s, background fades to green AND text appears (no delay for user)
-      tl.to(launchScreen, { backgroundColor: 'var(--color-forest-deep)', duration: 0.8, ease: "power2.inOut", delay: 1.4 })
-        .to(text2, { opacity: 0.9, duration: 0.8, ease: "power2.out" }, "<");
+      // Scene 2: At 1.4s, text appears. We NO LONGER fade the background to green here.
+      // The background remains black, so the matrix underneath stays hidden until Scene 4.
+      tl.to(text2, { opacity: 0.9, duration: 0.8, ease: "power2.out", delay: 1.4 });
         
       // Scene 3: Text fades out quickly
       tl.to(text2, { opacity: 0, duration: 0.4, ease: "power2.inOut", delay: 0.4 });
       
-      // Scene 4: Matrix revealed without delay. 
-      // The mark shrinks and moves to the top-left corner, acting as a visual transition into the Matrix plates.
-      tl.to(launchScreen, { backgroundColor: 'transparent', duration: 0.2 })
-        .to(mark, {
-          scale: 0.2,
-          x: "-40vw",
-          y: "-40vh",
-          opacity: 0,
-          duration: 1.0,
-          ease: "power3.inOut"
-        }, "<");
+      // Scene 4: Split into 5 and reveal Matrix
+      tl.addLabel("split");
+      tl.to(launchScreen, { backgroundColor: 'transparent', duration: 1.0 }, "split");
+      tl.to(mark, { opacity: 0, duration: 0.1 }, "split");
+      
+      // We calculate targets on the fly in an onCall or just before animation.
+      // Since it's DOMContentLoaded, the matrix plates are rendered.
+      const targetMarks = Array.from(document.querySelectorAll('.matrix-band .plate-origin-mark svg'));
+      
+      if (targetMarks.length > 0) {
+        const markRect = mark.getBoundingClientRect();
+        const markCenterX = markRect.left + markRect.width / 2;
+        const markCenterY = markRect.top + markRect.height / 2;
+        
+        targetMarks.forEach((targetSvg, i) => {
+          const targetRect = targetSvg.getBoundingClientRect();
+          const targetCenterX = targetRect.left + targetRect.width / 2;
+          const targetCenterY = targetRect.top + targetRect.height / 2;
+          
+          const clone = mark.cloneNode(true);
+          clone.id = `flying-clone-${i}`;
+          clone.style.position = 'absolute';
+          clone.style.left = `${markRect.left}px`;
+          clone.style.top = `${markRect.top}px`;
+          clone.style.margin = '0';
+          launchScreen.appendChild(clone);
+          
+          const scale = targetRect.width / markRect.width;
+          const deltaX = targetCenterX - markCenterX;
+          const deltaY = targetCenterY - markCenterY;
+          
+          tl.to(clone, {
+            x: deltaX,
+            y: deltaY,
+            scale: scale,
+            transformOrigin: "50% 50%",
+            duration: 1.2,
+            ease: "power3.inOut"
+          }, "split");
+          
+          // Turn to gold
+          tl.to(clone.querySelectorAll('circle, g, line'), { stroke: 'var(--color-gold)', duration: 1.2 }, "split");
+          tl.to(clone.querySelectorAll('.om-dot'), { fill: 'var(--color-gold)', duration: 1.2 }, "split");
+        });
+        
+        // Notify LivingMatrix to reveal real marks after animation
+        tl.call(() => {
+          window.dispatchEvent(new Event('origin-marks-arrived'));
+        });
+      }
+        
         
     } else if (launchScreen) {
       launchScreen.classList.add('hidden');

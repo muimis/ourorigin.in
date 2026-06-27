@@ -83,7 +83,7 @@ const originMarks = {
           aria-expanded="false"
           aria-label={`${origin.data.name}, ${getHighestElevation(origin.data.elevation)}M. Tap to expand.`}
         >
-          <div class="plate-origin-mark" style={`opacity: ${origin.data.slug === 'malabar-coast' ? '0.3' : '0.9'};`}>
+          <div class="plate-origin-mark" style="opacity: 0;" data-target-opacity={origin.data.slug === 'malabar-coast' ? '0.3' : '0.9'}>
             <OriginMark variant="gold" size={24} animate={false} />
           </div>
           <div class="tap-pulse-indicator"></div>
@@ -139,26 +139,20 @@ const originMarks = {
       const bands = document.querySelectorAll('.matrix-band');
       const originNames = document.querySelectorAll('.title-group');
       
-      gsap.set(bands, { opacity: 0 });
-      gsap.set(originNames, { y: 10, opacity: 0 });
-
-      const tl = gsap.timeline({ delay: 0.5 });
-
-      tl.to(bands, {
-        opacity: 1,
-        duration: 2,
-        stagger: 0.15,
-        ease: 'power2.inOut'
-      })
-      .to(originNames, {
-        y: 0,
-        opacity: 1,
-        duration: 1.5,
-        stagger: 0.1,
-        ease: 'power3.out'
-      }, "-=1.5");
+      // Load instantly instead of a 2 second fade to remove green screen delay
+      gsap.set(bands, { opacity: 1 });
+      gsap.set(originNames, { y: 0, opacity: 1 });
     }
   }
+
+  // Add an event listener to reveal the marks when the flying animation completes
+  window.addEventListener('origin-marks-arrived', () => {
+    const marks = document.querySelectorAll('.plate-origin-mark');
+    marks.forEach(mark => {
+      const targetOp = mark.getAttribute('data-target-opacity') || '0.9';
+      gsap.to(mark, { opacity: parseFloat(targetOp), duration: 0.5, ease: 'power2.out' });
+    });
+  });
 
   document.addEventListener('DOMContentLoaded', () => {
     const hasVisited = sessionStorage.getItem('ourorigin_visited');
