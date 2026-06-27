@@ -139,24 +139,9 @@ const originMarks = {
       const bands = document.querySelectorAll('.matrix-band');
       const originNames = document.querySelectorAll('.title-group');
       
-      gsap.set(bands, { opacity: 0 });
-      gsap.set(originNames, { y: 10, opacity: 0 });
-
-      const tl = gsap.timeline({ delay: 0.5 });
-
-      tl.to(bands, {
-        opacity: 1,
-        duration: 2,
-        stagger: 0.15,
-        ease: 'power2.inOut'
-      })
-      .to(originNames, {
-        y: 0,
-        opacity: 1,
-        duration: 1.5,
-        stagger: 0.1,
-        ease: 'power3.out'
-      }, "-=1.5");
+      // Load instantly instead of a 2 second fade to remove green screen delay
+      gsap.set(bands, { opacity: 1 });
+      gsap.set(originNames, { y: 0, opacity: 1 });
     }
   }
 
