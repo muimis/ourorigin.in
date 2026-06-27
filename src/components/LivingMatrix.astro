@@ -111,9 +111,6 @@ const hudData = {
 
           <TopographicMap index={index} />
 
-          <div class="plate-origin-mark" style="opacity: 0;" data-target-opacity={origin.data.slug === 'malabar-coast' ? '0.3' : '0.9'}>
-            <OriginMark variant="gold" size={24} animate={false} />
-          </div>
           <div class="tap-pulse-indicator"></div>
           
           <!-- Mobile Hold Indicator -->
@@ -788,8 +785,13 @@ const hudData = {
 
 
   @media (max-width: 768px) {
-    .yield-hud-callout {
-      display: none !important;
+    .hud-tag {
+      font-size: 8px;
+      max-width: 80px;
+      white-space: normal;
+      line-height: 1.2;
+      right: 1.5rem;
+      text-align: right;
     }
   }
 

@@ -1,4 +1,5 @@
 ---
+import OriginMark from '../components/OriginMark.astro';
 import '../styles/tokens.css';
 import GlobalNav from '../components/GlobalNav.astro';
 import LivingMatrix from '../components/LivingMatrix.astro';
@@ -136,6 +137,9 @@ import AllYieldsPanel from '../components/AllYieldsPanel.astro';
     </main>
 
     <footer>
+      <div class="footer-left">
+        <OriginMark variant="gold" size={24} animate={true} />
+      </div>
       <p class="sr-only">OurOrigin — FSSAI Reg. No. 21326135000354</p>
       <nav aria-label="Site navigation">
         <a href="/observations">Observations</a>
