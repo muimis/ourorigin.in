@@ -11,13 +11,13 @@ function sampleBezier(P0, P1, P2, P3, steps) {
   for (let i = 1; i <= steps; i++) {
     const t = i / steps;
     const invT = 1 - t;
-    const x = Math.round(
+    const x = (
       invT * invT * invT * P0.x +
       3 * invT * invT * t * P1.x +
       3 * invT * t * t * P2.x +
       t * t * t * P3.x
     );
-    const y = Math.round(
+    const y = (
       invT * invT * invT * P0.y +
       3 * invT * invT * t * P1.y +
       3 * invT * t * t * P2.y +
@@ -47,7 +47,8 @@ function parseAndSample(pathStr) {
         const P2 = { x: coords[i+2], y: coords[i+3] };
         const P3 = { x: coords[i+4], y: coords[i+5] };
         
-        const sampled = sampleBezier(currentPos, P1, P2, P3, 10);
+        // Use 100 steps per cubic bezier for ultra-smoothness
+        const sampled = sampleBezier(currentPos, P1, P2, P3, 100);
         allPoints = allPoints.concat(sampled);
         currentPos = P3;
       }
@@ -61,16 +62,13 @@ const polygons = curves.map(curve => {
   const points = parseAndSample(curve);
   if (!points) return "";
   
-  // Convert points to X% and Ypx
-  // The viewBox is 0 0 1000 150, but we map height to 60px.
-  // So Y * (60/150) = Y * 0.4
   const polyPoints = points.map(p => {
-    const xPct = (p.x / 1000 * 100).toFixed(1);
-    const yPx = (p.y * 0.4).toFixed(1);
+    // Keep high precision
+    const xPct = (p.x / 1000 * 100).toFixed(3);
+    const yPx = (p.y * 0.4).toFixed(3);
     return `${xPct}% ${yPx}px`;
   });
   
-  // Add bottom corners to complete the polygon
   polyPoints.push("100% 100%");
   polyPoints.push("0% 100%");
   
