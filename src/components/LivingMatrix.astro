@@ -54,6 +54,14 @@ const originMarks = {
   'kollam': 'silver',
   'malabar-coast': 'primary'
 };
+
+const hudData = {
+  'wayanad': { tag: 'YIELD // BERRIES, BUDS & BARK', top: '75%', rightDot: '35%' },
+  'idukki': { tag: 'YIELD // PODS & ARILS', top: '28%', rightDot: '28%' },
+  'nilgiris': { tag: 'YIELD // BEANS & LEAVES', top: '70%', rightDot: '32%' },
+  'thiruvananthapuram': { tag: 'YIELD // ROOTS & RHIZOMES', top: '32%', rightDot: '30%' },
+  'malabar-coast': { tag: '[ UNDOCUMENTED ]', top: '50%', rightDot: '25%' }
+};
 ---
 
 <div class="living-matrix-container" id="living-matrix">
@@ -88,6 +96,19 @@ const originMarks = {
           aria-expanded="false"
           aria-label={`${origin.data.name}, ${getHighestElevation(origin.data.elevation)}M. Tap to expand.`}
         >
+          
+          <!-- HUD Callout -->
+          {hudData[origin.data.slug] && (
+            <div class="yield-hud-callout" style={`top: ${hudData[origin.data.slug].top};`}>
+              <div class="hud-tether-container" style={`right: ${hudData[origin.data.slug].rightDot};`}>
+                <div class="hud-ring"></div>
+                <div class="hud-dot"></div>
+              </div>
+              <div class="hud-line" style={`width: ${hudData[origin.data.slug].rightDot};`}></div>
+              <div class="hud-tag">{hudData[origin.data.slug].tag}</div>
+            </div>
+          )}
+
           <TopographicMap index={index} />
 
           <div class="plate-origin-mark" style="opacity: 0;" data-target-opacity={origin.data.slug === 'malabar-coast' ? '0.3' : '0.9'}>
@@ -652,4 +673,86 @@ const originMarks = {
   }
 
   /* Nav CSS removed */
+
+  /* HUD Callouts */
+  .yield-hud-callout {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    z-index: 4;
+    pointer-events: none;
+    opacity: 0.6;
+    transition: opacity 0.4s ease;
+  }
+  
+  .matrix-band:hover .yield-hud-callout {
+    opacity: 1;
+  }
+  
+  .hud-tether-container {
+    position: absolute;
+    top: 0;
+    width: 6px;
+    height: 6px;
+    transform: translateY(-50%);
+  }
+  
+  .hud-dot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 4px;
+    height: 4px;
+    background-color: rgba(166, 124, 60, 1);
+    border-radius: 50%;
+  }
+  
+  .hud-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 14px;
+    height: 14px;
+    border: 1px solid rgba(166, 124, 60, 0.6);
+    border-radius: 50%;
+    animation: hudPulse 2.5s infinite cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  
+  @keyframes hudPulse {
+    0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+  }
+  
+  .hud-line {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(166,124,60,0.8) 0%, rgba(166,124,60,0.1) 100%);
+  }
+  
+  .hud-tag {
+    position: absolute;
+    bottom: 4px;
+    right: 2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: rgba(166, 124, 60, 0.9);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 768px) {
+    .yield-hud-callout {
+      opacity: 0.4;
+    }
+    .hud-tag {
+      right: 1.5rem;
+      font-size: 9px;
+    }
+  }
+
 </style>
