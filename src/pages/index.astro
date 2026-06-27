@@ -88,6 +88,34 @@ import AllYieldsPanel from '../components/AllYieldsPanel.astro';
         .skip-nav:focus {
             top: 0;
         }
+    
+        footer {
+            padding: 3rem 1.5rem;
+            text-align: center;
+            background-color: var(--color-forest-deep);
+            position: relative;
+            z-index: 10;
+        }
+        footer nav {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        footer nav a {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.85rem;
+            color: rgba(166, 124, 60, 0.9); /* Golden color */
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: color 0.3s ease;
+        }
+        footer nav a:hover {
+            color: #d4af37;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+        }
     </style>
 </head>
 <body>
