@@ -79,7 +79,7 @@ const originMarks = {
       return (
         <div 
           data-href={linkHref} 
-          class={`matrix-band ${origin.data.slug === 'malabar-coast' ? 'empty-state' : ''} ${index === 0 ? 'expanded' : ''}`} 
+          class={`matrix-band ${origin.data.slug === 'malabar-coast' ? 'empty-state' : ''}`} 
           style={bandStyle}
           data-index={index}
           data-slug={origin.data.slug}
@@ -283,6 +283,10 @@ const originMarks = {
   .matrix-band:not(:first-child) {
     margin-top: -60px; /* Pulls the plate up to overlap the one above it */
     padding-top: 60px; /* Offsets content so it remains visually centered */
+  }
+  
+  .matrix-band:not(:last-child) {
+    padding-bottom: 60px; /* Offsets the area covered by the overlapping plate below it */
   }
   
   .plate-origin-mark {

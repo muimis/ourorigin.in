@@ -18,9 +18,9 @@ const curves = [
 const curve = curves[index];
 
 // Distinct visual sections of the topographic map for each plate
-// By scaling the background to 300%, we ensure background-position actually shifts to new regions
-const patternOffsetY = index * 45; // Shifts significantly more vertically
-const patternOffsetX = index * 60; // Shifts significantly more horizontally
+// By slightly scaling the background and shifting, we get variety without thick lines
+const patternOffsetY = index * 15; 
+const patternOffsetX = index * 20;
 ---
 
 <div class="topographic-map-container">
@@ -57,7 +57,7 @@ const patternOffsetX = index * 60; // Shifts significantly more horizontally
     width: 100%;
     height: 100%;
     background-image: url('/topographic_pattern.svg');
-    background-size: 300% auto; /* Scaled up so background-position exposes different sections per plate */
+    background-size: 120% auto; /* Scaled down significantly from 300% to keep lines thin */
     opacity: 0.6; /* Slightly fade the pattern so text remains readable */
   }
 
