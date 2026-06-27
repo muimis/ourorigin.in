@@ -80,8 +80,11 @@ import OriginMark from './OriginMark.astro';
       const tl = gsap.timeline({
         onComplete: () => {
           launchScreen.style.pointerEvents = 'none';
-          launchScreen.style.backgroundColor = 'transparent';
+          launchScreen.style.opacity = '0';
           launchScreen.classList.add('fade-out');
+          
+          // Remove all flying clones
+          document.querySelectorAll('[id^="flying-clone-"]').forEach(el => el.remove());
           
           sessionStorage.setItem('ourorigin_visited', 'true');
           window.dispatchEvent(new Event('launch-sequence-complete'));
@@ -103,7 +106,7 @@ import OriginMark from './OriginMark.astro';
       
       // Scene 4: Split into 5 and reveal Matrix
       tl.addLabel("split");
-      tl.to(launchScreen, { backgroundColor: 'transparent', duration: 1.0 }, "split");
+      tl.to(launchScreen, { opacity: 0, duration: 1.0 }, "split");
       tl.to(mark, { opacity: 0, duration: 0.1 }, "split");
       
       // We calculate targets on the fly in an onCall or just before animation.
@@ -122,11 +125,16 @@ import OriginMark from './OriginMark.astro';
           
           const clone = mark.cloneNode(true);
           clone.id = `flying-clone-${i}`;
+          clone.classList.remove('om-animated', 'gsap-ready');
           clone.style.position = 'absolute';
           clone.style.left = `${markRect.left}px`;
           clone.style.top = `${markRect.top}px`;
           clone.style.margin = '0';
-          launchScreen.appendChild(clone);
+          clone.style.zIndex = '10000';
+          clone.style.opacity = '1';
+          clone.style.pointerEvents = 'none';
+          clone.querySelectorAll('*').forEach(el => el.style.opacity = '1');
+          document.body.appendChild(clone);
           
           const scale = targetRect.width / markRect.width;
           const deltaX = targetCenterX - markCenterX;
