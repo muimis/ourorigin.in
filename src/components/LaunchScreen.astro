@@ -105,16 +105,16 @@ import OriginMark from './OriginMark.astro';
       tl.to(text2, { opacity: 0, duration: 0.4, ease: "power2.inOut", delay: 0.4 });
       
       // Scene 4: Matrix Reveal
-      // launchBg fades to transparent revealing matrix. The launch mark simply shrinks and fades out in the center.
+      // launchBg fades to transparent instantly to reveal matrix without lag.
       tl.addLabel("fly");
       
-      tl.to(launchBg, { opacity: 0, duration: 1.0 }, "fly");
+      tl.to(launchBg, { opacity: 0, duration: 0.3 }, "fly");
       
       tl.to(mark, {
         scale: 0,
         opacity: 0,
         transformOrigin: "50% 50%",
-        duration: 0.8,
+        duration: 0.4,
         ease: "power2.inOut"
       }, "fly");
       
