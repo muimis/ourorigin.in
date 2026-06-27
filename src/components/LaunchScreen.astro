@@ -3,6 +3,7 @@
 import OriginMark from './OriginMark.astro';
 ---
 <div id="launch-screen" class="launch-screen">
+  <div id="launch-bg" style="position: absolute; inset: 0; background-color: #000000; z-index: -1;"></div>
   <OriginMark variant="primary" size={120} id="launch-mark" animate={true} />
   <div class="launch-text-container">
     <p class="launch-text-2">from the source...</p>
@@ -25,7 +26,7 @@ import OriginMark from './OriginMark.astro';
     width: 100%;
     height: 100vh;
     height: 100dvh;
-    background-color: #000000; /* The Void */
+    background-color: transparent;
     z-index: 9999;
     display: flex;
     flex-direction: column;
@@ -92,27 +93,53 @@ import OriginMark from './OriginMark.astro';
         }
       });
       
+      const launchBg = document.getElementById('launch-bg');
+      
       // Scene 1: Mark draws (0 to 1.4s) - handled internally by play-origin-mark-entrance
       
-      // Scene 2: At 1.4s, text appears. We NO LONGER fade the background to green here.
-      // The background remains black, so the matrix underneath stays hidden until Scene 4.
-      tl.to(text2, { opacity: 0.9, duration: 0.8, ease: "power2.out", delay: 1.4 });
+      // Scene 2: At 1.4s, text appears and background fades to green simultaneously (no flicker)
+      tl.to(launchBg, { backgroundColor: 'var(--color-forest-deep)', duration: 0.8, ease: "power2.inOut", delay: 1.4 })
+        .to(text2, { opacity: 0.9, duration: 0.8, ease: "power2.out" }, "<");
         
       // Scene 3: Text fades out quickly
       tl.to(text2, { opacity: 0, duration: 0.4, ease: "power2.inOut", delay: 0.4 });
       
-      // Scene 4: Matrix revealed without delay. 
-      // The mark shrinks and moves to the top-left corner, acting as a visual transition into the Matrix plates.
-      // We fade the launchScreen opacity so the black void smoothly reveals the green matrix.
-      tl.to(launchScreen, { opacity: 0, duration: 0.5 })
-        .to(mark, {
-          scale: 0.2,
-          x: "-40vw",
-          y: "-40vh",
-          opacity: 0,
+      // Scene 4: Mark flies to top plate border, shrinks, becomes golden. 
+      // launchBg fades to transparent revealing matrix instantly.
+      tl.addLabel("fly");
+      
+      tl.to(launchBg, { opacity: 0, duration: 1.0 }, "fly");
+      
+      const allMarks = Array.from(document.querySelectorAll('.matrix-band .plate-origin-mark svg'));
+      if (allMarks.length > 0) {
+        const targetSvg = allMarks[0];
+        const targetRect = targetSvg.getBoundingClientRect();
+        const markRect = mark.getBoundingClientRect();
+        
+        const scale = targetRect.width / markRect.width;
+        const deltaX = (targetRect.left + targetRect.width/2) - (markRect.left + markRect.width/2);
+        const deltaY = (targetRect.top + targetRect.height/2) - (markRect.top + markRect.height/2);
+        
+        tl.to(mark, {
+          x: deltaX,
+          y: deltaY,
+          scale: scale,
+          transformOrigin: "50% 50%",
           duration: 1.0,
           ease: "power3.inOut"
-        }, "<");
+        }, "fly");
+        
+        tl.to(mark.querySelectorAll('circle, g, line'), { stroke: 'var(--color-gold)', duration: 1.0 }, "fly");
+        tl.to(mark.querySelectorAll('.om-dot'), { fill: 'var(--color-gold)', duration: 1.0 }, "fly");
+      } else {
+        // Fallback if matrix is missing
+        tl.to(mark, { scale: 0.2, x: "-40vw", y: "-40vh", opacity: 0, duration: 1.0, ease: "power3.inOut" }, "fly");
+      }
+      
+      // Scene 5: Landed
+      tl.call(() => {
+        window.dispatchEvent(new Event('origin-marks-arrived'));
+      });
         
     } else if (launchScreen) {
       launchScreen.classList.add('hidden');

@@ -83,7 +83,7 @@ const originMarks = {
           aria-expanded="false"
           aria-label={`${origin.data.name}, ${getHighestElevation(origin.data.elevation)}M. Tap to expand.`}
         >
-          <div class="plate-origin-mark" style={`opacity: ${origin.data.slug === 'malabar-coast' ? '0.3' : '0.9'};`}>
+          <div class="plate-origin-mark" style="opacity: 0;" data-target-opacity={origin.data.slug === 'malabar-coast' ? '0.3' : '0.9'}>
             <OriginMark variant="gold" size={24} animate={false} />
           </div>
           <div class="tap-pulse-indicator"></div>
@@ -144,6 +144,21 @@ const originMarks = {
       gsap.set(originNames, { y: 0, opacity: 1 });
     }
   }
+
+  // Add an event listener to reveal the marks when the flying animation completes
+  window.addEventListener('origin-marks-arrived', () => {
+    const marks = document.querySelectorAll('.plate-origin-mark');
+    marks.forEach((mark, index) => {
+      const targetOp = mark.getAttribute('data-target-opacity') || '0.9';
+      if (index === 0) {
+        // The top plate (Wayanad) is where the flying mark lands. It appears instantly as the flying mark is hidden by LaunchScreen fade.
+        gsap.set(mark, { opacity: parseFloat(targetOp) });
+      } else {
+        // The other 4 plates fade in with a live golden fade-in
+        gsap.to(mark, { opacity: parseFloat(targetOp), duration: 0.8, ease: 'power2.out' });
+      }
+    });
+  });
 
   document.addEventListener('DOMContentLoaded', () => {
     const hasVisited = sessionStorage.getItem('ourorigin_visited');
