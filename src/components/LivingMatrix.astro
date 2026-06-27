@@ -71,8 +71,8 @@ const originMarks = {
         "M0,30 C150,30 200,70 350,60 C500,50 600,10 750,30 C900,50 950,80 1000,40"
       ];
       const curve = curves[index];
-      
       let bandStyle = `--index: ${index};`;
+      let maskStyle = '';
       
       if (curve) {
         // Create an SVG mask that perfectly traces the topographic curve.
@@ -80,7 +80,7 @@ const originMarks = {
         const svg = `<svg viewBox="0 0 1000 150" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="${curve} L1000,150 L0,150 Z" fill="black" stroke="black" stroke-width="4" vector-effect="non-scaling-stroke"/></svg>`;
         const encoded = `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;
         
-        bandStyle += `
+        maskStyle = `
           -webkit-mask-image: ${encoded}, linear-gradient(black, black);
           -webkit-mask-size: 100% 60px, 100% calc(100% - 59px);
           -webkit-mask-position: top left, bottom left;
@@ -96,18 +96,22 @@ const originMarks = {
         <div 
           data-href={linkHref} 
           class={`matrix-band ${origin.data.slug === 'malabar-coast' ? 'empty-state' : ''}`} 
-          style={bandStyle} 
+          style={bandStyle}
+          data-index={index}
+          data-slug={origin.data.slug}
           tabindex="0"
           role="button"
           aria-expanded="false"
           aria-label={`${origin.data.name}, ${getHighestElevation(origin.data.elevation)}M. Tap to expand.`}
         >
+          <div class="band-visuals" style={maskStyle}>
+            <TopographicMap index={index} />
+          </div>
+
           <div class="plate-origin-mark" style="opacity: 0;" data-target-opacity={origin.data.slug === 'malabar-coast' ? '0.3' : '0.9'}>
             <OriginMark variant="gold" size={24} animate={false} />
           </div>
           <div class="tap-pulse-indicator"></div>
-          
-          <TopographicMap index={index} />
           
           <!-- Mobile Hold Indicator -->
           <div class="mobile-hold-indicator">
@@ -274,9 +278,8 @@ const originMarks = {
   .matrix-band {
     position: relative;
     width: 100%;
-    background-color: rgba(12, 21, 9, 0.4);
     flex: 1; /* evenly distributes space => roughly 20dvh */
-    transition: flex 700ms cubic-bezier(0.22, 1, 0.36, 1), background-color var(--duration-standard) ease, color var(--duration-standard) ease, opacity var(--duration-standard) ease, transform var(--duration-standard) ease;
+    transition: flex 700ms cubic-bezier(0.22, 1, 0.36, 1), color var(--duration-standard) ease, opacity var(--duration-standard) ease, transform var(--duration-standard) ease;
     animation: subtleBreathe 10s ease-in-out infinite;
     animation-delay: calc(var(--index, 0) * -2s);
     color: var(--color-warm-cream);
@@ -284,7 +287,6 @@ const originMarks = {
     opacity: 0;
     /* Reversing Z-index so bottom plates overlap top plates, allowing negative margin masking to work */
     z-index: var(--index);
-    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -295,9 +297,15 @@ const originMarks = {
     cursor: pointer;
   }
   
-  .matrix-band:not(:first-child) {
-    margin-top: -60px; /* Pulls the plate up to overlap the one above it */
-    padding-top: 60px; /* Offsets content so it remains visually centered in the unmasked area */
+  .band-visuals {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: -60px; /* Extends underneath the plate below it to fill gaps without layout overlap */
+    z-index: -1;
+    background-color: rgba(12, 21, 9, 0.4);
+    transition: background-color var(--duration-standard) ease;
   }
   
   .plate-origin-mark {
@@ -328,18 +336,23 @@ const originMarks = {
     border-bottom: none;
   }
   
+  .matrix-band.expanded .band-visuals {
+    background-color: #121d0e;
+  }
+  
   .matrix-band.expanded {
     flex: 4 !important; /* 45dvh out of 90dvh available (100dvh - 10dvh padding) */
-    background-color: #121d0e;
     color: var(--color-pure-white);
     outline: none;
     animation-play-state: paused;
   }
 
   @media (hover: hover) {
+    .matrix-band:not(.empty-state):hover .band-visuals, .matrix-band:not(.empty-state):focus-visible .band-visuals {
+      background-color: #121d0e;
+    }
     .matrix-band:not(.empty-state):hover, .matrix-band:not(.empty-state):focus-visible {
       flex: 4 !important;
-      background-color: #121d0e;
       color: var(--color-pure-white);
       outline: none;
       animation-play-state: paused;
