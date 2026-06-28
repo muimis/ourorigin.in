@@ -138,7 +138,7 @@ const hudData = {
             <div class="title-group" id={`title-${origin.data.slug}`}>
               <h2 class="origin-name">
                 <span class="elevation-floating">{getHighestElevation(origin.data.elevation)}M</span>
-                {origin.data.name}
+                {origin.data.name.toUpperCase()}
               </h2>
             </div>
             <div class="band-reveal">
@@ -223,9 +223,16 @@ const hudData = {
       const targetTagTop = (titleRect.top - bandRect.top) - 24 - tagRect.height;
       tag.style.top = `${targetTagTop}px`;
       
+      // Pull the tag in: Position it 120px to the right of the text edge instead of extreme screen right
+      tag.style.left = `${(titleRect.right - bandRect.left) + 120}px`;
+      tag.style.right = 'auto';
+      
+      // We must re-measure tagRect after moving it to left instead of right
+      const updatedTagRect = tag.getBoundingClientRect();
+      
       // Telemetry tag underline
-      const tagStartX = (tagRect.left - bandRect.left) - 4; // 4px padding left of tag
-      const tagEndX = (tagRect.right - bandRect.left) + 2;  // 2px padding right of tag
+      const tagStartX = (updatedTagRect.left - bandRect.left) - 4; // 4px padding left of tag
+      const tagEndX = (updatedTagRect.right - bandRect.left) + 2;  // 2px padding right of tag
       const tagUnderlineY = targetTagTop + tagRect.height + 4; // 4px below tag text
       
       const pathData = `M ${startX} ${startY} L ${underlineEndX} ${startY} L ${tagStartX} ${tagUnderlineY} L ${tagEndX} ${tagUnderlineY}`;
@@ -485,11 +492,11 @@ const hudData = {
   }
   
   .origin-name {
-    font-family: var(--font-narrative);
+    font-family: var(--font-institutional);
     font-size: clamp(12px, 3.8vw, var(--text-size-stratum-title));
     line-height: 1.1;
     letter-spacing: 0.1em;
-    text-transform: capitalize;
+    text-transform: uppercase;
     margin: 0;
     font-weight: 400;
     text-align: left;
