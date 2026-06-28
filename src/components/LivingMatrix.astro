@@ -57,23 +57,23 @@ const originMarks = {
 
 const hudData = {
   'nilgiris': { 
-    tag: '// BEANS & LEAVES', side: 'right', 
+    tag: 'BEANS & LEAVES', side: 'right', 
     startX: '70%', startY: '50%', elbowX: '88%', tagY: '25%' 
   },
   'idukki': { 
-    tag: '// PODS & ARILS', side: 'left', 
+    tag: 'PODS & ARILS', side: 'right', 
     startX: '30%', startY: '50%', elbowX: '12%', tagY: '75%' 
   },
   'wayanad': { 
-    tag: '// BERRIES, BUDS & BARK', side: 'right', 
+    tag: 'BERRIES, BUDS & BARK', side: 'right', 
     startX: '70%', startY: '50%', elbowX: '88%', tagY: '25%' 
   },
   'malabar-coast': { 
-    tag: '// GRAINS & SEEDS', side: 'left', 
+    tag: 'GRAINS & SEEDS', side: 'right', 
     startX: '30%', startY: '50%', elbowX: '12%', tagY: '75%' 
   },
   'thiruvananthapuram': { 
-    tag: '// ROOTS & RHIZOMES', side: 'right', 
+    tag: 'ROOTS & RHIZOMES', side: 'right', 
     startX: '70%', startY: '50%', elbowX: '88%', tagY: '25%' 
   }
 };
@@ -842,11 +842,12 @@ const hudData = {
     position: absolute;
     font-family: 'DM Mono', monospace;
     font-size: 10px;
-    color: rgba(166, 124, 60, 0.9);
     letter-spacing: 0.1em;
-    text-transform: uppercase;
-    z-index: 5;
+    color: rgba(166, 124, 60, 0.8);
     pointer-events: none;
+    z-index: 5;
+    white-space: nowrap;
+    text-align: right;
     transition: opacity 0.4s ease, top 0.4s ease;
   }
 
