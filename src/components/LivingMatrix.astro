@@ -116,7 +116,7 @@ const hudData = {
           {hudData[origin.data.slug] && (
             <>
               <div class="hud-dynamic-container" data-slug={origin.data.slug} data-side={hudData[origin.data.slug].side}></div>
-              <div class="hud-tag" id={`tag-${origin.data.slug}`} style={`top: ${hudData[origin.data.slug].tagY}; ${hudData[origin.data.slug].side}: 2rem;`}>
+              <div class="hud-tag" id={`tag-${origin.data.slug}`} style={`${hudData[origin.data.slug].side}: 2rem;`}>
                 {hudData[origin.data.slug].tag}
               </div>
             </>
@@ -225,8 +225,12 @@ const hudData = {
         underlineEndX = (titleRect.left - bandRect.left) - outwardOffset;
       }
       
+      // Calculate tag position: 6mm (~24px) above the origin name
+      const targetTagTop = (titleRect.top - bandRect.top) - 24 - tagRect.height;
+      tag.style.top = `${targetTagTop}px`;
+      
       const tagX = side === 'right' ? (tagRect.left - bandRect.left) - 8 : (tagRect.right - bandRect.left) + 8;
-      const tagY = (tagRect.top - bandRect.top) + (tagRect.height / 2);
+      const tagY = targetTagTop + (tagRect.height / 2);
       
       const pathData = `M ${startX} ${startY} L ${underlineEndX} ${startY} L ${tagX} ${tagY}`;
       
