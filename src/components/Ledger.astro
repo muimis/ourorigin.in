@@ -207,11 +207,9 @@ const companionsJson = JSON.stringify(companionProductsMap);
       
       const depthBasket = document.getElementById('depth-basket-trigger');
       if (depthBasket) {
-        if (count > 0) {
-          depthBasket.style.display = 'block';
-        } else {
-          depthBasket.style.display = 'none';
-        }
+        // We now always show the basket trigger in DepthExperience
+        // to indicate 'BASKET : 0' and encourage discovery.
+        depthBasket.style.display = 'block';
       }
     }
     

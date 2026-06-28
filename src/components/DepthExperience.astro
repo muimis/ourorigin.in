@@ -86,8 +86,8 @@ const sizes = product ? product.data.sizes : [];
   <div class="pin-container" data-origin-slug={origin?.data.slug} data-product-slug={product?.id} data-origin-name={origin?.data.name} data-product-name={product?.data.name}>
     {strata.map((s, i) => (
       <section 
-        class={`stratum stratum-${s.id} ${maskUrl ? 'has-terrain-mask' : ''}`} 
-        style={`z-index: ${i + 1}; height: 100dvh; width: 100%; transform: translateY(${i === 0 ? '0' : '100dvh'}); ${maskUrl ? `--mask-url: url('${maskUrl}');` : ''}`}
+        class={`stratum stratum-${s.id} ${maskUrl && i === 0 ? 'has-terrain-mask' : ''}`} 
+        style={`z-index: ${i + 1}; height: 100dvh; width: 100%; transform: translateY(${i === 0 ? '0' : '100dvh'}); ${maskUrl && i === 0 ? `--mask-url: url('${maskUrl}');` : ''}`}
       >
         <div class="stratum-content">
           {s.image && !origin?.data.images.isPlaceholderImagery && (
@@ -147,6 +147,8 @@ const sizes = product ? product.data.sizes : [];
             [ ADD TO BASKET ]
           </button>
         </div>
+        
+        <div class="product-fssai">FSSAI Reg. No. 21326135000354</div>
       </div>
     </section>
   </div>
