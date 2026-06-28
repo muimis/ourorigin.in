@@ -156,11 +156,11 @@ const hudData = {
               </div>
 
               <div class="band-hud-memory">
-                YIELD TYPE: {hudData[origin.data.slug].tag}
+                {hudData[origin.data.slug].tag}
               </div>
 
               {origin.data.slug !== 'malabar-coast' && (
-                <p class="band-partner-note">The people who grow this are partners, not suppliers.</p>
+                <p class="band-partner-note"><span class="partner-highlight">The people who grow this</span> are partners, not suppliers.</p>
               )}
               
               {origin.data.slug === 'malabar-coast' ? (
@@ -173,7 +173,7 @@ const hudData = {
                     <circle cx="12" cy="12" r="10" stroke="rgba(166, 124, 60, 0.4)" stroke-width="1" fill="none" />
                     <circle cx="12" cy="2" r="2" fill="rgba(166, 124, 60, 1)" style="transform-origin: center; animation: revolve 3s linear infinite;" />
                   </svg>
-                  <span class="origin-action">[ JOIN THE HARVEST: {linkData.name.toUpperCase()} ]</span>
+                  <span class="origin-action">[ JOIN THE HARVEST ]</span>
                 </a>
               )}
             </div>
@@ -582,13 +582,16 @@ const hudData = {
   .band-partner-note {
     text-shadow: 0 2px 10px rgba(12,21,9,1), 0 -2px 10px rgba(12,21,9,1);
 
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 18px; /* Elevated */
-    color: var(--color-gold);
+    font-family: var(--font-narrative);
+    font-size: clamp(14px, 2.8vw, 1.1rem);
+    color: var(--color-warm-cream);
     opacity: 0.9;
     margin: 0;
-    letter-spacing: 0.02em;
+    font-style: normal;
+  }
+  .partner-highlight {
+    color: var(--color-gold);
+    font-family: var(--font-institutional);
   }
   
   .hud-button-container {

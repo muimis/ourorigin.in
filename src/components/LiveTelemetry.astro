@@ -6,7 +6,8 @@ export interface Props {
   botanicalState: string;
 }
 
-const { coordinates, elevation, soil, botanicalState } = Astro.props;
+const { coordinates, elevation } = Astro.props;
+const maxElevation = elevation.split('-').pop()?.replace('M', '').trim() + 'M';
 ---
 
 <div class="live-telemetry" data-coords={coordinates}>
@@ -15,13 +16,7 @@ const { coordinates, elevation, soil, botanicalState } = Astro.props;
     <span class="telemetry-value weather-value">CONNECTING...</span>
   </div>
   <div class="telemetry-row">
-    <span class="telemetry-value">{elevation}</span>
-  </div>
-  <div class="telemetry-row">
-    <span class="telemetry-label">SOIL MATRIX:</span> <span class="telemetry-value">{soil}</span>
-  </div>
-  <div class="telemetry-row">
-    <span class="telemetry-label">STATE:</span> <span class="telemetry-value">{botanicalState}</span>
+    <span class="telemetry-value">{maxElevation}</span>
   </div>
 </div>
 
