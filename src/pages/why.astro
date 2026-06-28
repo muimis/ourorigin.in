@@ -209,8 +209,7 @@ import OriginMark from '../components/OriginMark.astro';
 
         /* Initial state for GSAP */
         .gsap-reveal {
-            opacity: 0;
-            transform: translateY(30px);
+            /* JS will handle opacity to prevent blank pages on error */
         }
     </style>
 </head>
@@ -309,13 +308,17 @@ import OriginMark from '../components/OriginMark.astro';
     </main>
 
     <!-- GSAP for cinematic scroll reveals -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" is:inline></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" is:inline></script>
     <script>
+        import gsap from 'gsap';
+        import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
         document.addEventListener('DOMContentLoaded', () => {
             gsap.registerPlugin(ScrollTrigger);
 
             const reveals = document.querySelectorAll('.gsap-reveal');
+            
+            // Set initial state via JS so fallback is visible
+            gsap.set(reveals, { opacity: 0, y: 30 });
             
             reveals.forEach((element) => {
                 gsap.to(element, {
