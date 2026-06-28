@@ -207,9 +207,21 @@ const companionsJson = JSON.stringify(companionProductsMap);
       
       const depthBasket = document.getElementById('depth-basket-trigger');
       if (depthBasket) {
-        // We now always show the basket trigger in DepthExperience
-        // to indicate 'BASKET : 0' and encourage discovery.
-        depthBasket.style.display = 'block';
+        if (count > 0) {
+          depthBasket.style.display = 'block';
+        } else {
+          depthBasket.style.display = 'none';
+        }
+      }
+      
+      // Update the yields triggers to act as invitations when basket is empty
+      const depthYields = document.getElementById('depth-yields-trigger');
+      if (depthYields) {
+        depthYields.textContent = count > 0 ? '[ ALL YIELDS ]' : '[ EXPLORE YIELDS ]';
+      }
+      const ccYields = document.getElementById('trigger-yields');
+      if (ccYields) {
+        ccYields.textContent = count > 0 ? '[ ALL YIELDS ]' : '[ EXPLORE YIELDS ]';
       }
     }
     
