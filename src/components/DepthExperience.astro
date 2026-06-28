@@ -76,7 +76,6 @@ const sizes = product ? product.data.sizes : [];
 </div>
 
 <div class="depth-experience-container">
-  <div class="depth-topographic-bg"></div>
   
   <!-- Interactive Depth Gauge -->
   <div class="depth-gauge-wrapper">
@@ -84,6 +83,8 @@ const sizes = product ? product.data.sizes : [];
   </div>
 
   <div class="pin-container" data-origin-slug={origin?.data.slug} data-product-slug={product?.id} data-origin-name={origin?.data.name} data-product-name={product?.data.name}>
+    <div class="depth-topographic-bg"></div>
+    
     {strata.map((s, i) => (
       <section 
         class={`stratum stratum-${s.id} ${maskUrl && i === 0 ? 'has-terrain-mask' : ''}`} 
