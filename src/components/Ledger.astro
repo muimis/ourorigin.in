@@ -187,6 +187,8 @@ const companionsJson = JSON.stringify(companionProductsMap);
     
     function updateTrigger() {
       const count = ledgerItems.reduce((acc, item) => acc + item.quantity, 0);
+      
+      // Update the Ledger trigger
       if (count > 0) {
         countDisplay.textContent = count;
         trigger.classList.remove('hidden');
@@ -195,6 +197,11 @@ const companionsJson = JSON.stringify(companionProductsMap);
         trigger.classList.add('hidden');
         trigger.removeAttribute('aria-label');
       }
+      
+      // Update global Dossier counts (e.g. in CommandCenter)
+      document.querySelectorAll('.dossier-count').forEach(el => {
+        el.textContent = count;
+      });
     }
     
     function saveAndRender() {
@@ -460,6 +467,11 @@ const companionsJson = JSON.stringify(companionProductsMap);
     trigger.addEventListener('click', openLedger);
     closeBtn.addEventListener('click', closeLedger);
     backdrop.addEventListener('click', closeLedger);
+    
+    const triggerDossier = document.getElementById('trigger-dossier');
+    if (triggerDossier) {
+      triggerDossier.addEventListener('click', openLedger);
+    }
     
     // Initial render
     updateTrigger();

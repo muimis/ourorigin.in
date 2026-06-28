@@ -2,9 +2,17 @@
 import OriginMark from './OriginMark.astro';
 ---
 
+<button id="trigger-yields" class="hud-telemetry-btn" aria-label="All Yields">
+  [ ALL YIELDS ]
+</button>
+
 <div id="command-center-trigger" aria-label="Open Navigation">
   <OriginMark variant="gold" size={32} animate={false} />
 </div>
+
+<button id="trigger-dossier" class="hud-telemetry-btn" aria-label="Open Dossier">
+  [ DOSSIER : <span class="dossier-count">0</span> ]
+</button>
 
 <div id="command-center-overlay" aria-hidden="true">
   <div class="cc-close" aria-label="Close Navigation">
@@ -38,6 +46,31 @@ import OriginMark from './OriginMark.astro';
     transform: translateX(-50%) scale(1.1);
   }
   
+  .hud-telemetry-btn {
+    position: fixed;
+    bottom: 18px;
+    z-index: 8000;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: rgba(245, 237, 216, 0.6);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: color 0.3s ease, opacity 0.4s ease;
+    white-space: nowrap;
+  }
+  .hud-telemetry-btn:hover {
+    color: var(--color-gold);
+  }
+  #trigger-yields {
+    right: calc(50% + 30px);
+  }
+  #trigger-dossier {
+    left: calc(50% + 30px);
+  }
+  
   /* Force the inner SVG elements to at least 80% opacity for this specific mark */
   #command-center-trigger :global(.origin-mark *) {
     opacity: 0.8 !important;
@@ -52,6 +85,10 @@ import OriginMark from './OriginMark.astro';
   }
   :global(body.matrix-expanded) #command-center-trigger:hover {
     transform: scale(1.1);
+  }
+  :global(body.matrix-expanded) .hud-telemetry-btn {
+    opacity: 0;
+    pointer-events: none;
   }
   
   @media (max-width: 768px) {
@@ -178,13 +215,20 @@ import OriginMark from './OriginMark.astro';
       document.body.style.overflow = '';
     });
     
-    const yieldsBtn = document.getElementById('cc-all-yields-btn');
-    if (yieldsBtn) {
-      yieldsBtn.addEventListener('click', () => {
+    const ccYieldsBtn = document.getElementById('cc-all-yields-btn');
+    if (ccYieldsBtn) {
+      ccYieldsBtn.addEventListener('click', () => {
         overlay.classList.remove('is-active');
         trigger.style.opacity = '0.8';
         trigger.style.pointerEvents = 'auto';
         document.body.style.overflow = '';
+        window.dispatchEvent(new Event('open-all-yields-panel'));
+      });
+    }
+
+    const triggerYields = document.getElementById('trigger-yields');
+    if (triggerYields) {
+      triggerYields.addEventListener('click', () => {
         window.dispatchEvent(new Event('open-all-yields-panel'));
       });
     }
