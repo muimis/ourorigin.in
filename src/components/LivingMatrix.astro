@@ -56,11 +56,26 @@ const originMarks = {
 };
 
 const hudData = {
-  'nilgiris': { tag: '// BEANS & LEAVES', top: '40%', rightDot: '15%' },
-  'idukki': { tag: '// PODS & ARILS', top: '65%', rightDot: '15%' },
-  'wayanad': { tag: '// BERRIES, BUDS & BARK', top: '35%', rightDot: '15%' },
-  'malabar-coast': { tag: '// GRAINS & SEEDS', top: '45%', rightDot: '15%' },
-  'thiruvananthapuram': { tag: '// ROOTS & RHIZOMES', top: '60%', rightDot: '15%' }
+  'nilgiris': { 
+    tag: '// BEANS & LEAVES', side: 'right', 
+    startX: '70%', startY: '50%', elbowX: '88%', tagY: '25%' 
+  },
+  'idukki': { 
+    tag: '// PODS & ARILS', side: 'left', 
+    startX: '30%', startY: '50%', elbowX: '12%', tagY: '75%' 
+  },
+  'wayanad': { 
+    tag: '// BERRIES, BUDS & BARK', side: 'right', 
+    startX: '70%', startY: '50%', elbowX: '88%', tagY: '25%' 
+  },
+  'malabar-coast': { 
+    tag: '// GRAINS & SEEDS', side: 'left', 
+    startX: '30%', startY: '50%', elbowX: '12%', tagY: '75%' 
+  },
+  'thiruvananthapuram': { 
+    tag: '// ROOTS & RHIZOMES', side: 'right', 
+    startX: '70%', startY: '50%', elbowX: '88%', tagY: '25%' 
+  }
 };
 ---
 
@@ -97,16 +112,41 @@ const hudData = {
           aria-label={`${origin.data.name}, ${getHighestElevation(origin.data.elevation)}M. Tap to expand.`}
         >
           
-          <!-- HUD Callout -->
+          <!-- HUD Tether & Callout -->
           {hudData[origin.data.slug] && (
-            <div class="yield-hud-callout" style={`top: ${hudData[origin.data.slug].top};`}>
-              <div class="hud-tether-container" style={`right: ${hudData[origin.data.slug].rightDot};`}>
-                <div class="hud-ring"></div>
-                <div class="hud-dot"></div>
+            <>
+              <svg class="hud-tether-svg">
+                <line 
+                  x1={hudData[origin.data.slug].startX} 
+                  y1={hudData[origin.data.slug].startY} 
+                  x2={hudData[origin.data.slug].elbowX} 
+                  y2={hudData[origin.data.slug].tagY} 
+                  class="hud-tether-path" 
+                />
+                <line 
+                  x1={hudData[origin.data.slug].elbowX} 
+                  y1={hudData[origin.data.slug].tagY} 
+                  x2={hudData[origin.data.slug].side === 'right' ? '100%' : '0%'} 
+                  y2={hudData[origin.data.slug].tagY} 
+                  class="hud-tether-path" 
+                />
+                <circle 
+                  cx={hudData[origin.data.slug].startX} 
+                  cy={hudData[origin.data.slug].startY} 
+                  r="3" 
+                  class="hud-tether-node" 
+                />
+                <circle 
+                  cx={hudData[origin.data.slug].elbowX} 
+                  cy={hudData[origin.data.slug].tagY} 
+                  r="2" 
+                  class="hud-tether-node" 
+                />
+              </svg>
+              <div class="hud-tag" style={`top: calc(${hudData[origin.data.slug].tagY} - 16px); ${hudData[origin.data.slug].side}: 2rem;`}>
+                {hudData[origin.data.slug].tag}
               </div>
-              <div class="hud-line" style={`width: ${hudData[origin.data.slug].rightDot};`}></div>
-              <div class="hud-tag">{hudData[origin.data.slug].tag}</div>
-            </div>
+            </>
           )}
 
           <TopographicMap index={index} />
@@ -706,82 +746,58 @@ const hudData = {
   /* Nav CSS removed */
 
   /* HUD Callouts */
-  .yield-hud-callout {
+  .hud-tether-svg {
     position: absolute;
-    left: 0;
-    right: 0;
-    height: 1px;
-    z-index: 4;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     pointer-events: none;
-    opacity: 1;
-    transition: opacity 0.4s ease;
+    z-index: 4;
   }
   
-  
-  
-  .hud-tether-container {
-    position: absolute;
-    top: 0;
-    width: 6px;
-    height: 6px;
-    transform: translateY(-50%);
+  .hud-tether-path {
+    stroke: rgba(166, 124, 60, 0.4);
+    stroke-width: 1px;
+    fill: none;
+    transition: stroke-opacity 0.4s ease;
+  }
+
+  .hud-tether-node {
+    fill: rgba(166, 124, 60, 0.8);
+    transition: fill-opacity 0.4s ease;
   }
   
-  .hud-dot {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 4px;
-    height: 4px;
-    background-color: rgba(166, 124, 60, 1);
-    border-radius: 50%;
+  .matrix-band.expanded .hud-tether-path {
+    stroke: rgba(166, 124, 60, 0.1);
   }
-  
-  .hud-ring {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 14px;
-    height: 14px;
-    border: 1px solid rgba(166, 124, 60, 0.6);
-    border-radius: 50%;
-    animation: hudPulse 2.5s infinite cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-  
-  @keyframes hudPulse {
-    0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
-    100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
-  }
-  
-  .hud-line {
-    position: absolute;
-    top: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, rgba(166,124,60,0.8) 0%, rgba(166,124,60,0.1) 100%);
+  .matrix-band.expanded .hud-tether-node {
+    fill: rgba(166, 124, 60, 0.2);
   }
   
   .hud-tag {
     position: absolute;
-    bottom: 4px; /* place vertically above the line */
-    right: 2rem;
     font-family: 'DM Mono', monospace;
     font-size: 10px;
     color: rgba(166, 124, 60, 0.9);
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    /* No background needed as it is positioned perfectly in white space */
+    z-index: 5;
+    pointer-events: none;
+    transition: opacity 0.4s ease, top 0.4s ease;
+  }
+
+  .matrix-band.expanded .hud-tag {
+    opacity: 0.2;
   }
 
   @media (max-width: 768px) {
-    .yield-hud-callout {
-      opacity: 0.8;
-    }
     .hud-tag {
-      right: 1.5rem;
-      font-size: 9px;
+      font-size: 8px;
+      /* On mobile, bring tags slightly closer to center to avoid edge clipping */
+      right: 1rem !important; 
+    }
+    .hud-tether-svg {
+      opacity: 0.7;
     }
   }
 
