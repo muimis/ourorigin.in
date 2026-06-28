@@ -134,10 +134,6 @@ const hudData = {
             </svg>
           </div>
 
-          <div class="plate-origin-mark">
-            <OriginMark variant="gold" size={32} animate={false} />
-          </div>
-
           <div class="band-content">
             <div class="title-group" id={`title-${origin.data.slug}`}>
               <h2 class="origin-name">
@@ -382,30 +378,6 @@ const hudData = {
   
   .matrix-band:not(:last-child) {
     padding-bottom: 60px; /* Offsets the area covered by the overlapping plate below it */
-  }
-  
-  .plate-origin-mark {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: 1rem;
-    z-index: 5;
-    pointer-events: none;
-  }
-  
-  /* Apply HUD line properties to the Origin Mark */
-  .plate-origin-mark :global(.origin-mark *) {
-    stroke: rgba(166, 124, 60, 0.4) !important;
-    stroke-width: 1px !important;
-    opacity: 1 !important;
-  }
-  
-  @media (min-width: 768px) {
-    .plate-origin-mark {
-      top: 2rem;
-      right: 2rem;
-      transform: none;
-    }
   }
   
   /* Expansion Math */
