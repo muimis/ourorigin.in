@@ -76,6 +76,8 @@ const sizes = product ? product.data.sizes : [];
 </div>
 
 <div class="depth-experience-container">
+  <div class="depth-topographic-bg"></div>
+  
   <!-- Interactive Depth Gauge -->
   <div class="depth-gauge-wrapper">
     <OriginMark variant="gold" size={48} id="depth-gauge-mark" />
@@ -159,6 +161,17 @@ const sizes = product ? product.data.sizes : [];
     /* GSAP will pin this container */
   }
 
+  .depth-topographic-bg {
+    position: absolute;
+    inset: 0;
+    background-image: url('/topographic_pattern.svg');
+    background-size: 100% auto;
+    background-position: center center;
+    opacity: 0.15;
+    pointer-events: none;
+    z-index: 0;
+  }
+
   .pin-container {
     width: 100%;
     height: 100dvh;
@@ -211,9 +224,7 @@ const sizes = product ? product.data.sizes : [];
     inset: 0;
     background-size: cover;
     background-position: center;
-    /* Blend photography subtly into the Forest Deep brand color */
-    opacity: 0.55;
-    mix-blend-mode: luminosity;
+    opacity: 0.6; /* Restores the green overlay effect by letting the forest-deep background show through */
     z-index: 1;
     pointer-events: none;
   }
@@ -259,8 +270,7 @@ const sizes = product ? product.data.sizes : [];
   }
 
   .stratum-image.image-preserve-people {
-    opacity: 0.55;
-    mix-blend-mode: normal;
+    opacity: 0.6;
   }
 
   /* Basic typographic styling */
