@@ -216,15 +216,11 @@ const hudData = {
       const underlineEndX = (titleRect.right - bandRect.left) + outwardOffset;
       const startY = (titleRect.bottom - bandRect.top) + 2;
       
-      // Telemetry tag positioning
+      // Telemetry tag positioning (Y axis only, X axis is handled by CSS right: 2rem)
       const targetTagTop = (titleRect.top - bandRect.top) - 24 - tagRect.height;
       tag.style.top = `${targetTagTop}px`;
       
-      // Position the tag 120px to the right of the origin text
-      tag.style.left = `${(titleRect.right - bandRect.left) + 120}px`;
-      tag.style.right = 'auto';
-      
-      // We must re-measure tagRect after moving it
+      // We must re-measure tagRect after moving it vertically
       const updatedTagRect = tag.getBoundingClientRect();
       
       const tagStartX = (updatedTagRect.left - bandRect.left) - 4; 
