@@ -1,0 +1,151 @@
+---
+export interface Props {
+  coordinates: string;
+  elevation: string;
+  soil: string;
+  botanicalState: string;
+}
+
+const { coordinates, elevation, soil, botanicalState } = Astro.props;
+---
+
+<div class="live-telemetry" data-coords={coordinates}>
+  <div class="telemetry-row">
+    <div class="live-indicator"></div>
+    <span class="telemetry-value weather-value">CONNECTING...</span>
+  </div>
+  <div class="telemetry-row">
+    <span class="telemetry-value">{elevation}</span>
+  </div>
+  <div class="telemetry-row">
+    <span class="telemetry-label">SOIL MATRIX:</span> <span class="telemetry-value">{soil}</span>
+  </div>
+  <div class="telemetry-row">
+    <span class="telemetry-label">STATE:</span> <span class="telemetry-value">{botanicalState}</span>
+  </div>
+</div>
+
+<script>
+  class LiveTelemetryHandler {
+    constructor(el) {
+      this.el = el;
+      this.coordsStr = el.getAttribute('data-coords');
+      this.weatherValue = el.querySelector('.weather-value');
+      
+      if (this.coordsStr) {
+        this.init();
+      }
+    }
+    
+    parseDMS(dmsStr) {
+      const parts = dmsStr.match(/([\d\.]+)°\s*([\d\.]+)?['′]?\s*[A-Z]/);
+      if (parts) {
+        let deg = parseFloat(parts[1]);
+        let min = parts[2] ? parseFloat(parts[2]) : 0;
+        return deg + (min / 60);
+      }
+      return NaN;
+    }
+
+    async init() {
+      const parts = this.coordsStr.split(',');
+      if (parts.length >= 2) {
+        const lat = this.parseDMS(parts[0].trim()) || parseFloat(parts[0].trim());
+        const lon = this.parseDMS(parts[1].trim()) || parseFloat(parts[1].trim());
+        
+        if (!isNaN(lat) && !isNaN(lon)) {
+          this.fetchWeather(lat, lon);
+        }
+      }
+    }
+    
+    getConditionFromCode(code) {
+      if (code === 0) return "CLEAR SKY";
+      if (code === 1 || code === 2 || code === 3) return "PARTLY CLOUDY";
+      if (code === 45 || code === 48) return "FOG";
+      if (code >= 51 && code <= 55) return "DRIZZLE";
+      if (code >= 61 && code <= 65) return "RAIN";
+      if (code >= 71 && code <= 77) return "SNOW";
+      if (code >= 80 && code <= 82) return "SHOWERS";
+      if (code >= 95) return "THUNDERSTORM";
+      return "ACTIVE";
+    }
+
+    async fetchWeather(lat, lon) {
+      try {
+        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+        const data = await res.json();
+        
+        if (data.current_weather) {
+          const temp = Math.round(data.current_weather.temperature);
+          const condition = this.getConditionFromCode(data.current_weather.weathercode);
+          
+          if (this.weatherValue) {
+            this.weatherValue.textContent = `${temp}°C, ${condition}`;
+          }
+        }
+      } catch (err) {
+        if (this.weatherValue) {
+          this.weatherValue.textContent = 'TELEMETRY UNAVAILABLE';
+        }
+      }
+    }
+  }
+
+  // Use MutationObserver or custom element to initialize on expanded state
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.live-telemetry').forEach(el => {
+      new LiveTelemetryHandler(el);
+    });
+  });
+</script>
+
+<style>
+  .live-telemetry {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: rgba(245, 237, 216, 0.7); /* Muted warm cream */
+    margin: 1rem 0;
+    opacity: 0;
+    transform: translateY(5px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  
+  :global(.matrix-band.expanded) .live-telemetry {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.6s 0.2s ease, transform 0.6s 0.2s ease;
+  }
+  
+  .telemetry-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .telemetry-label {
+    opacity: 0.5;
+  }
+  
+  .telemetry-value {
+    color: rgba(245, 237, 216, 0.9);
+  }
+  
+  .live-indicator {
+    width: 6px;
+    height: 6px;
+    background-color: #32D74B; /* vibrant green */
+    border-radius: 50%;
+    animation: blink 1.5s infinite;
+    box-shadow: 0 0 8px rgba(50, 215, 75, 0.6);
+  }
+  
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+</style>

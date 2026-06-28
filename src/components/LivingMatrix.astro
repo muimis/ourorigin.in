@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import OriginMark from './OriginMark.astro';
 import TopographicMap from './TopographicMap.astro';
+import LiveTelemetry from './LiveTelemetry.astro';
 
 const origins = await getCollection('origins');
 
@@ -21,11 +22,11 @@ function getHighestElevation(elevationString) {
 }
 
 const matrixCopy = {
-  'nilgiris': { fragment: 'This high, India has frost.', subLine: 'Western Ghats · Forest Polyculture', cta: 'Enter this origin →' },
-  'idukki': { fragment: 'Named for what grows here.', subLine: 'Western Ghats · Shade-Grown Wild Harvest', cta: 'Enter this origin →' },
-  'wayanad': { fragment: 'The vine doesn\'t stand. It climbs.', subLine: 'Western Ghats · Traditional Agrarian', cta: 'Enter this origin →' },
-  'thiruvananthapuram': { fragment: 'The root is dug up, not picked.', subLine: 'Western Ghats · Lowland Homesteading', cta: 'Enter this origin →' },
-  'malabar-coast': { fragment: 'This coastline named the trade routes.', subLine: 'Western Ghats · Smallholder Hand Harvest', cta: 'This origin is still being documented.' }
+  'nilgiris': { fragment: 'This high, India has frost.', subLine: 'Western Ghats · Forest Polyculture', cta: '[ JOIN THE HARVEST → ]', botanicalState: 'LEAF FLUSH' },
+  'idukki': { fragment: 'Named for what grows here.', subLine: 'Western Ghats · Shade-Grown Wild Harvest', cta: '[ JOIN THE HARVEST → ]', botanicalState: 'POD DEVELOPMENT' },
+  'wayanad': { fragment: 'The vine doesn\'t stand. It climbs.', subLine: 'Western Ghats · Traditional Agrarian', cta: '[ JOIN THE HARVEST → ]', botanicalState: 'VINE MATURATION' },
+  'thiruvananthapuram': { fragment: 'The root is dug up, not picked.', subLine: 'Western Ghats · Lowland Homesteading', cta: '[ JOIN THE HARVEST → ]', botanicalState: 'RHIZOME EXPANSION' },
+  'malabar-coast': { fragment: 'This coastline named the trade routes.', subLine: 'Western Ghats · Smallholder Hand Harvest', cta: '[ AWAITING MONSOON ]', botanicalState: 'DORMANT' }
 };
 
 const products = await getCollection('products');
@@ -146,7 +147,14 @@ const hudData = {
               <p class="origin-subline">{copy.subLine}</p>
               {origin.data.slug !== 'malabar-coast' && <p class="band-partner-note">The people who grow this are partners, not suppliers.</p>}
               {origin.data.slug === 'wayanad' && <p class="commerce-signal">From ₹109</p>}
-              <div class="origin-live-telemetry"></div>
+              <div class="origin-live-telemetry">
+                <LiveTelemetry 
+                  coordinates={origin.data.coordinates} 
+                  elevation={origin.data.elevation}
+                  soil={origin.data.soil}
+                  botanicalState={copy.botanicalState}
+                />
+              </div>
               
               {origin.data.slug === 'malabar-coast' ? (
                 <p class="origin-action malabar-documented">{copy.cta}</p>

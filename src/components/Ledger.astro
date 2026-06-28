@@ -76,9 +76,14 @@ const companionsJson = JSON.stringify(companionProductsMap);
           </div>
           <p class="dispatch-timeline">DISPATCH WITHIN 2–3 WORKING DAYS · THIRUVANANTHAPURAM</p>
         </div>
+        <div class="ledger-observation-guide">
+          <p class="observation-title">OBSERVATION LOG: THE REALITY</p>
+          <p class="observation-text">
+            This ledger reflects a journey deep into the forest. It reflects a community leaving the unripened—and whatever the wild animals claim—to nature with joy, not compromise. Their dignity is inherent. By proceeding, you are not a consumer. You are taking your place as the final link in this origin system.
+          </p>
+        </div>
 
-        <p class="summary-heading">WHERE TO SEND THIS</p>
-        
+        <p class="summary-heading">WHERE TO SEND THIS</p>        
         <!-- Shipping Form -->
         <form id="shipping-form" class="shipping-form">
           <input type="text" id="ship-name" name="name" placeholder="Full name" required />
@@ -108,7 +113,7 @@ const companionsJson = JSON.stringify(companionProductsMap);
           <p class="upi-note human-note-small">Paid via UPI? Include your payment reference in the message and we'll confirm immediately.</p>
         </div>
 
-        <button id="ledger-connect-btn" class="ledger-connect" aria-label="Continue to checkout via WhatsApp">Continue to the Source</button>
+        <button id="ledger-connect-btn" class="ledger-connect" aria-label="Initialize transfer via WhatsApp">INITIALIZE TRANSFER (WHATSAPP)</button>
       </div>
       
       <!-- Post-checkout state (Gap 4) -->
@@ -818,6 +823,33 @@ const companionsJson = JSON.stringify(companionProductsMap);
   .hidden {
     display: none !important;
   }
+  
+  .ledger-observation-guide {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    border: 1px dashed rgba(166, 124, 60, 0.3); /* Subtle gold dashed border */
+    background: rgba(12, 21, 9, 0.4);
+    border-radius: 4px;
+  }
+  
+  .observation-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: rgba(166, 124, 60, 0.9); /* Perfect visibility secondary color (gold) */
+    margin: 0 0 1rem 0;
+    text-transform: uppercase;
+  }
+  
+  .observation-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--color-warm-cream); /* Perfect readability */
+    margin: 0;
+    opacity: 0.9;
+  }
+  
   .shipping-form {
     display: flex;
     flex-direction: column;
