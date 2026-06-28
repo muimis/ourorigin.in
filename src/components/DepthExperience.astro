@@ -61,9 +61,14 @@ const sizes = product ? product.data.sizes : [];
 ---
 
 <!-- Telemetry Escape Hatch -->
-<a href="/" class="depth-escape-hatch" aria-label="Return to Matrix">
-  [ &larr; MATRIX ]
-</a>
+<div class="depth-top-hud">
+  <a href="/" class="depth-escape-hatch" aria-label="Return to Matrix">
+    [ &larr; MATRIX ]
+  </a>
+  <button class="depth-basket-trigger" id="depth-basket-trigger" aria-label="Open Basket">
+    [ BASKET : <span class="dossier-count">0</span> ]
+  </button>
+</div>
 
 <div class="depth-experience-container">
   <!-- Interactive Depth Gauge -->
@@ -116,13 +121,18 @@ const sizes = product ? product.data.sizes : [];
         
         <p class="yield-status">YIELD STATUS: STRICTLY LIMITED (WILD HARVEST)</p>
         
-        <div class="offering-sizes-grid">
-          {sizes.map((size) => (
-            <div class="offering-size-row">
-              <span class="size-label">{size.label}</span>
-              <span class="size-price">₹{size.priceINR}</span>
-            </div>
+        <div class="size-selector">
+          {sizes.map((size, index) => (
+            <button 
+              class={`size-btn ${index === 0 ? 'selected' : ''}`} 
+              data-size={size.label} 
+              data-price={size.priceINR}>
+              {size.label}
+            </button>
           ))}
+        </div>
+        <div class="offering-price-display">
+          <span class="price-val" id="active-price">₹{sizes[0]?.priceINR}</span>
         </div>
         
         <div class="offering-actions">
@@ -328,27 +338,37 @@ const sizes = product ? product.data.sizes : [];
     flex-direction: column;
   }
 
-  .offering-sizes-grid {
+  .size-selector {
     display: flex;
-    flex-direction: column;
     gap: 0.5rem;
-    margin: 2rem 0;
-    width: 100%;
-    max-width: 320px;
+    margin: 2rem 0 0.5rem 0;
+    flex-wrap: wrap;
+    justify-content: center;
     z-index: 10;
   }
-
-  .offering-size-row {
-    display: flex;
-    justify-content: space-between;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid rgba(245, 237, 216, 0.2);
-    font-family: 'DM Mono', monospace;
-    font-size: 14px;
+  .size-btn {
+    background: none;
+    border: 1px solid rgba(245, 237, 216, 0.3);
     color: var(--color-warm-cream);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 0.6rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .size-btn.selected {
+    background: var(--color-warm-cream);
+    color: var(--color-forest-deep);
   }
 
-  .size-price {
+  .offering-price-display {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .price-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 16px;
     color: var(--color-gold);
   }
 
@@ -375,20 +395,35 @@ const sizes = product ? product.data.sizes : [];
     color: var(--color-gold);
   }
 
-  /* Fixed Escape Hatch */
-  .depth-escape-hatch {
+  /* Fixed Top HUD Elements */
+  .depth-top-hud {
     position: fixed;
     top: 24px;
     left: 24px;
+    right: 24px;
+    display: flex;
+    justify-content: space-between;
     z-index: 9999;
+    pointer-events: none;
+  }
+
+  .depth-escape-hatch,
+  .depth-basket-trigger {
+    background: transparent;
+    border: none;
     font-family: 'DM Mono', monospace;
     font-size: 10px;
     letter-spacing: 0.1em;
     color: rgba(245, 237, 216, 0.6);
     text-decoration: none;
+    cursor: pointer;
+    pointer-events: auto;
     transition: color 0.3s ease;
+    padding: 0;
   }
-  .depth-escape-hatch:hover {
+  
+  .depth-escape-hatch:hover,
+  .depth-basket-trigger:hover {
     color: var(--color-gold);
   }
 </style>
@@ -411,11 +446,59 @@ const sizes = product ? product.data.sizes : [];
     }
 
     initPurchaseAction() {
-      const openYieldsBtn = document.getElementById('open-yields-btn');
-      if (openYieldsBtn) {
-        openYieldsBtn.addEventListener('click', () => {
-          // Open All Yields panel
-          window.dispatchEvent(new Event('open-all-yields-panel'));
+      // 1. Size Selection Logic
+      const sizeBtns = document.querySelectorAll('.size-btn');
+      const priceDisplay = document.getElementById('active-price');
+      let activeSize = sizeBtns[0]?.getAttribute('data-size');
+      let activePrice = sizeBtns[0]?.getAttribute('data-price');
+
+      sizeBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          sizeBtns.forEach(b => b.classList.remove('selected'));
+          const target = e.currentTarget;
+          target.classList.add('selected');
+          activeSize = target.getAttribute('data-size');
+          activePrice = target.getAttribute('data-price');
+          if (priceDisplay) {
+            priceDisplay.textContent = `₹${activePrice}`;
+          }
+        });
+      });
+
+      // 2. Add to Ledger Logic
+      const addBtn = document.getElementById('add-to-ledger-btn');
+      if (addBtn) {
+        addBtn.addEventListener('click', () => {
+          const pinContainer = document.querySelector('.pin-container');
+          if (!pinContainer || !activeSize || !activePrice) return;
+          
+          window.dispatchEvent(new CustomEvent('add-to-ledger', {
+            detail: {
+              originId: pinContainer.getAttribute('data-origin-slug'),
+              originName: pinContainer.getAttribute('data-origin-name'),
+              productId: pinContainer.getAttribute('data-product-slug'),
+              productName: pinContainer.getAttribute('data-product-name'),
+              size: activeSize,
+              price: parseInt(activePrice, 10)
+            }
+          }));
+
+          // Haptic feedback
+          const originalText = addBtn.textContent;
+          addBtn.textContent = '[ ADDED ]';
+          addBtn.style.color = 'var(--color-gold)';
+          setTimeout(() => {
+            addBtn.textContent = originalText;
+            addBtn.style.color = '';
+          }, 1500);
+        });
+      }
+
+      // 3. Basket Trigger Logic
+      const basketBtn = document.getElementById('depth-basket-trigger');
+      if (basketBtn) {
+        basketBtn.addEventListener('click', () => {
+          window.dispatchEvent(new Event('trigger-dossier'));
         });
       }
     }
