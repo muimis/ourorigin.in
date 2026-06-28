@@ -200,10 +200,19 @@ const companionsJson = JSON.stringify(companionProductsMap);
         trigger.removeAttribute('aria-label');
       }
       
-      // Update global Dossier counts (e.g. in CommandCenter)
+      // Update global Dossier counts and toggle depth basket visibility
       document.querySelectorAll('.dossier-count').forEach(el => {
         el.textContent = count;
       });
+      
+      const depthBasket = document.getElementById('depth-basket-trigger');
+      if (depthBasket) {
+        if (count > 0) {
+          depthBasket.style.display = 'block';
+        } else {
+          depthBasket.style.display = 'none';
+        }
+      }
     }
     
     function saveAndRender() {

@@ -433,6 +433,11 @@ const sizes = product ? product.data.sizes : [];
     letter-spacing: 0.1em;
     pointer-events: auto;
   }
+  
+  .depth-basket-trigger {
+    display: none; /* Hidden by default until Ledger logic reveals it */
+  }
+
   .depth-escape-hatch:hover, .depth-basket-trigger:hover, .depth-hud-btn:hover {
     opacity: 1;
     color: var(--color-gold);
