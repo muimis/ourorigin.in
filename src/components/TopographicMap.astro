@@ -63,7 +63,7 @@ const patternOffsetX = index * 20;
 
   @media (max-width: 768px) {
     .topographic-pattern {
-      opacity: 0.6; /* Increased slightly per request, but still protective of text */
+      opacity: 0.85; /* Increased to prevent dim screen wash out */
     }
   }
 
@@ -84,7 +84,7 @@ const patternOffsetX = index * 20;
 
   @media (max-width: 768px) {
     .plate-border {
-      stroke: rgba(245, 237, 216, 0.15);
+      stroke: rgba(245, 237, 216, 0.3); /* Bumped from 0.15 to survive dim screen backlights */
     }
   }
 </style>
