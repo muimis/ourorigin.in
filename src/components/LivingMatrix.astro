@@ -165,25 +165,45 @@ const hudData = {
               
               {origin.data.slug === 'malabar-coast' ? (
                 <div class="hud-button-container malabar-documented">
+                  <div class="hud-decorator hud-top-right">
+                    <svg width="40" height="10" style="overflow: visible;">
+                      <path d="M 0 5 L 40 5" stroke="rgba(166, 124, 60, 0.4)" stroke-width="1" fill="none" />
+                      <g transform="translate(40, 5)">
+                        <circle r="4" stroke="rgba(166, 124, 60, 0.6)" stroke-width="1" fill="none" style="animation: hudPulse 2.5s infinite cubic-bezier(0.2, 0.8, 0.2, 1);" />
+                        <circle r="1.5" fill="rgba(166, 124, 60, 1)" />
+                      </g>
+                    </svg>
+                  </div>
                   <span class="origin-action">{copy.cta}</span>
+                  <div class="hud-decorator hud-bottom-left">
+                    <svg width="40" height="10" style="overflow: visible;">
+                      <path d="M 0 5 L 40 5" stroke="rgba(166, 124, 60, 0.4)" stroke-width="1" fill="none" />
+                      <g transform="translate(0, 5)">
+                        <circle r="4" stroke="rgba(166, 124, 60, 0.6)" stroke-width="1" fill="none" style="animation: hudPulse 2.5s infinite cubic-bezier(0.2, 0.8, 0.2, 1);" />
+                        <circle r="1.5" fill="rgba(166, 124, 60, 1)" />
+                      </g>
+                    </svg>
+                  </div>
                 </div>
               ) : (
                 <a href={linkData.href} class="hud-button-container" aria-label={`Enter ${origin.data.name}`}>
                   <div class="hud-decorator hud-top-right">
-                    <svg viewBox="0 0 40 10" preserveAspectRatio="none" style="overflow: visible;">
-                      <line x1="0" y1="5" x2="38" y2="5" stroke="rgba(166, 124, 60, 0.5)" stroke-width="1" />
-                      <circle cx="38" cy="5" r="2" class="hud-dot-circle" />
-                      <circle cx="38" cy="5" r="4" class="hud-ring-circle" />
-                      <circle cx="38" cy="5" r="4" class="hud-ring-circle" style="animation-delay: 1.25s;" />
+                    <svg width="40" height="10" style="overflow: visible;">
+                      <path d="M 0 5 L 40 5" stroke="rgba(166, 124, 60, 0.4)" stroke-width="1" fill="none" />
+                      <g transform="translate(40, 5)">
+                        <circle r="4" stroke="rgba(166, 124, 60, 0.6)" stroke-width="1" fill="none" style="animation: hudPulse 2.5s infinite cubic-bezier(0.2, 0.8, 0.2, 1);" />
+                        <circle r="1.5" fill="rgba(166, 124, 60, 1)" />
+                      </g>
                     </svg>
                   </div>
-                  <span class="origin-action">JOIN THE HARVEST</span>
+                  <span class="origin-action">{copy.cta}</span>
                   <div class="hud-decorator hud-bottom-left">
-                    <svg viewBox="0 0 40 10" preserveAspectRatio="none" style="overflow: visible;">
-                      <line x1="40" y1="5" x2="2" y2="5" stroke="rgba(166, 124, 60, 0.5)" stroke-width="1" />
-                      <circle cx="2" cy="5" r="2" class="hud-dot-circle" />
-                      <circle cx="2" cy="5" r="4" class="hud-ring-circle" />
-                      <circle cx="2" cy="5" r="4" class="hud-ring-circle" style="animation-delay: 1.25s;" />
+                    <svg width="40" height="10" style="overflow: visible;">
+                      <path d="M 0 5 L 40 5" stroke="rgba(166, 124, 60, 0.4)" stroke-width="1" fill="none" />
+                      <g transform="translate(0, 5)">
+                        <circle r="4" stroke="rgba(166, 124, 60, 0.6)" stroke-width="1" fill="none" style="animation: hudPulse 2.5s infinite cubic-bezier(0.2, 0.8, 0.2, 1);" />
+                        <circle r="1.5" fill="rgba(166, 124, 60, 1)" />
+                      </g>
                     </svg>
                   </div>
                 </a>
