@@ -65,6 +65,9 @@ const sizes = product ? product.data.sizes : [];
   <a href="/" class="depth-escape-hatch" aria-label="Return to Matrix">
     [ &larr; MATRIX ]
   </a>
+  <button id="depth-yields-trigger" class="depth-hud-btn" aria-label="All Yields">
+    [ ALL YIELDS ]
+  </button>
   <button class="depth-basket-trigger" id="depth-basket-trigger" aria-label="Open Basket">
     [ BASKET : <span class="dossier-count">0</span> ]
   </button>
@@ -408,22 +411,22 @@ const sizes = product ? product.data.sizes : [];
   }
 
   .depth-escape-hatch,
-  .depth-basket-trigger {
-    background: transparent;
+  .depth-escape-hatch, .depth-basket-trigger, .depth-hud-btn {
+    color: var(--color-warm-cream);
+    text-decoration: none;
+    background: none;
     border: none;
+    cursor: pointer;
+    padding: 0;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
     font-family: 'DM Mono', monospace;
     font-size: 10px;
     letter-spacing: 0.1em;
-    color: rgba(245, 237, 216, 0.6);
-    text-decoration: none;
-    cursor: pointer;
     pointer-events: auto;
-    transition: color 0.3s ease;
-    padding: 0;
   }
-  
-  .depth-escape-hatch:hover,
-  .depth-basket-trigger:hover {
+  .depth-escape-hatch:hover, .depth-basket-trigger:hover, .depth-hud-btn:hover {
+    opacity: 1;
     color: var(--color-gold);
   }
 </style>
@@ -628,16 +631,16 @@ const sizes = product ? product.data.sizes : [];
           window.location.href = '/';
         });
       }
-
-      const yieldsBtn = document.getElementById('open-yields-btn');
-      if (yieldsBtn) {
-        yieldsBtn.addEventListener('click', () => {
-          window.dispatchEvent(new Event('open-all-yields-panel'));
-        });
-      }
     }
   }
 
   // Ensure initialization happens safely
   new DepthExperience();
+  
+  const yieldsBtn = document.getElementById('depth-yields-trigger');
+  if (yieldsBtn) {
+    yieldsBtn.addEventListener('click', () => {
+      window.dispatchEvent(new Event('open-all-yields-panel'));
+    });
+  }
 </script>
