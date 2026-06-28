@@ -167,7 +167,7 @@ const sizes = product ? product.data.sizes : [];
     background-image: url('/topographic_pattern.svg');
     background-size: 100% auto;
     background-position: center center;
-    opacity: 0.15;
+    opacity: 0.4; /* Increased opacity so it is clearly visible behind the map cut */
     pointer-events: none;
     z-index: 0;
   }
@@ -224,7 +224,7 @@ const sizes = product ? product.data.sizes : [];
     inset: 0;
     background-size: cover;
     background-position: center;
-    opacity: 0.6; /* Restores the green overlay effect by letting the forest-deep background show through */
+    opacity: 0.8; /* Acceptable green overlay effect showing topography and background */
     z-index: 1;
     pointer-events: none;
   }
@@ -270,7 +270,7 @@ const sizes = product ? product.data.sizes : [];
   }
 
   .stratum-image.image-preserve-people {
-    opacity: 0.6;
+    opacity: 0.8;
   }
 
   /* Basic typographic styling */
