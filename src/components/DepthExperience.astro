@@ -60,8 +60,13 @@ const maskUrl = origin?.data.slug === 'wayanad' ? encodeURI('/maps/wayanadu map 
 const sizes = product ? product.data.sizes : [];
 ---
 
+<!-- Telemetry Escape Hatch -->
+<a href="/" class="depth-escape-hatch" aria-label="Return to Matrix">
+  [ &larr; MATRIX ]
+</a>
+
 <div class="depth-experience-container">
-  <!-- Depth Gauge -->
+  <!-- Interactive Depth Gauge -->
   <div class="depth-gauge-wrapper">
     <OriginMark variant="gold" size={48} id="depth-gauge-mark" />
   </div>
@@ -124,7 +129,6 @@ const sizes = product ? product.data.sizes : [];
           <button class="add-to-ledger-btn" id="add-to-ledger-btn" aria-label="Add to Ledger">
             [ ADD TO BASKET ]
           </button>
-          <a href="/" class="return-matrix-link">Return to the Matrix</a>
         </div>
       </div>
     </section>
@@ -228,12 +232,16 @@ const sizes = product ? product.data.sizes : [];
     height: 100%;
     display: flex;
     flex-direction: column;
-    /* Add padding so content doesn't get clipped by the top/right topographical cuts */
     padding-top: 8vh;
     padding-right: 12vw;
   }
   
-  /* Additional layer specific styles can go here if needed */
+  @media (max-width: 768px) {
+    .stratum-content {
+      padding-top: 12vh;
+      padding-right: 10vw;
+    }
+  }
 
   .stratum-image.image-preserve-people {
     opacity: 0.55;
@@ -347,47 +355,41 @@ const sizes = product ? product.data.sizes : [];
   /* Action Styles */
   .offering-actions {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-    z-index: 10;
-    position: relative;
-    width: 100%;
-    max-width: 320px;
+    justify-content: center;
+    margin-top: 2rem;
   }
 
-  .view-all-yields-btn {
-    width: 100%;
+  .add-to-ledger-btn {
     background: transparent;
     color: var(--color-warm-cream);
     border: 1px solid rgba(245, 237, 216, 0.3);
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 14px;
-    padding: 1.2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    padding: 1rem 2rem;
     cursor: pointer;
-    border-radius: 4px;
-    transition: all 0.3s ease;
+    transition: color 0.3s ease;
+    width: 100%;
+    max-width: 320px;
   }
-  
-  .view-all-yields-btn:hover {
-    background: rgba(245, 237, 216, 0.1);
-    border-color: rgba(245, 237, 216, 0.8);
+  .add-to-ledger-btn:hover {
+    color: var(--color-gold);
   }
 
-  .return-matrix-link {
-    display: inline-block;
-    color: var(--color-warm-cream);
+  /* Fixed Escape Hatch */
+  .depth-escape-hatch {
+    position: fixed;
+    top: 24px;
+    left: 24px;
+    z-index: 9999;
     font-family: 'DM Mono', monospace;
-    font-size: 0.9rem;
-    margin-top: 1rem;
-    text-decoration: none;
-    text-transform: uppercase;
+    font-size: 10px;
     letter-spacing: 0.1em;
-    opacity: 0.6;
-    transition: opacity 0.2s ease;
+    color: rgba(245, 237, 216, 0.6);
+    text-decoration: none;
+    transition: color 0.3s ease;
   }
-  .return-matrix-link:hover {
-    opacity: 1;
+  .depth-escape-hatch:hover {
+    color: var(--color-gold);
   }
 </style>
 

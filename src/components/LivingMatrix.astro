@@ -164,7 +164,7 @@ const hudData = {
               )}
               
               {origin.data.slug === 'malabar-coast' ? (
-                <div class="hud-button-container malabar-documented">
+                <div class="hud-button-container locked-origin">
                   <div class="hud-decorator hud-top-right">
                     <svg width="40" height="10" style="overflow: visible;">
                       <path d="M 0 5 L 40 5" stroke="rgba(166, 124, 60, 0.4)" stroke-width="1" fill="none" />
@@ -264,8 +264,13 @@ const hudData = {
       const inwardOffset = 20;
       const outwardOffset = 20;
       
-      const titleStartX = (titleRect.right - bandRect.left) - 20; // inner (under text)
-      const titleEndX = (titleRect.right - bandRect.left) + 20;   // outer (past text)
+      let titleStartX = (titleRect.right - bandRect.left) - 20; // inner (under text)
+      let titleEndX = (titleRect.right - bandRect.left) + 20;   // outer (past text)
+      
+      if (titleEndX > bandRect.width - 10) {
+        titleEndX = bandRect.width - 10;
+        titleStartX = titleEndX - 20;
+      }
       const startY = (titleRect.bottom - bandRect.top) + 2;
       
       // Telemetry tag positioning (Y axis only, X axis is handled by CSS right)
@@ -275,8 +280,13 @@ const hudData = {
       // We must re-measure tagRect after moving it vertically
       const updatedTagRect = tag.getBoundingClientRect();
       
-      const tagStartX = (updatedTagRect.left - bandRect.left) + 20; // inner (under text)
-      const tagEndX = (updatedTagRect.left - bandRect.left) - 20;   // outer (past text)
+      let tagStartX = (updatedTagRect.left - bandRect.left) + 20; // inner (under text)
+      let tagEndX = (updatedTagRect.left - bandRect.left) - 20;   // outer (past text)
+      
+      if (tagEndX < 10) {
+        tagEndX = 10;
+        tagStartX = tagEndX + 20;
+      }
       const tagUnderlineY = targetTagTop + tagRect.height + 4; 
       
       // Two separate disconnected 10mm lines
@@ -648,10 +658,10 @@ const hudData = {
     opacity: 1;
   }
 
-  .hud-button-container.malabar-documented {
-    opacity: 0.5;
+  .locked-origin {
+    opacity: 0.4;
+    pointer-events: none !important;
     cursor: default;
-    pointer-events: none;
   }
 
   .hud-decorator {
