@@ -452,7 +452,6 @@ const hudData = {
     color: var(--color-pure-white);
     outline: none;
     animation-play-state: paused;
-    z-index: 20;
   }
   .matrix-band.expanded:last-child {
     flex: 0 0 50% !important;
@@ -472,7 +471,6 @@ const hudData = {
       color: var(--color-pure-white);
       outline: none;
       animation-play-state: paused;
-      z-index: 20;
     }
     .matrix-band:hover:last-child, .matrix-band:focus-visible:last-child {
       flex: 0 0 50% !important;
@@ -563,6 +561,7 @@ const hudData = {
     height: auto;
     opacity: 1;
     margin-top: clamp(0.3rem, 1vh, 1.5rem);
+    overflow: visible;
   }
   
   @media (hover: hover) {
@@ -570,6 +569,7 @@ const hudData = {
       height: auto;
       opacity: 1;
       margin-top: 1.5rem;
+      overflow: visible;
     }
   }
   
