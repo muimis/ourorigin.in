@@ -26,7 +26,7 @@ const matrixCopy = {
   'idukki': { fragment: 'Named for what grows here.', subLine: 'Western Ghats · Shade-Grown Wild Harvest', cta: '[ JOIN THE HARVEST → ]', botanicalState: 'POD DEVELOPMENT' },
   'wayanad': { fragment: 'The vine doesn\'t stand. It climbs.', subLine: 'Western Ghats · Traditional Agrarian', cta: '[ JOIN THE HARVEST → ]', botanicalState: 'VINE MATURATION' },
   'thiruvananthapuram': { fragment: 'The root is dug up, not picked.', subLine: 'Western Ghats · Lowland Homesteading', cta: '[ JOIN THE HARVEST → ]', botanicalState: 'RHIZOME EXPANSION' },
-  'malabar-coast': { fragment: 'This coastline named the trade routes.', subLine: 'Western Ghats · Smallholder Hand Harvest', cta: '[ AWAITING MONSOON ]', botanicalState: 'DORMANT' }
+  'malabar-coast': { fragment: 'This coastline named the trade routes.', subLine: 'Western Ghats · Smallholder Hand Harvest', cta: 'NOT HARVESTED YET', botanicalState: 'DORMANT' }
 };
 
 const products = await getCollection('products');
@@ -103,7 +103,7 @@ const hudData = {
       return (
         <div 
           data-href={linkData.href}
-          class={`matrix-band ${origin.data.slug === 'malabar-coast' ? 'empty-state' : ''}`} 
+          class="matrix-band"
           style={bandStyle}
           data-index={index}
           data-slug={origin.data.slug}
@@ -308,7 +308,7 @@ const hudData = {
         const hasHover = window.matchMedia('(hover: hover)').matches;
         
         if (!hasHover) {
-          if (band.classList.contains('empty-state')) return;
+
           e.preventDefault();
           const bandsContainer = document.querySelector('.matrix-bands');
           
@@ -434,21 +434,21 @@ const hudData = {
   }
   
   @media (hover: hover) {
-    .matrix-bands:hover .matrix-band:not(:hover):not(.empty-state) {
+    .matrix-bands:hover .matrix-band:not(:hover) {
       flex: 0 0 calc(12.5% + 60px) !important;
     }
-    .matrix-bands:hover .matrix-band:not(:hover):not(.empty-state):last-child {
+    .matrix-bands:hover .matrix-band:not(:hover):last-child {
       flex: 0 0 12.5% !important;
     }
 
-    .matrix-band:not(.empty-state):hover, .matrix-band:not(.empty-state):focus-visible {
+    .matrix-band:hover, .matrix-band:focus-visible {
       flex: 0 0 calc(50% + 60px) !important;
       background-color: #121d0e;
       color: var(--color-pure-white);
       outline: none;
       animation-play-state: paused;
     }
-    .matrix-band:not(.empty-state):hover:last-child, .matrix-band:not(.empty-state):focus-visible:last-child {
+    .matrix-band:hover:last-child, .matrix-band:focus-visible:last-child {
       flex: 0 0 50% !important;
     }
   }
@@ -735,11 +735,6 @@ const hudData = {
     100% { width: 400%; height: 400%; opacity: 0; }
   }
   
-  .matrix-band.empty-state .origin-action {
-    color: rgba(245, 237, 216, 0.6);
-    pointer-events: none;
-  }
-
   .matrix-mark-wrapper {
     position: absolute;
     top: 50%;
