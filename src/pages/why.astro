@@ -2,6 +2,7 @@
 import '../styles/tokens.css';
 import GlobalNav from '../components/GlobalNav.astro';
 import AllYieldsPanel from '../components/AllYieldsPanel.astro';
+import OriginMark from '../components/OriginMark.astro';
 ---
 
 <!DOCTYPE html>
@@ -9,11 +10,11 @@ import AllYieldsPanel from '../components/AllYieldsPanel.astro';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Why this exists. — OurOrigin</title>
+    <title>The Founding Document. — OurOrigin</title>
     
     <meta name="description" content="OurOrigin exists because the people and places behind real products deserve to be seen, not kept in the background of a marketing story.">
     <link rel="canonical" href="https://ourorigin.in/why">
-    <meta property="og:title" content="Why this exists. | OurOrigin">
+    <meta property="og:title" content="The Founding Document. | OurOrigin">
     <meta property="og:description" content="A small business sourcing from the Western Ghats. We show you the origin and let you reach your own conclusions.">
     <meta property="og:url" content="https://ourorigin.in/why">
     <meta property="og:image" content="https://ourorigin.in/og-image.jpg">
@@ -21,7 +22,7 @@ import AllYieldsPanel from '../components/AllYieldsPanel.astro';
     <!-- Google Fonts with display=swap as explicitly requested -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Cormorant+Garamond:wght@300;400;500&family=DM+Mono:ital,wght@0,300;0,400;0,500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Cormorant+Garamond:wght@300;400;500;600&family=DM+Mono:ital,wght@0,300;0,400;0,500&display=swap" rel="stylesheet">
     <style>
         body, html {
             margin: 0;
@@ -29,34 +30,167 @@ import AllYieldsPanel from '../components/AllYieldsPanel.astro';
             background-color: var(--color-forest-deep);
             color: var(--color-warm-cream);
             height: 100%;
+            overflow-x: hidden;
         }
-        .page-container {
-            max-width: 800px;
+
+        /* Dossier Layout */
+        .dossier-container {
+            max-width: 900px;
             margin: 0 auto;
-            padding: 20vh 5vw;
+            padding: 25vh 5vw 15vh 5vw;
+            position: relative;
+        }
+
+        /* Telemetry Guide Line */
+        .guide-line {
+            position: absolute;
+            left: 5vw;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: linear-gradient(to bottom, transparent, rgba(244, 241, 235, 0.1) 10%, rgba(244, 241, 235, 0.1) 90%, transparent);
+            z-index: 0;
+        }
+
+        @media (min-width: 900px) {
+            .guide-line {
+                left: calc(50% - 480px); /* Align slightly outside the content box */
+            }
+        }
+
+        /* Typographic System */
+        .document-title {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--color-gold);
+            margin-bottom: 3rem;
+            opacity: 0.8;
             display: flex;
-            flex-direction: column;
-            gap: 2rem;
-            opacity: 0;
-            animation: cinematicFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            align-items: center;
+            gap: 1rem;
         }
-        @keyframes cinematicFade {
-            0% { opacity: 0; transform: translateY(15px); }
-            100% { opacity: 1; transform: translateY(0); }
+
+        .document-title::after {
+            content: '';
+            flex-grow: 1;
+            height: 1px;
+            background-color: rgba(166, 124, 60, 0.3);
+            max-width: 200px;
         }
-        h1 {
-            font-family: 'Cinzel', serif;
-            font-size: 24px;
-            margin: 0 0 2rem 0;
-            font-weight: 400;
-        }
-        p {
+
+        .preamble {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 20px;
-            line-height: 1.6;
-            margin: 0 0 1.5rem 0;
-            opacity: 0.9;
+            font-size: 1.5rem;
+            line-height: 1.4;
+            font-style: italic;
+            color: var(--color-warm-cream);
+            opacity: 0.7;
+            margin-bottom: 8rem;
+            max-width: 700px;
         }
+
+        /* Sections */
+        .dossier-section {
+            margin-bottom: 8rem;
+            position: relative;
+            padding-left: 2rem; /* Give space for the guide line */
+        }
+
+        .section-header {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.85rem;
+            letter-spacing: 0.2em;
+            color: var(--color-gold);
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-header::before {
+            content: '[';
+            color: rgba(166, 124, 60, 0.5);
+        }
+        .section-header::after {
+            content: ']';
+            color: rgba(166, 124, 60, 0.5);
+        }
+
+        .prose-block {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            line-height: 1.6;
+            color: var(--color-warm-cream);
+            max-width: 680px;
+            margin-bottom: 1.5rem;
+        }
+
+        .prose-block strong {
+            font-weight: 600;
+            color: var(--color-gold);
+        }
+
+        .bullet-list {
+            list-style: none;
+            padding-left: 0;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .bullet-list li {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            line-height: 1.6;
+            color: var(--color-warm-cream);
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-left: 1.5rem;
+            max-width: 680px;
+        }
+
+        .bullet-list li::before {
+            content: '—';
+            position: absolute;
+            left: 0;
+            color: var(--color-gold);
+            opacity: 0.5;
+        }
+
+        /* Visual Decorators */
+        .decorator-mark {
+            position: absolute;
+            left: -1rem;
+            top: 0.2rem;
+            opacity: 0.3;
+            transform: translateX(-50%);
+        }
+
+        .conclusion {
+            text-align: center;
+            margin-top: 15vh;
+            padding-top: 5vh;
+            border-top: 1px solid rgba(244, 241, 235, 0.1);
+        }
+
+        .conclusion-sig {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            letter-spacing: 0.4em;
+            color: var(--color-gold);
+            margin-top: 3rem;
+        }
+
+        .fssai-footer {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--color-warm-cream);
+            opacity: 0.2;
+            margin-top: 2rem;
+        }
+
         .nav-link {
             font-family: 'DM Mono', monospace;
             color: var(--color-warm-cream);
@@ -68,55 +202,135 @@ import AllYieldsPanel from '../components/AllYieldsPanel.astro';
             border-bottom: 1px solid rgba(244, 241, 235, 0.3);
             padding-bottom: 0.2rem;
             transition: border-color 0.3s ease;
-            align-self: flex-start;
         }
         .nav-link:hover {
             border-bottom-color: var(--color-warm-cream);
         }
-        .fssai-footer {
-            margin-top: auto;
-            padding-top: 4rem;
-            font-family: 'DM Mono', monospace;
-            font-size: 0.75rem;
-            color: var(--color-warm-cream);
-            opacity: 0.4;
-            text-align: left;
+
+        /* Initial state for GSAP */
+        .gsap-reveal {
+            opacity: 0;
+            transform: translateY(30px);
         }
     </style>
 </head>
 <body>
     <GlobalNav />
     <AllYieldsPanel />
-    <main id="main-content" class="page-container">
-<h1 class="sr-only">Why this exists. — OurOrigin</h1>
+    
+    <main id="main-content" class="dossier-container">
+        <div class="guide-line"></div>
 
-<section class="why-content">
+        <div class="gsap-reveal">
+            <h1 class="document-title">The Founding Document</h1>
+            <p class="preamble">Written as a living record of what this is, what it believes, and what it will never compromise — regardless of who is building, who is funding, who is advising, or how large it becomes. To be read before touching anything. To be returned to when a decision is hard.</p>
+        </div>
 
-  <p class="why-heading">WHY THIS EXISTS.</p>
-  <!-- Cinzel, 14px, letter-spacing 0.35em, cream at 80% -->
+        <section class="dossier-section gsap-reveal">
+            <div class="decorator-mark">
+                <OriginMark variant="gold" size={24} animate={false} />
+            </div>
+            <h2 class="section-header">SEC 01 : What We Observed</h2>
+            <p class="prose-block">Before there was a brand, before there was a product, before there was a website, there was something noticed.</p>
+            <p class="prose-block">A farmer walks 12 kilometres into a forest to reach a vine. He picks what is ripe. He leaves what the animals took, because it was theirs. He leaves what the season hasn't finished, because it isn't ready. He carries back only what the forest agreed to give this morning, in this season, under these particular conditions of rain and light and temperature that will not repeat in exactly this combination again.</p>
+            <p class="prose-block">No one is watching him make these decisions. There is no premium paid for the fact that he didn't take what the birds got to first. The market doesn't know these decisions happened. The label on the packet doesn't carry them.</p>
+            <p class="prose-block">We noticed this. And then we noticed something else: the entire system of commerce surrounding this man — the supply chains, the brands, the development programmes, the NGO campaigns — none of it makes these decisions visible. All of it, in different ways, obscures them.</p>
+            <p class="prose-block">OurOrigin exists because we believe these decisions are the most interesting thing in the whole supply chain. And because we believe that making them visible is not a marketing strategy. It is a correction.</p>
+        </section>
 
-  <div class="why-body">
+        <section class="dossier-section gsap-reveal">
+            <div class="decorator-mark">
+                <OriginMark variant="primary" size={24} animate={false} />
+            </div>
+            <h2 class="section-header">SEC 02 : What an Origin Actually Is</h2>
+            <p class="prose-block">An origin is not a location. A location is a coordinate on a map, and a map is an abstraction.</p>
+            <p class="prose-block">An origin is the living reality beneath the surface. It is the place — its altitude, its rainfall, its soil, its particular quality of morning light. It is the knowledge — accumulated across generations, in the same forest, watching the same vines, understanding what ready looks like before it is visible to someone who has not been watching long enough.</p>
+            <p class="prose-block">The pepper that arrives in a kitchen is the final visible inch of all of this. The packet it comes in is not the product. It is the evidence.</p>
+            <p class="prose-block">When we say "origin," we mean all of it. Not the romantic version. Not the marketing version. The actual version, in all its complexity and specificity and non-repeatability.</p>
+        </section>
 
-    <p>A farmer walks 12 kilometres into the forest to reach a vine. He picks what is ripe and leaves the rest — what the animals took, what the season hasn't finished. He carries back only what was given willingly.</p>
+        <section class="dossier-section gsap-reveal">
+            <div class="decorator-mark">
+                <OriginMark variant="gold" size={24} animate={false} />
+            </div>
+            <h2 class="section-header">SEC 03 : The Seven Dimensions of an Origin</h2>
+            <p class="prose-block">An origin can be understood through seven dimensions. None is more important than the others. None exists independently.</p>
+            <ul class="bullet-list">
+                <li><strong>Geo</strong> — the specific place. Not "India" or "the Western Ghats" as a brand claim, but Wayanad at 900-1,100 metres, Idukki on its steep slopes at 1,200 metres, Nilgiris high enough for frost.</li>
+                <li><strong>Bio</strong> — the life the place produces. The ecology, the species, the relationships between what grows and what doesn't.</li>
+                <li><strong>Community</strong> — the people who understand and live within this ecosystem. Not beneficiaries of a development programme. Knowledge holders. Practitioners.</li>
+                <li><strong>Method</strong> — the relationship between community and nature, expressed through practice. How the vine is climbed. How readiness is recognised.</li>
+                <li><strong>Product</strong> — the yield. The final visible form that the other dimensions produce together. The product is the evidence that the others are real.</li>
+                <li><strong>Observation</strong> — the evidence layer. The documented record of what actually happens: what was harvested, when, at what conditions, by whom.</li>
+                <li><strong>Time</strong> — the living layer. Origins change by season. The live weather at Wayanad's coordinates is not decoration. It is evidence that this is a place experiencing real conditions right now.</li>
+            </ul>
+        </section>
 
-    <p>The product in this packet is the evidence of that decision.</p>
+        <section class="dossier-section gsap-reveal">
+            <div class="decorator-mark">
+                <OriginMark variant="primary" size={24} animate={false} />
+            </div>
+            <h2 class="section-header">SEC 04 : The Consumer Is Inside the Origin</h2>
+            <p class="prose-block">This is the most important structural claim OurOrigin makes, and it is not a marketing claim. It is a description of how the system actually works.</p>
+            <p class="prose-block">The farmer who walked 12 kilometres made a decision: to pick only what was ready, to leave what wasn't. That decision has no value without a market that understands and pays for it. A market that pays the same price for carelessly harvested pepper as for carefully harvested pepper is a market that makes the farmer's decision economically irrational. Over time, it eliminates the decision. The knowledge goes too.</p>
+            <p class="prose-block">The buyer who understands what they're paying for — who pays for the 12km walk, the leaving, the not-harvesting-for-maximum-yield — makes the corresponding decision: to pay what this actually costs, and to know why it costs that. This decision completes the farmer's decision.</p>
+            <p class="prose-block">The origin is a closed system only when both decisions hold. The consumer is not downstream from the origin. They are inside it.</p>
+        </section>
 
-    <p>OurOrigin exists to make that decision visible — to connect it directly to the person who uses what it produced. No campaign. No intermediary. The origin is here, if you want to see it.</p>
+        <section class="dossier-section gsap-reveal">
+            <div class="decorator-mark">
+                <OriginMark variant="gold" size={24} animate={false} />
+            </div>
+            <h2 class="section-header">SEC 05 : What We Will Always Do</h2>
+            <p class="prose-block"><strong>Tell the truth about what we know and don't know.</strong> If the land image for an origin doesn't exist yet, the site shows an honest empty state, not a reused photograph pretending to be specific.</p>
+            <p class="prose-block"><strong>Pay before the harvest makes someone vulnerable.</strong> We align our payment with what the market can sustain — at or above market rate, before the harvest, when the grower still has negotiating dignity.</p>
+            <p class="prose-block"><strong>Let the origin change by season.</strong> The product changes because the season changes. This is not a quality control failure. It is the proof that the product came from a real place, in a real season, made by real decisions.</p>
+            <p class="prose-block"><strong>Return to the origin when something is unclear.</strong> If there is doubt about a claim, the answer is to go and verify, not to soften the language until the doubt is obscured.</p>
+            <p class="prose-block"><strong>Keep the community relationship honest about what it is.</strong> We are not a development organisation. We are creating a market connection that, if it works, allows the community's expertise to have economic dignity. That is all. It is not nothing.</p>
+        </section>
 
-    <p>The buyer who sees it, and pays for what it actually cost to make it, is not a customer of OurOrigin. They are part of it.</p>
+        <section class="dossier-section gsap-reveal">
+            <div class="decorator-mark">
+                <OriginMark variant="primary" size={24} animate={false} />
+            </div>
+            <h2 class="section-header">SEC 06 : The Standard for Every Decision</h2>
+            <p class="prose-block">One question applies to every decision — in design, in copy, in sourcing, in pricing, in how we respond to a message at 11pm on a Tuesday:</p>
+            <p class="prose-block" style="font-style: italic; color: var(--color-gold);">Would the farmer who walked 12 kilometres still recognise this as honest?</p>
+            <p class="prose-block">Not "would he approve" — he may not have seen a website. But would the decision being made, if he understood it fully, still feel like the same orientation toward his knowledge and his work that brought him into this relationship?</p>
+            <p class="prose-block">If yes, proceed.<br/>If uncertain, wait.<br/>If no, don't.</p>
+        </section>
 
-  </div>
-
-  <p class="why-closing">FROM THE SOURCE.</p>
-  <!-- Cinzel, 12px, letter-spacing 0.3em, gold, centred -->
-
-  <p class="why-fssai">FSSAI Reg. No. 21326135000354</p>
-  <!-- DM Mono, 9px, cream at 25% -->
-
-  <a href="/" class="why-return">← Return to the origins</a>
-  <!-- Cormorant Garamond, 13px, cream at 50% -->
-
-</section>
+        <div class="conclusion gsap-reveal">
+            <OriginMark variant="gold" size={64} animate={false} />
+            <p class="conclusion-sig">FROM THE SOURCE.</p>
+            <a href="/" class="nav-link">← Return to the Matrix</a>
+            <p class="fssai-footer">FSSAI Reg. No. 21326135000354</p>
+        </div>
     </main>
+
+    <!-- GSAP for cinematic scroll reveals -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" is:inline></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" is:inline></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            gsap.registerPlugin(ScrollTrigger);
+
+            const reveals = document.querySelectorAll('.gsap-reveal');
+            
+            reveals.forEach((element) => {
+                gsap.to(element, {
+                    scrollTrigger: {
+                        trigger: element,
+                        start: "top 85%",
+                        toggleActions: "play none none reverse"
+                    },
+                    opacity: 1,
+                    y: 0,
+                    duration: 1.2,
+                    ease: "power2.out"
+                });
+            });
+        });
+    </script>
 </body>
 </html>
