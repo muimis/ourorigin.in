@@ -137,8 +137,8 @@ const hudData = {
           <div class="band-content">
             <div class="title-group" id={`title-${origin.data.slug}`}>
               <h2 class="origin-name">
+                <span class="elevation-floating">{getHighestElevation(origin.data.elevation)}M</span>
                 {origin.data.name.toUpperCase()}
-                <sup class="elevation-sup">{getHighestElevation(origin.data.elevation)}M</sup>
               </h2>
             </div>
             <div class="band-reveal">
@@ -515,14 +515,21 @@ const hudData = {
   }
   }
   
-  .elevation-sup {
-    vertical-align: super;
+  .origin-name {
+    position: relative;
+    /* other styles are preserved below */
+  }
+
+  .elevation-floating {
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    margin-bottom: 4px; /* ~1mm above */
     font-size: 0.35em;
-    margin-left: 0.2rem;
     font-family: var(--font-evidence);
     letter-spacing: 0.1em;
     opacity: 0.7;
-    display: inline-block;
+    white-space: nowrap;
   }
   
   .band-reveal {
