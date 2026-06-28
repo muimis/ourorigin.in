@@ -9,6 +9,16 @@ export interface Props {
 
 const { origin, product } = Astro.props;
 
+const botanicalStates = {
+  'nilgiris': 'LEAF FLUSH',
+  'idukki': 'POD DEVELOPMENT',
+  'wayanad': 'VINE MATURATION',
+  'thiruvananthapuram': 'RHIZOME EXPANSION',
+  'malabar-coast': 'DORMANT'
+};
+const botanicalState = origin ? botanicalStates[origin.data.slug] : '';
+
+
 // Build the content for the first 4 strata
 const strata = [
   { 
@@ -73,7 +83,12 @@ const sizes = product ? product.data.sizes : [];
               {s.hasWeather && origin && <><span class="weather-separator">·</span><LiveWeather coordinates={origin.data.coordinates} originName={origin.data.name} /></>}
             </h2>
             {s.id === 'specimen' && s.botanicalName && (
-              <p class="specimen-botanical-name">{s.botanicalName}</p>
+              <>
+                <p class="specimen-botanical-name">{s.botanicalName}</p>
+                <div class="specimen-telemetry-handoff">
+                  <span class="telemetry-label">STATE:</span> <span class="telemetry-value">{botanicalState}</span>
+                </div>
+              </>
             )}
             <p class="stratum-narrative">{s.narrative}</p>
           </div>
@@ -88,11 +103,13 @@ const sizes = product ? product.data.sizes : [];
       )}
       <div class="stratum-content offering-content">
         <div class="stratum-shadow"></div>
-        <h2 class="stratum-evidence">OFFERING</h2>
+        <h2 class="stratum-evidence">THE HARVEST</h2>
         
         {product.data.offeringCopy && (
           <p class="offering-copy">{product.data.offeringCopy}</p>
         )}
+        
+        <p class="yield-status">YIELD STATUS: STRICTLY LIMITED (WILD HARVEST)</p>
         
         <div class="offering-sizes-grid">
           {sizes.map((size) => (
@@ -105,7 +122,7 @@ const sizes = product ? product.data.sizes : [];
         
         <div class="offering-actions">
           <button class="view-all-yields-btn" id="open-yields-btn" aria-label="Open all yields panel">
-            View All Yields & Procure
+            [ ADD TO DOSSIER ]
           </button>
           <a href="/" class="return-matrix-link">Return to the Matrix</a>
         </div>
@@ -267,6 +284,32 @@ const sizes = product ? product.data.sizes : [];
     font-style: italic;
     color: var(--color-gold);
     margin: -1rem 0 0 0;
+  }
+
+  .specimen-telemetry-handoff {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--color-warm-cream);
+    margin: -1rem 0 0 0;
+    display: flex;
+    gap: 0.5rem;
+  }
+  .specimen-telemetry-handoff .telemetry-label {
+    opacity: 0.5;
+  }
+  .specimen-telemetry-handoff .telemetry-value {
+    opacity: 0.9;
+  }
+
+  .yield-status {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--color-gold);
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    opacity: 0.9;
   }
 
   .weather-separator {

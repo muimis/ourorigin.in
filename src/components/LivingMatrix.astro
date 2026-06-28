@@ -31,10 +31,10 @@ const matrixCopy = {
 
 const products = await getCollection('products');
 
-const anchorMap: Record<string, string> = {};
+const anchorMap: Record<string, { href: string, name: string }> = {};
 orderedOrigins.forEach(origin => {
   if (origin.data.slug === 'malabar-coast') {
-    anchorMap[origin.data.slug] = '#';
+    anchorMap[origin.data.slug] = { href: '#', name: '' };
   } else {
     const anchorProduct = products.find(p => {
       const pOriginId = typeof p.data.originSlug === 'object' ? p.data.originSlug.id : p.data.originSlug;
@@ -44,7 +44,7 @@ orderedOrigins.forEach(origin => {
       const pOriginId = typeof p.data.originSlug === 'object' ? p.data.originSlug.id : p.data.originSlug;
       return pOriginId === origin.id;
     });
-    anchorMap[origin.data.slug] = firstProduct ? `/origins/${origin.id}/${firstProduct.id}` : '#';
+    anchorMap[origin.data.slug] = firstProduct ? { href: `/origins/${origin.id}/${firstProduct.id}`, name: firstProduct.data.name } : { href: '#', name: '' };
   }
 });
 const originMarks = {
@@ -85,7 +85,7 @@ const hudData = {
 
   <div class="matrix-bands">
     {orderedOrigins.map((origin, index) => {
-      const linkHref = anchorMap[origin.data.slug];
+      const linkData = anchorMap[origin.data.slug];
       const copy = matrixCopy[origin.data.slug];
       const clipPaths = [
         "", // Band 0 (Nilgiris) has no top curve, so no clip-path needed
@@ -102,7 +102,7 @@ const hudData = {
       
       return (
         <div 
-          data-href={linkHref} 
+          data-href={linkData.href}
           class={`matrix-band ${origin.data.slug === 'malabar-coast' ? 'empty-state' : ''}`} 
           style={bandStyle}
           data-index={index}
@@ -145,8 +145,7 @@ const hudData = {
             <div class="band-reveal">
               <p class="origin-meta">{copy.fragment}</p>
               <p class="origin-subline">{copy.subLine}</p>
-              {origin.data.slug !== 'malabar-coast' && <p class="band-partner-note">The people who grow this are partners, not suppliers.</p>}
-              {origin.data.slug === 'wayanad' && <p class="commerce-signal">From ₹109</p>}
+              
               <div class="origin-live-telemetry">
                 <LiveTelemetry 
                   coordinates={origin.data.coordinates} 
@@ -155,14 +154,27 @@ const hudData = {
                   botanicalState={copy.botanicalState}
                 />
               </div>
+
+              <div class="band-hud-memory">
+                YIELD TYPE: {hudData[origin.data.slug].tag}
+              </div>
+
+              {origin.data.slug !== 'malabar-coast' && (
+                <p class="band-partner-note">The people who grow this are partners, not suppliers.</p>
+              )}
               
               {origin.data.slug === 'malabar-coast' ? (
-                <p class="origin-action malabar-documented">{copy.cta}</p>
+                <div class="hud-button-container malabar-documented">
+                  <span class="origin-action">{copy.cta}</span>
+                </div>
               ) : (
-                <>
-                  <a href={linkHref} class="origin-action" aria-label={`Enter ${origin.data.name} — descend through ${origin.data.method || 'the origin'}`}>{copy.cta}</a>
-                  <p class="carousel-trigger" data-origin={origin.id} aria-label={`Browse all yields from ${origin.data.name}`} role="button" tabindex="0">Browse all yields</p>
-                </>
+                <a href={linkData.href} class="hud-button-container" aria-label={`Enter ${origin.data.name}`}>
+                  <svg viewBox="0 0 24 24" class="hud-revolving-dot">
+                    <circle cx="12" cy="12" r="10" stroke="rgba(166, 124, 60, 0.4)" stroke-width="1" fill="none" />
+                    <circle cx="12" cy="2" r="2" fill="rgba(166, 124, 60, 1)" style="transform-origin: center; animation: revolve 3s linear infinite;" />
+                  </svg>
+                  <span class="origin-action">[ JOIN THE HARVEST: {linkData.name.toUpperCase()} ]</span>
+                </a>
               )}
             </div>
           </div>
@@ -554,32 +566,62 @@ const hudData = {
     font-size: 12px;
     letter-spacing: 0.05em;
     opacity: 0.75;
-    margin: 0 0 0.6rem 0;
+    margin: 0;
+  }
+  
+  .band-hud-memory {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--color-gold);
+    opacity: 0.8;
+    margin: 0;
+    text-transform: uppercase;
   }
   
   .band-partner-note {
     text-shadow: 0 2px 10px rgba(12,21,9,1), 0 -2px 10px rgba(12,21,9,1);
 
-    font-family: var(--font-narrative);
+    font-family: 'Cormorant Garamond', serif;
     font-style: italic;
-    font-size: 13px;
-    color: var(--color-warm-cream);
-    opacity: 0.7;
-    margin-top: 0.5rem;
+    font-size: 18px; /* Elevated */
+    color: var(--color-gold);
+    opacity: 0.9;
+    margin: 0;
     letter-spacing: 0.02em;
   }
   
-  .commerce-signal {
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    color: rgba(166, 124, 60, 0.75); /* gold at 75% */
-    margin: -0.2rem 0 0.6rem 0;
+  .hud-button-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    text-decoration: none;
+    pointer-events: none;
     opacity: 0;
     transition: opacity var(--duration-standard) ease;
   }
-  
-  .matrix-band.expanded .commerce-signal {
+
+  .matrix-band.expanded .hud-button-container {
+    pointer-events: auto;
     opacity: 1;
+  }
+
+  .hud-button-container.malabar-documented {
+    opacity: 0.5;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .hud-revolving-dot {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+
+  @keyframes revolve {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
   }
   
   .origin-action {
@@ -589,8 +631,6 @@ const hudData = {
     color: rgba(245, 237, 216, 0.55);
     text-decoration: none;
     margin: 0;
-    opacity: 0;
-    transform: translateY(5px);
     transition: opacity 0.3s ease;
   }
   
@@ -598,22 +638,9 @@ const hudData = {
     color: rgba(245, 237, 216, 0.35);
   }
 
-  .carousel-trigger {
-    font-family: var(--font-narrative);
-    font-size: 12px;
-    color: rgba(245, 237, 216, 0.40);
-    margin: 0.2rem 0 0 0;
-    cursor: pointer;
-    transition: color 0.2s ease;
-  }
-  .carousel-trigger:hover {
-    color: rgba(245, 237, 216, 0.80);
-  }
-
   @media (max-width: 768px) {
     .origin-subline { font-size: 9px; }
     .origin-action { font-size: 12px; }
-    .carousel-trigger { font-size: 12px; }
   }
 
   /* Plate static Origin Mark (Removed duplicate block from here) */
@@ -661,18 +688,6 @@ const hudData = {
     100% { width: 400%; height: 400%; opacity: 0; }
   }
   
-  .matrix-band.expanded .origin-action {
-    opacity: 1;
-    transform: translateY(20px);
-  }
-  
-  @media (hover: hover) {
-    .matrix-band:hover .origin-action, .matrix-band:focus-visible .origin-action {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
   .matrix-band.empty-state .origin-action {
     color: rgba(245, 237, 216, 0.6);
     pointer-events: none;
