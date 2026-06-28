@@ -212,41 +212,31 @@ const hudData = {
       const inwardOffset = 20;
       const outwardOffset = 20;
       
-      let startX, underlineEndX;
-      const startY = (titleRect.bottom - bandRect.top) + 2; 
-      
-      // We know side is always 'right' now based on previous instruction
-      startX = (titleRect.right - bandRect.left) - inwardOffset;
-      underlineEndX = (titleRect.right - bandRect.left) + outwardOffset;
-      
-      // Calculate tag position: 6mm (~24px) above the origin name
+      // Telemetry tag positioning
       const targetTagTop = (titleRect.top - bandRect.top) - 24 - tagRect.height;
       tag.style.top = `${targetTagTop}px`;
       
-      // Pull the tag in: Position it 120px to the right of the text edge instead of extreme screen right
+      // Position the tag 120px to the right of the origin text
       tag.style.left = `${(titleRect.right - bandRect.left) + 120}px`;
       tag.style.right = 'auto';
       
-      // We must re-measure tagRect after moving it to left instead of right
+      // We must re-measure tagRect after moving it
       const updatedTagRect = tag.getBoundingClientRect();
       
-      // Telemetry tag underline
-      const tagStartX = (updatedTagRect.left - bandRect.left) - 4; // 4px padding left of tag
-      const tagEndX = (updatedTagRect.right - bandRect.left) + 2;  // 2px padding right of tag
-      const tagUnderlineY = targetTagTop + tagRect.height + 4; // 4px below tag text
+      const tagStartX = (updatedTagRect.left - bandRect.left) - 4; 
+      const tagEndX = (updatedTagRect.right - bandRect.left) + 2;  
+      const tagUnderlineY = targetTagTop + tagRect.height + 4; 
       
-      const pathData = `M ${startX} ${startY} L ${underlineEndX} ${startY} L ${tagStartX} ${tagUnderlineY} L ${tagEndX} ${tagUnderlineY}`;
+      // Orthogonal 90-degree line: Contrast with the curved topo lines
+      // Out to underlineEndX -> straight UP -> straight RIGHT under tag
+      const pathData = `M ${startX} ${startY} L ${underlineEndX} ${startY} L ${underlineEndX} ${tagUnderlineY} L ${tagEndX} ${tagUnderlineY}`;
       
       container.innerHTML = `
         <svg class="hud-dynamic-svg" style="position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 4;">
           <path d="${pathData}" stroke="rgba(166, 124, 60, 0.4)" stroke-width="1" fill="none" class="hud-tether-path" />
-          <g class="hud-pulse-group" transform="translate(${startX}, ${startY})">
-            <circle r="4" stroke="rgba(166, 124, 60, 0.6)" stroke-width="1" fill="none" style="animation: hudPulse 2.5s infinite cubic-bezier(0.2, 0.8, 0.2, 1);" />
-            <circle r="1.5" fill="rgba(166, 124, 60, 1)" />
-          </g>
           <g class="hud-pulse-group" transform="translate(${tagEndX}, ${tagUnderlineY})">
-            <circle r="4" stroke="rgba(166, 124, 60, 0.6)" stroke-width="1" fill="none" style="animation: hudPulse 2.5s infinite cubic-bezier(0.2, 0.8, 0.2, 1);" />
-            <circle r="1.5" fill="rgba(166, 124, 60, 1)" />
+            <circle r="3" stroke="rgba(166, 124, 60, 0.6)" stroke-width="1" fill="none" style="animation: hudPulse 2.5s infinite cubic-bezier(0.2, 0.8, 0.2, 1);" />
+            <circle r="1" fill="rgba(166, 124, 60, 1)" />
           </g>
         </svg>
       `;
