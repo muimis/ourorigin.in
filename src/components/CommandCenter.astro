@@ -30,7 +30,7 @@ import OriginMark from './OriginMark.astro';
     transform: translateX(-50%);
     z-index: 8000;
     cursor: pointer;
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+    transition: top 0.6s cubic-bezier(0.16, 1, 0.3, 1), left 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
     opacity: 1;
   }
   #command-center-trigger:hover {
@@ -40,6 +40,24 @@ import OriginMark from './OriginMark.astro';
   /* Force the inner SVG elements to at least 80% opacity for this specific mark */
   #command-center-trigger :global(.origin-mark *) {
     opacity: 0.8 !important;
+  }
+  
+  /* When a matrix plate is expanded, move the trigger to the top left */
+  :global(body.matrix-expanded) #command-center-trigger {
+    bottom: auto;
+    top: 40px; /* 10mm */
+    left: 40px; /* 10mm */
+    transform: none;
+  }
+  :global(body.matrix-expanded) #command-center-trigger:hover {
+    transform: scale(1.1);
+  }
+  
+  @media (max-width: 768px) {
+    :global(body.matrix-expanded) #command-center-trigger {
+      top: 24px;
+      left: 24px;
+    }
   }
 
   #command-center-overlay {

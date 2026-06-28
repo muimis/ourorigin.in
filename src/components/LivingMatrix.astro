@@ -307,6 +307,7 @@ const hudData = {
               b.setAttribute('aria-expanded', 'false');
             });
             bandsContainer.classList.add('has-expanded');
+            document.body.classList.add('matrix-expanded');
             
             band.classList.add('expanded');
             band.setAttribute('aria-expanded', 'true');
@@ -314,6 +315,7 @@ const hudData = {
             band.classList.remove('expanded');
             band.setAttribute('aria-expanded', 'false');
             bandsContainer.classList.remove('has-expanded');
+            document.body.classList.remove('matrix-expanded');
           }
         } else {
           const href = band.getAttribute('data-href');
@@ -839,21 +841,25 @@ const hudData = {
     }
   }
 
-
-  /* Topographic map fading for non-focused plates */
-  .topographic-map-container {
+  .topographic-map-container,
+  .band-reveal,
+  .hud-dynamic-container {
     transition: opacity 0.6s var(--ease-settle);
   }
   
+  /* Topographic map fading for non-focused plates (Hover state) */
   .matrix-bands:hover .matrix-band:not(:hover) .topographic-map-container,
-  .matrix-bands.has-expanded .matrix-band:not(.expanded) .topographic-map-container {
+  .matrix-bands:hover .matrix-band:not(:hover) .yield-hud-callout {
     opacity: 0.2;
   }
-
-  /* HUD fading for non-focused plates */
-  .matrix-bands:hover .matrix-band:not(:hover) .yield-hud-callout,
+  
+  /* When a plate is expanded, aggressively hide everything on inactive plates EXCEPT title and hud tag */
+  .matrix-bands.has-expanded .matrix-band:not(.expanded) .band-reveal,
+  .matrix-bands.has-expanded .matrix-band:not(.expanded) .topographic-map-container,
+  .matrix-bands.has-expanded .matrix-band:not(.expanded) .hud-dynamic-container,
   .matrix-bands.has-expanded .matrix-band:not(.expanded) .yield-hud-callout {
-    opacity: 0.2;
+    opacity: 0;
+    pointer-events: none;
   }
 
 
