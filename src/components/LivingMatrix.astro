@@ -231,15 +231,15 @@ const hudData = {
       const pathData = `M ${startX} ${startY} L ${underlineEndX} ${startY} L ${tagX} ${tagY}`;
       
       container.innerHTML = `
-        <svg class="hud-dynamic-svg">
-          <path d="${pathData}" class="hud-tether-path" />
+        <svg class="hud-dynamic-svg" style="position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 4;">
+          <path d="${pathData}" stroke="rgba(166, 124, 60, 0.4)" stroke-width="1" fill="none" class="hud-tether-path" />
           <g class="hud-pulse-group" transform="translate(${startX}, ${startY})">
-            <circle r="4" class="hud-ring-circle" />
-            <circle r="1.5" class="hud-dot-circle" />
+            <circle r="4" stroke="rgba(166, 124, 60, 0.6)" stroke-width="1" fill="none" style="animation: hudPulse 2.5s infinite cubic-bezier(0.2, 0.8, 0.2, 1);" />
+            <circle r="1.5" fill="rgba(166, 124, 60, 1)" />
           </g>
           <g class="hud-pulse-group" transform="translate(${tagX}, ${tagY})">
-            <circle r="4" class="hud-ring-circle" />
-            <circle r="1.5" class="hud-dot-circle" />
+            <circle r="4" stroke="rgba(166, 124, 60, 0.6)" stroke-width="1" fill="none" style="animation: hudPulse 2.5s infinite cubic-bezier(0.2, 0.8, 0.2, 1);" />
+            <circle r="1.5" fill="rgba(166, 124, 60, 1)" />
           </g>
         </svg>
       `;
