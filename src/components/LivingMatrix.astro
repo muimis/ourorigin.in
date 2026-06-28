@@ -861,6 +861,13 @@ const hudData = {
     opacity: 0;
     pointer-events: none;
   }
+  
+  /* Dim the remaining elements (origin name and hud tag) on inactive plates to shift focus to the active one */
+  .matrix-bands.has-expanded .matrix-band:not(.expanded) .origin-name,
+  .matrix-bands.has-expanded .matrix-band:not(.expanded) .hud-tag {
+    opacity: 0.3 !important;
+    transition: opacity 0.6s var(--ease-settle) !important;
+  }
 
 
   @media (max-width: 768px) {
