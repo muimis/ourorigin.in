@@ -456,7 +456,7 @@ const hudData = {
     height: 100%;
     width: 100%;
     overflow: hidden;
-    padding: 2vh 0;
+    padding: 2vh clamp(2rem, 8vw, 6rem); /* 8vw pulls the text significantly inward */
     box-sizing: border-box;
   }
   
@@ -836,6 +836,7 @@ const hudData = {
   
   .hud-tag {
     position: absolute;
+    right: clamp(2rem, 8vw, 6rem); /* Matches band-content left padding exactly */
     font-family: 'DM Mono', monospace;
     font-size: 10px;
     letter-spacing: 0.1em;
