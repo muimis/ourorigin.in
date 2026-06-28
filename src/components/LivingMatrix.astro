@@ -212,8 +212,8 @@ const hudData = {
       const inwardOffset = 20;
       const outwardOffset = 20;
       
-      const titleStartX = (titleRect.left - bandRect.left) - 20; // 5mm outer (left of the text)
-      const titleEndX = (titleRect.left - bandRect.left) + 20;   // 5mm under the text
+      const titleStartX = (titleRect.right - bandRect.left) - 20; // inner (under text)
+      const titleEndX = (titleRect.right - bandRect.left) + 20;   // outer (past text)
       const startY = (titleRect.bottom - bandRect.top) + 2;
       
       // Telemetry tag positioning (Y axis only, X axis is handled by CSS right)
@@ -223,8 +223,8 @@ const hudData = {
       // We must re-measure tagRect after moving it vertically
       const updatedTagRect = tag.getBoundingClientRect();
       
-      const tagStartX = (updatedTagRect.left - bandRect.left) - 20; // 5mm before the tag
-      const tagEndX = (updatedTagRect.left - bandRect.left) + 20;   // 5mm under the tag
+      const tagStartX = (updatedTagRect.left - bandRect.left) + 20; // inner (under text)
+      const tagEndX = (updatedTagRect.left - bandRect.left) - 20;   // outer (past text)
       const tagUnderlineY = targetTagTop + tagRect.height + 4; 
       
       // Two separate disconnected 10mm lines
