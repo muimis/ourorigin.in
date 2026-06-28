@@ -35,7 +35,11 @@ import OriginMark from './OriginMark.astro';
   }
   #command-center-trigger:hover {
     transform: translateX(-50%) scale(1.1);
-    opacity: 1;
+  }
+  
+  /* Force the inner SVG elements to at least 80% opacity for this specific mark */
+  #command-center-trigger :global(.origin-mark *) {
+    opacity: 0.8 !important;
   }
 
   #command-center-overlay {
