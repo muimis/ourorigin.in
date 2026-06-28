@@ -212,6 +212,10 @@ const hudData = {
       const inwardOffset = 20;
       const outwardOffset = 20;
       
+      const startX = (titleRect.right - bandRect.left) - inwardOffset;
+      const underlineEndX = (titleRect.right - bandRect.left) + outwardOffset;
+      const startY = (titleRect.bottom - bandRect.top) + 2;
+      
       // Telemetry tag positioning
       const targetTagTop = (titleRect.top - bandRect.top) - 24 - tagRect.height;
       tag.style.top = `${targetTagTop}px`;
