@@ -15,6 +15,7 @@ import OriginMark from './OriginMark.astro';
     <a href="/observations">Observations</a>
     <a href="/why">Why this exists.</a>
     <a href="/contact">Contact</a>
+    <button id="cc-all-yields-btn" class="cc-button">All Yields</button>
   </nav>
 
   <div class="cc-legal">
@@ -106,7 +107,7 @@ import OriginMark from './OriginMark.astro';
     transform: translateY(0);
   }
 
-  .cc-nav a {
+  .cc-nav a, .cc-button {
     font-family: 'Cormorant Garamond', serif;
     font-size: 3.5rem;
     font-weight: 300;
@@ -115,9 +116,14 @@ import OriginMark from './OriginMark.astro';
     letter-spacing: 0.05em;
     transition: color 0.4s ease, opacity 0.4s ease;
     opacity: 0.6;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    line-height: 1;
   }
 
-  .cc-nav a:hover {
+  .cc-nav a:hover, .cc-button:hover {
     color: var(--color-gold);
     opacity: 1;
   }
@@ -134,7 +140,7 @@ import OriginMark from './OriginMark.astro';
   }
   
   @media (max-width: 768px) {
-    .cc-nav a { 
+    .cc-nav a, .cc-button { 
       font-size: 2.5rem; 
     }
     .cc-nav {
@@ -171,5 +177,16 @@ import OriginMark from './OriginMark.astro';
       trigger.style.pointerEvents = 'auto';
       document.body.style.overflow = '';
     });
+    
+    const yieldsBtn = document.getElementById('cc-all-yields-btn');
+    if (yieldsBtn) {
+      yieldsBtn.addEventListener('click', () => {
+        overlay.classList.remove('is-active');
+        trigger.style.opacity = '0.8';
+        trigger.style.pointerEvents = 'auto';
+        document.body.style.overflow = '';
+        window.dispatchEvent(new Event('open-all-yields-panel'));
+      });
+    }
   }
 </script>
