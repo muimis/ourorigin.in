@@ -169,11 +169,19 @@ const hudData = {
                 </div>
               ) : (
                 <a href={linkData.href} class="hud-button-container" aria-label={`Enter ${origin.data.name}`}>
-                  <svg viewBox="0 0 24 24" class="hud-revolving-dot">
-                    <circle cx="12" cy="12" r="10" stroke="rgba(166, 124, 60, 0.4)" stroke-width="1" fill="none" />
-                    <circle cx="12" cy="2" r="2" fill="rgba(166, 124, 60, 1)" style="transform-origin: center; animation: revolve 3s linear infinite;" />
-                  </svg>
+                  <div class="hud-decorator hud-top-right">
+                    <svg viewBox="0 0 40 10" preserveAspectRatio="none">
+                      <line x1="0" y1="5" x2="38" y2="5" stroke="rgba(166, 124, 60, 0.5)" stroke-width="1" />
+                      <circle cx="38" cy="5" r="2" fill="rgba(166, 124, 60, 1)" />
+                    </svg>
+                  </div>
                   <span class="origin-action">[ JOIN THE HARVEST ]</span>
+                  <div class="hud-decorator hud-bottom-left">
+                    <svg viewBox="0 0 40 10" preserveAspectRatio="none">
+                      <line x1="2" y1="5" x2="40" y2="5" stroke="rgba(166, 124, 60, 0.5)" stroke-width="1" />
+                      <circle cx="2" cy="5" r="2" fill="rgba(166, 124, 60, 1)" />
+                    </svg>
+                  </div>
                 </a>
               )}
             </div>
@@ -595,10 +603,11 @@ const hudData = {
   }
   
   .hud-button-container {
-    display: flex;
+    position: relative;
+    padding: 0.5rem 1rem;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
     text-decoration: none;
     pointer-events: none;
     opacity: 0;
@@ -616,15 +625,23 @@ const hudData = {
     pointer-events: none;
   }
 
-  .hud-revolving-dot {
-    width: 24px;
-    height: 24px;
-    flex-shrink: 0;
+  .hud-decorator {
+    position: absolute;
+    width: 40px;
+    height: 10px;
   }
-
-  @keyframes revolve {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+  .hud-decorator svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .hud-top-right {
+    top: -5px;
+    right: -20px;
+  }
+  .hud-bottom-left {
+    bottom: -5px;
+    left: -20px;
   }
   
   .origin-action {
@@ -815,11 +832,9 @@ const hudData = {
     100% { transform: scale(2.5); opacity: 0; }
   }
   
-  .matrix-band.expanded .hud-tether-path {
-    stroke: rgba(166, 124, 60, 0.1);
-  }
+  .matrix-band.expanded .hud-tether-path,
   .matrix-band.expanded .hud-pulse-group {
-    opacity: 0.2;
+    opacity: 0 !important;
     transition: opacity 0.4s ease;
   }
 
@@ -837,6 +852,11 @@ const hudData = {
 </style>
 <style>
   
+  .matrix-band.expanded .hud-tag {
+    opacity: 0 !important;
+    transition: opacity 0.4s ease;
+  }
+  
   .hud-tag {
     position: absolute;
     right: clamp(2.4rem, 5vw, 3.5rem); /* Matches band-content left padding exactly */
@@ -848,6 +868,7 @@ const hudData = {
     pointer-events: none;
     z-index: 5;
     white-space: nowrap;
+    transition: opacity 0.4s ease;
     text-align: right;
     transition: opacity 0.4s ease, top 0.4s ease;
   }
