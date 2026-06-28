@@ -7,7 +7,9 @@ export interface Props {
 }
 
 const { coordinates, elevation } = Astro.props;
-const maxElevation = elevation.split('-').pop()?.replace('M', '').trim() + 'M';
+const numbers = elevation.replace(/,/g, '').match(/\d+/g);
+const maxNumber = numbers ? Math.max(...numbers.map(Number)) : null;
+const maxElevation = maxNumber ? maxNumber.toLocaleString() + 'M' : elevation.toUpperCase();
 ---
 
 <div class="live-telemetry" data-coords={coordinates}>
