@@ -123,13 +123,6 @@ const hudData = {
           )}
 
           <TopographicMap index={index} />
-          
-          <div class="title-group" id={`title-${origin.data.slug}`}>
-            <h2 class="origin-name">
-              {origin.data.name.toUpperCase()}
-              <sup class="elevation-sup">{getHighestElevation(origin.data.elevation)}M</sup>
-            </h2>
-          </div>
 
           <div class="tap-pulse-indicator"></div>
           
@@ -784,7 +777,9 @@ const hudData = {
 
   /* Nav CSS removed */
 
-  /* HUD Callouts */
+</style>
+<style is:global>
+  /* HUD Callouts (Global for JS Injection) */
   .hud-dynamic-container {
     position: absolute;
     inset: 0;
@@ -829,6 +824,8 @@ const hudData = {
     opacity: 0.2;
     transition: opacity 0.4s ease;
   }
+</style>
+<style>
   
   .hud-tag {
     position: absolute;
