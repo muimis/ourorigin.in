@@ -115,7 +115,7 @@ const hudData = {
           <!-- HUD Tether & Callout -->
           {hudData[origin.data.slug] && (
             <>
-              <svg class="hud-dynamic-svg" data-slug={origin.data.slug} data-side={hudData[origin.data.slug].side}></svg>
+              <div class="hud-dynamic-container" data-slug={origin.data.slug} data-side={hudData[origin.data.slug].side}></div>
               <div class="hud-tag" id={`tag-${origin.data.slug}`} style={`top: ${hudData[origin.data.slug].tagY}; ${hudData[origin.data.slug].side}: 2rem;`}>
                 {hudData[origin.data.slug].tag}
               </div>
@@ -201,13 +201,13 @@ const hudData = {
   function renderHUDLines() {
     const bands = document.querySelectorAll('.matrix-band');
     bands.forEach(band => {
-      const svg = band.querySelector('.hud-dynamic-svg');
-      if (!svg) return;
+      const container = band.querySelector('.hud-dynamic-container');
+      if (!container) return;
       
-      const slug = svg.getAttribute('data-slug');
-      const side = svg.getAttribute('data-side');
+      const slug = container.getAttribute('data-slug');
+      const side = container.getAttribute('data-side');
       
-      const title = band.querySelector(`#title-${slug}`);
+      const title = band.querySelector(`#title-${slug} h2`);
       const tag = band.querySelector(`#tag-${slug}`);
       const bandRect = band.getBoundingClientRect();
       
@@ -217,13 +217,12 @@ const hudData = {
       const tagRect = tag.getBoundingClientRect();
       
       // Approx 3 letters is about 3ch. Assuming 1ch = 12px for title font.
-      // The user wants it to start 3 letters INWARDS and extend 3 letters OUTWARDS.
       const charWidth = 14; 
       const inwardOffset = 3 * charWidth;
       const outwardOffset = inwardOffset;
       
       let startX, underlineEndX;
-      const startY = (titleRect.bottom - bandRect.top) + 2; // Underline just below text
+      const startY = (titleRect.bottom - bandRect.top) + 2; 
       
       if (side === 'right') {
         startX = (titleRect.right - bandRect.left) - inwardOffset;
@@ -238,16 +237,18 @@ const hudData = {
       
       const pathData = `M ${startX} ${startY} L ${underlineEndX} ${startY} L ${tagX} ${tagY}`;
       
-      svg.innerHTML = `
-        <path d="${pathData}" class="hud-tether-path" />
-        <g class="hud-pulse-group" transform="translate(${startX}, ${startY})">
-          <circle r="4" class="hud-ring-circle" />
-          <circle r="1.5" class="hud-dot-circle" />
-        </g>
-        <g class="hud-pulse-group" transform="translate(${tagX}, ${tagY})">
-          <circle r="4" class="hud-ring-circle" />
-          <circle r="1.5" class="hud-dot-circle" />
-        </g>
+      container.innerHTML = `
+        <svg class="hud-dynamic-svg">
+          <path d="${pathData}" class="hud-tether-path" />
+          <g class="hud-pulse-group" transform="translate(${startX}, ${startY})">
+            <circle r="4" class="hud-ring-circle" />
+            <circle r="1.5" class="hud-dot-circle" />
+          </g>
+          <g class="hud-pulse-group" transform="translate(${tagX}, ${tagY})">
+            <circle r="4" class="hud-ring-circle" />
+            <circle r="1.5" class="hud-dot-circle" />
+          </g>
+        </svg>
       `;
     });
   }
@@ -784,13 +785,18 @@ const hudData = {
   /* Nav CSS removed */
 
   /* HUD Callouts */
-  .hud-dynamic-svg {
+  .hud-dynamic-container {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     pointer-events: none;
     z-index: 4;
+  }
+  .hud-dynamic-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
   }
   
   .hud-tether-path {
