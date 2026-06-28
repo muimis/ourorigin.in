@@ -22,10 +22,10 @@ function getHighestElevation(elevationString) {
 }
 
 const matrixCopy = {
-  'nilgiris': { fragment: 'This high, India has frost.', subLine: 'Western Ghats · Forest Polyculture', cta: '[ JOIN THE HARVEST → ]', botanicalState: 'LEAF FLUSH' },
-  'idukki': { fragment: 'Named for what grows here.', subLine: 'Western Ghats · Shade-Grown Wild Harvest', cta: '[ JOIN THE HARVEST → ]', botanicalState: 'POD DEVELOPMENT' },
-  'wayanad': { fragment: 'The vine doesn\'t stand. It climbs.', subLine: 'Western Ghats · Traditional Agrarian', cta: '[ JOIN THE HARVEST → ]', botanicalState: 'VINE MATURATION' },
-  'thiruvananthapuram': { fragment: 'The root is dug up, not picked.', subLine: 'Western Ghats · Lowland Homesteading', cta: '[ JOIN THE HARVEST → ]', botanicalState: 'RHIZOME EXPANSION' },
+  'nilgiris': { fragment: 'This high, India has frost.', subLine: 'Western Ghats · Forest Polyculture', cta: 'JOIN THE HARVEST', botanicalState: 'LEAF FLUSH' },
+  'idukki': { fragment: 'Named for what grows here.', subLine: 'Western Ghats · Shade-Grown Wild Harvest', cta: 'JOIN THE HARVEST', botanicalState: 'POD DEVELOPMENT' },
+  'wayanad': { fragment: 'The vine doesn\'t stand. It climbs.', subLine: 'Western Ghats · Traditional Agrarian', cta: 'JOIN THE HARVEST', botanicalState: 'VINE MATURATION' },
+  'thiruvananthapuram': { fragment: 'The root is dug up, not picked.', subLine: 'Western Ghats · Lowland Homesteading', cta: 'JOIN THE HARVEST', botanicalState: 'RHIZOME EXPANSION' },
   'malabar-coast': { fragment: 'This coastline named the trade routes.', subLine: 'Western Ghats · Smallholder Hand Harvest', cta: 'NOT HARVESTED YET', botanicalState: 'DORMANT' }
 };
 
@@ -452,6 +452,7 @@ const hudData = {
     color: var(--color-pure-white);
     outline: none;
     animation-play-state: paused;
+    z-index: 20;
   }
   .matrix-band.expanded:last-child {
     flex: 0 0 50% !important;
@@ -471,6 +472,7 @@ const hudData = {
       color: var(--color-pure-white);
       outline: none;
       animation-play-state: paused;
+      z-index: 20;
     }
     .matrix-band:hover:last-child, .matrix-band:focus-visible:last-child {
       flex: 0 0 50% !important;
