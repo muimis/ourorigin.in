@@ -62,12 +62,14 @@ const sizes = product ? product.data.sizes : [];
 
 <!-- Telemetry Escape Hatch -->
 <div class="depth-top-hud">
-  <a href="/" class="depth-escape-hatch" aria-label="Return to Matrix">
-    [ &larr; MATRIX ]
-  </a>
-  <button id="depth-yields-trigger" class="depth-hud-btn" aria-label="All Yields">
-    [ ALL YIELDS ]
-  </button>
+  <div class="hud-left-group">
+    <a href="/" class="depth-escape-hatch" aria-label="Return to Matrix">
+      [ &larr; MATRIX ]
+    </a>
+    <button id="depth-yields-trigger" class="depth-hud-btn" aria-label="All Yields">
+      [ ALL YIELDS ]
+    </button>
+  </div>
   <button class="depth-basket-trigger" id="depth-basket-trigger" aria-label="Open Basket">
     [ BASKET : <span class="dossier-count">0</span> ]
   </button>
@@ -169,7 +171,7 @@ const sizes = product ? product.data.sizes : [];
     right: 24px;
     top: 0; 
     z-index: 9999;
-    cursor: pointer;
+    pointer-events: none;
   }
 
   .stratum {
@@ -409,6 +411,12 @@ const sizes = product ? product.data.sizes : [];
     z-index: 9999;
     pointer-events: none;
   }
+  
+  .hud-left-group {
+    display: flex;
+    gap: 1.5rem;
+    pointer-events: auto;
+  }
 
   .depth-escape-hatch,
   .depth-escape-hatch, .depth-basket-trigger, .depth-hud-btn {
@@ -626,10 +634,6 @@ const sizes = product ? product.data.sizes : [];
             }
           }
         );
-
-        gauge.addEventListener('click', () => {
-          window.location.href = '/';
-        });
       }
     }
   }
