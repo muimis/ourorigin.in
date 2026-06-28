@@ -115,41 +115,21 @@ const hudData = {
           <!-- HUD Tether & Callout -->
           {hudData[origin.data.slug] && (
             <>
-              <svg class="hud-tether-svg">
-                <line 
-                  x1={hudData[origin.data.slug].startX} 
-                  y1={hudData[origin.data.slug].startY} 
-                  x2={hudData[origin.data.slug].elbowX} 
-                  y2={hudData[origin.data.slug].tagY} 
-                  class="hud-tether-path" 
-                />
-                <line 
-                  x1={hudData[origin.data.slug].elbowX} 
-                  y1={hudData[origin.data.slug].tagY} 
-                  x2={hudData[origin.data.slug].side === 'right' ? '100%' : '0%'} 
-                  y2={hudData[origin.data.slug].tagY} 
-                  class="hud-tether-path" 
-                />
-                <circle 
-                  cx={hudData[origin.data.slug].startX} 
-                  cy={hudData[origin.data.slug].startY} 
-                  r="3" 
-                  class="hud-tether-node" 
-                />
-                <circle 
-                  cx={hudData[origin.data.slug].elbowX} 
-                  cy={hudData[origin.data.slug].tagY} 
-                  r="2" 
-                  class="hud-tether-node" 
-                />
-              </svg>
-              <div class="hud-tag" style={`top: calc(${hudData[origin.data.slug].tagY} - 16px); ${hudData[origin.data.slug].side}: 2rem;`}>
+              <svg class="hud-dynamic-svg" data-slug={origin.data.slug} data-side={hudData[origin.data.slug].side}></svg>
+              <div class="hud-tag" id={`tag-${origin.data.slug}`} style={`top: ${hudData[origin.data.slug].tagY}; ${hudData[origin.data.slug].side}: 2rem;`}>
                 {hudData[origin.data.slug].tag}
               </div>
             </>
           )}
 
           <TopographicMap index={index} />
+          
+          <div class="title-group" id={`title-${origin.data.slug}`}>
+            <h2 class="origin-name">
+              {origin.data.name.toUpperCase()}
+              <sup class="elevation-sup">{getHighestElevation(origin.data.elevation)}M</sup>
+            </h2>
+          </div>
 
           <div class="tap-pulse-indicator"></div>
           
@@ -162,7 +142,7 @@ const hudData = {
           </div>
 
           <div class="band-content">
-            <div class="title-group">
+            <div class="title-group" id={`title-${origin.data.slug}`}>
               <h2 class="origin-name">
                 {origin.data.name.toUpperCase()}
                 <sup class="elevation-sup">{getHighestElevation(origin.data.elevation)}M</sup>
@@ -218,6 +198,60 @@ const hudData = {
     });
   });
 
+  function renderHUDLines() {
+    const bands = document.querySelectorAll('.matrix-band');
+    bands.forEach(band => {
+      const svg = band.querySelector('.hud-dynamic-svg');
+      if (!svg) return;
+      
+      const slug = svg.getAttribute('data-slug');
+      const side = svg.getAttribute('data-side');
+      
+      const title = band.querySelector(`#title-${slug}`);
+      const tag = band.querySelector(`#tag-${slug}`);
+      const bandRect = band.getBoundingClientRect();
+      
+      if (!title || !tag) return;
+      
+      const titleRect = title.getBoundingClientRect();
+      const tagRect = tag.getBoundingClientRect();
+      
+      // Approx 3 letters is about 3ch. Assuming 1ch = 12px for title font.
+      // The user wants it to start 3 letters INWARDS and extend 3 letters OUTWARDS.
+      const charWidth = 14; 
+      const inwardOffset = 3 * charWidth;
+      const outwardOffset = inwardOffset;
+      
+      let startX, underlineEndX;
+      const startY = (titleRect.bottom - bandRect.top) + 2; // Underline just below text
+      
+      if (side === 'right') {
+        startX = (titleRect.right - bandRect.left) - inwardOffset;
+        underlineEndX = (titleRect.right - bandRect.left) + outwardOffset;
+      } else {
+        startX = (titleRect.left - bandRect.left) + inwardOffset;
+        underlineEndX = (titleRect.left - bandRect.left) - outwardOffset;
+      }
+      
+      const tagX = side === 'right' ? (tagRect.left - bandRect.left) - 8 : (tagRect.right - bandRect.left) + 8;
+      const tagY = (tagRect.top - bandRect.top) + (tagRect.height / 2);
+      
+      const pathData = `M ${startX} ${startY} L ${underlineEndX} ${startY} L ${tagX} ${tagY}`;
+      
+      svg.innerHTML = `
+        <path d="${pathData}" class="hud-tether-path" />
+        <g class="hud-pulse-group" transform="translate(${startX}, ${startY})">
+          <circle r="4" class="hud-ring-circle" />
+          <circle r="1.5" class="hud-dot-circle" />
+        </g>
+        <g class="hud-pulse-group" transform="translate(${tagX}, ${tagY})">
+          <circle r="4" class="hud-ring-circle" />
+          <circle r="1.5" class="hud-dot-circle" />
+        </g>
+      `;
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     const hasVisited = sessionStorage.getItem('ourorigin_visited');
     if (hasVisited === 'true') {
@@ -227,6 +261,10 @@ const hudData = {
         new LivingMatrixOrchestrator();
       });
     }
+    
+    // Render HUD and bind resize
+    renderHUDLines();
+    window.addEventListener('resize', renderHUDLines);
     
     document.querySelectorAll('.carousel-trigger').forEach(trigger => {
       trigger.addEventListener('click', (e) => {
@@ -746,7 +784,7 @@ const hudData = {
   /* Nav CSS removed */
 
   /* HUD Callouts */
-  .hud-tether-svg {
+  .hud-dynamic-svg {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -762,16 +800,28 @@ const hudData = {
     transition: stroke-opacity 0.4s ease;
   }
 
-  .hud-tether-node {
-    fill: rgba(166, 124, 60, 0.8);
-    transition: fill-opacity 0.4s ease;
+  .hud-ring-circle {
+    stroke: rgba(166, 124, 60, 0.6);
+    stroke-width: 1px;
+    fill: none;
+    animation: hudPulse 2.5s infinite cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .hud-dot-circle {
+    fill: rgba(166, 124, 60, 1);
+  }
+  
+  @keyframes hudPulse {
+    0% { transform: scale(0.5); opacity: 1; }
+    100% { transform: scale(2.5); opacity: 0; }
   }
   
   .matrix-band.expanded .hud-tether-path {
     stroke: rgba(166, 124, 60, 0.1);
   }
-  .matrix-band.expanded .hud-tether-node {
-    fill: rgba(166, 124, 60, 0.2);
+  .matrix-band.expanded .hud-pulse-group {
+    opacity: 0.2;
+    transition: opacity 0.4s ease;
   }
   
   .hud-tag {
