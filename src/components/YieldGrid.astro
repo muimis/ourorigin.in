@@ -37,14 +37,14 @@ const formatPrice = (price) => {
               <span class="origin-pill">{origin?.data.name || 'Unknown Origin'}</span>
             </div>
             <h3 class="product-name">{product.data.name}</h3>
-            <p class="product-price">{formatPrice(product.data.price)} / {product.data.weight}</p>
+            <p class="product-price">{formatPrice(product.data.sizes[0].priceINR)} / {product.data.sizes[0].label}</p>
             <button 
               class="add-to-basket-btn" 
               data-id={product.id}
               data-name={product.data.name}
               data-origin={origin?.data.name || 'Unknown Origin'}
-              data-price={product.data.price}
-              data-weight={product.data.weight}
+              data-price={product.data.sizes[0].priceINR}
+              data-weight={product.data.sizes[0].label}
               aria-label={`Add ${product.data.name} to basket`}
             >
               Add to Basket
