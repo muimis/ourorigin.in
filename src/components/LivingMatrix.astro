@@ -1,0 +1,964 @@
+---
+import { getCollection } from 'astro:content';
+import OriginMark from './OriginMark.astro';
+import TopographicMap from './TopographicMap.astro';
+import LiveTelemetry from './LiveTelemetry.astro';
+
+const origins = await getCollection('origins');
+
+// Order by elevation (highest to lowest)
+const orderedSlugs = ['nilgiris', 'idukki', 'wayanad', 'malabar-coast', 'thiruvananthapuram'];
+const orderedOrigins = orderedSlugs.map(slug => origins.find(o => o.data.slug === slug)).filter(Boolean);
+
+// Helper to get highest elevation from string like "100m - 1500m"
+function getHighestElevation(elevationString) {
+  if (!elevationString) return '';
+  const cleanStr = elevationString.replace(/,/g, '');
+  const matches = cleanStr.match(/\d+/g);
+  if (matches) {
+    return Math.max(...matches.map(Number));
+  }
+  return cleanStr.replace(/[^0-9]/g, '');
+}
+
+const matrixCopy = {
+  'nilgiris': { fragment: 'This high, India has frost.', subLine: 'Western Ghats · Forest Polyculture', cta: 'JOIN THE HARVEST', botanicalState: 'LEAF FLUSH' },
+  'idukki': { fragment: 'Named for what grows here.', subLine: 'Western Ghats · Shade-Grown Wild Harvest', cta: 'JOIN THE HARVEST', botanicalState: 'POD DEVELOPMENT' },
+  'wayanad': { fragment: 'The vine doesn\'t stand. It climbs.', subLine: 'Western Ghats · Traditional Agrarian', cta: 'JOIN THE HARVEST', botanicalState: 'VINE MATURATION' },
+  'thiruvananthapuram': { fragment: 'The root is dug up, not picked.', subLine: 'Western Ghats · Lowland Homesteading', cta: 'JOIN THE HARVEST', botanicalState: 'RHIZOME EXPANSION' },
+  'malabar-coast': { fragment: 'This coastline named the trade routes.', subLine: 'Western Ghats · Smallholder Hand Harvest', cta: 'NOT HARVESTED YET', botanicalState: 'DORMANT' }
+};
+
+const products = await getCollection('products');
+
+const productsByOrigin: Record<string, any[]> = {};
+orderedOrigins.forEach(origin => {
+  productsByOrigin[origin.data.slug] = products.filter(p => {
+    const pOriginId = typeof p.data.originSlug === 'object' ? p.data.originSlug.id : p.data.originSlug;
+    return pOriginId === origin.id;
+  });
+});
+const originMarks = {
+  'wayanad': 'gold',
+  'idukki': 'ruby',
+  'thiruvananthapuram': 'copper',
+  'nilgiris': 'forest',
+  'kollam': 'silver',
+  'malabar-coast': 'primary'
+};
+
+const hudData = {
+  'nilgiris': { 
+    tag: 'BEANS & LEAVES', side: 'right', 
+    startX: '70%', startY: '50%', elbowX: '88%', tagY: '25%' 
+  },
+  'idukki': { 
+    tag: 'PODS & ARILS', side: 'right', 
+    startX: '30%', startY: '50%', elbowX: '12%', tagY: '75%' 
+  },
+  'wayanad': { 
+    tag: 'BERRIES, BUDS & BARK', side: 'right', 
+    startX: '70%', startY: '50%', elbowX: '88%', tagY: '25%' 
+  },
+  'malabar-coast': { 
+    tag: 'GRAINS & SEEDS', side: 'right', 
+    startX: '30%', startY: '50%', elbowX: '12%', tagY: '75%' 
+  },
+  'thiruvananthapuram': { 
+    tag: 'ROOTS & RHIZOMES', side: 'right', 
+    startX: '70%', startY: '50%', elbowX: '88%', tagY: '25%' 
+  }
+};
+---
+
+<div class="living-matrix-container" id="living-matrix">
+  <!-- Nav removed per request -->
+
+  <div class="matrix-bands">
+    {orderedOrigins.map((origin, index) => {
+      const copy = matrixCopy[origin.data.slug];
+      const clipPaths = [
+        "", // Band 0 (Nilgiris) has no top curve, so no clip-path needed
+        "polygon(0.000% 24.000px, 0.447% 23.994px, 0.888% 23.976px, 1.323% 23.947px, 1.753% 23.907px, 2.177% 23.855px, 2.595% 23.794px, 3.008% 23.721px, 3.416% 23.639px, 3.818% 23.546px, 4.215% 23.444px, 4.607% 23.333px, 4.994% 23.212px, 5.376% 23.083px, 5.753% 22.945px, 6.126% 22.799px, 6.493% 22.644px, 6.857% 22.482px, 7.215% 22.313px, 7.570% 22.136px, 7.920% 21.952px, 8.266% 21.761px, 8.608% 21.565px, 8.946% 21.361px, 9.279% 21.152px, 9.609% 20.938px, 9.936% 20.717px, 10.258% 20.492px, 10.577% 20.262px, 10.893% 20.027px, 11.205% 19.788px, 11.514% 19.545px, 11.820% 19.298px, 12.122% 19.047px, 12.422% 18.793px, 12.718% 18.537px, 13.012% 18.277px, 13.303% 18.015px, 13.591% 17.750px, 13.877% 17.484px, 14.160% 17.216px, 14.441% 16.947px, 14.719% 16.676px, 14.996% 16.404px, 15.270% 16.132px, 15.542% 15.860px, 15.812% 15.587px, 16.080% 15.314px, 16.347% 15.042px, 16.612% 14.771px, 16.875% 14.500px, 17.137% 14.231px, 17.397% 13.963px, 17.656% 13.697px, 17.914% 13.432px, 18.171% 13.170px, 18.426% 12.911px, 18.681% 12.654px, 18.935% 12.401px, 19.188% 12.151px, 19.440% 11.904px, 19.692% 11.661px, 19.943% 11.422px, 20.194% 11.188px, 20.444% 10.958px, 20.694% 10.733px, 20.944% 10.514px, 21.194% 10.300px, 21.444% 10.091px, 21.695% 9.888px, 21.945% 9.692px, 22.196% 9.502px, 22.447% 9.319px, 22.698% 9.143px, 22.950% 8.974px, 23.203% 8.813px, 23.457% 8.659px, 23.711% 8.513px, 23.966% 8.376px, 24.223% 8.248px, 24.480% 8.128px, 24.739% 8.017px, 24.999% 7.916px, 25.260% 7.825px, 25.523% 7.743px, 25.787% 7.672px, 26.053% 7.610px, 26.321% 7.560px, 26.590% 7.521px, 26.862% 7.493px, 27.135% 7.476px, 27.411% 7.471px, 27.688% 7.478px, 27.968% 7.498px, 28.251% 7.530px, 28.536% 7.574px, 28.823% 7.632px, 29.113% 7.704px, 29.406% 7.788px, 29.701% 7.887px, 30.000% 8.000px, 30.299% 8.126px, 30.594% 8.264px, 30.887% 8.413px, 31.177% 8.573px, 31.464% 8.743px, 31.749% 8.925px, 32.032% 9.116px, 32.312% 9.317px, 32.589% 9.528px, 32.865% 9.748px, 33.138% 9.977px, 33.410% 10.214px, 33.679% 10.460px, 33.947% 10.713px, 34.213% 10.974px, 34.477% 11.243px, 34.740% 11.519px, 35.001% 11.801px, 35.261% 12.089px, 35.520% 12.384px, 35.777% 12.684px, 36.034% 12.990px, 36.289% 13.301px, 36.543% 13.617px, 36.797% 13.938px, 37.050% 14.262px, 37.302% 14.590px, 37.553% 14.922px, 37.804% 15.258px, 38.055% 15.596px, 38.305% 15.937px, 38.556% 16.280px, 38.806% 16.625px, 39.056% 16.972px, 39.306% 17.320px, 39.556% 17.670px, 39.806% 18.020px, 40.057% 18.371px, 40.308% 18.721px, 40.560% 19.072px, 40.812% 19.422px, 41.065% 19.771px, 41.319% 20.120px, 41.574% 20.466px, 41.829% 20.812px, 42.086% 21.155px, 42.344% 21.495px, 42.603% 21.833px, 42.863% 22.168px, 43.125% 22.500px, 43.388% 22.828px, 43.653% 23.152px, 43.920% 23.472px, 44.188% 23.788px, 44.458% 24.099px, 44.730% 24.404px, 45.004% 24.704px, 45.281% 24.998px, 45.559% 25.286px, 45.840% 25.568px, 46.123% 25.843px, 46.409% 26.111px, 46.697% 26.372px, 46.988% 26.625px, 47.282% 26.870px, 47.578% 27.106px, 47.878% 27.334px, 48.180% 27.554px, 48.486% 27.764px, 48.795% 27.964px, 49.107% 28.155px, 49.423% 28.335px, 49.742% 28.505px, 50.064% 28.664px, 50.391% 28.813px, 50.721% 28.949px, 51.054% 29.074px, 51.392% 29.187px, 51.734% 29.288px, 52.080% 29.376px, 52.430% 29.451px, 52.785% 29.513px, 53.143% 29.561px, 53.507% 29.595px, 53.874% 29.615px, 54.247% 29.621px, 54.624% 29.612px, 55.006% 29.587px, 55.393% 29.548px, 55.785% 29.492px, 56.182% 29.420px, 56.584% 29.332px, 56.992% 29.227px, 57.405% 29.106px, 57.823% 28.967px, 58.247% 28.810px, 58.677% 28.635px, 59.112% 28.442px, 59.553% 28.230px, 60.000% 28.000px, 60.449% 27.758px, 60.894% 27.511px, 61.337% 27.259px, 61.777% 27.004px, 62.214% 26.745px, 62.648% 26.481px, 63.080% 26.215px, 63.509% 25.945px, 63.936% 25.672px, 64.360% 25.396px, 64.782% 25.118px, 65.201% 24.837px, 65.618% 24.553px, 66.033% 24.268px, 66.446% 23.981px, 66.857% 23.693px, 67.266% 23.403px, 67.672% 23.112px, 68.077% 22.821px, 68.480% 22.528px, 68.881% 22.235px, 69.280% 21.942px, 69.678% 21.648px, 70.074% 21.355px, 70.469% 21.063px, 70.862% 20.770px, 71.253% 20.479px, 71.644% 20.189px, 72.032% 19.900px, 72.420% 19.612px, 72.806% 19.326px, 73.192% 19.042px, 73.576% 18.760px, 73.959% 18.481px, 74.341% 18.204px, 74.723% 17.929px, 75.103% 17.658px, 75.483% 17.390px, 75.862% 17.125px, 76.240% 16.864px, 76.618% 16.607px, 76.995% 16.354px, 77.372% 16.105px, 77.748% 15.860px, 78.124% 15.621px, 78.499% 15.386px, 78.875% 15.156px, 79.250% 14.932px, 79.625% 14.713px, 80.000% 14.500px, 80.375% 14.293px, 80.750% 14.092px, 81.125% 13.898px, 81.501% 13.710px, 81.876% 13.529px, 82.252% 13.356px, 82.628% 13.189px, 83.005% 13.030px, 83.382% 12.879px, 83.760% 12.736px, 84.138% 12.601px, 84.517% 12.474px, 84.897% 12.356px, 85.277% 12.247px, 85.659% 12.147px, 86.041% 12.055px, 86.424% 11.974px, 86.808% 11.902px, 87.194% 11.840px, 87.580% 11.788px, 87.968% 11.746px, 88.356% 11.715px, 88.747% 11.695px, 89.138% 11.686px, 89.531% 11.688px, 89.926% 11.701px, 90.322% 11.726px, 90.720% 11.762px, 91.119% 11.811px, 91.520% 11.872px, 91.923% 11.945px, 92.328% 12.032px, 92.734% 12.131px, 93.143% 12.243px, 93.554% 12.369px, 93.967% 12.508px, 94.382% 12.661px, 94.799% 12.827px, 95.218% 13.008px, 95.640% 13.204px, 96.064% 13.414px, 96.491% 13.639px, 96.920% 13.879px, 97.352% 14.135px, 97.786% 14.405px, 98.223% 14.692px, 98.663% 14.995px, 99.106% 15.313px, 99.551% 15.648px, 100.000% 16.000px, 100% 100%, 0% 100%)",
+        "polygon(0.000% 16.000px, 0.299% 16.005px, 0.594% 16.019px, 0.887% 16.042px, 1.177% 16.074px, 1.464% 16.115px, 1.748% 16.165px, 2.030% 16.223px, 2.309% 16.289px, 2.586% 16.363px, 2.860% 16.444px, 3.132% 16.533px, 3.401% 16.629px, 3.668% 16.732px, 3.933% 16.842px, 4.196% 16.958px, 4.457% 17.081px, 4.716% 17.210px, 4.972% 17.345px, 5.227% 17.486px, 5.480% 17.632px, 5.731% 17.783px, 5.980% 17.940px, 6.228% 18.101px, 6.474% 18.267px, 6.719% 18.438px, 6.962% 18.612px, 7.203% 18.791px, 7.444% 18.973px, 7.682% 19.159px, 7.920% 19.348px, 8.156% 19.540px, 8.392% 19.736px, 8.626% 19.933px, 8.859% 20.134px, 9.091% 20.337px, 9.323% 20.541px, 9.553% 20.748px, 9.783% 20.956px, 10.012% 21.165px, 10.240% 21.376px, 10.468% 21.588px, 10.695% 21.800px, 10.922% 22.013px, 11.148% 22.226px, 11.374% 22.440px, 11.599% 22.653px, 11.825% 22.866px, 12.050% 23.078px, 12.275% 23.289px, 12.500% 23.500px, 12.725% 23.709px, 12.950% 23.917px, 13.175% 24.124px, 13.401% 24.328px, 13.626% 24.531px, 13.852% 24.731px, 14.078% 24.928px, 14.305% 25.123px, 14.532% 25.315px, 14.760% 25.504px, 14.988% 25.689px, 15.217% 25.871px, 15.447% 26.050px, 15.677% 26.224px, 15.909% 26.394px, 16.141% 26.559px, 16.374% 26.720px, 16.608% 26.876px, 16.844% 27.026px, 17.080% 27.172px, 17.318% 27.312px, 17.556% 27.446px, 17.797% 27.575px, 18.038% 27.697px, 18.281% 27.813px, 18.526% 27.922px, 18.772% 28.024px, 19.020% 28.119px, 19.269% 28.207px, 19.520% 28.288px, 19.773% 28.361px, 20.028% 28.426px, 20.284% 28.483px, 20.543% 28.531px, 20.804% 28.572px, 21.067% 28.603px, 21.332% 28.625px, 21.599% 28.638px, 21.868% 28.642px, 22.140% 28.636px, 22.414% 28.620px, 22.691% 28.594px, 22.970% 28.558px, 23.252% 28.512px, 23.536% 28.455px, 23.823% 28.386px, 24.113% 28.307px, 24.406% 28.216px, 24.701% 28.114px, 25.000% 28.000px, 25.299% 27.876px, 25.594% 27.746px, 25.887% 27.608px, 26.177% 27.464px, 26.464% 27.314px, 26.749% 27.157px, 27.032% 26.995px, 27.312% 26.826px, 27.589% 26.652px, 27.865% 26.472px, 28.138% 26.287px, 28.410% 26.097px, 28.679% 25.902px, 28.947% 25.702px, 29.213% 25.498px, 29.477% 25.289px, 29.740% 25.077px, 30.001% 24.860px, 30.261% 24.640px, 30.520% 24.416px, 30.777% 24.189px, 31.034% 23.958px, 31.289% 23.725px, 31.543% 23.489px, 31.797% 23.250px, 32.050% 23.009px, 32.302% 22.765px, 32.553% 22.520px, 32.804% 22.273px, 33.055% 22.024px, 33.305% 21.774px, 33.556% 21.522px, 33.806% 21.270px, 34.056% 21.016px, 34.306% 20.762px, 34.556% 20.507px, 34.806% 20.252px, 35.057% 19.998px, 35.308% 19.743px, 35.560% 19.488px, 35.812% 19.234px, 36.065% 18.980px, 36.319% 18.728px, 36.574% 18.476px, 36.829% 18.226px, 37.086% 17.977px, 37.344% 17.730px, 37.603% 17.485px, 37.863% 17.241px, 38.125% 17.000px, 38.388% 16.761px, 38.653% 16.525px, 38.920% 16.292px, 39.188% 16.061px, 39.458% 15.834px, 39.730% 15.610px, 40.004% 15.390px, 40.281% 15.173px, 40.559% 14.961px, 40.840% 14.752px, 41.123% 14.548px, 41.409% 14.348px, 41.697% 14.153px, 41.988% 13.963px, 42.282% 13.778px, 42.578% 13.598px, 42.878% 13.424px, 43.180% 13.255px, 43.486% 13.093px, 43.795% 12.936px, 44.107% 12.786px, 44.423% 12.642px, 44.742% 12.504px, 45.064% 12.374px, 45.391% 12.250px, 45.721% 12.134px, 46.054% 12.025px, 46.392% 11.923px, 46.734% 11.830px, 47.080% 11.744px, 47.430% 11.667px, 47.785% 11.597px, 48.143% 11.537px, 48.507% 11.485px, 48.874% 11.442px, 49.247% 11.408px, 49.624% 11.384px, 50.006% 11.369px, 50.393% 11.363px, 50.785% 11.368px, 51.182% 11.383px, 51.584% 11.408px, 51.992% 11.443px, 52.405% 11.489px, 52.823% 11.546px, 53.247% 11.614px, 53.677% 11.693px, 54.112% 11.784px, 54.553% 11.886px, 55.000% 12.000px, 55.449% 12.125px, 55.894% 12.259px, 56.337% 12.402px, 56.777% 12.554px, 57.214% 12.714px, 57.649% 12.882px, 58.082% 13.059px, 58.512% 13.243px, 58.939% 13.434px, 59.365% 13.632px, 59.788% 13.837px, 60.210% 14.048px, 60.629% 14.266px, 61.047% 14.489px, 61.463% 14.718px, 61.877% 14.952px, 62.290% 15.191px, 62.701% 15.435px, 63.111% 15.684px, 63.520% 15.936px, 63.927% 16.192px, 64.334% 16.452px, 64.739% 16.715px, 65.143% 16.981px, 65.547% 17.250px, 65.950% 17.521px, 66.352% 17.794px, 66.753% 18.070px, 67.154% 18.346px, 67.555% 18.624px, 67.955% 18.903px, 68.356% 19.182px, 68.756% 19.462px, 69.156% 19.742px, 69.556% 20.022px, 69.956% 20.301px, 70.356% 20.580px, 70.757% 20.857px, 71.158% 21.133px, 71.560% 21.408px, 71.962% 21.681px, 72.365% 21.951px, 72.769% 22.219px, 73.174% 22.484px, 73.579% 22.746px, 73.986% 23.005px, 74.394% 23.260px, 74.803% 23.511px, 75.213% 23.758px, 75.625% 24.000px, 76.038% 24.238px, 76.453% 24.470px, 76.870% 24.697px, 77.288% 24.919px, 77.708% 25.134px, 78.130% 25.343px, 78.554% 25.546px, 78.981% 25.742px, 79.409% 25.931px, 79.840% 26.112px, 80.273% 26.286px, 80.709% 26.451px, 81.147% 26.609px, 81.588% 26.758px, 82.032% 26.898px, 82.478% 27.029px, 82.928% 27.151px, 83.380% 27.262px, 83.836% 27.364px, 84.295% 27.456px, 84.757% 27.537px, 85.223% 27.607px, 85.692% 27.666px, 86.164% 27.714px, 86.641% 27.750px, 87.121% 27.774px, 87.604% 27.786px, 88.092% 27.785px, 88.584% 27.771px, 89.080% 27.744px, 89.580% 27.704px, 90.085% 27.650px, 90.593% 27.581px, 91.107% 27.499px, 91.624% 27.402px, 92.147% 27.290px, 92.674% 27.163px, 93.206% 27.021px, 93.743% 26.862px, 94.285% 26.688px, 94.832% 26.497px, 95.384% 26.290px, 95.942% 26.066px, 96.505% 25.825px, 97.073% 25.566px, 97.647% 25.289px, 98.227% 24.995px, 98.812% 24.682px, 99.403% 24.350px, 100.000% 24.000px, 100% 100%, 0% 100%)",
+        "polygon(0.000% 28.000px, 0.596% 27.994px, 1.182% 27.976px, 1.760% 27.947px, 2.330% 27.907px, 2.891% 27.855px, 3.443% 27.794px, 3.988% 27.721px, 4.525% 27.639px, 5.054% 27.546px, 5.575% 27.444px, 6.089% 27.333px, 6.595% 27.212px, 7.094% 27.083px, 7.587% 26.945px, 8.072% 26.798px, 8.550% 26.644px, 9.022% 26.482px, 9.488% 26.313px, 9.947% 26.136px, 10.400% 25.952px, 10.847% 25.761px, 11.288% 25.565px, 11.724% 25.361px, 12.154% 25.152px, 12.578% 24.938px, 12.997% 24.717px, 13.412% 24.492px, 13.821% 24.262px, 14.225% 24.027px, 14.625% 23.788px, 15.020% 23.545px, 15.411% 23.298px, 15.798% 23.047px, 16.181% 22.793px, 16.559% 22.537px, 16.934% 22.277px, 17.306% 22.015px, 17.674% 21.750px, 18.038% 21.484px, 18.400% 21.216px, 18.759% 20.947px, 19.114% 20.676px, 19.467% 20.404px, 19.818% 20.132px, 20.166% 19.860px, 20.511% 19.587px, 20.855% 19.314px, 21.197% 19.042px, 21.537% 18.771px, 21.875% 18.500px, 22.212% 18.231px, 22.547% 17.963px, 22.881% 17.697px, 23.215% 17.432px, 23.547% 17.171px, 23.878% 16.911px, 24.209% 16.654px, 24.540% 16.401px, 24.870% 16.151px, 25.200% 15.904px, 25.530% 15.661px, 25.860% 15.422px, 26.191% 15.188px, 26.522% 14.958px, 26.853% 14.733px, 27.185% 14.514px, 27.519% 14.300px, 27.853% 14.091px, 28.188% 13.888px, 28.525% 13.692px, 28.863% 13.502px, 29.203% 13.319px, 29.545% 13.143px, 29.889% 12.974px, 30.234% 12.813px, 30.582% 12.659px, 30.933% 12.513px, 31.286% 12.376px, 31.641% 12.248px, 32.000% 12.128px, 32.362% 12.017px, 32.726% 11.916px, 33.094% 11.825px, 33.466% 11.743px, 33.841% 11.672px, 34.219% 11.610px, 34.602% 11.560px, 34.989% 11.521px, 35.380% 11.493px, 35.775% 11.476px, 36.175% 11.471px, 36.579% 11.478px, 36.988% 11.498px, 37.403% 11.530px, 37.822% 11.575px, 38.246% 11.632px, 38.676% 11.704px, 39.112% 11.788px, 39.553% 11.887px, 40.000% 12.000px, 40.447% 12.124px, 40.888% 12.254px, 41.324% 12.391px, 41.753% 12.535px, 42.177% 12.685px, 42.596% 12.842px, 43.010% 13.004px, 43.418% 13.172px, 43.822% 13.345px, 44.220% 13.524px, 44.614% 13.708px, 45.003% 13.896px, 45.387% 14.089px, 45.767% 14.287px, 46.143% 14.489px, 46.514% 14.694px, 46.881% 14.904px, 47.245% 15.116px, 47.604% 15.333px, 47.960% 15.552px, 48.312% 15.774px, 48.661% 15.999px, 49.006% 16.226px, 49.348% 16.456px, 49.688% 16.688px, 50.024% 16.921px, 50.357% 17.156px, 50.687% 17.392px, 51.015% 17.630px, 51.340% 17.868px, 51.663% 18.107px, 51.983% 18.347px, 52.302% 18.587px, 52.618% 18.827px, 52.932% 19.067px, 53.245% 19.306px, 53.556% 19.545px, 53.865% 19.783px, 54.173% 20.020px, 54.480% 20.256px, 54.785% 20.490px, 55.090% 20.723px, 55.393% 20.954px, 55.696% 21.183px, 55.998% 21.410px, 56.299% 21.634px, 56.599% 21.855px, 56.900% 22.073px, 57.200% 22.288px, 57.500% 22.500px, 57.800% 22.708px, 58.100% 22.913px, 58.401% 23.113px, 58.701% 23.309px, 59.003% 23.501px, 59.304% 23.687px, 59.607% 23.869px, 59.910% 24.046px, 60.215% 24.218px, 60.520% 24.384px, 60.827% 24.544px, 61.135% 24.699px, 61.444% 24.847px, 61.755% 24.988px, 62.067% 25.124px, 62.382% 25.252px, 62.698% 25.373px, 63.017% 25.487px, 63.337% 25.593px, 63.660% 25.692px, 63.985% 25.783px, 64.313% 25.865px, 64.643% 25.940px, 64.976% 26.006px, 65.313% 26.063px, 65.652% 26.110px, 65.994% 26.149px, 66.339% 26.179px, 66.688% 26.198px, 67.040% 26.208px, 67.396% 26.208px, 67.755% 26.197px, 68.119% 26.176px, 68.486% 26.144px, 68.858% 26.102px, 69.233% 26.048px, 69.613% 25.982px, 69.997% 25.905px, 70.386% 25.817px, 70.780% 25.716px, 71.178% 25.603px, 71.582% 25.478px, 71.990% 25.340px, 72.404% 25.189px, 72.822% 25.025px, 73.247% 24.847px, 73.676% 24.656px, 74.112% 24.451px, 74.553% 24.233px, 75.000% 24.000px, 75.447% 23.760px, 75.888% 23.520px, 76.323% 23.281px, 76.753% 23.041px, 77.176% 22.802px, 77.594% 22.564px, 78.006% 22.327px, 78.413% 22.090px, 78.814% 21.855px, 79.210% 21.620px, 79.600% 21.387px, 79.985% 21.155px, 80.365% 20.924px, 80.739% 20.695px, 81.109% 20.468px, 81.473% 20.242px, 81.832% 20.018px, 82.186% 19.797px, 82.536% 19.577px, 82.880% 19.360px, 83.220% 19.145px, 83.554% 18.933px, 83.885% 18.723px, 84.210% 18.516px, 84.531% 18.313px, 84.848% 18.112px, 85.160% 17.914px, 85.468% 17.719px, 85.771% 17.528px, 86.070% 17.340px, 86.365% 17.156px, 86.656% 16.975px, 86.942% 16.799px, 87.225% 16.626px, 87.504% 16.457px, 87.779% 16.293px, 88.050% 16.133px, 88.317% 15.977px, 88.580% 15.826px, 88.840% 15.680px, 89.096% 15.538px, 89.349% 15.402px, 89.598% 15.270px, 89.844% 15.144px, 90.086% 15.023px, 90.325% 14.907px, 90.561% 14.796px, 90.794% 14.692px, 91.023% 14.593px, 91.250% 14.500px, 91.474% 14.413px, 91.694% 14.332px, 91.912% 14.258px, 92.127% 14.189px, 92.339% 14.128px, 92.548% 14.072px, 92.755% 14.024px, 92.959% 13.982px, 93.161% 13.948px, 93.360% 13.920px, 93.557% 13.900px, 93.751% 13.887px, 93.943% 13.881px, 94.133% 13.883px, 94.321% 13.893px, 94.507% 13.910px, 94.691% 13.935px, 94.872% 13.969px, 95.052% 14.010px, 95.230% 14.060px, 95.406% 14.118px, 95.580% 14.185px, 95.753% 14.260px, 95.924% 14.344px, 96.094% 14.438px, 96.262% 14.540px, 96.428% 14.651px, 96.594% 14.771px, 96.757% 14.901px, 96.920% 15.040px, 97.081% 15.189px, 97.242% 15.347px, 97.401% 15.516px, 97.559% 15.694px, 97.716% 15.883px, 97.873% 16.081px, 98.028% 16.290px, 98.183% 16.509px, 98.337% 16.739px, 98.490% 16.980px, 98.643% 17.231px, 98.795% 17.494px, 98.947% 17.767px, 99.098% 18.052px, 99.249% 18.347px, 99.399% 18.655px, 99.550% 18.973px, 99.700% 19.304px, 99.850% 19.646px, 100.000% 20.000px, 100% 100%, 0% 100%)",
+        "polygon(0.000% 12.000px, 0.447% 12.005px, 0.888% 12.019px, 1.324% 12.042px, 1.753% 12.074px, 2.177% 12.116px, 2.596% 12.165px, 3.010% 12.223px, 3.418% 12.289px, 3.822% 12.363px, 4.220% 12.444px, 4.614% 12.533px, 5.003% 12.629px, 5.387% 12.732px, 5.767% 12.842px, 6.142% 12.958px, 6.514% 13.081px, 6.881% 13.210px, 7.245% 13.345px, 7.604% 13.486px, 7.960% 13.632px, 8.312% 13.783px, 8.661% 13.940px, 9.006% 14.101px, 9.348% 14.267px, 9.688% 14.438px, 10.024% 14.612px, 10.357% 14.791px, 10.687% 14.973px, 11.015% 15.159px, 11.340% 15.348px, 11.663% 15.540px, 11.983% 15.736px, 12.302% 15.933px, 12.618% 16.134px, 12.932% 16.336px, 13.245% 16.541px, 13.556% 16.748px, 13.865% 16.956px, 14.173% 17.165px, 14.480% 17.376px, 14.785% 17.588px, 15.090% 17.800px, 15.393% 18.013px, 15.696% 18.226px, 15.998% 18.440px, 16.299% 18.653px, 16.599% 18.866px, 16.900% 19.078px, 17.200% 19.289px, 17.500% 19.500px, 17.800% 19.709px, 18.100% 19.917px, 18.401% 20.124px, 18.701% 20.328px, 19.003% 20.531px, 19.304% 20.731px, 19.607% 20.928px, 19.910% 21.123px, 20.215% 21.315px, 20.520% 21.504px, 20.827% 21.689px, 21.135% 21.871px, 21.444% 22.050px, 21.755% 22.224px, 22.068% 22.394px, 22.382% 22.559px, 22.698% 22.720px, 23.017% 22.876px, 23.337% 23.026px, 23.660% 23.172px, 23.985% 23.312px, 24.313% 23.446px, 24.643% 23.575px, 24.976% 23.697px, 25.313% 23.813px, 25.652% 23.922px, 25.994% 24.024px, 26.339% 24.119px, 26.688% 24.207px, 27.040% 24.288px, 27.396% 24.361px, 27.755% 24.426px, 28.119% 24.483px, 28.486% 24.531px, 28.857% 24.572px, 29.233% 24.603px, 29.613% 24.625px, 29.997% 24.638px, 30.386% 24.642px, 30.780% 24.636px, 31.178% 24.620px, 31.582% 24.594px, 31.990% 24.558px, 32.404% 24.512px, 32.822% 24.455px, 33.247% 24.386px, 33.676% 24.307px, 34.112% 24.216px, 34.553% 24.114px, 35.000% 24.000px, 35.449% 23.876px, 35.894% 23.746px, 36.337% 23.609px, 36.777% 23.465px, 37.214% 23.314px, 37.648% 23.158px, 38.080% 22.996px, 38.509% 22.828px, 38.936% 22.655px, 39.360% 22.476px, 39.782% 22.292px, 40.201% 22.104px, 40.618% 21.911px, 41.033% 21.713px, 41.446% 21.511px, 41.857% 21.306px, 42.266% 21.096px, 42.672% 20.884px, 43.077% 20.667px, 43.480% 20.448px, 43.881% 20.226px, 44.280% 20.001px, 44.678% 19.774px, 45.074% 19.544px, 45.469% 19.313px, 45.862% 19.079px, 46.253% 18.844px, 46.644% 18.608px, 47.032% 18.370px, 47.420% 18.132px, 47.806% 17.893px, 48.192% 17.653px, 48.576% 17.413px, 48.959% 17.173px, 49.341% 16.934px, 49.723% 16.694px, 50.103% 16.455px, 50.483% 16.217px, 50.862% 15.980px, 51.240% 15.744px, 51.618% 15.510px, 51.995% 15.277px, 52.372% 15.046px, 52.748% 14.817px, 53.124% 14.591px, 53.499% 14.366px, 53.875% 14.145px, 54.250% 13.927px, 54.625% 13.712px, 55.000% 13.500px, 55.375% 13.292px, 55.750% 13.087px, 56.125% 12.887px, 56.501% 12.691px, 56.876% 12.500px, 57.252% 12.313px, 57.628% 12.131px, 58.005% 11.954px, 58.382% 11.782px, 58.760% 11.616px, 59.138% 11.456px, 59.517% 11.301px, 59.897% 11.153px, 60.277% 11.012px, 60.659% 10.877px, 61.041% 10.748px, 61.424% 10.627px, 61.808% 10.513px, 62.194% 10.407px, 62.580% 10.308px, 62.968% 10.217px, 63.356% 10.135px, 63.747% 10.060px, 64.138% 9.994px, 64.531% 9.938px, 64.926% 9.890px, 65.322% 9.851px, 65.720% 9.821px, 66.119% 9.802px, 66.520% 9.792px, 66.923% 9.792px, 67.328% 9.803px, 67.734% 9.824px, 68.143% 9.856px, 68.554% 9.899px, 68.967% 9.952px, 69.382% 10.018px, 69.799% 10.095px, 70.218% 10.183px, 70.640% 10.284px, 71.064% 10.397px, 71.491% 10.522px, 71.920% 10.660px, 72.352% 10.811px, 72.786% 10.976px, 73.223% 11.153px, 73.663% 11.344px, 74.106% 11.549px, 74.551% 11.767px, 75.000% 12.000px, 75.447% 12.241px, 75.888% 12.485px, 76.323% 12.730px, 76.753% 12.977px, 77.176% 13.226px, 77.594% 13.476px, 78.006% 13.728px, 78.413% 13.980px, 78.814% 14.234px, 79.210% 14.488px, 79.600% 14.743px, 79.985% 14.998px, 80.365% 15.252px, 80.739% 15.507px, 81.109% 15.762px, 81.473% 16.016px, 81.832% 16.270px, 82.186% 16.522px, 82.536% 16.774px, 82.880% 17.024px, 83.220% 17.273px, 83.554% 17.520px, 83.885% 17.765px, 84.210% 18.009px, 84.531% 18.250px, 84.848% 18.489px, 85.160% 18.725px, 85.468% 18.958px, 85.771% 19.189px, 86.070% 19.416px, 86.365% 19.640px, 86.656% 19.860px, 86.942% 20.077px, 87.225% 20.289px, 87.504% 20.498px, 87.779% 20.702px, 88.050% 20.902px, 88.317% 21.097px, 88.580% 21.287px, 88.840% 21.472px, 89.096% 21.652px, 89.349% 21.826px, 89.598% 21.995px, 89.844% 22.157px, 90.086% 22.314px, 90.325% 22.464px, 90.561% 22.608px, 90.794% 22.746px, 91.023% 22.876px, 91.250% 23.000px, 91.474% 23.116px, 91.694% 23.225px, 91.912% 23.327px, 92.127% 23.420px, 92.339% 23.506px, 92.548% 23.583px, 92.755% 23.653px, 92.959% 23.713px, 93.161% 23.765px, 93.360% 23.808px, 93.557% 23.842px, 93.751% 23.866px, 93.943% 23.881px, 94.133% 23.887px, 94.321% 23.882px, 94.507% 23.867px, 94.691% 23.842px, 94.872% 23.807px, 95.052% 23.761px, 95.230% 23.704px, 95.406% 23.636px, 95.580% 23.557px, 95.753% 23.466px, 95.924% 23.364px, 96.094% 23.250px, 96.262% 23.124px, 96.428% 22.986px, 96.594% 22.835px, 96.757% 22.672px, 96.920% 22.496px, 97.081% 22.307px, 97.242% 22.105px, 97.401% 21.890px, 97.559% 21.661px, 97.716% 21.418px, 97.873% 21.161px, 98.028% 20.891px, 98.183% 20.606px, 98.337% 20.306px, 98.490% 19.992px, 98.643% 19.663px, 98.795% 19.319px, 98.947% 18.959px, 99.098% 18.585px, 99.249% 18.194px, 99.399% 17.788px, 99.550% 17.365px, 99.700% 16.927px, 99.850% 16.472px, 100.000% 16.000px, 100% 100%, 0% 100%)"
+      ];
+      const clipPath = clipPaths[index];
+      let bandStyle = `--index: ${index};`;
+      if (clipPath) {
+        bandStyle += `clip-path: ${clipPath}; -webkit-clip-path: ${clipPath};`;
+      }
+      
+      return (
+        <div 
+          class="matrix-band"
+          style={bandStyle}
+          data-index={index}
+          data-slug={origin.data.slug}
+          tabindex="0"
+          role="button"
+          aria-expanded="false"
+          aria-label={`${origin.data.name}, ${getHighestElevation(origin.data.elevation)}M. Tap to expand.`}
+        >
+          
+          <!-- HUD Tether & Callout -->
+          {hudData[origin.data.slug] && (
+            <>
+              <div class="hud-dynamic-container" data-slug={origin.data.slug} data-side={hudData[origin.data.slug].side}></div>
+              <div class="hud-tag" id={`tag-${origin.data.slug}`}>
+                {hudData[origin.data.slug].tag}
+              </div>
+            </>
+          )}
+
+          <TopographicMap index={index} />
+
+          <div class="tap-pulse-indicator"></div>
+          
+          <!-- Mobile Hold Indicator -->
+          <div class="mobile-hold-indicator">
+            <svg viewBox="0 0 100 100" class="hold-svg">
+              <circle cx="50" cy="50" r="4" class="hold-dot" />
+              <circle cx="50" cy="50" r="15" class="hold-circle" />
+            </svg>
+          </div>
+
+          <div class="band-content">
+            <div class="title-group" id={`title-${origin.data.slug}`}>
+              <h2 class="origin-name">
+                <span class="elevation-floating">{getHighestElevation(origin.data.elevation)}M</span>
+                {origin.data.name.toUpperCase()}
+              </h2>
+            </div>
+            <div class="band-reveal">
+              <p class="origin-meta">{copy.fragment}</p>
+              <p class="origin-subline">{copy.subLine}</p>
+              
+              <div class="origin-live-telemetry">
+                <LiveTelemetry 
+                  coordinates={origin.data.coordinates} 
+                  elevation={origin.data.elevation}
+                  soil={origin.data.soil}
+                  botanicalState={copy.botanicalState}
+                />
+              </div>
+
+              <div class="band-hud-memory">
+                {hudData[origin.data.slug].tag}
+              </div>
+
+              {origin.data.slug !== 'malabar-coast' && (
+                <p class="band-partner-note"><span class="partner-highlight">The people who grow this</span> are partners, not suppliers.</p>
+              )}
+              
+              <div class="inline-products-gallery">
+                {productsByOrigin[origin.data.slug]?.length > 0 ? (
+                  productsByOrigin[origin.data.slug].map((p) => (
+                    <div class="inline-product-card">
+                      <div class="product-info">
+                        <h3 class="product-name">{p.data.name}</h3>
+                        <p class="product-botanical">{p.data.botanicalName}</p>
+                        <p class="product-price">FROM INR {Math.min(...p.data.sizes.map(s => s.priceINR))}</p>
+                      </div>
+                      <a href={`/origins/${origin.id}/${p.id}`} class="buy-button">ADD TO BASKET</a>
+                    </div>
+                  ))
+                ) : (
+                  <div class="inline-product-card locked">
+                    <div class="product-info">
+                      <h3 class="product-name" style="color: rgba(245, 237, 216, 0.4)">HARVEST PENDING</h3>
+                      <p class="product-botanical" style="color: rgba(245, 237, 216, 0.3)">Malabar Coast</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )
+    })}
+</div>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  function renderHUDLines() {
+    const bands = document.querySelectorAll('.matrix-band');
+    bands.forEach(band => {
+      const container = band.querySelector('.hud-dynamic-container');
+      if (!container) return;
+      
+      const slug = container.getAttribute('data-slug');
+      
+      const title = band.querySelector(`#title-${slug} h2`);
+      const tag = band.querySelector(`#tag-${slug}`);
+      const bandRect = band.getBoundingClientRect();
+      
+      if (!title || !tag) return;
+      
+      const titleRect = title.getBoundingClientRect();
+      const tagRect = tag.getBoundingClientRect();
+      
+      let titleStartX = (titleRect.right - bandRect.left) - 20; 
+      let titleEndX = (titleRect.right - bandRect.left) + 20;   
+      
+      if (titleEndX > bandRect.width - 10) {
+        titleEndX = bandRect.width - 10;
+        titleStartX = titleEndX - 20;
+      }
+      const startY = (titleRect.bottom - bandRect.top) + 2;
+      
+      const targetTagTop = (titleRect.top - bandRect.top) - 24 - tagRect.height;
+      tag.style.top = `${targetTagTop}px`;
+      
+      const updatedTagRect = tag.getBoundingClientRect();
+      let tagStartX = (updatedTagRect.left - bandRect.left) + 20; 
+      let tagEndX = (updatedTagRect.left - bandRect.left) - 20;   
+      
+      if (tagEndX < 10) {
+        tagEndX = 10;
+        tagStartX = tagEndX + 20;
+      }
+      const tagUnderlineY = targetTagTop + tagRect.height + 4; 
+      
+      const pathData1 = `M ${titleStartX} ${startY} L ${titleEndX} ${startY}`;
+      const pathData2 = `M ${tagStartX} ${tagUnderlineY} L ${tagEndX} ${tagUnderlineY}`;
+      
+      let svg = container.querySelector('svg');
+      if (!svg) {
+        container.innerHTML = `
+          <svg class="hud-dynamic-svg" style="position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 4;">
+            <path d="${pathData1}" stroke="rgba(166, 124, 60, 0.4)" stroke-width="1" fill="none" class="hud-tether-path draw-path" stroke-dasharray="40" stroke-dashoffset="40" />
+            <path d="${pathData2}" stroke="rgba(166, 124, 60, 0.4)" stroke-width="1" fill="none" class="hud-tether-path draw-path" stroke-dasharray="40" stroke-dashoffset="40" />
+            
+            <g class="hud-pulse-group hud-pulse-target" transform="translate(${titleStartX}, ${startY})" opacity="0">
+              <circle r="4" stroke="rgba(166, 124, 60, 0.6)" stroke-width="1" fill="none" style="animation: hudPulse 2.5s infinite cubic-bezier(0.2, 0.8, 0.2, 1);" />
+              <circle r="1.5" fill="rgba(166, 124, 60, 1)" />
+            </g>
+            <g class="hud-pulse-group hud-pulse-target" transform="translate(${tagStartX}, ${tagUnderlineY})" opacity="0">
+              <circle r="4" stroke="rgba(166, 124, 60, 0.6)" stroke-width="1" fill="none" style="animation: hudPulse 2.5s infinite cubic-bezier(0.2, 0.8, 0.2, 1);" />
+              <circle r="1.5" fill="rgba(166, 124, 60, 1)" />
+            </g>
+          </svg>
+        `;
+      } else {
+        const paths = svg.querySelectorAll('path');
+        if (paths[0]) paths[0].setAttribute('d', pathData1);
+        if (paths[1]) paths[1].setAttribute('d', pathData2);
+        
+        const groups = svg.querySelectorAll('g');
+        if (groups[0]) groups[0].setAttribute('transform', `translate(${titleStartX}, ${startY})`);
+        if (groups[1]) groups[1].setAttribute('transform', `translate(${tagStartX}, ${tagUnderlineY})`);
+      }
+    });
+  }
+
+  function initScrollyTelling() {
+    gsap.set('.matrix-band', { opacity: 1 });
+    gsap.set('.title-group', { opacity: 1, y: 0 });
+    
+    // We render HUD lines geometry immediately, but their dashoffset is at 40 (hidden)
+    renderHUDLines();
+
+    // GSAP ScrollTrigger orchestration
+    const bands = document.querySelectorAll('.matrix-band');
+    
+    bands.forEach((band) => {
+      // 1. Topographic Parallax
+      const topoMap = band.querySelector('.topographic-map-container');
+      if (topoMap) {
+        gsap.fromTo(topoMap, 
+          { y: -30 }, 
+          {
+            y: 30,
+            ease: "none",
+            scrollTrigger: {
+              trigger: band,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: true
+            }
+          }
+        );
+      }
+
+      // 2. HUD Drawing effect
+      const hudPaths = band.querySelectorAll('.draw-path');
+      const hudPulses = band.querySelectorAll('.hud-pulse-target');
+      
+      const hudTimeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: band,
+          start: "top 60%", // Start drawing when the band is slightly above the bottom of the viewport
+          end: "top 30%",
+          scrub: true
+        }
+      });
+
+      if (hudPaths.length > 0) {
+        hudTimeline.to(hudPaths, { strokeDashoffset: 0, ease: "none", duration: 1 });
+        hudTimeline.to(hudPulses, { opacity: 1, duration: 0.2 }, "-=0.2");
+      }
+      
+      // 3. Staggered fade in for Products
+      const products = band.querySelectorAll('.inline-product-card');
+      if (products.length > 0) {
+        gsap.fromTo(products, 
+          { y: 30, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            stagger: 0.1,
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: band,
+              start: "top 60%",
+              toggleActions: "play none none none"
+            }
+          }
+        );
+      }
+    });
+    
+    ScrollTrigger.refresh();
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const hasVisited = sessionStorage.getItem('ourorigin_visited');
+    if (hasVisited === 'true') {
+      initScrollyTelling();
+    } else {
+      window.addEventListener('launch-sequence-complete', () => {
+        initScrollyTelling();
+      });
+    }
+    
+    window.addEventListener('resize', () => {
+      renderHUDLines();
+      ScrollTrigger.refresh();
+    });
+  });
+</script>
+
+<style>
+  .living-matrix-container {
+    width: 100%;
+    min-height: 100vh;
+    background-color: var(--color-forest-deep);
+    position: relative;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 0 0 48px 0; 
+    box-sizing: border-box;
+  }
+  
+  .matrix-bands {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  @keyframes subtleBreathe {
+    0% { background-color: #0c1509; transform: translateY(0); }
+    50% { background-color: #10190c; transform: translateY(-4px); }
+    100% { background-color: #0c1509; transform: translateY(0); }
+  }
+
+  .matrix-band {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    background-color: #0c1509; 
+    transition: background-color var(--duration-standard) ease, color var(--duration-standard) ease, opacity var(--duration-standard) ease, transform var(--duration-standard) ease;
+    color: var(--color-warm-cream);
+    text-decoration: none;
+    opacity: 0;
+    z-index: var(--index);
+    display: flex;
+    box-sizing: border-box;
+  }
+  
+  .matrix-band:last-child {
+    border-bottom: none;
+  }
+  
+  .matrix-band:not(:first-child) {
+    margin-top: -100px; /* Overlap slightly for topographic effect */
+    padding-top: 100px;
+  }
+  
+  .matrix-band:not(:last-child) {
+    padding-bottom: 100px; 
+  }
+  
+  .band-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    text-align: left;
+    min-height: 100vh;
+    width: 100%;
+    padding: 120px clamp(1.5rem, 5vw, 3.5rem) 100px;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 2;
+  }
+  
+  .title-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    position: relative;
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  
+  /* title-group overlay removed per user request */
+  
+  .origin-name {
+    font-family: var(--font-institutional);
+    font-size: clamp(12px, 3.8vw, var(--text-size-stratum-title));
+    line-height: 1.1;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin: 0;
+    font-weight: 400;
+    text-align: left;
+    word-break: break-word;
+    transition: transform 0.6s var(--ease-settle), opacity 0.6s ease;
+    transform-origin: left center;
+  }
+  
+  @media (max-width: 768px) {
+    .origin-name {
+      font-size: 16px !important; /* Bumped to 16px to be definitively readable and larger than clamp */
+    }
+    .matrix-bands.has-expanded .matrix-band:not(.expanded) .origin-name {
+    transform: scale(0.65);
+    opacity: 0.2;
+  }
+  
+  .matrix-bands:hover .matrix-band:not(:hover) .origin-name {
+    @media (hover: hover) {
+      transform: scale(0.65);
+      opacity: 0.2;
+    }
+  }
+  }
+  
+  .origin-name {
+    position: relative;
+    /* other styles are preserved below */
+  }
+
+  .elevation-floating {
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    margin-bottom: 4px; /* ~1mm above */
+    font-size: 0.35em;
+    font-family: var(--font-evidence);
+    letter-spacing: 0.1em;
+    opacity: 0.7;
+    white-space: nowrap;
+  }
+  
+  .band-reveal {
+    height: auto;
+    opacity: 1;
+    margin-top: 1.5rem;
+    overflow: visible;
+  }
+  
+  .origin-meta {
+    text-shadow: 0 2px 10px rgba(12,21,9,1), 0 -2px 10px rgba(12,21,9,1);
+
+    font-family: var(--font-narrative);
+    font-size: clamp(14px, 2.8vw, 1.1rem);
+    line-height: 1.3;
+    margin: 0 0 0.3rem 0;
+    max-width: 100%;
+  }
+  
+  @media (max-width: 768px) {
+    .origin-meta {
+      font-size: 14px;
+    }
+    .band-reveal {
+      width: 100%;
+      padding: 0 1rem;
+      box-sizing: border-box;
+    }
+  }
+  
+  .origin-subline {
+    text-shadow: 0 2px 10px rgba(12,21,9,1), 0 -2px 10px rgba(12,21,9,1);
+
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    opacity: 0.75;
+    margin: 0;
+  }
+  
+  .band-hud-memory {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--color-gold);
+    opacity: 0.8;
+    margin: 0;
+    text-transform: uppercase;
+  }
+  
+  .band-partner-note {
+    text-shadow: 0 2px 10px rgba(12,21,9,1), 0 -2px 10px rgba(12,21,9,1);
+
+    font-family: var(--font-narrative);
+    font-size: clamp(14px, 2.8vw, 1.1rem);
+    color: var(--color-warm-cream);
+    opacity: 0.9;
+    margin: 0;
+    font-style: normal;
+  }
+  .partner-highlight {
+    color: var(--color-gold);
+    font-family: var(--font-institutional);
+  }
+  
+  .hud-button-container {
+    position: relative;
+    padding: 1rem 2rem;
+    margin: 1.5rem auto 0 auto;
+    display: flex;
+    width: max-content;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--duration-standard) ease;
+  }
+
+  .matrix-band.expanded .hud-button-container {
+    pointer-events: auto;
+    opacity: 1;
+  }
+
+  .locked-origin {
+    opacity: 0.4 !important;
+    pointer-events: none !important;
+    cursor: default;
+  }
+
+  .hud-decorator {
+    position: absolute;
+    width: 40px;
+    height: 10px;
+  }
+  .hud-decorator svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .hud-top-right {
+    top: -5px;
+    right: -20px;
+  }
+  .hud-bottom-left {
+    bottom: -5px;
+    left: -20px;
+  }
+  
+
+  
+  .origin-action {
+    display: inline-block;
+    font-family: var(--font-narrative);
+    font-size: 12px;
+    color: rgba(245, 237, 216, 0.55);
+    text-decoration: none;
+    margin: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .origin-action.malabar-documented {
+    color: rgba(245, 237, 216, 0.35);
+  }
+
+  @media (max-width: 768px) {
+    .origin-subline { font-size: 9px; }
+    .origin-action { font-size: 12px; }
+  }
+
+  /* Plate static Origin Mark (Removed duplicate block from here) */
+
+  .tap-pulse-indicator {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-gold);
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .tap-pulse-indicator::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 1px solid var(--color-gold);
+    transform: translate(-50%, -50%);
+  }
+
+  .tap-pulse-indicator.pulse-active {
+    animation: dotPulse 300ms ease-out forwards;
+  }
+
+  .tap-pulse-indicator.pulse-active::after {
+    animation: ringPulse 300ms ease-out forwards;
+  }
+
+  @keyframes dotPulse {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 0.6; }
+    50% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+    100% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+  }
+
+  @keyframes ringPulse {
+    0% { width: 100%; height: 100%; opacity: 0.6; }
+    100% { width: 400%; height: 400%; opacity: 0; }
+  }
+  
+  .matrix-mark-wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 5000;
+    transition: opacity var(--duration-standard) ease;
+  }
+
+  /* Inline E-Commerce Products (Mobile First) */
+  .inline-products-gallery {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+    width: 100%;
+    max-width: 100vw;
+    position: relative;
+    z-index: 20;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 1rem;
+    -webkit-overflow-scrolling: touch;
+    /* Hide scrollbar for cleaner look */
+    scrollbar-width: none; 
+  }
+  
+  .inline-products-gallery::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Desktop override */
+  @media (min-width: 769px) {
+    .inline-products-gallery {
+      flex-wrap: wrap;
+      overflow-x: visible;
+      scroll-snap-type: none;
+      max-width: 800px;
+    }
+  }
+
+  .inline-product-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    border: 1px solid rgba(166, 124, 60, 0.15);
+    background: rgba(12, 21, 9, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    flex: 0 0 85%; /* Mobile width */
+    max-width: 320px;
+    scroll-snap-align: start;
+    border-radius: 2px;
+    transition: border-color 0.4s ease, background 0.4s ease, transform 0.4s ease;
+  }
+
+  @media (min-width: 769px) {
+    .inline-product-card {
+      flex: 1 1 250px;
+    }
+  }
+
+  .inline-product-card:hover:not(.locked) {
+    border-color: rgba(166, 124, 60, 0.6);
+    background: rgba(12, 21, 9, 0.8);
+    transform: translateY(-4px);
+  }
+
+  .product-name {
+    font-family: var(--font-institutional);
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+    color: var(--color-warm-cream);
+    margin: 0 0 0.5rem 0;
+    text-transform: uppercase;
+  }
+
+  .product-botanical {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--color-gold);
+    opacity: 0.8;
+    margin: 0 0 1rem 0;
+    text-transform: uppercase;
+  }
+
+  .product-price {
+    font-family: var(--font-narrative);
+    font-size: 0.95rem;
+    color: rgba(245, 237, 216, 0.7);
+    margin: 0;
+  }
+
+  .buy-button {
+    display: inline-block;
+    font-family: var(--font-institutional);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--color-gold);
+    text-decoration: none;
+    padding: 0.8rem 1.5rem;
+    border: 1px solid rgba(166, 124, 60, 0.4);
+    text-align: center;
+    transition: all 0.3s ease;
+    margin-top: auto;
+    background: transparent;
+  }
+
+  .buy-button:hover {
+    background: rgba(166, 124, 60, 0.1);
+    color: var(--color-warm-cream);
+    border-color: var(--color-gold);
+  }
+
+  /* Mobile Hold Indicator Styles */
+  .mobile-hold-indicator {
+    position: absolute;
+    left: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 100;
+  }
+  
+  .matrix-band.expanded.holding .mobile-hold-indicator {
+    opacity: 1;
+  }
+  
+  .hold-svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg); /* Start circle draw from top */
+  }
+  
+  .hold-circle {
+    fill: none;
+    stroke: var(--color-gold);
+    stroke-width: 2;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+  }
+  
+  .hold-dot {
+    fill: var(--color-gold);
+    opacity: 0;
+  }
+  
+  .matrix-band.expanded.holding .hold-circle {
+    animation: drawCircle 2.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+  
+  .matrix-band.expanded.holding .hold-dot {
+    animation: pulseDot 2.4s ease-in-out forwards;
+  }
+  
+  @keyframes drawCircle {
+    0% { stroke-dashoffset: 100; }
+    100% { stroke-dashoffset: 0; }
+  }
+  
+  @keyframes pulseDot {
+    0% { opacity: 0; transform: scale(0); }
+    20% { opacity: 1; transform: scale(1); }
+    80% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(0); }
+  }
+  
+  .matrix-mark-wrapper.initial-center {
+    right: 50%;
+    transform: translate(50%, -50%) scale(2.5);
+  }
+
+  @media (max-width: 768px) {
+    .matrix-mark-wrapper:not(.initial-center) {
+      right: 1rem;
+    }
+  }
+
+  /* Nav CSS removed */
+
+</style>
+<style is:global>
+  /* HUD Callouts (Global for JS Injection) */
+  .hud-dynamic-container {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 4;
+  }
+  .hud-dynamic-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  
+  .hud-tether-path {
+    stroke: rgba(166, 124, 60, 0.4);
+    stroke-width: 1px;
+    fill: none;
+    transition: stroke-opacity 0.4s ease;
+  }
+
+  .hud-ring-circle {
+    stroke: rgba(166, 124, 60, 0.6);
+    stroke-width: 1px;
+    fill: none;
+    animation: hudPulse 2.5s infinite cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .hud-dot-circle {
+    fill: rgba(166, 124, 60, 1);
+  }
+  
+  @keyframes hudPulse {
+    0% { transform: scale(0.5); opacity: 1; }
+    100% { transform: scale(2.5); opacity: 0; }
+  }
+  
+  .matrix-band.expanded .hud-tether-path,
+  .matrix-band.expanded .hud-pulse-group {
+    opacity: 0 !important;
+    transition: opacity 0.4s ease;
+  }
+
+  .band-partner-note {
+    transition: opacity 0.5s 0.2s ease;
+  }
+  
+  /* Layout Tweaks */
+  @media (max-width: 767px) {
+    .matrix-band[data-slug="nilgiris"] .band-content,
+    .matrix-band[data-slug="nilgiris"] .mobile-hold-indicator {
+      transform: translateY(10mm);
+    }
+  }
+</style>
+<style>
+  
+  .matrix-band.expanded .hud-tag {
+    opacity: 0 !important;
+    transition: opacity 0.4s ease;
+  }
+  
+  .hud-tag {
+    position: absolute;
+    right: clamp(2.4rem, 5vw, 3.5rem); /* Matches band-content left padding exactly */
+    margin-right: -0.1em; /* Offsets the letter-spacing to ensure mathematically perfect right alignment */
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: rgba(166, 124, 60, 0.8);
+    pointer-events: none;
+    z-index: 5;
+    white-space: nowrap;
+    transition: opacity 0.4s ease;
+    text-align: right;
+    transition: opacity 0.4s ease, top 0.4s ease;
+  }
+
+  .matrix-band.expanded .hud-tag {
+    opacity: 0.2;
+  }
+
+  @media (max-width: 768px) {
+    .hud-tag {
+      font-size: 8px;
+      /* On mobile, bring tags slightly closer to center to avoid edge clipping */
+      right: 1rem !important; 
+    }
+    .hud-tether-svg {
+      opacity: 0.7;
+    }
+  }
+
+  .topographic-map-container,
+  .band-reveal,
+  .hud-dynamic-container {
+    transition: opacity 0.6s var(--ease-settle);
+  }
+  
+  /* Topographic map fading for non-focused plates (Hover state) */
+  .matrix-bands:hover .matrix-band:not(:hover) .topographic-map-container,
+  .matrix-bands:hover .matrix-band:not(:hover) .yield-hud-callout {
+    opacity: 0.2;
+  }
+  
+  /* When a plate is expanded, aggressively hide everything on inactive plates EXCEPT title and hud tag */
+  .matrix-bands.has-expanded .matrix-band:not(.expanded) .band-reveal,
+  .matrix-bands.has-expanded .matrix-band:not(.expanded) .topographic-map-container,
+  .matrix-bands.has-expanded .matrix-band:not(.expanded) .hud-dynamic-container,
+  .matrix-bands.has-expanded .matrix-band:not(.expanded) .yield-hud-callout {
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  /* Dim the remaining elements (origin name and hud tag) on inactive plates to shift focus to the active one */
+  .matrix-bands.has-expanded .matrix-band:not(.expanded) .origin-name,
+  .matrix-bands.has-expanded .matrix-band:not(.expanded) .hud-tag {
+    opacity: 0.3 !important;
+    transition: opacity 0.6s var(--ease-settle) !important;
+  }
+
+
+  @media (max-width: 768px) {
+    .hud-tag {
+      font-size: 9px;
+      right: 1.5rem;
+    }
+  }
+
+</style>

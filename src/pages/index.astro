@@ -2,9 +2,7 @@
 import '../styles/tokens.css';
 import CommandCenter from '../components/CommandCenter.astro';
 import LaunchScreen from '../components/LaunchScreen.astro';
-import HeroStorefront from '../components/HeroStorefront.astro';
-import OriginCarousel from '../components/OriginCarousel.astro';
-import YieldGrid from '../components/YieldGrid.astro';
+import LivingCanvas from '../components/LivingCanvas.astro';
 import CartDrawer from '../components/CartDrawer.astro';
 ---
 
@@ -34,23 +32,6 @@ import CartDrawer from '../components/CartDrawer.astro';
     <meta name="twitter:description" content="Five origins. Twelve yields. The Western Ghats, made experienceable.">
     <meta name="twitter:image" content="https://ourorigin.in/og-image.jpg">
     
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "OurOrigin",
-      "url": "https://ourorigin.in",
-      "logo": "https://ourorigin.in/og-image.jpg",
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "telephone": "+91-96455-55668",
-        "contactType": "customer service",
-        "availableLanguage": ["English", "Malayalam"]
-      },
-      "description": "OurOrigin sources spices and natural ingredients from the Western Ghats of India."
-    }
-    </script>
-    
     <!-- Google Fonts with display=swap as explicitly requested -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -63,23 +44,11 @@ import CartDrawer from '../components/CartDrawer.astro';
         <CommandCenter />
         
         <main>
-            <HeroStorefront />
-            <OriginCarousel />
-            <YieldGrid />
+            <LivingCanvas />
         </main>
         
-        <footer class="site-footer">
-            <div class="footer-content">
-                <p>&copy; {new Date().getFullYear()} OurOrigin. From the source.</p>
-            </div>
-        </footer>
     </div>
 
-    <!-- Add Locomotive Scroll or keep GSAP ScrollTrigger for basic things if needed later, but we've removed complex scrollytelling -->
-    <script>
-      // We rely on LaunchScreen to cover the viewport initially.
-      // No Javascript-based fade-in is required, eliminating race conditions.
-    </script>
     <CartDrawer />
 </body>
 </html>
@@ -88,23 +57,9 @@ import CartDrawer from '../components/CartDrawer.astro';
     body {
         margin: 0;
         padding: 0;
-        background-color: var(--color-warm-cream);
-        color: var(--color-forest-deep);
+        background-color: var(--color-forest-deep);
+        color: var(--color-warm-cream);
         font-family: var(--font-mono);
-        overflow-x: hidden;
-    }
-    
-    .site-footer {
-        padding: var(--space-2xl) var(--space-xl);
-        text-align: center;
-        background-color: var(--color-warm-cream);
-        border-top: 1px solid rgba(13, 30, 17, 0.1);
-    }
-    
-    .site-footer p {
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        opacity: 0.6;
+        overflow: hidden; /* No scrolling for Living Canvas */
     }
 </style>

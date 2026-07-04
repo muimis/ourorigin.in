@@ -18,7 +18,7 @@ const formatPrice = (price) => {
 <section id="yields" class="yield-grid-section">
   <div class="section-header">
     <h2 class="section-title">The Harvest</h2>
-    <p class="section-subtitle">Direct from the Western Ghats</p>
+    <p class="section-subtitle">Boundless Origins. Singular Quality.</p>
   </div>
 
   <div class="product-grid">
@@ -27,10 +27,25 @@ const formatPrice = (price) => {
       const originId = typeof product.data.originSlug === 'object' ? product.data.originSlug.id : product.data.originSlug;
       const origin = origins.find(o => o.id === originId);
       
+      // Resolve map image
+      let mapSvg = '/maps/topographic.svg';
+      if (originId === 'wayanad') mapSvg = '/maps/wayanad.svg';
+      if (originId === 'idukki') mapSvg = '/maps/idukki.svg';
+      if (originId === 'thiruvananthapuram') mapSvg = '/maps/trivandrum.svg';
+      
+      const packagingImg = product.data.images?.packaging || null;
+      
       return (
         <div class="product-card">
+          <div class="card-watermark">
+            <img src={mapSvg} alt="" aria-hidden="true" />
+          </div>
           <div class="product-image-placeholder">
-            <span class="image-text">No Image</span>
+            {packagingImg ? (
+              <img src={packagingImg} alt={`${product.data.name} Packaging`} class="product-img-actual" />
+            ) : (
+              <span class="image-text">No Image</span>
+            )}
           </div>
           <div class="product-info">
             <div class="product-meta">
@@ -113,24 +128,70 @@ const formatPrice = (price) => {
   .product-card {
     display: flex;
     flex-direction: column;
-    background: transparent;
-    transition: transform 0.3s ease;
+    position: relative;
+    background: rgba(245, 237, 216, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(12, 21, 9, 0.05);
+    border-radius: 8px;
+    padding: var(--space-md);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+    overflow: hidden;
   }
 
   .product-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(12, 21, 9, 0.08);
+  }
+
+  .card-watermark {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.03;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .card-watermark img {
+    width: 150%;
+    height: 150%;
+    object-fit: contain;
+    transform: rotate(-15deg);
+    transition: transform 1s ease;
+  }
+
+  .product-card:hover .card-watermark img {
+    transform: rotate(0deg) scale(1.1);
   }
 
   .product-image-placeholder {
     width: 100%;
     aspect-ratio: 4/5;
-    background-color: rgba(13, 30, 17, 0.05);
+    background-color: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: var(--space-md);
     border-radius: 4px;
     overflow: hidden;
+    position: relative;
+    z-index: 1;
+  }
+
+  .product-img-actual {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1));
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .product-card:hover .product-img-actual {
+    transform: scale(1.05);
   }
 
   .image-text {
@@ -142,9 +203,11 @@ const formatPrice = (price) => {
   }
 
   .product-info {
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
+    position: relative;
+    z-index: 1;
   }
 
   .product-meta {
