@@ -71,6 +71,18 @@ import OriginMark from './OriginMark.astro';
     const hasVisited = sessionStorage.getItem('ourorigin_visited');
     const launchScreen = document.getElementById('launch-screen');
     
+    // Bulletproof fallback: If launch screen is still visible after 4 seconds, force hide it.
+    // This prevents the site from being blank if GSAP or any other JS fails.
+    if (launchScreen) {
+      setTimeout(() => {
+        if (!launchScreen.classList.contains('hidden')) {
+          launchScreen.classList.add('hidden');
+          sessionStorage.setItem('ourorigin_visited', 'true');
+          window.dispatchEvent(new Event('launch-sequence-complete'));
+        }
+      }, 4000);
+    }
+    
     if (!hasVisited && launchScreen) {
       const text2 = document.querySelector('.launch-text-2');
       
