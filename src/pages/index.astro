@@ -59,7 +59,7 @@ import CartDrawer from '../components/CartDrawer.astro';
 <body class="theme-default">
     <LaunchScreen />
     
-    <div id="main-content" style="opacity: 0;">
+    <div id="main-content">
         <CommandCenter />
         
         <main>
@@ -77,25 +77,8 @@ import CartDrawer from '../components/CartDrawer.astro';
 
     <!-- Add Locomotive Scroll or keep GSAP ScrollTrigger for basic things if needed later, but we've removed complex scrollytelling -->
     <script>
-      import { gsap } from 'gsap';
-      import { ScrollTrigger } from 'gsap/ScrollTrigger';
-      gsap.registerPlugin(ScrollTrigger);
-
-      // Simple fade in for elements as they scroll into view
-      document.addEventListener('DOMContentLoaded', () => {
-        const mainContent = document.getElementById('main-content');
-        
-        window.addEventListener('launch-sequence-complete', () => {
-          gsap.to(mainContent, { opacity: 1, duration: 0.8, ease: "power2.out" });
-        });
-
-        // Fallback in case LaunchScreen is bypassed or removed
-        setTimeout(() => {
-          if (mainContent.style.opacity === '0') {
-            gsap.to(mainContent, { opacity: 1, duration: 0.4 });
-          }
-        }, 3000);
-      });
+      // We rely on LaunchScreen to cover the viewport initially.
+      // No Javascript-based fade-in is required, eliminating race conditions.
     </script>
     <CartDrawer />
 </body>
