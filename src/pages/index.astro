@@ -1,9 +1,6 @@
 ---
 import '../styles/tokens.css';
-import CommandCenter from '../components/CommandCenter.astro';
-import LaunchScreen from '../components/LaunchScreen.astro';
-import UniversalConstellation from '../components/UniversalConstellation.astro';
-import CartDrawer from '../components/CartDrawer.astro';
+import TheThreshold from '../components/TheThreshold.astro';
 ---
 
 <!DOCTYPE html>
@@ -19,7 +16,7 @@ import CartDrawer from '../components/CartDrawer.astro';
     <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="OurOrigin — From the Western Ghats">
-    <meta property="og:description" content="Five origins. Twelve yields. The Western Ghats, made experienceable.">
+    <meta property="og:description" content="Five origins. Twelve yields. The absolute truth of the earth.">
     <meta property="og:url" content="https://ourorigin.in/">
     <meta property="og:image" content="https://ourorigin.in/og-image.jpg">
     <meta property="og:image:width" content="1200">
@@ -29,27 +26,17 @@ import CartDrawer from '../components/CartDrawer.astro';
     <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="OurOrigin — From the Western Ghats">
-    <meta name="twitter:description" content="Five origins. Twelve yields. The Western Ghats, made experienceable.">
-    <meta name="twitter:image" content="https://ourorigin.in/og-image.jpg">
     
-    <!-- Google Fonts with display=swap as explicitly requested -->
+    <!-- Google Fonts with display=swap -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Cormorant+Garamond:wght@300;400;500&family=DM+Mono:ital,wght@0,300;0,400;0,500&display=swap" rel="stylesheet">
 </head>
 <body class="theme-default">
-    <LaunchScreen />
-    
-    <div id="main-content">
-        <CommandCenter />
-        
-        <main>
-            <UniversalConstellation />
-        </main>
-        
-    </div>
-
-    <CartDrawer />
+    <main>
+        <!-- The Presentation: Phase 1 -->
+        <TheThreshold />
+    </main>
 </body>
 </html>
 
@@ -57,9 +44,9 @@ import CartDrawer from '../components/CartDrawer.astro';
     body {
         margin: 0;
         padding: 0;
-        background-color: #040a05;
+        background-color: #010201; /* Deep abyssal black */
         color: var(--color-warm-cream);
         font-family: var(--font-mono);
-        overflow: hidden; /* No scrolling for App-like experience */
+        overflow: hidden; /* No scrolling on the Threshold */
     }
 </style>
