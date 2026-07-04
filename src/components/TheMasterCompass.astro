@@ -1,10 +1,12 @@
 ---
 import OriginMark from './OriginMark.astro';
+import TheDeepDive from './TheDeepDive.astro';
 import { getCollection } from 'astro:content';
 
 // We fetch the yields to populate the views
 // For Horizon, we might filter by a 'status' field in the future, but we'll use all for now as mock data
 const yields = await getCollection('products');
+const origins = await getCollection('origins');
 
 // Sort alphabetically for the Index (safeguard against missing name)
 const sortedYields = [...yields].sort((a, b) => {
@@ -21,8 +23,28 @@ const sortedYields = [...yields].sort((a, b) => {
     <OriginMark variant="gold" size={32} animate={false} />
   </div>
 
+  <!-- VIEW LOBBY: THE CROSSROADS -->
+  <div id="view-lobby" class="compass-view is-active">
+    <div class="lobby-container">
+      <nav class="lobby-menu">
+        <button class="lobby-link" data-target="view-yield">
+          <span class="lobby-title">THE YIELD</span>
+          <span class="lobby-subtitle">What the earth has surrendered. The active harvest.</span>
+        </button>
+        <button class="lobby-link" data-target="view-horizon">
+          <span class="lobby-title">THE HORIZON</span>
+          <span class="lobby-subtitle">What the soil is preparing. Curing and future yields.</span>
+        </button>
+        <button class="lobby-link" data-target="view-index">
+          <span class="lobby-title">THE INDEX</span>
+          <span class="lobby-subtitle">The absolute ledger. Our complete global catalog.</span>
+        </button>
+      </nav>
+    </div>
+  </div>
+
   <!-- VIEW A: THE YIELD (Active Harvests) -->
-  <div id="view-yield" class="compass-view is-active">
+  <div id="view-yield" class="compass-view">
     <div class="horizontal-stream">
       {yields.map((y, index) => (
         <div class="stream-item">
@@ -30,7 +52,9 @@ const sortedYields = [...yields].sort((a, b) => {
             <div class="texture-overlay"></div>
           </div>
           <div class="stream-content">
-            <h2 class="stream-title">{y.data.name}</h2>
+            <button class="stream-btn-trigger" data-slug={y.id || y.slug} style="background:none;border:none;cursor:pointer;padding:0;">
+              <h2 class="stream-title">{y.data.name}</h2>
+            </button>
             <p class="stream-collective">[{String((typeof y.data.originSlug === 'object' ? y.data.originSlug?.id : y.data.originSlug) || '').toUpperCase()} COLLECTIVE]</p>
           </div>
         </div>
@@ -47,7 +71,9 @@ const sortedYields = [...yields].sort((a, b) => {
           <div class="texture-overlay"></div>
         </div>
         <div class="stream-content">
-          <h2 class="stream-title">Winter Curing Vanilla</h2>
+          <button class="stream-btn-trigger" data-slug="vanilla-mock" style="background:none;border:none;cursor:pointer;padding:0;">
+            <h2 class="stream-title">Winter Curing Vanilla</h2>
+          </button>
           <p class="stream-collective">[IDUKKI HORIZON]</p>
         </div>
       </div>
@@ -70,11 +96,14 @@ const sortedYields = [...yields].sort((a, b) => {
   </div>
 
   <!-- Fixed Bottom Center: Master Toggle -->
-  <div class="compass-toggle">
-    <button class="toggle-btn is-active" data-target="view-yield">YIELD</button>
+  <div class="compass-toggle is-hidden-initially" id="master-toggle">
+    <button class="toggle-btn" data-target="view-yield">YIELD</button>
     <button class="toggle-btn" data-target="view-horizon">HORIZON</button>
     <button class="toggle-btn" data-target="view-index">INDEX</button>
   </div>
+
+  <!-- THE DEEP DIVE OVERLAY -->
+  <TheDeepDive products={yields} origins={origins} />
 
 </div>
 
@@ -190,6 +219,55 @@ const sortedYields = [...yields].sort((a, b) => {
     text-transform: uppercase;
   }
 
+  /* THE LOBBY (CROSSROADS) */
+  .lobby-container {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at center, rgba(1, 2, 1, 0.4) 0%, var(--color-forest-deep) 100%);
+  }
+
+  .lobby-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    text-align: center;
+  }
+
+  .lobby-link {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    transition: opacity 0.3s ease;
+    opacity: 0.6;
+  }
+  .lobby-link:hover, .lobby-link:focus {
+    opacity: 1;
+  }
+
+  .lobby-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 300;
+    color: var(--color-warm-cream);
+    letter-spacing: 0.05em;
+  }
+
+  .lobby-subtitle {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    color: var(--color-gold);
+    text-transform: uppercase;
+  }
+
   /* THE INDEX (Brutalist Ledger) */
   .ledger-container {
     width: 100%;
@@ -259,6 +337,13 @@ const sortedYields = [...yields].sort((a, b) => {
     display: flex;
     background: var(--color-forest-deep);
     border: 1px solid rgba(245, 237, 216, 0.15); /* Stark structural line */
+    transition: opacity 1s ease, visibility 1s;
+  }
+  
+  .compass-toggle.is-hidden-initially {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
   }
 
   .toggle-btn {
@@ -289,23 +374,43 @@ const sortedYields = [...yields].sort((a, b) => {
     // State Machine Logic for Compass Toggles
     const toggles = document.querySelectorAll('.toggle-btn');
     const views = document.querySelectorAll('.compass-view');
+    const lobbyLinks = document.querySelectorAll('.lobby-link');
+    const masterToggle = document.getElementById('master-toggle');
+
+    function activateView(targetId) {
+      // Update toggle states
+      toggles.forEach(t => {
+        if(t.getAttribute('data-target') === targetId) {
+          t.classList.add('is-active');
+        } else {
+          t.classList.remove('is-active');
+        }
+      });
+
+      // Update view states
+      views.forEach(v => {
+        if (v.id === targetId) {
+          v.classList.add('is-active');
+        } else {
+          v.classList.remove('is-active');
+        }
+      });
+      
+      // If we are leaving the lobby, reveal the master toggle permanently
+      if (targetId !== 'view-lobby' && masterToggle) {
+        masterToggle.classList.remove('is-hidden-initially');
+      }
+    }
 
     toggles.forEach(btn => {
       btn.addEventListener('click', () => {
-        const targetId = btn.getAttribute('data-target');
-        
-        // Update toggle states
-        toggles.forEach(t => t.classList.remove('is-active'));
-        btn.classList.add('is-active');
+        activateView(btn.getAttribute('data-target'));
+      });
+    });
 
-        // Update view states
-        views.forEach(v => {
-          if (v.id === targetId) {
-            v.classList.add('is-active');
-          } else {
-            v.classList.remove('is-active');
-          }
-        });
+    lobbyLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        activateView(link.getAttribute('data-target'));
       });
     });
 
@@ -315,6 +420,27 @@ const sortedYields = [...yields].sort((a, b) => {
       if (compass) {
         compass.classList.remove('is-hidden');
       }
+    });
+
+    // Deep Dive Triggers
+    const streamTriggers = document.querySelectorAll('.stream-btn-trigger');
+    const ledgerRows = document.querySelectorAll('.ledger-row');
+
+    function triggerDeepDive(slug) {
+      if (!slug) return;
+      window.dispatchEvent(new CustomEvent('open-deep-dive', { detail: { slug } }));
+    }
+
+    streamTriggers.forEach(btn => {
+      btn.addEventListener('click', () => {
+        triggerDeepDive(btn.getAttribute('data-slug'));
+      });
+    });
+
+    ledgerRows.forEach(row => {
+      row.addEventListener('click', () => {
+        triggerDeepDive(row.getAttribute('data-slug'));
+      });
     });
   });
 </script>
