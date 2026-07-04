@@ -12,8 +12,8 @@ import OriginMark from './OriginMark.astro';
       [ ALL YIELDS ]
     </button>
 
-    <button id="trigger-dossier" class="hud-telemetry-btn" aria-label="Open Basket">
-      [ BASKET : <span class="dossier-count">0</span> ]
+    <button id="trigger-dossier" class="hud-telemetry-btn" aria-label="Open Basket" onclick="window.dispatchEvent(new Event('open-cart'))">
+      [ BASKET : <span class="dossier-count" id="header-basket-count">0</span> ]
     </button>
   </div>
 </header>
@@ -63,15 +63,15 @@ import OriginMark from './OriginMark.astro';
   }
   
   .hud-telemetry-btn {
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     letter-spacing: 0.1em;
-    color: rgba(245, 237, 216, 0.6);
+    color: var(--color-forest-deep); /* Dark color for light background */
     background: none;
     border: none;
     padding: 0;
     cursor: pointer;
-    transition: color 0.3s ease, opacity 0.4s ease;
+    transition: opacity 0.3s ease;
     white-space: nowrap;
   }
   .hud-telemetry-btn:hover {
@@ -210,7 +210,16 @@ import OriginMark from './OriginMark.astro';
       });
     }
 
-    const triggerYields = document.getElementById('trigger-yields');
+    // Update the Basket count dynamically
+  window.addEventListener('cart-updated', (e) => {
+    const { totalItems } = e.detail;
+    const basketCountEl = document.getElementById('header-basket-count');
+    if (basketCountEl) {
+      basketCountEl.textContent = totalItems;
+    }
+  });
+
+  const triggerYields = document.getElementById('trigger-yields');
     if (triggerYields) {
       triggerYields.addEventListener('click', () => {
         window.dispatchEvent(new Event('open-all-yields-panel'));

@@ -38,7 +38,15 @@ const formatPrice = (price) => {
             </div>
             <h3 class="product-name">{product.data.name}</h3>
             <p class="product-price">{formatPrice(product.data.price)} / {product.data.weight}</p>
-            <button class="add-to-basket-btn" aria-label={`Add ${product.data.name} to basket`}>
+            <button 
+              class="add-to-basket-btn" 
+              data-id={product.id}
+              data-name={product.data.name}
+              data-origin={origin?.data.name || 'Unknown Origin'}
+              data-price={product.data.price}
+              data-weight={product.data.weight}
+              aria-label={`Add ${product.data.name} to basket`}
+            >
               Add to Basket
             </button>
           </div>
@@ -196,4 +204,43 @@ const formatPrice = (price) => {
   .add-to-basket-btn:active {
     transform: scale(0.98);
   }
+
+  /* Micro-animation class when clicked */
+  .add-to-basket-btn.added {
+    background-color: var(--color-forest-deep);
+    color: var(--color-warm-cream);
+    transform: scale(1.02);
+  }
 </style>
+
+<script>
+  import { cartState } from '../scripts/cart.js';
+
+  document.querySelectorAll('.add-to-basket-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const b = e.currentTarget;
+      
+      // Add to cart state
+      cartState.addItem({
+        id: b.dataset.id,
+        name: b.dataset.name,
+        origin: b.dataset.origin,
+        price: parseInt(b.dataset.price, 10),
+        weight: b.dataset.weight
+      });
+
+      // Micro-animation: Change text temporarily to show success
+      const originalText = b.textContent;
+      b.textContent = "Added to Basket";
+      b.classList.add("added");
+
+      setTimeout(() => {
+        b.textContent = originalText;
+        b.classList.remove("added");
+      }, 1000);
+      
+      // Optionally open the cart automatically
+      window.dispatchEvent(new Event('open-cart'));
+    });
+  });
+</script>
