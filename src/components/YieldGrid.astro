@@ -1,0 +1,199 @@
+---
+// src/components/YieldGrid.astro
+import { getCollection } from 'astro:content';
+
+const products = await getCollection('products');
+const origins = await getCollection('origins');
+
+// Helper to format currency
+const formatPrice = (price) => {
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    minimumFractionDigits: 0
+  }).format(price);
+};
+---
+
+<section id="yields" class="yield-grid-section">
+  <div class="section-header">
+    <h2 class="section-title">The Harvest</h2>
+    <p class="section-subtitle">Direct from the Western Ghats</p>
+  </div>
+
+  <div class="product-grid">
+    {products.map((product) => {
+      // Find origin name for the pill
+      const originId = typeof product.data.originSlug === 'object' ? product.data.originSlug.id : product.data.originSlug;
+      const origin = origins.find(o => o.id === originId);
+      
+      return (
+        <div class="product-card">
+          <div class="product-image-placeholder">
+            <span class="image-text">No Image</span>
+          </div>
+          <div class="product-info">
+            <div class="product-meta">
+              <span class="origin-pill">{origin?.data.name || 'Unknown Origin'}</span>
+            </div>
+            <h3 class="product-name">{product.data.name}</h3>
+            <p class="product-price">{formatPrice(product.data.price)} / {product.data.weight}</p>
+            <button class="add-to-basket-btn" aria-label={`Add ${product.data.name} to basket`}>
+              Add to Basket
+            </button>
+          </div>
+        </div>
+      );
+    })}
+  </div>
+</section>
+
+<style>
+  .yield-grid-section {
+    padding: var(--space-4xl) var(--space-xl);
+    background-color: var(--color-warm-cream);
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: var(--space-3xl);
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: var(--color-forest-deep);
+    font-weight: 400;
+  }
+
+  .section-subtitle {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-forest-deep);
+    opacity: 0.6;
+    margin-top: var(--space-sm);
+  }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-2xl);
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  @media (min-width: 768px) {
+    .product-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .product-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (min-width: 1440px) {
+    .product-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .product-card {
+    display: flex;
+    flex-direction: column;
+    background: transparent;
+    transition: transform 0.3s ease;
+  }
+
+  .product-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .product-image-placeholder {
+    width: 100%;
+    aspect-ratio: 4/5;
+    background-color: rgba(13, 30, 17, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--space-md);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .image-text {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-forest-deep);
+    opacity: 0.3;
+    text-transform: uppercase;
+  }
+
+  .product-info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  .product-meta {
+    margin-bottom: var(--space-xs);
+  }
+
+  .origin-pill {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-forest-deep);
+    border: 1px solid rgba(13, 30, 17, 0.2);
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+
+  .product-name {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    color: var(--color-forest-deep);
+    font-weight: 400;
+    margin-bottom: var(--space-xs);
+    line-height: 1.2;
+  }
+
+  .product-price {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--color-forest-deep);
+    opacity: 0.8;
+    margin-bottom: var(--space-lg);
+  }
+
+  .add-to-basket-btn {
+    margin-top: auto;
+    width: 100%;
+    min-height: 48px;
+    background-color: transparent;
+    border: 1px solid var(--color-forest-deep);
+    color: var(--color-forest-deep);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+  }
+
+  .add-to-basket-btn:hover {
+    background-color: var(--color-forest-deep);
+    color: var(--color-warm-cream);
+  }
+
+  .add-to-basket-btn:active {
+    transform: scale(0.98);
+  }
+</style>

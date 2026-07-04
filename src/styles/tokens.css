@@ -2,9 +2,27 @@
   --color-forest-deep: #0c1509;
   --color-warm-cream: #F5EDD8;
   --color-gold: #A67C3C;
+  --color-ruby: #8a2a2b;
+  --color-copper: #b87333;
+  --color-silver: #c0c0c0;
+  --color-primary: #123456; /* Added for origin marks fallback */
+
+  --font-display: 'Cormorant Garamond', serif;
   --font-institutional: 'Cinzel', serif;
   --font-narrative: 'Cormorant Garamond', serif;
   --font-evidence: 'DM Mono', monospace;
+  --font-mono: 'DM Mono', monospace;
+
+  /* Spacing Tokens for UI Consistency */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 0.75rem;
+  --space-lg: 1rem;
+  --space-xl: 1.5rem;
+  --space-2xl: 2rem;
+  --space-3xl: 3rem;
+  --space-4xl: 4rem;
+  
   /* Fluid typography: 24px on mobile, scaling with viewport, up to 40px on large screens */
   --text-size-stratum-title: clamp(1.5rem, 5vw, 2.5rem);
   --stratum-text-max-width: 85vw;

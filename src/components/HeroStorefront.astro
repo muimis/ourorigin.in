@@ -1,0 +1,90 @@
+---
+// src/components/HeroStorefront.astro
+---
+<section class="hero-storefront">
+  <div class="hero-content">
+    <h1 class="hero-title">The Western Ghats, <br/>Uncut.</h1>
+    <p class="hero-subtitle">Five origins. Twelve yields. Experienceable at the source.</p>
+    <a href="#yields" class="cta-primary">Shop the Harvest</a>
+  </div>
+</section>
+
+<style>
+  .hero-storefront {
+    position: relative;
+    width: 100%;
+    min-height: 90vh; /* Leave room for header / next section */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-warm-cream);
+    overflow: hidden;
+    padding-top: var(--space-4xl); /* Account for header */
+  }
+
+  /* Optional: subtle noise overlay for premium feel */
+  .hero-storefront::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.03;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+
+  .hero-content {
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    padding: var(--space-xl);
+    max-width: 1200px;
+    width: 100%;
+  }
+
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 10vw, 8rem);
+    line-height: 1;
+    color: var(--color-forest-deep);
+    margin-bottom: var(--space-lg);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-subtitle {
+    font-family: var(--font-mono);
+    font-size: clamp(0.875rem, 2vw, 1rem);
+    color: var(--color-forest-deep);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-2xl);
+    opacity: 0.8;
+  }
+
+  .cta-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 2.5rem;
+    background-color: var(--color-forest-deep);
+    color: var(--color-warm-cream);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    border-radius: 9999px;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease;
+    /* Minimum touch target 48px */
+    min-height: 48px;
+  }
+
+  .cta-primary:hover {
+    transform: translateY(-2px);
+    background-color: #0d1e11; /* slightly darker forest */
+  }
+
+  .cta-primary:active {
+    transform: translateY(0);
+  }
+</style>

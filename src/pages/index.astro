@@ -1,11 +1,10 @@
 ---
-import OriginMark from '../components/OriginMark.astro';
 import '../styles/tokens.css';
-import LivingMatrix from '../components/LivingMatrix.astro';
 import CommandCenter from '../components/CommandCenter.astro';
-import Carousel from '../components/Carousel.astro';
 import LaunchScreen from '../components/LaunchScreen.astro';
-import AllYieldsPanel from '../components/AllYieldsPanel.astro';
+import HeroStorefront from '../components/HeroStorefront.astro';
+import OriginCarousel from '../components/OriginCarousel.astro';
+import YieldGrid from '../components/YieldGrid.astro';
 ---
 
 <!DOCTYPE html>
@@ -55,56 +54,61 @@ import AllYieldsPanel from '../components/AllYieldsPanel.astro';
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Cormorant+Garamond:wght@300;400;500&family=DM+Mono:ital,wght@0,300;0,400;0,500&display=swap" rel="stylesheet">
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            background-color: var(--color-forest-deep);
-            color: var(--color-warm-cream);
-        }
-        
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border-width: 0;
-        }
-
-        .skip-nav {
-            position: absolute;
-            top: -100%;
-            left: 0;
-            background: var(--color-warm-cream);
-            color: var(--color-forest-deep);
-            padding: 0.5rem 1rem;
-            font-family: var(--font-evidence);
-            font-size: 0.875rem;
-            z-index: 9999;
-        }
-        .skip-nav:focus {
-            top: 0;
-        }
-    
-        /* Allow native scrolling for scrollytelling */
-        body { overflow-x: hidden; overflow-y: auto; }
-    </style>
 </head>
-<body>
-    <a href="#main-content" class="skip-nav">Skip to main content</a>
+<body class="theme-default">
     <LaunchScreen />
     
-    <main id="main-content">
-      <h1 class="sr-only">OurOrigin — The Living Matrix — From the Western Ghats</h1>
-      <LivingMatrix />
-      <Carousel />
-      <AllYieldsPanel />
-    </main>
+    <div id="main-content" style="opacity: 0;">
+        <CommandCenter />
+        
+        <main>
+            <HeroStorefront />
+            <OriginCarousel />
+            <YieldGrid />
+        </main>
+        
+        <footer class="site-footer">
+            <div class="footer-content">
+                <p>&copy; {new Date().getFullYear()} OurOrigin. From the source.</p>
+            </div>
+        </footer>
+    </div>
 
-    <CommandCenter />
-  </body>
+    <!-- Add Locomotive Scroll or keep GSAP ScrollTrigger for basic things if needed later, but we've removed complex scrollytelling -->
+    <script>
+      import { gsap } from 'gsap';
+      import { ScrollTrigger } from 'gsap/ScrollTrigger';
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Simple fade in for elements as they scroll into view
+      document.addEventListener('DOMContentLoaded', () => {
+        // We leave it to LaunchScreen timeline to fade in the main-content
+      });
+    </script>
+</body>
 </html>
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: var(--color-warm-cream);
+        color: var(--color-forest-deep);
+        font-family: var(--font-mono);
+        overflow-x: hidden;
+    }
+    
+    .site-footer {
+        padding: var(--space-2xl) var(--space-xl);
+        text-align: center;
+        background-color: var(--color-warm-cream);
+        border-top: 1px solid rgba(13, 30, 17, 0.1);
+    }
+    
+    .site-footer p {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        opacity: 0.6;
+    }
+</style>
