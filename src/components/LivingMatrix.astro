@@ -371,10 +371,7 @@ const hudData = {
     opacity: 0;
     z-index: var(--index);
     display: flex;
-    align-items: center;
-    justify-content: center;
     box-sizing: border-box;
-    padding-bottom: 0;
   }
   
   .matrix-band:last-child {
@@ -396,11 +393,12 @@ const hudData = {
     align-items: flex-start;
     justify-content: center;
     text-align: left;
-    height: 100%;
+    min-height: 100vh;
     width: 100%;
-    overflow: hidden;
-    padding: 2vh clamp(2.4rem, 5vw, 3.5rem); /* ~10mm inward margin on mobile */
+    padding: 120px clamp(1.5rem, 5vw, 3.5rem) 100px;
     box-sizing: border-box;
+    position: relative;
+    z-index: 2;
   }
   
   .title-group {
@@ -646,16 +644,36 @@ const hudData = {
     transition: opacity var(--duration-standard) ease;
   }
 
-  /* Inline E-Commerce Products */
+  /* Inline E-Commerce Products (Mobile First) */
   .inline-products-gallery {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 1.5rem;
     margin-top: 2.5rem;
     width: 100%;
-    max-width: 800px;
+    max-width: 100vw;
     position: relative;
-    z-index: 10;
+    z-index: 20;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 1rem;
+    -webkit-overflow-scrolling: touch;
+    /* Hide scrollbar for cleaner look */
+    scrollbar-width: none; 
+  }
+  
+  .inline-products-gallery::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Desktop override */
+  @media (min-width: 769px) {
+    .inline-products-gallery {
+      flex-wrap: wrap;
+      overflow-x: visible;
+      scroll-snap-type: none;
+      max-width: 800px;
+    }
   }
 
   .inline-product-card {
@@ -667,9 +685,17 @@ const hudData = {
     background: rgba(12, 21, 9, 0.4);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    flex: 1 1 250px;
+    flex: 0 0 85%; /* Mobile width */
+    max-width: 320px;
+    scroll-snap-align: start;
     border-radius: 2px;
     transition: border-color 0.4s ease, background 0.4s ease, transform 0.4s ease;
+  }
+
+  @media (min-width: 769px) {
+    .inline-product-card {
+      flex: 1 1 250px;
+    }
   }
 
   .inline-product-card:hover:not(.locked) {
