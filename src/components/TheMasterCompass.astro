@@ -1,0 +1,335 @@
+---
+import OriginMark from './OriginMark.astro';
+import { getCollection } from 'astro:content';
+
+// We fetch the yields to populate the views
+// For Horizon, we might filter by a 'status' field in the future, but we'll use all for now as mock data
+const yields = await getCollection('yields');
+
+// Sort alphabetically for the Index
+const sortedYields = [...yields].sort((a, b) => a.data.title.localeCompare(b.data.title));
+---
+
+<div id="master-compass" class="master-compass is-hidden">
+  
+  <!-- Fixed Top Left: Origin Mark -->
+  <div class="compass-header">
+    <OriginMark variant="gold" size={32} animate={false} />
+  </div>
+
+  <!-- VIEW A: THE YIELD (Active Harvests) -->
+  <div id="view-yield" class="compass-view is-active">
+    <div class="horizontal-stream">
+      {yields.map((y, index) => (
+        <div class="stream-item">
+          <div class="artifact-texture" style={`background-image: url('${y.data.image}')`}>
+            <div class="texture-overlay"></div>
+          </div>
+          <div class="stream-content">
+            <h2 class="stream-title">{y.data.title}</h2>
+            <p class="stream-collective">[{y.data.origin.toUpperCase()} COLLECTIVE]</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <!-- VIEW B: THE HORIZON (Future Harvests) -->
+  <div id="view-horizon" class="compass-view">
+    <div class="horizontal-stream">
+      <!-- Mocking future harvests for now -->
+      <div class="stream-item">
+        <div class="artifact-texture" style="background: linear-gradient(135deg, #1a150e, #0a0805)">
+          <div class="texture-overlay"></div>
+        </div>
+        <div class="stream-content">
+          <h2 class="stream-title">Winter Curing Vanilla</h2>
+          <p class="stream-collective">[IDUKKI HORIZON]</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW C: THE INDEX (Typographic Ledger) -->
+  <div id="view-index" class="compass-view">
+    <div class="ledger-container">
+      <div class="ledger-header">
+        <span class="col-yield">YIELD</span>
+        <span class="col-collective">COLLECTIVE</span>
+        <span class="col-status">STATUS</span>
+      </div>
+      <div class="ledger-list">
+        {sortedYields.map((y) => (
+          <div class="ledger-row" data-slug={y.slug}>
+            <span class="col-yield">{y.data.title}</span>
+            <span class="col-collective">{y.data.origin}</span>
+            <span class="col-status status-active">ACTIVE</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- Fixed Bottom Center: Master Toggle -->
+  <div class="compass-toggle">
+    <button class="toggle-btn is-active" data-target="view-yield">YIELD</button>
+    <button class="toggle-btn" data-target="view-horizon">HORIZON</button>
+    <button class="toggle-btn" data-target="view-index">INDEX</button>
+  </div>
+
+</div>
+
+<style>
+  .master-compass {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background-color: #010201;
+    color: #F5EDD8;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 1.5s ease, visibility 1.5s;
+  }
+  
+  .master-compass.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .compass-header {
+    position: absolute;
+    top: 24px;
+    left: clamp(1.5rem, 5vw, 3.5rem);
+    z-index: 100;
+  }
+
+  /* Views Base */
+  .compass-view {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s;
+  }
+
+  .compass-view.is-active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  /* HORIZONTAL STREAM (Yield & Horizon) */
+  .horizontal-stream {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .horizontal-stream::-webkit-scrollbar { display: none; }
+
+  .stream-item {
+    position: relative;
+    flex: 0 0 100vw;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .artifact-texture {
+    position: absolute;
+    inset: -5%; /* Prevent edge bleed on mobile scroll */
+    background-size: cover;
+    background-position: center;
+    filter: saturate(0.8) contrast(1.2);
+    z-index: 1;
+  }
+
+  .texture-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(1, 2, 1, 0.3) 0%, rgba(1, 2, 1, 0.9) 100%);
+  }
+
+  .stream-content {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 0 2rem;
+  }
+
+  .stream-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3rem, 8vw, 8rem);
+    font-weight: 300;
+    line-height: 1;
+    margin: 0 0 1rem 0;
+    color: #F5EDD8;
+    text-shadow: 0 10px 40px rgba(0,0,0,0.8);
+  }
+
+  .stream-collective {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.4em;
+    color: var(--color-gold);
+    margin: 0;
+    text-transform: uppercase;
+  }
+
+  /* THE INDEX (Brutalist Ledger) */
+  .ledger-container {
+    width: 100%;
+    height: 100%;
+    padding: 120px clamp(1.5rem, 5vw, 4rem) 120px clamp(1.5rem, 5vw, 4rem);
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+  .ledger-container::-webkit-scrollbar { display: none; }
+
+  .ledger-header {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    border-bottom: 1px solid rgba(245, 237, 216, 0.2);
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: rgba(245, 237, 216, 0.5);
+  }
+
+  .ledger-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ledger-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    align-items: baseline;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid rgba(245, 237, 216, 0.05);
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  .ledger-row:hover {
+    background: rgba(245, 237, 216, 0.03);
+  }
+
+  .ledger-row .col-yield {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 4vw, 4rem);
+    font-weight: 300;
+    line-height: 1;
+    color: #F5EDD8;
+  }
+
+  .ledger-row .col-collective {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+  }
+
+  .ledger-row .col-status {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+  }
+  .status-active { color: #8F9A83; }
+
+  @media (max-width: 768px) {
+    .ledger-header {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+      display: none; /* Hide header on mobile for purer brutalism */
+    }
+    .ledger-row {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+      padding: 2rem 0;
+    }
+  }
+
+  /* BOTTOM MASTER TOGGLE */
+  .compass-toggle {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: flex;
+    gap: 1px; /* Creates the border effect between buttons */
+    background: rgba(245, 237, 216, 0.1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 1px;
+    border-radius: 100px;
+  }
+
+  .toggle-btn {
+    background: transparent;
+    border: none;
+    padding: 12px 24px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: rgba(245, 237, 216, 0.5);
+    cursor: pointer;
+    border-radius: 100px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .toggle-btn.is-active {
+    background: #F5EDD8;
+    color: #010201;
+  }
+</style>
+
+<script>
+  // State Machine Logic for Compass Toggles
+  const toggles = document.querySelectorAll('.toggle-btn');
+  const views = document.querySelectorAll('.compass-view');
+
+  toggles.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.getAttribute('data-target');
+      
+      // Update toggle states
+      toggles.forEach(t => t.classList.remove('is-active'));
+      btn.classList.add('is-active');
+
+      // Update view states
+      views.forEach(v => {
+        if (v.id === targetId) {
+          v.classList.add('is-active');
+        } else {
+          v.classList.remove('is-active');
+        }
+      });
+    });
+  });
+
+  // State 0 -> State 1 Transition Event Listener
+  window.addEventListener('enter-state-1', () => {
+    const compass = document.getElementById('master-compass');
+    if (compass) {
+      compass.classList.remove('is-hidden');
+    }
+  });
+</script>

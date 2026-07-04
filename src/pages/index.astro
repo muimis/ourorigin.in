@@ -1,6 +1,7 @@
 ---
 import '../styles/tokens.css';
 import TheThreshold from '../components/TheThreshold.astro';
+import TheMasterCompass from '../components/TheMasterCompass.astro';
 ---
 
 <!DOCTYPE html>
@@ -34,8 +35,11 @@ import TheThreshold from '../components/TheThreshold.astro';
 </head>
 <body class="theme-default">
     <main>
-        <!-- The Presentation: Phase 1 -->
+        <!-- State 0: The Presentation -->
         <TheThreshold />
+        
+        <!-- State 1: The Global Canvas -->
+        <TheMasterCompass />
     </main>
 </body>
 </html>

@@ -183,8 +183,15 @@
       // Fire the cinematic transition
       container.classList.add('is-entering');
       
-      // In a real flow, this would route to Phase 2 after the transition completes.
-      // For the presentation, we just let the CSS bleed animation finish.
+      // Dispatch State 1 transition just before the violent green bleed finishes (2s)
+      setTimeout(() => {
+        window.dispatchEvent(new Event('enter-state-1'));
+      }, 2000);
+      
+      // Remove Threshold from DOM flow after animation finishes completely
+      setTimeout(() => {
+        container.style.display = 'none';
+      }, 3000);
     });
   }
 </script>
