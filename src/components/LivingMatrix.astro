@@ -334,56 +334,26 @@ const hudData = {
       });
     });
 
+    // Use IntersectionObserver to render HUD lines when a band comes into view
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Add a subtle class for any enter animations if needed
+          entry.target.classList.add('in-view');
+        }
+      });
+    }, { threshold: 0.3 });
+
     document.querySelectorAll('.matrix-band').forEach(band => {
+      observer.observe(band);
+      
+      // Keep click navigation for the whole band
       band.addEventListener('click', (e) => {
         if (e.target.closest('.carousel-trigger')) return;
         if (e.target.closest('.origin-action')) return;
-
-        const hasHover = window.matchMedia('(hover: hover)').matches;
-        
-        if (!hasHover) {
-
-          e.preventDefault();
-          const bandsContainer = document.querySelector('.matrix-bands');
-          
-          if (!band.classList.contains('expanded')) {
-            // Pulse animation centered on tap coordinates
-            const pulse = band.querySelector('.tap-pulse-indicator');
-            if (pulse) {
-              const rect = band.getBoundingClientRect();
-              const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-              const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-              const x = clientX - rect.left;
-              const y = clientY - rect.top;
-              pulse.style.left = `${x}px`;
-              pulse.style.top = `${y}px`;
-              
-              pulse.classList.add('pulse-active');
-              setTimeout(() => {
-                pulse.classList.remove('pulse-active');
-              }, 300);
-            }
-
-            document.querySelectorAll('.matrix-band.expanded').forEach(b => {
-              b.classList.remove('expanded');
-              b.setAttribute('aria-expanded', 'false');
-            });
-            bandsContainer.classList.add('has-expanded');
-            document.body.classList.add('matrix-expanded');
-            
-            band.classList.add('expanded');
-            band.setAttribute('aria-expanded', 'true');
-          } else {
-            band.classList.remove('expanded');
-            band.setAttribute('aria-expanded', 'false');
-            bandsContainer.classList.remove('has-expanded');
-            document.body.classList.remove('matrix-expanded');
-          }
-        } else {
-          const href = band.getAttribute('data-href');
-          if (href && href !== '#') {
-            window.location.href = href;
-          }
+        const href = band.getAttribute('data-href');
+        if (href && href !== '#') {
+          window.location.href = href;
         }
       });
     });
@@ -393,11 +363,12 @@ const hudData = {
 <style>
   .living-matrix-container {
     width: 100%;
-    height: 100vh;
-    height: 100dvh;
+    min-height: 100vh;
     background-color: var(--color-forest-deep);
     position: relative;
-    overflow: hidden;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
     padding: 0 0 48px 0; 
     box-sizing: border-box;
   }
@@ -405,7 +376,6 @@ const hudData = {
   .matrix-bands {
     display: flex;
     flex-direction: column;
-    height: 100%;
     width: 100%;
   }
   
@@ -418,10 +388,9 @@ const hudData = {
   .matrix-band {
     position: relative;
     width: 100%;
-    min-height: 0;
-    background-color: #0c1509; /* Solid base color perfectly blocks the overlapping plates below it */
-    flex: 0 0 calc(20% + 60px); /* Strict math for equal visual distribution */
-    transition: flex 700ms cubic-bezier(0.22, 1, 0.36, 1), background-color var(--duration-standard) ease, color var(--duration-standard) ease, opacity var(--duration-standard) ease, transform var(--duration-standard) ease;
+    min-height: 100vh;
+    background-color: #0c1509; 
+    transition: background-color var(--duration-standard) ease, color var(--duration-standard) ease, opacity var(--duration-standard) ease, transform var(--duration-standard) ease;
     color: var(--color-warm-cream);
     text-decoration: none;
     opacity: 0;
@@ -431,60 +400,19 @@ const hudData = {
     justify-content: center;
     box-sizing: border-box;
     padding-bottom: 0;
-    cursor: pointer;
   }
   
   .matrix-band:last-child {
-    flex: 0 0 20%;
     border-bottom: none;
   }
   
   .matrix-band:not(:first-child) {
-    margin-top: -60px; /* Pulls the plate up to overlap the one above it */
-    padding-top: 60px; /* Offsets content so it remains visually centered */
+    margin-top: -100px; /* Overlap slightly for topographic effect */
+    padding-top: 100px;
   }
   
   .matrix-band:not(:last-child) {
-    padding-bottom: 60px; /* Offsets the area covered by the overlapping plate below it */
-  }
-  
-  /* Expansion Math */
-  .matrix-bands.has-expanded .matrix-band:not(.expanded) {
-    flex: 0 0 calc(12.5% + 60px) !important;
-  }
-  .matrix-bands.has-expanded .matrix-band:not(.expanded):last-child {
-    flex: 0 0 12.5% !important;
-  }
-
-  .matrix-band.expanded {
-    flex: 0 0 calc(50% + 60px) !important;
-    background-color: #121d0e;
-    color: var(--color-pure-white);
-    outline: none;
-    animation-play-state: paused;
-  }
-  .matrix-band.expanded:last-child {
-    flex: 0 0 50% !important;
-  }
-  
-  @media (hover: hover) {
-    .matrix-bands:hover .matrix-band:not(:hover) {
-      flex: 0 0 calc(12.5% + 60px) !important;
-    }
-    .matrix-bands:hover .matrix-band:not(:hover):last-child {
-      flex: 0 0 12.5% !important;
-    }
-
-    .matrix-band:hover, .matrix-band:focus-visible {
-      flex: 0 0 calc(50% + 60px) !important;
-      background-color: #121d0e;
-      color: var(--color-pure-white);
-      outline: none;
-      animation-play-state: paused;
-    }
-    .matrix-band:hover:last-child, .matrix-band:focus-visible:last-child {
-      flex: 0 0 50% !important;
-    }
+    padding-bottom: 100px; 
   }
   
   .band-content {
@@ -561,26 +489,10 @@ const hudData = {
   }
   
   .band-reveal {
-    height: 0;
-    opacity: 0;
-    overflow: hidden;
-    transition: height var(--duration-slow) var(--ease-settle), opacity var(--duration-slow) var(--ease-settle), margin var(--duration-slow) var(--ease-settle);
-  }
-  
-  .matrix-band.expanded .band-reveal {
     height: auto;
     opacity: 1;
-    margin-top: clamp(0.3rem, 1vh, 1.5rem);
+    margin-top: 1.5rem;
     overflow: visible;
-  }
-  
-  @media (hover: hover) {
-    .matrix-band:hover .band-reveal, .matrix-band:focus-visible .band-reveal {
-      height: auto;
-      opacity: 1;
-      margin-top: 1.5rem;
-      overflow: visible;
-    }
   }
   
   .origin-meta {

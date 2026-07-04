@@ -30,7 +30,7 @@ import OriginMark from './OriginMark.astro';
 <style>
   #command-center-trigger {
     position: fixed;
-    bottom: 8px;
+    top: 20px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 8000;
@@ -44,10 +44,10 @@ import OriginMark from './OriginMark.astro';
   
   .hud-telemetry-btn {
     position: fixed;
-    bottom: 18px;
+    top: 24px;
     z-index: 8000;
     font-family: 'DM Mono', monospace;
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 0.1em;
     color: rgba(245, 237, 216, 0.6);
     background: none;
@@ -72,27 +72,7 @@ import OriginMark from './OriginMark.astro';
     opacity: 1 !important;
   }
   
-  /* When a matrix plate is expanded, move the trigger to the top left */
-  :global(body.matrix-expanded) #command-center-trigger {
-    bottom: auto;
-    top: 40px; /* 10mm */
-    left: 40px; /* 10mm */
-    transform: none;
-  }
-  :global(body.matrix-expanded) #command-center-trigger:hover {
-    transform: scale(1.1);
-  }
-  :global(body.matrix-expanded) .hud-telemetry-btn {
-    opacity: 0;
-    pointer-events: none;
-  }
-  
-  @media (max-width: 768px) {
-    :global(body.matrix-expanded) #command-center-trigger {
-      top: 24px;
-      left: 24px;
-    }
-  }
+  /* Matrix expanded overrides removed since scrolling replaces it */
 
   #command-center-overlay {
     position: fixed;
