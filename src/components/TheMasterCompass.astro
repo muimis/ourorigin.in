@@ -84,8 +84,8 @@ const sortedYields = [...yields].sort((a, b) => a.data.title.localeCompare(b.dat
     position: fixed;
     inset: 0;
     z-index: 50;
-    background-color: #010201;
-    color: #F5EDD8;
+    background-color: var(--color-forest-deep);
+    color: var(--color-warm-cream);
     opacity: 1;
     visibility: visible;
     transition: opacity 1.5s ease, visibility 1.5s;
@@ -99,8 +99,9 @@ const sortedYields = [...yields].sort((a, b) => a.data.title.localeCompare(b.dat
 
   .compass-header {
     position: absolute;
-    top: 24px;
-    left: clamp(1.5rem, 5vw, 3.5rem);
+    top: 32px;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 100;
   }
 
@@ -172,17 +173,17 @@ const sortedYields = [...yields].sort((a, b) => a.data.title.localeCompare(b.dat
   }
 
   .stream-title {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: var(--font-display);
     font-size: clamp(3rem, 8vw, 8rem);
     font-weight: 300;
     line-height: 1;
     margin: 0 0 1rem 0;
-    color: #F5EDD8;
+    color: var(--color-warm-cream);
     text-shadow: 0 10px 40px rgba(0,0,0,0.8);
   }
 
   .stream-collective {
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.75rem;
     letter-spacing: 0.4em;
     color: var(--color-gold);
@@ -206,7 +207,7 @@ const sortedYields = [...yields].sort((a, b) => a.data.title.localeCompare(b.dat
     border-bottom: 1px solid rgba(245, 237, 216, 0.2);
     padding-bottom: 1rem;
     margin-bottom: 2rem;
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.65rem;
     letter-spacing: 0.3em;
     color: rgba(245, 237, 216, 0.5);
@@ -231,15 +232,15 @@ const sortedYields = [...yields].sort((a, b) => a.data.title.localeCompare(b.dat
   }
 
   .ledger-row .col-yield {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: var(--font-display);
     font-size: clamp(2rem, 4vw, 4rem);
     font-weight: 300;
     line-height: 1;
-    color: #F5EDD8;
+    color: var(--color-warm-cream);
   }
 
   .ledger-row .col-collective {
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.75rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
@@ -247,7 +248,7 @@ const sortedYields = [...yields].sort((a, b) => a.data.title.localeCompare(b.dat
   }
 
   .ledger-row .col-status {
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.75rem;
     letter-spacing: 0.2em;
   }
@@ -274,62 +275,64 @@ const sortedYields = [...yields].sort((a, b) => a.data.title.localeCompare(b.dat
     transform: translateX(-50%);
     z-index: 100;
     display: flex;
-    gap: 1px; /* Creates the border effect between buttons */
-    background: rgba(245, 237, 216, 0.1);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    padding: 1px;
-    border-radius: 100px;
+    background: var(--color-forest-deep);
+    border: 1px solid rgba(245, 237, 216, 0.15); /* Stark structural line */
   }
 
   .toggle-btn {
     background: transparent;
     border: none;
-    padding: 12px 24px;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.2em;
-    color: rgba(245, 237, 216, 0.5);
+    border-right: 1px solid rgba(245, 237, 216, 0.15); /* Gauge separators */
+    padding: 16px 32px;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    color: rgba(245, 237, 216, 0.4);
     cursor: pointer;
-    border-radius: 100px;
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
+  .toggle-btn:last-child {
+    border-right: none;
+  }
+
   .toggle-btn.is-active {
-    background: #F5EDD8;
-    color: #010201;
+    background: var(--color-warm-cream);
+    color: var(--color-forest-deep);
   }
 </style>
 
 <script>
-  // State Machine Logic for Compass Toggles
-  const toggles = document.querySelectorAll('.toggle-btn');
-  const views = document.querySelectorAll('.compass-view');
+  document.addEventListener('DOMContentLoaded', () => {
+    // State Machine Logic for Compass Toggles
+    const toggles = document.querySelectorAll('.toggle-btn');
+    const views = document.querySelectorAll('.compass-view');
 
-  toggles.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const targetId = btn.getAttribute('data-target');
-      
-      // Update toggle states
-      toggles.forEach(t => t.classList.remove('is-active'));
-      btn.classList.add('is-active');
+    toggles.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetId = btn.getAttribute('data-target');
+        
+        // Update toggle states
+        toggles.forEach(t => t.classList.remove('is-active'));
+        btn.classList.add('is-active');
 
-      // Update view states
-      views.forEach(v => {
-        if (v.id === targetId) {
-          v.classList.add('is-active');
-        } else {
-          v.classList.remove('is-active');
-        }
+        // Update view states
+        views.forEach(v => {
+          if (v.id === targetId) {
+            v.classList.add('is-active');
+          } else {
+            v.classList.remove('is-active');
+          }
+        });
       });
     });
-  });
 
-  // State 0 -> State 1 Transition Event Listener
-  window.addEventListener('enter-state-1', () => {
-    const compass = document.getElementById('master-compass');
-    if (compass) {
-      compass.classList.remove('is-hidden');
-    }
+    // State 0 -> State 1 Transition Event Listener
+    window.addEventListener('enter-state-1', () => {
+      const compass = document.getElementById('master-compass');
+      if (compass) {
+        compass.classList.remove('is-hidden');
+      }
+    });
   });
 </script>
