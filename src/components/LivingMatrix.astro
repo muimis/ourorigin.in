@@ -31,21 +31,12 @@ const matrixCopy = {
 
 const products = await getCollection('products');
 
-const anchorMap: Record<string, { href: string, name: string }> = {};
+const productsByOrigin: Record<string, any[]> = {};
 orderedOrigins.forEach(origin => {
-  if (origin.data.slug === 'malabar-coast') {
-    anchorMap[origin.data.slug] = { href: '#', name: '' };
-  } else {
-    const anchorProduct = products.find(p => {
-      const pOriginId = typeof p.data.originSlug === 'object' ? p.data.originSlug.id : p.data.originSlug;
-      return pOriginId === origin.id && p.data.isAnchorProduct;
-    });
-    const firstProduct = anchorProduct || products.find(p => {
-      const pOriginId = typeof p.data.originSlug === 'object' ? p.data.originSlug.id : p.data.originSlug;
-      return pOriginId === origin.id;
-    });
-    anchorMap[origin.data.slug] = firstProduct ? { href: `/origins/${origin.id}/${firstProduct.id}`, name: firstProduct.data.name } : { href: '#', name: '' };
-  }
+  productsByOrigin[origin.data.slug] = products.filter(p => {
+    const pOriginId = typeof p.data.originSlug === 'object' ? p.data.originSlug.id : p.data.originSlug;
+    return pOriginId === origin.id;
+  });
 });
 const originMarks = {
   'wayanad': 'gold',
@@ -163,51 +154,27 @@ const hudData = {
                 <p class="band-partner-note"><span class="partner-highlight">The people who grow this</span> are partners, not suppliers.</p>
               )}
               
-              {origin.data.slug === 'malabar-coast' ? (
-                <div class="hud-button-container locked-origin">
-                  <div class="hud-decorator hud-top-right">
-                    <svg width="40" height="10" style="overflow: visible;">
-                      <path d="M 0 5 L 40 5" stroke="rgba(166, 124, 60, 0.4)" stroke-width="1" fill="none" />
-                      <g transform="translate(0, 5)">
-                        <circle r="4" stroke="rgba(166, 124, 60, 0.6)" stroke-width="1" fill="none" style="animation: hudPulse 2.5s infinite cubic-bezier(0.2, 0.8, 0.2, 1);" />
-                        <circle r="1.5" fill="rgba(166, 124, 60, 1)" />
-                      </g>
-                    </svg>
+              <div class="inline-products-gallery">
+                {productsByOrigin[origin.data.slug]?.length > 0 ? (
+                  productsByOrigin[origin.data.slug].map((p) => (
+                    <div class="inline-product-card">
+                      <div class="product-info">
+                        <h3 class="product-name">{p.data.name}</h3>
+                        <p class="product-botanical">{p.data.botanicalName}</p>
+                        <p class="product-price">FROM INR {Math.min(...p.data.sizes.map(s => s.priceINR))}</p>
+                      </div>
+                      <a href={`/origins/${origin.id}/${p.id}`} class="buy-button">ADD TO BASKET</a>
+                    </div>
+                  ))
+                ) : (
+                  <div class="inline-product-card locked">
+                    <div class="product-info">
+                      <h3 class="product-name" style="color: rgba(245, 237, 216, 0.4)">HARVEST PENDING</h3>
+                      <p class="product-botanical" style="color: rgba(245, 237, 216, 0.3)">Malabar Coast</p>
+                    </div>
                   </div>
-                  <span class="origin-action">{copy.cta}</span>
-                  <div class="hud-decorator hud-bottom-left">
-                    <svg width="40" height="10" style="overflow: visible;">
-                      <path d="M 0 5 L 40 5" stroke="rgba(166, 124, 60, 0.4)" stroke-width="1" fill="none" />
-                      <g transform="translate(40, 5)">
-                        <circle r="4" stroke="rgba(166, 124, 60, 0.6)" stroke-width="1" fill="none" style="animation: hudPulse 2.5s infinite cubic-bezier(0.2, 0.8, 0.2, 1);" />
-                        <circle r="1.5" fill="rgba(166, 124, 60, 1)" />
-                      </g>
-                    </svg>
-                  </div>
-                </div>
-              ) : (
-                <a href={linkData.href} class="hud-button-container" aria-label={`Enter ${origin.data.name}`}>
-                  <div class="hud-decorator hud-top-right">
-                    <svg width="40" height="10" style="overflow: visible;">
-                      <path d="M 0 5 L 40 5" stroke="rgba(166, 124, 60, 0.4)" stroke-width="1" fill="none" />
-                      <g transform="translate(0, 5)">
-                        <circle r="4" stroke="rgba(166, 124, 60, 0.6)" stroke-width="1" fill="none" style="animation: hudPulse 2.5s infinite cubic-bezier(0.2, 0.8, 0.2, 1);" />
-                        <circle r="1.5" fill="rgba(166, 124, 60, 1)" />
-                      </g>
-                    </svg>
-                  </div>
-                  <span class="origin-action">{copy.cta}</span>
-                  <div class="hud-decorator hud-bottom-left">
-                    <svg width="40" height="10" style="overflow: visible;">
-                      <path d="M 0 5 L 40 5" stroke="rgba(166, 124, 60, 0.4)" stroke-width="1" fill="none" />
-                      <g transform="translate(40, 5)">
-                        <circle r="4" stroke="rgba(166, 124, 60, 0.6)" stroke-width="1" fill="none" style="animation: hudPulse 2.5s infinite cubic-bezier(0.2, 0.8, 0.2, 1);" />
-                        <circle r="1.5" fill="rgba(166, 124, 60, 1)" />
-                      </g>
-                    </svg>
-                  </div>
-                </a>
-              )}
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -216,32 +183,10 @@ const hudData = {
 </div>
 
 <script>
-  import gsap from 'gsap';
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-  class LivingMatrixOrchestrator {
-    constructor() {
-      this.init();
-    }
-
-    init() {
-      const bands = document.querySelectorAll('.matrix-band');
-      const originNames = document.querySelectorAll('.title-group');
-      
-      // Load instantly instead of a 2 second fade to remove green screen delay
-      gsap.set(bands, { opacity: 1 });
-      gsap.set(originNames, { y: 0, opacity: 1 });
-    }
-  }
-
-  // Add an event listener to reveal the marks when the launch animation completes
-  window.addEventListener('origin-marks-arrived', () => {
-    const marks = document.querySelectorAll('.plate-origin-mark');
-    marks.forEach((mark) => {
-      const targetOp = mark.getAttribute('data-target-opacity') || '0.9';
-      // All 5 plates fade in with a live golden fade-in simultaneously
-      gsap.to(mark, { opacity: parseFloat(targetOp), duration: 0.8, ease: 'power2.out' });
-    });
-  });
+  gsap.registerPlugin(ScrollTrigger);
 
   function renderHUDLines() {
     const bands = document.querySelectorAll('.matrix-band');
@@ -250,7 +195,6 @@ const hudData = {
       if (!container) return;
       
       const slug = container.getAttribute('data-slug');
-      const side = container.getAttribute('data-side');
       
       const title = band.querySelector(`#title-${slug} h2`);
       const tag = band.querySelector(`#tag-${slug}`);
@@ -260,12 +204,9 @@ const hudData = {
       
       const titleRect = title.getBoundingClientRect();
       const tagRect = tag.getBoundingClientRect();
-      // 5mm is approx 20px
-      const inwardOffset = 20;
-      const outwardOffset = 20;
       
-      let titleStartX = (titleRect.right - bandRect.left) - 20; // inner (under text)
-      let titleEndX = (titleRect.right - bandRect.left) + 20;   // outer (past text)
+      let titleStartX = (titleRect.right - bandRect.left) - 20; 
+      let titleEndX = (titleRect.right - bandRect.left) + 20;   
       
       if (titleEndX > bandRect.width - 10) {
         titleEndX = bandRect.width - 10;
@@ -273,15 +214,12 @@ const hudData = {
       }
       const startY = (titleRect.bottom - bandRect.top) + 2;
       
-      // Telemetry tag positioning (Y axis only, X axis is handled by CSS right)
       const targetTagTop = (titleRect.top - bandRect.top) - 24 - tagRect.height;
       tag.style.top = `${targetTagTop}px`;
       
-      // We must re-measure tagRect after moving it vertically
       const updatedTagRect = tag.getBoundingClientRect();
-      
-      let tagStartX = (updatedTagRect.left - bandRect.left) + 20; // inner (under text)
-      let tagEndX = (updatedTagRect.left - bandRect.left) - 20;   // outer (past text)
+      let tagStartX = (updatedTagRect.left - bandRect.left) + 20; 
+      let tagEndX = (updatedTagRect.left - bandRect.left) - 20;   
       
       if (tagEndX < 10) {
         tagEndX = 10;
@@ -289,20 +227,19 @@ const hudData = {
       }
       const tagUnderlineY = targetTagTop + tagRect.height + 4; 
       
-      // Two separate disconnected 10mm lines
       const pathData1 = `M ${titleStartX} ${startY} L ${titleEndX} ${startY}`;
       const pathData2 = `M ${tagStartX} ${tagUnderlineY} L ${tagEndX} ${tagUnderlineY}`;
       
       container.innerHTML = `
         <svg class="hud-dynamic-svg" style="position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 4;">
-          <path d="${pathData1}" stroke="rgba(166, 124, 60, 0.4)" stroke-width="1" fill="none" class="hud-tether-path" />
-          <path d="${pathData2}" stroke="rgba(166, 124, 60, 0.4)" stroke-width="1" fill="none" class="hud-tether-path" />
+          <path d="${pathData1}" stroke="rgba(166, 124, 60, 0.4)" stroke-width="1" fill="none" class="hud-tether-path draw-path" stroke-dasharray="40" stroke-dashoffset="40" />
+          <path d="${pathData2}" stroke="rgba(166, 124, 60, 0.4)" stroke-width="1" fill="none" class="hud-tether-path draw-path" stroke-dasharray="40" stroke-dashoffset="40" />
           
-          <g class="hud-pulse-group" transform="translate(${titleStartX}, ${startY})">
+          <g class="hud-pulse-group hud-pulse-target" transform="translate(${titleStartX}, ${startY})" opacity="0">
             <circle r="4" stroke="rgba(166, 124, 60, 0.6)" stroke-width="1" fill="none" style="animation: hudPulse 2.5s infinite cubic-bezier(0.2, 0.8, 0.2, 1);" />
             <circle r="1.5" fill="rgba(166, 124, 60, 1)" />
           </g>
-          <g class="hud-pulse-group" transform="translate(${tagStartX}, ${tagUnderlineY})">
+          <g class="hud-pulse-group hud-pulse-target" transform="translate(${tagStartX}, ${tagUnderlineY})" opacity="0">
             <circle r="4" stroke="rgba(166, 124, 60, 0.6)" stroke-width="1" fill="none" style="animation: hudPulse 2.5s infinite cubic-bezier(0.2, 0.8, 0.2, 1);" />
             <circle r="1.5" fill="rgba(166, 124, 60, 1)" />
           </g>
@@ -311,51 +248,89 @@ const hudData = {
     });
   }
 
+  function initScrollyTelling() {
+    gsap.set('.matrix-band', { opacity: 1 });
+    gsap.set('.title-group', { opacity: 1, y: 0 });
+    
+    // We render HUD lines geometry immediately, but their dashoffset is at 40 (hidden)
+    renderHUDLines();
+
+    // GSAP ScrollTrigger orchestration
+    const bands = document.querySelectorAll('.matrix-band');
+    
+    bands.forEach((band) => {
+      // 1. Topographic Parallax
+      const topoMap = band.querySelector('.topographic-map-container');
+      if (topoMap) {
+        gsap.fromTo(topoMap, 
+          { y: -30 }, 
+          {
+            y: 30,
+            ease: "none",
+            scrollTrigger: {
+              trigger: band,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: true
+            }
+          }
+        );
+      }
+
+      // 2. HUD Drawing effect
+      const hudPaths = band.querySelectorAll('.draw-path');
+      const hudPulses = band.querySelectorAll('.hud-pulse-target');
+      
+      const hudTimeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: band,
+          start: "top 60%", // Start drawing when the band is slightly above the bottom of the viewport
+          end: "top 30%",
+          scrub: true
+        }
+      });
+
+      if (hudPaths.length > 0) {
+        hudTimeline.to(hudPaths, { strokeDashoffset: 0, ease: "none", duration: 1 });
+        hudTimeline.to(hudPulses, { opacity: 1, duration: 0.2 }, "-=0.2");
+      }
+      
+      // 3. Staggered fade in for Products
+      const products = band.querySelectorAll('.inline-product-card');
+      if (products.length > 0) {
+        gsap.fromTo(products, 
+          { y: 20, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            stagger: 0.1,
+            scrollTrigger: {
+              trigger: band,
+              start: "top 70%",
+              end: "top 40%",
+              scrub: true
+            }
+          }
+        );
+      }
+    });
+    
+    ScrollTrigger.refresh();
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     const hasVisited = sessionStorage.getItem('ourorigin_visited');
     if (hasVisited === 'true') {
-      new LivingMatrixOrchestrator();
+      initScrollyTelling();
     } else {
       window.addEventListener('launch-sequence-complete', () => {
-        new LivingMatrixOrchestrator();
+        initScrollyTelling();
       });
     }
     
-    // Render HUD and bind resize
-    renderHUDLines();
-    window.addEventListener('resize', renderHUDLines);
-    
-    document.querySelectorAll('.carousel-trigger').forEach(trigger => {
-      trigger.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const originId = trigger.getAttribute('data-origin');
-        window.dispatchEvent(new CustomEvent('open-carousel', { detail: { originId } }));
-      });
-    });
-
-    // Use IntersectionObserver to render HUD lines when a band comes into view
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          // Add a subtle class for any enter animations if needed
-          entry.target.classList.add('in-view');
-        }
-      });
-    }, { threshold: 0.3 });
-
-    document.querySelectorAll('.matrix-band').forEach(band => {
-      observer.observe(band);
-      
-      // Keep click navigation for the whole band
-      band.addEventListener('click', (e) => {
-        if (e.target.closest('.carousel-trigger')) return;
-        if (e.target.closest('.origin-action')) return;
-        const href = band.getAttribute('data-href');
-        if (href && href !== '#') {
-          window.location.href = href;
-        }
-      });
+    window.addEventListener('resize', () => {
+      renderHUDLines();
+      ScrollTrigger.refresh();
     });
   });
 </script>
@@ -669,6 +644,84 @@ const hudData = {
     pointer-events: none;
     z-index: 5000;
     transition: opacity var(--duration-standard) ease;
+  }
+
+  /* Inline E-Commerce Products */
+  .inline-products-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+    width: 100%;
+    max-width: 800px;
+    position: relative;
+    z-index: 10;
+  }
+
+  .inline-product-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    border: 1px solid rgba(166, 124, 60, 0.15);
+    background: rgba(12, 21, 9, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    flex: 1 1 250px;
+    border-radius: 2px;
+    transition: border-color 0.4s ease, background 0.4s ease, transform 0.4s ease;
+  }
+
+  .inline-product-card:hover:not(.locked) {
+    border-color: rgba(166, 124, 60, 0.6);
+    background: rgba(12, 21, 9, 0.8);
+    transform: translateY(-4px);
+  }
+
+  .product-name {
+    font-family: var(--font-institutional);
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+    color: var(--color-warm-cream);
+    margin: 0 0 0.5rem 0;
+    text-transform: uppercase;
+  }
+
+  .product-botanical {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--color-gold);
+    opacity: 0.8;
+    margin: 0 0 1rem 0;
+    text-transform: uppercase;
+  }
+
+  .product-price {
+    font-family: var(--font-narrative);
+    font-size: 0.95rem;
+    color: rgba(245, 237, 216, 0.7);
+    margin: 0;
+  }
+
+  .buy-button {
+    display: inline-block;
+    font-family: var(--font-institutional);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--color-gold);
+    text-decoration: none;
+    padding: 0.8rem 1.5rem;
+    border: 1px solid rgba(166, 124, 60, 0.4);
+    text-align: center;
+    transition: all 0.3s ease;
+    margin-top: auto;
+    background: transparent;
+  }
+
+  .buy-button:hover {
+    background: rgba(166, 124, 60, 0.1);
+    color: var(--color-warm-cream);
+    border-color: var(--color-gold);
   }
 
   /* Mobile Hold Indicator Styles */
