@@ -2,17 +2,21 @@
 import OriginMark from './OriginMark.astro';
 ---
 
-<button id="trigger-yields" class="hud-telemetry-btn" aria-label="All Yields">
-  [ ALL YIELDS ]
-</button>
+<header class="global-header">
+  <div id="command-center-trigger" class="header-logo" aria-label="Open Navigation">
+    <OriginMark variant="gold" size={32} animate={false} />
+  </div>
 
-<div id="command-center-trigger" aria-label="Open Navigation">
-  <OriginMark variant="gold" size={32} animate={false} />
-</div>
+  <div class="header-actions">
+    <button id="trigger-yields" class="hud-telemetry-btn" aria-label="All Yields">
+      [ ALL YIELDS ]
+    </button>
 
-<button id="trigger-dossier" class="hud-telemetry-btn" aria-label="Open Basket">
-  [ BASKET : <span class="dossier-count">0</span> ]
-</button>
+    <button id="trigger-dossier" class="hud-telemetry-btn" aria-label="Open Basket">
+      [ BASKET : <span class="dossier-count">0</span> ]
+    </button>
+  </div>
+</header>
 
 <div id="command-center-overlay" aria-hidden="true">
   <div class="cc-close" aria-label="Close Navigation">
@@ -28,24 +32,37 @@ import OriginMark from './OriginMark.astro';
 </div>
 
 <style>
-  #command-center-trigger {
+  .global-header {
     position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 24px clamp(1.5rem, 5vw, 3.5rem);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     z-index: 8000;
-    cursor: pointer;
-    transition: top 0.6s cubic-bezier(0.16, 1, 0.3, 1), left 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
-    opacity: 1;
+    box-sizing: border-box;
+    pointer-events: none; /* Let clicks pass through empty space */
   }
-  #command-center-trigger:hover {
-    transform: translateX(-50%) scale(1.1);
+
+  .header-logo {
+    pointer-events: auto;
+    cursor: pointer;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+  }
+  .header-logo:hover {
+    transform: scale(1.05);
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    pointer-events: auto;
   }
   
   .hud-telemetry-btn {
-    position: fixed;
-    top: 24px;
-    z-index: 8000;
     font-family: 'DM Mono', monospace;
     font-size: 11px;
     letter-spacing: 0.1em;
@@ -60,11 +77,17 @@ import OriginMark from './OriginMark.astro';
   .hud-telemetry-btn:hover {
     color: var(--color-gold);
   }
-  #trigger-yields {
-    right: calc(50% + 30px);
-  }
-  #trigger-dossier {
-    left: calc(50% + 30px);
+
+  @media (max-width: 768px) {
+    .global-header {
+      padding: 16px 1.5rem;
+    }
+    .header-actions {
+      gap: 1rem;
+    }
+    .hud-telemetry-btn {
+      font-size: 10px;
+    }
   }
   
   /* Force the inner SVG elements to at least 100% opacity for this specific mark */

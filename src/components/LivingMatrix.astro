@@ -76,7 +76,6 @@ const hudData = {
 
   <div class="matrix-bands">
     {orderedOrigins.map((origin, index) => {
-      const linkData = anchorMap[origin.data.slug];
       const copy = matrixCopy[origin.data.slug];
       const clipPaths = [
         "", // Band 0 (Nilgiris) has no top curve, so no clip-path needed
@@ -93,7 +92,6 @@ const hudData = {
       
       return (
         <div 
-          data-href={linkData.href}
           class="matrix-band"
           style={bandStyle}
           data-index={index}
@@ -230,21 +228,32 @@ const hudData = {
       const pathData1 = `M ${titleStartX} ${startY} L ${titleEndX} ${startY}`;
       const pathData2 = `M ${tagStartX} ${tagUnderlineY} L ${tagEndX} ${tagUnderlineY}`;
       
-      container.innerHTML = `
-        <svg class="hud-dynamic-svg" style="position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 4;">
-          <path d="${pathData1}" stroke="rgba(166, 124, 60, 0.4)" stroke-width="1" fill="none" class="hud-tether-path draw-path" stroke-dasharray="40" stroke-dashoffset="40" />
-          <path d="${pathData2}" stroke="rgba(166, 124, 60, 0.4)" stroke-width="1" fill="none" class="hud-tether-path draw-path" stroke-dasharray="40" stroke-dashoffset="40" />
-          
-          <g class="hud-pulse-group hud-pulse-target" transform="translate(${titleStartX}, ${startY})" opacity="0">
-            <circle r="4" stroke="rgba(166, 124, 60, 0.6)" stroke-width="1" fill="none" style="animation: hudPulse 2.5s infinite cubic-bezier(0.2, 0.8, 0.2, 1);" />
-            <circle r="1.5" fill="rgba(166, 124, 60, 1)" />
-          </g>
-          <g class="hud-pulse-group hud-pulse-target" transform="translate(${tagStartX}, ${tagUnderlineY})" opacity="0">
-            <circle r="4" stroke="rgba(166, 124, 60, 0.6)" stroke-width="1" fill="none" style="animation: hudPulse 2.5s infinite cubic-bezier(0.2, 0.8, 0.2, 1);" />
-            <circle r="1.5" fill="rgba(166, 124, 60, 1)" />
-          </g>
-        </svg>
-      `;
+      let svg = container.querySelector('svg');
+      if (!svg) {
+        container.innerHTML = `
+          <svg class="hud-dynamic-svg" style="position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 4;">
+            <path d="${pathData1}" stroke="rgba(166, 124, 60, 0.4)" stroke-width="1" fill="none" class="hud-tether-path draw-path" stroke-dasharray="40" stroke-dashoffset="40" />
+            <path d="${pathData2}" stroke="rgba(166, 124, 60, 0.4)" stroke-width="1" fill="none" class="hud-tether-path draw-path" stroke-dasharray="40" stroke-dashoffset="40" />
+            
+            <g class="hud-pulse-group hud-pulse-target" transform="translate(${titleStartX}, ${startY})" opacity="0">
+              <circle r="4" stroke="rgba(166, 124, 60, 0.6)" stroke-width="1" fill="none" style="animation: hudPulse 2.5s infinite cubic-bezier(0.2, 0.8, 0.2, 1);" />
+              <circle r="1.5" fill="rgba(166, 124, 60, 1)" />
+            </g>
+            <g class="hud-pulse-group hud-pulse-target" transform="translate(${tagStartX}, ${tagUnderlineY})" opacity="0">
+              <circle r="4" stroke="rgba(166, 124, 60, 0.6)" stroke-width="1" fill="none" style="animation: hudPulse 2.5s infinite cubic-bezier(0.2, 0.8, 0.2, 1);" />
+              <circle r="1.5" fill="rgba(166, 124, 60, 1)" />
+            </g>
+          </svg>
+        `;
+      } else {
+        const paths = svg.querySelectorAll('path');
+        if (paths[0]) paths[0].setAttribute('d', pathData1);
+        if (paths[1]) paths[1].setAttribute('d', pathData2);
+        
+        const groups = svg.querySelectorAll('g');
+        if (groups[0]) groups[0].setAttribute('transform', `translate(${titleStartX}, ${startY})`);
+        if (groups[1]) groups[1].setAttribute('transform', `translate(${tagStartX}, ${tagUnderlineY})`);
+      }
     });
   }
 
@@ -299,16 +308,17 @@ const hudData = {
       const products = band.querySelectorAll('.inline-product-card');
       if (products.length > 0) {
         gsap.fromTo(products, 
-          { y: 20, opacity: 0 },
+          { y: 30, opacity: 0 },
           {
             y: 0,
             opacity: 1,
             stagger: 0.1,
+            duration: 0.8,
+            ease: "power2.out",
             scrollTrigger: {
               trigger: band,
-              start: "top 70%",
-              end: "top 40%",
-              scrub: true
+              start: "top 60%",
+              toggleActions: "play none none none"
             }
           }
         );
