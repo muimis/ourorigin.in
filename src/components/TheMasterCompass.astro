@@ -6,8 +6,12 @@ import { getCollection } from 'astro:content';
 // For Horizon, we might filter by a 'status' field in the future, but we'll use all for now as mock data
 const yields = await getCollection('products');
 
-// Sort alphabetically for the Index
-const sortedYields = [...yields].sort((a, b) => a.data.name.localeCompare(b.data.name));
+// Sort alphabetically for the Index (safeguard against missing name)
+const sortedYields = [...yields].sort((a, b) => {
+  const nameA = a.data.name || '';
+  const nameB = b.data.name || '';
+  return nameA.localeCompare(nameB);
+});
 ---
 
 <div id="master-compass" class="master-compass is-hidden">
@@ -27,7 +31,7 @@ const sortedYields = [...yields].sort((a, b) => a.data.name.localeCompare(b.data
           </div>
           <div class="stream-content">
             <h2 class="stream-title">{y.data.name}</h2>
-            <p class="stream-collective">[{y.data.originSlug.toUpperCase()} COLLECTIVE]</p>
+            <p class="stream-collective">[{String(y.data.originSlug || '').toUpperCase()} COLLECTIVE]</p>
           </div>
         </div>
       ))}
