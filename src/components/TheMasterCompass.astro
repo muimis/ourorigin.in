@@ -31,7 +31,7 @@ const sortedYields = [...yields].sort((a, b) => {
           </div>
           <div class="stream-content">
             <h2 class="stream-title">{y.data.name}</h2>
-            <p class="stream-collective">[{String(y.data.originSlug || '').toUpperCase()} COLLECTIVE]</p>
+            <p class="stream-collective">[{String((typeof y.data.originSlug === 'object' ? y.data.originSlug?.id : y.data.originSlug) || '').toUpperCase()} COLLECTIVE]</p>
           </div>
         </div>
       ))}
@@ -59,9 +59,9 @@ const sortedYields = [...yields].sort((a, b) => {
     <div class="ledger-container">
       <div class="ledger-list">
         {sortedYields.map((y) => (
-          <div class="ledger-row" data-slug={y.slug}>
+          <div class="ledger-row" data-slug={y.id || y.slug}>
             <span class="col-yield">{y.data.name}</span>
-            <span class="col-collective">{y.data.originSlug}</span>
+            <span class="col-collective">{typeof y.data.originSlug === 'object' ? y.data.originSlug?.id : y.data.originSlug}</span>
             <span class="col-status status-active">ACTIVE</span>
           </div>
         ))}
@@ -116,8 +116,8 @@ const sortedYields = [...yields].sort((a, b) => {
 
   .compass-view.is-active {
     opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
+    visibility: inherit;
+    pointer-events: inherit;
   }
 
   /* HORIZONTAL STREAM (Yield & Horizon) */
