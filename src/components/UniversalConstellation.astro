@@ -1,0 +1,569 @@
+---
+import { getCollection } from 'astro:content';
+import OriginMark from './OriginMark.astro';
+
+const products = await getCollection('products');
+const origins = await getCollection('origins');
+
+// Helper to reliably get origin data
+function getOriginData(product) {
+  const originId = typeof product.data.originSlug === 'object' ? product.data.originSlug.id : product.data.originSlug;
+  return origins.find(o => o.id === originId);
+}
+
+const pillars = ["BIO", "GEO", "METHOD", "PEOPLE", "PRODUCT"];
+---
+
+<div id="universal-constellation" class="universal-constellation">
+  
+  <!-- 1. The Artifacts (Hyper-real imagery background) -->
+  <div id="artifact-layer" class="artifact-layer">
+    <div class="artifact-overlay"></div>
+    <img id="artifact-image" class="artifact-image" src="" alt="Artifact imagery" />
+  </div>
+
+  <!-- 2. The Atmospheric Noise (Film Grain) -->
+  <div class="film-grain"></div>
+
+  <!-- 3. The Arrival -->
+  <div id="canvas-arrival" class="canvas-arrival">
+    <h2 class="arrival-text">You have arrived at the source.</h2>
+  </div>
+
+  <!-- 4. The Universal Constellation (Nodes) -->
+  <div class="constellation-container" id="constellation">
+    {products.map((product, index) => {
+      const origin = getOriginData(product);
+      // Generate some pseudo-random placement for desktop 
+      // (will be overridden by physics JS later, but this is the starting state)
+      const x = 15 + ((index * 23) % 70);
+      const y = 20 + ((index * 37) % 60);
+      
+      // Fallback image if product packaging is missing, use a moody forest image
+      const fallbackImage = "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?q=80&w=2000&auto=format&fit=crop";
+      const hoverImage = product.data.images?.gallery?.[0] || product.data.images?.packaging || fallbackImage;
+
+      return (
+        <div 
+          class="constellation-node" 
+          style={`--start-x: ${x}%; --start-y: ${y}%;`}
+          data-id={product.id}
+          data-name={product.data.name}
+          data-botanical={product.data.botanicalName}
+          data-origin={origin?.data.name || 'Unknown'}
+          data-method={product.data.methodDescription || 'Traditional'}
+          data-price={product.data.sizes[0].priceINR}
+          data-weight={product.data.sizes[0].label}
+          data-packaging={product.data.images?.packaging || ''}
+          data-hover-img={hoverImage}
+        >
+          <span class="node-origin">[{origin?.data.name || 'Origin'}]</span>
+          <h2 class="node-title">{product.data.name}</h2>
+        </div>
+      );
+    })}
+  </div>
+
+  <!-- 5. The Glassmorphic Dossier -->
+  <div id="dossier-panel" class="dossier-panel">
+    <button id="close-dossier" class="close-btn">[ CLOSE ]</button>
+    <div class="dossier-content">
+      <div class="dossier-visual">
+        <img id="dossier-img" src="" alt="Yield Packaging" />
+      </div>
+      <div class="dossier-data">
+        <h3 id="dossier-title" class="d-title">Title</h3>
+        
+        <div class="pillar-data">
+          <p class="d-label">[ GEO ]</p>
+          <p id="dossier-geo" class="d-value"></p>
+        </div>
+        
+        <div class="pillar-data">
+          <p class="d-label">[ BIO ]</p>
+          <p id="dossier-bio" class="d-value"></p>
+        </div>
+        
+        <div class="pillar-data">
+          <p class="d-label">[ METHOD ]</p>
+          <p id="dossier-method" class="d-value"></p>
+        </div>
+        
+        <div class="pillar-data">
+          <p class="d-label">[ PEOPLE ]</p>
+          <p class="d-value">Artisan Harvesters</p>
+        </div>
+        
+        <div class="d-action">
+          <p class="d-label">[ PRODUCT ]</p>
+          <p class="d-value">₹<span id="dossier-price"></span> / <span id="dossier-weight"></span></p>
+          <button id="dossier-add-btn" class="brutalist-btn">ADD TO BASKET</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // 1. Arrival Fade
+    setTimeout(() => {
+      document.getElementById('canvas-arrival').classList.add('fade-out');
+      document.getElementById('constellation').classList.add('visible');
+    }, 2000);
+
+    const nodes = document.querySelectorAll('.constellation-node');
+    const dossierPanel = document.getElementById('dossier-panel');
+    const closeBtn = document.getElementById('close-dossier');
+    const artifactImage = document.getElementById('artifact-image');
+    
+    // Dossier elements
+    const dTitle = document.getElementById('dossier-title');
+    const dGeo = document.getElementById('dossier-geo');
+    const dBio = document.getElementById('dossier-bio');
+    const dMethod = document.getElementById('dossier-method');
+    const dPrice = document.getElementById('dossier-price');
+    const dWeight = document.getElementById('dossier-weight');
+    const dImg = document.getElementById('dossier-img');
+    const dAddBtn = document.getElementById('dossier-add-btn');
+
+    let currentProduct = null;
+    let isMobile = window.innerWidth <= 768;
+
+    window.addEventListener('resize', () => {
+      isMobile = window.innerWidth <= 768;
+    });
+
+    // 2. Desktop Magnetic Physics & Hover Logic
+    const constellation = document.getElementById('constellation');
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+
+    if (!isMobile) {
+      document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+      });
+
+      // Simple physics loop for desktop
+      function animateNodes() {
+        if (!isMobile && !dossierPanel.classList.contains('is-open')) {
+          nodes.forEach(node => {
+            const rect = node.getBoundingClientRect();
+            const nodeCX = rect.left + rect.width / 2;
+            const nodeCY = rect.top + rect.height / 2;
+            
+            // Calculate distance to mouse
+            const dx = mouseX - nodeCX;
+            const dy = mouseY - nodeCY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            
+            // Magnetic pull (only if mouse is close enough, e.g., within 300px)
+            let tx = 0;
+            let ty = 0;
+            if (dist < 400) {
+              const pull = (400 - dist) * 0.05;
+              tx = (dx / dist) * pull;
+              ty = (dy / dist) * pull;
+            }
+            
+            node.style.transform = `translate3d(calc(-50% + ${tx}px), calc(-50% + ${ty}px), 0)`;
+          });
+        }
+        requestAnimationFrame(animateNodes);
+      }
+      animateNodes();
+    }
+
+    // 3. Hover (Desktop) / Scroll (Mobile) Imagery Logic
+    function activateArtifact(hoverImgUrl) {
+      if(hoverImgUrl && artifactImage.src !== hoverImgUrl) {
+        artifactImage.style.opacity = '0';
+        setTimeout(() => {
+          artifactImage.src = hoverImgUrl;
+          artifactImage.style.opacity = '0.4'; // Subtle background presence
+        }, 300);
+      }
+    }
+
+    // Mobile Intersection Observer for snap scroll
+    if (isMobile) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            activateArtifact(entry.target.dataset.hoverImg);
+            // Add focus class to current node
+            nodes.forEach(n => n.classList.remove('mobile-focused'));
+            entry.target.classList.add('mobile-focused');
+          }
+        });
+      }, { threshold: 0.6 });
+      
+      nodes.forEach(node => observer.observe(node));
+    }
+
+    // Desktop hover
+    nodes.forEach(node => {
+      node.addEventListener('mouseenter', () => {
+        if(!isMobile) activateArtifact(node.dataset.hoverImg);
+      });
+      
+      node.addEventListener('mouseleave', () => {
+        if(!isMobile && !dossierPanel.classList.contains('is-open')) {
+          artifactImage.style.opacity = '0';
+        }
+      });
+      
+      // 4. Interaction (Click/Tap)
+      node.addEventListener('click', () => {
+        // Populate
+        dTitle.textContent = node.dataset.name;
+        dGeo.textContent = node.dataset.origin;
+        dBio.textContent = node.dataset.botanical;
+        dMethod.textContent = node.dataset.method;
+        dPrice.textContent = node.dataset.price;
+        dWeight.textContent = node.dataset.weight;
+        dImg.src = node.dataset.packaging || node.dataset.hoverImg;
+        
+        currentProduct = {
+          id: node.dataset.id,
+          name: node.dataset.name,
+          price: node.dataset.price,
+          weight: node.dataset.weight,
+          origin: node.dataset.origin
+        };
+
+        dossierPanel.classList.add('is-open');
+        
+        if(!isMobile) {
+          // Camera push in effect on container
+          constellation.style.transform = 'scale(1.1) translate3d(-5%, 0, 0)';
+          constellation.style.filter = 'blur(4px)';
+        }
+      });
+    });
+
+    closeBtn.addEventListener('click', () => {
+      dossierPanel.classList.remove('is-open');
+      if(!isMobile) {
+        constellation.style.transform = 'scale(1) translate3d(0,0,0)';
+        constellation.style.filter = 'blur(0)';
+      }
+    });
+
+    // 5. Cart integration
+    dAddBtn.addEventListener('click', () => {
+      if(!currentProduct) return;
+      window.dispatchEvent(new CustomEvent('cart-add', { detail: currentProduct }));
+      
+      dAddBtn.textContent = "[ ADDED ]";
+      setTimeout(() => {
+        dAddBtn.textContent = "ADD TO BASKET";
+        window.dispatchEvent(new Event('open-cart'));
+      }, 600);
+    });
+  });
+</script>
+
+<style>
+  .universal-constellation {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    background-color: #040a05; /* Deep abyssal green */
+    color: var(--color-warm-cream);
+  }
+
+  /* The Artifacts Imagery Layer */
+  .artifact-layer {
+    position: absolute;
+    inset: -5%;
+    z-index: 1;
+    pointer-events: none;
+  }
+  
+  .artifact-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+    filter: saturate(0.8) contrast(1.2);
+  }
+
+  .artifact-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, transparent 0%, #040a05 80%);
+    z-index: 2;
+  }
+
+  /* Film Grain */
+  .film-grain {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.05;
+  }
+
+  .canvas-arrival {
+    position: absolute;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #040a05;
+    transition: opacity 1.5s ease, visibility 1.5s;
+  }
+  .canvas-arrival.fade-out {
+    opacity: 0;
+    visibility: hidden;
+  }
+  .arrival-text {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 4vw, 3rem);
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    animation: pulse 4s infinite alternate;
+  }
+  @keyframes pulse {
+    0% { opacity: 0.3; filter: blur(2px); }
+    100% { opacity: 1; filter: blur(0px); }
+  }
+
+  /* Desktop Constellation (Absolute Physics) */
+  .constellation-container {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 2s ease, transform 1s cubic-bezier(0.76, 0, 0.24, 1), filter 1s ease;
+  }
+  .constellation-container.visible {
+    opacity: 1;
+  }
+
+  .constellation-node {
+    position: absolute;
+    top: var(--start-y);
+    left: var(--start-x);
+    transform: translate3d(-50%, -50%, 0);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    text-align: center;
+    opacity: 0.6;
+    transition: opacity 0.4s ease, text-shadow 0.4s ease;
+    will-change: transform;
+  }
+
+  .constellation-node:hover {
+    opacity: 1;
+    z-index: 20;
+    text-shadow: 0 0 40px rgba(245, 237, 216, 0.4);
+  }
+
+  .node-title {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 6vw, 7rem);
+    line-height: 1;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+    margin: 0;
+  }
+
+  .node-origin {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+    margin-bottom: var(--space-xs);
+  }
+
+  /* Mobile Gesture Stack Overrides */
+  @media (max-width: 768px) {
+    .constellation-container {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      /* Hide scrollbar */
+      scrollbar-width: none; 
+    }
+    .constellation-container::-webkit-scrollbar {
+      display: none;
+    }
+
+    .constellation-node {
+      /* Remove absolute positioning */
+      position: relative;
+      top: auto !important;
+      left: auto !important;
+      transform: none !important;
+      
+      /* Full screen panel */
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      scroll-snap-align: center;
+      scroll-snap-stop: always;
+      
+      /* Center content */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0.3;
+      transition: opacity 0.5s ease;
+    }
+    
+    .constellation-node.mobile-focused {
+      opacity: 1;
+      text-shadow: 0 0 30px rgba(245, 237, 216, 0.3);
+    }
+    
+    .node-title {
+      font-size: 3.5rem;
+      white-space: normal;
+      padding: 0 var(--space-md);
+    }
+  }
+
+  /* The Glassmorphic Dossier */
+  .dossier-panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    max-width: 500px;
+    height: 100vh;
+    height: 100dvh;
+    background: rgba(4, 10, 5, 0.4);
+    backdrop-filter: blur(40px) saturate(150%);
+    -webkit-backdrop-filter: blur(40px) saturate(150%);
+    border-left: 1px solid rgba(245, 237, 216, 0.1);
+    z-index: 100;
+    transform: translateX(100%);
+    transition: transform 0.8s cubic-bezier(0.76, 0, 0.24, 1);
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-2xl);
+  }
+
+  .dossier-panel.is-open {
+    transform: translateX(0);
+  }
+
+  .close-btn {
+    align-self: flex-start;
+    background: transparent;
+    border: none;
+    color: var(--color-warm-cream);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+    margin-bottom: var(--space-xl);
+    padding: 0;
+  }
+  .close-btn:hover { opacity: 1; }
+
+  .dossier-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+    flex-grow: 1;
+    overflow-y: auto;
+    /* Hide scrollbar */
+    scrollbar-width: none;
+  }
+  .dossier-content::-webkit-scrollbar { display: none; }
+
+  .dossier-visual {
+    width: 100%;
+    aspect-ratio: 4/3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .dossier-visual img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 30px 40px rgba(0,0,0,0.4));
+  }
+
+  .d-title {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    line-height: 1.1;
+    margin-bottom: var(--space-xl);
+    font-weight: 400;
+  }
+
+  .pillar-data {
+    margin-bottom: var(--space-md);
+  }
+
+  .d-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: var(--color-gold);
+    margin-bottom: var(--space-xs);
+  }
+
+  .d-value {
+    font-family: var(--font-narrative);
+    font-size: 1.1rem;
+    line-height: 1.4;
+    color: rgba(245, 237, 216, 0.9);
+  }
+
+  .d-action {
+    margin-top: auto;
+    padding-top: var(--space-xl);
+    border-top: 1px solid rgba(245, 237, 216, 0.1);
+  }
+
+  .brutalist-btn {
+    width: 100%;
+    padding: var(--space-xl);
+    background: var(--color-warm-cream);
+    color: var(--color-forest-deep);
+    border: none;
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+    margin-top: var(--space-md);
+  }
+
+  .brutalist-btn:hover {
+    background: #fff;
+  }
+
+  @media (max-width: 768px) {
+    .dossier-panel { 
+      max-width: 100%; 
+      padding: var(--space-xl) var(--space-lg);
+      border-left: none;
+    }
+  }
+</style>

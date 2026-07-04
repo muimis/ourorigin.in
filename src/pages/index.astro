@@ -2,7 +2,7 @@
 import '../styles/tokens.css';
 import CommandCenter from '../components/CommandCenter.astro';
 import LaunchScreen from '../components/LaunchScreen.astro';
-import LivingCanvas from '../components/LivingCanvas.astro';
+import UniversalConstellation from '../components/UniversalConstellation.astro';
 import CartDrawer from '../components/CartDrawer.astro';
 ---
 
@@ -44,7 +44,7 @@ import CartDrawer from '../components/CartDrawer.astro';
         <CommandCenter />
         
         <main>
-            <LivingCanvas />
+            <UniversalConstellation />
         </main>
         
     </div>
@@ -57,9 +57,9 @@ import CartDrawer from '../components/CartDrawer.astro';
     body {
         margin: 0;
         padding: 0;
-        background-color: var(--color-forest-deep);
+        background-color: #040a05;
         color: var(--color-warm-cream);
         font-family: var(--font-mono);
-        overflow: hidden; /* No scrolling for Living Canvas */
+        overflow: hidden; /* No scrolling for App-like experience */
     }
 </style>
