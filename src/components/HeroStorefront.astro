@@ -1,10 +1,24 @@
 ---
 // src/components/HeroStorefront.astro
+import OriginMark from './OriginMark.astro';
 ---
 <section class="hero-storefront">
+  <div class="hero-map-bg">
+    <div class="om-watermark">
+      <OriginMark variant="gold" size={800} animate={false} />
+    </div>
+    <img src="/topographic_pattern.svg" alt="" aria-hidden="true" class="topo-map" />
+  </div>
   <div class="hero-content">
-    <h1 class="hero-title">The Western Ghats, <br/>Uncut.</h1>
-    <p class="hero-subtitle">Five origins. Twelve yields. Experienceable at the source.</p>
+    <div class="pillars-signature">
+      <span>Bio</span><span class="dot"></span>
+      <span>Geo</span><span class="dot"></span>
+      <span>Method</span><span class="dot"></span>
+      <span>People</span><span class="dot"></span>
+      <span>Product</span>
+    </div>
+    <h1 class="hero-title">Connecting<br/>the Universe.</h1>
+    <p class="hero-subtitle">Boundless origins. A singular philosophy. Experienceable at the source.</p>
     <a href="#yields" class="cta-primary">Shop the Harvest</a>
   </div>
 </section>
@@ -22,12 +36,47 @@
     padding-top: var(--space-4xl); /* Account for header */
   }
 
+  /* Topographic map layer */
+  .hero-map-bg {
+    position: absolute;
+    inset: -10%;
+    z-index: 1;
+    overflow: hidden;
+    opacity: 0.15;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .topo-map {
+    width: 120%;
+    height: 120%;
+    object-fit: cover;
+    animation: slow-pan 60s linear infinite alternate;
+  }
+
+  .om-watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+  }
+
+  @keyframes slow-pan {
+    0% { transform: translate(-2%, -2%) scale(1.05); }
+    100% { transform: translate(2%, 2%) scale(1.05); }
+  }
+
   /* Optional: subtle noise overlay for premium feel */
-  .hero-storefront::before {
+  .hero-storefront::after {
     content: '';
     position: absolute;
     inset: 0;
-    opacity: 0.03;
+    opacity: 0.04;
+    z-index: 2;
     pointer-events: none;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
   }
@@ -35,10 +84,34 @@
   .hero-content {
     text-align: center;
     position: relative;
-    z-index: 2;
+    z-index: 3;
     padding: var(--space-xl);
     max-width: 1200px;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .pillars-signature {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-xl);
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--color-forest-deep);
+    opacity: 0.7;
+  }
+
+  .pillars-signature .dot {
+    width: 3px;
+    height: 3px;
+    background-color: var(--color-forest-deep);
+    border-radius: 50%;
+    opacity: 0.5;
   }
 
   .hero-title {
@@ -49,6 +122,7 @@
     margin-bottom: var(--space-lg);
     font-weight: 400;
     letter-spacing: -0.02em;
+    text-shadow: 0 4px 20px rgba(245, 237, 216, 0.5); /* subtle glow to lift off topo map */
   }
 
   .hero-subtitle {
