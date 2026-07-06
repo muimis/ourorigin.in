@@ -12,6 +12,17 @@
   --font-narrative: 'Cormorant Garamond', serif;
   --font-evidence: 'DM Mono', monospace;
   --font-mono: 'DM Mono', monospace;
+  --font-sans: 'Inter', -apple-system, sans-serif;
+
+  /* Typographic Scales */
+  --text-base: clamp(1rem, 1.2vw, 1.25rem);
+  --text-lead: clamp(1.25rem, 1.5vw, 1.5rem);
+  --text-title: clamp(2rem, 4vw, 3.5rem);
+  --text-massive: clamp(3.5rem, 8vw, 8rem); /* For true cinematic impact */
+  
+  --line-height-tight: 1.1;
+  --line-height-base: 1.4;
+  --line-height-loose: 1.8;
 
   /* Spacing Tokens for UI Consistency */
   --space-xs: 0.25rem;
@@ -24,7 +35,7 @@
   --space-4xl: 4rem;
   
   /* Fluid typography: 24px on mobile, scaling with viewport, up to 40px on large screens */
-  --text-size-stratum-title: clamp(1.5rem, 5vw, 2.5rem);
+  --text-size-stratum-title: var(--text-massive);
   --stratum-text-max-width: 85vw;
   
   /* Stratum Architectural Tokens */
@@ -47,10 +58,29 @@ a, button, [role="button"], input, select, textarea {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Global overflow protection to prevent horizontal glitch scrolling */
+/* Global overflow protection and rendering polish */
 html, body {
   overflow-x: hidden;
   max-width: 100%;
+  background-color: var(--color-forest-deep);
+  color: var(--color-warm-cream);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--font-narrative);
+  line-height: var(--line-height-base);
+}
+
+/* Global Film Grain Effect */
+.film-grain::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.04;
+  /* background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); */
 }
 
 /* Screen-reader only utility */

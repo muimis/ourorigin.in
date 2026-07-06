@@ -124,8 +124,9 @@ const { products, origins } = Astro.props;
     background-position: center;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), visibility 1.2s;
-    will-change: opacity;
+    transform: scale(1);
+    transition: opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 1.5s;
+    will-change: opacity, transform;
     z-index: 1;
     filter: saturate(0.8) contrast(1.2);
   }
@@ -133,6 +134,8 @@ const { products, origins } = Astro.props;
   .pillar-bg.is-active {
     opacity: 1;
     visibility: visible;
+    transform: scale(1.05);
+    transition: opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 1.5s, transform 20s linear;
   }
 
   .deep-dive-overlay {
@@ -148,26 +151,39 @@ const { products, origins } = Astro.props;
     inset: 0;
     z-index: 10;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 clamp(2rem, 5vw, 6rem);
-    text-align: center;
+    align-items: flex-end; /* Anchor to bottom for editorial look */
+    justify-content: flex-start;
+    padding: 0 clamp(2rem, 5vw, 6rem) 20vh clamp(2rem, 5vw, 6rem);
+    text-align: left;
   }
 
   .pillar-content {
     position: absolute;
     opacity: 0;
     visibility: hidden;
-    transform: translateY(20px);
-    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: opacity, transform;
+    transition: visibility 1.5s;
     max-width: 800px;
   }
 
   .pillar-content.is-active {
     opacity: 1;
     visibility: visible;
-    transform: translateY(0);
+  }
+
+  /* Staggered Animations */
+  .pillar-content > * {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .pillar-content.is-active .pillar-label { animation: fadeUpText 1s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards; }
+  .pillar-content.is-active .pillar-heading { animation: fadeUpText 1s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards; }
+  .pillar-content.is-active .pillar-meta { animation: fadeUpText 1s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards; }
+  .pillar-content.is-active .pillar-body { animation: fadeUpText 1s cubic-bezier(0.22, 1, 0.36, 1) 0.5s forwards; }
+  .pillar-content.is-active .weather-wrapper { animation: fadeUpText 1s cubic-bezier(0.22, 1, 0.36, 1) 0.6s forwards; }
+
+  @keyframes fadeUpText {
+    to { opacity: 1; transform: translateY(0); }
   }
 
   .pillar-label {
@@ -203,7 +219,7 @@ const { products, origins } = Astro.props;
     line-height: 1.6;
     color: rgba(245, 237, 216, 0.8);
     max-width: 600px;
-    margin: 0 auto 1.5rem auto;
+    margin: 0 0 1.5rem 0;
   }
 
   .pillar-meta {
@@ -266,10 +282,26 @@ const { products, origins } = Astro.props;
     transition: color 0.3s ease;
     padding: 0.5rem 0;
     white-space: nowrap;
+    position: relative;
+  }
+
+  .ribbon-item::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0%;
+    height: 1px;
+    background-color: var(--color-warm-cream);
+    transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .ribbon-item:hover, .ribbon-item.is-active {
     color: var(--color-warm-cream);
+  }
+  
+  .ribbon-item.is-active::after {
+    width: 100%;
   }
 
   .ribbon-dot {

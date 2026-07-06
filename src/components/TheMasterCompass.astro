@@ -194,29 +194,36 @@ const sortedYields = [...yields].sort((a, b) => {
   }
 
   .stream-content {
-    position: relative;
+    position: absolute;
+    bottom: 8vh;
+    left: 5vw;
     z-index: 10;
-    text-align: center;
-    padding: 0 2rem;
+    text-align: left;
+    max-width: 90vw;
   }
 
   .stream-title {
     font-family: var(--font-display);
-    font-size: clamp(3rem, 8vw, 8rem);
+    font-size: clamp(3rem, 10vw, 12rem);
     font-weight: 300;
-    line-height: 1;
-    margin: 0 0 1rem 0;
+    line-height: 0.85;
+    margin: 0 0 1.5rem 0;
     color: var(--color-warm-cream);
-    text-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    text-shadow: 0 10px 40px rgba(0,0,0,0.9);
+    letter-spacing: -0.02em;
+    mix-blend-mode: normal; /* Safe default, relies on deep shadow for contrast */
   }
 
   .stream-collective {
     font-family: var(--font-mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.4em;
-    color: var(--color-gold);
+    font-size: 0.85rem;
+    letter-spacing: 0.5em;
+    color: var(--color-warm-cream);
     margin: 0;
     text-transform: uppercase;
+    display: inline-block;
+    border-top: 1px solid rgba(245, 237, 216, 0.4);
+    padding-top: 0.5rem;
   }
 
   /* THE LOBBY (CROSSROADS) */
@@ -227,14 +234,19 @@ const sortedYields = [...yields].sort((a, b) => {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: radial-gradient(circle at center, rgba(1, 2, 1, 0.4) 0%, var(--color-forest-deep) 100%);
+    background: radial-gradient(circle at center, rgba(12, 21, 9, 0.8) 0%, var(--color-forest-deep) 100%);
   }
 
   .lobby-menu {
     display: flex;
     flex-direction: column;
-    gap: 3rem;
-    text-align: center;
+    gap: 4rem;
+    text-align: left; /* Shifted to left-align for brutalist architecture */
+  }
+
+  /* Hover Physics */
+  .lobby-menu:hover .lobby-link:not(:hover) {
+    opacity: 0.15;
   }
 
   .lobby-link {
@@ -243,28 +255,48 @@ const sortedYields = [...yields].sort((a, b) => {
     cursor: pointer;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.5rem;
-    transition: opacity 0.3s ease;
-    opacity: 0.6;
+    transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    opacity: 0.8;
+    position: relative;
   }
+  
   .lobby-link:hover, .lobby-link:focus {
     opacity: 1;
   }
 
+  /* Architectural hover line */
+  .lobby-link::before {
+    content: '';
+    position: absolute;
+    left: -2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 2px;
+    background-color: var(--color-warm-cream);
+    transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .lobby-link:hover::before {
+    width: 1rem;
+  }
+
   .lobby-title {
     font-family: var(--font-display);
-    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-size: var(--text-massive);
     font-weight: 300;
     color: var(--color-warm-cream);
-    letter-spacing: 0.05em;
+    letter-spacing: 0.02em;
+    line-height: 1;
   }
 
   .lobby-subtitle {
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
     letter-spacing: 0.25em;
-    color: var(--color-gold);
+    color: rgba(245, 237, 216, 0.6);
     text-transform: uppercase;
   }
 
@@ -272,7 +304,7 @@ const sortedYields = [...yields].sort((a, b) => {
   .ledger-container {
     width: 100%;
     height: 100%;
-    padding: 120px clamp(1.5rem, 5vw, 4rem) 120px clamp(1.5rem, 5vw, 4rem);
+    padding: 15vh clamp(1.5rem, 5vw, 6vw);
     overflow-y: auto;
     scrollbar-width: none;
   }
@@ -281,43 +313,52 @@ const sortedYields = [...yields].sort((a, b) => {
   .ledger-list {
     display: flex;
     flex-direction: column;
+    border-top: 1px solid rgba(245, 237, 216, 0.2); /* Stark top boundary */
   }
 
   .ledger-row {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
-    align-items: baseline;
-    padding: 1.5rem 0;
-    border-bottom: 1px solid rgba(245, 237, 216, 0.05);
+    grid-template-columns: 3fr 1fr 1fr;
+    align-items: center;
+    padding: 2.5rem 0;
+    border-bottom: 1px solid rgba(245, 237, 216, 0.15);
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   }
+  
   .ledger-row:hover {
-    background: rgba(245, 237, 216, 0.03);
+    padding-left: 2rem; /* Indent on hover */
+    background: rgba(245, 237, 216, 0.02);
   }
 
   .ledger-row .col-yield {
     font-family: var(--font-display);
-    font-size: clamp(2rem, 4vw, 4rem);
+    font-size: clamp(2.5rem, 5vw, 5rem);
     font-weight: 300;
     line-height: 1;
     color: var(--color-warm-cream);
+    transition: color 0.4s ease;
+  }
+
+  .ledger-row:hover .col-yield {
+    color: #fff;
   }
 
   .ledger-row .col-collective {
     font-family: var(--font-mono);
-    font-size: 0.75rem;
+    font-size: 0.85rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--color-gold);
+    color: rgba(245, 237, 216, 0.6);
   }
 
   .ledger-row .col-status {
-    font-family: var(--font-mono);
+    font-family: var(--font-sans);
     font-size: 0.75rem;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.3em;
+    text-align: right;
   }
-  .status-active { color: #8F9A83; }
+  .status-active { color: var(--color-warm-cream); opacity: 0.5; }
 
   @media (max-width: 768px) {
     .ledger-row {
