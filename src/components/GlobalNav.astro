@@ -4,6 +4,7 @@
 
 <nav class="global-nav">
   <button id="global-yields-btn" class="nav-button">All Yields</button>
+  <button id="global-basket-btn" class="nav-button" style="margin-left: 2rem;">Basket (<span id="global-basket-count">0</span>)</button>
 </nav>
 
 <style>
@@ -55,10 +56,31 @@
 </style>
 
 <script>
+  import { cartState } from '../scripts/cart.js';
+  
   const btn = document.getElementById('global-yields-btn');
   if (btn) {
     btn.addEventListener('click', () => {
       window.dispatchEvent(new Event('open-all-yields-panel'));
     });
   }
+
+  const basketBtn = document.getElementById('global-basket-btn');
+  const countSpan = document.getElementById('global-basket-count');
+  
+  if (basketBtn) {
+    basketBtn.addEventListener('click', () => {
+      window.dispatchEvent(new Event('open-cart'));
+    });
+  }
+
+  if (countSpan) {
+    countSpan.textContent = cartState.getTotalItems();
+  }
+
+  window.addEventListener('cart-updated', (e) => {
+    if (countSpan) {
+      countSpan.textContent = e.detail.totalItems;
+    }
+  });
 </script>

@@ -5,6 +5,7 @@ import CartDrawer from '../components/CartDrawer.astro';
 import HeroStorefront from '../components/HeroStorefront.astro';
 import LivingCanvas from '../components/LivingCanvas.astro';
 import TheDeepDive from '../components/TheDeepDive.astro';
+import AllYieldsPanel from '../components/AllYieldsPanel.astro';
 import { getCollection } from 'astro:content';
 
 const products = await getCollection('products');
@@ -45,6 +46,7 @@ const origins = await getCollection('origins');
     <!-- Global HUD Layers -->
     <CommandCenter />
     <CartDrawer />
+    <AllYieldsPanel />
     
     <main id="app-container">
         <!-- State 1: The Presentation (Hero) -->
