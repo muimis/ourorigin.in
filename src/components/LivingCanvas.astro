@@ -63,7 +63,7 @@ const pillars = ["Bio", "Geo", "Method", "People", "Product"];
       return (
         <div 
           class="typographic-node" 
-          style={`top: ${y}%; left: ${x}%; animation-delay: ${(hashX % 2000)}ms;`}
+          style={`animation-delay: ${(hashX % 2000)}ms;`}
           data-id={product.id}
           data-name={product.data.name}
           data-botanical={product.data.botanicalName}
@@ -298,6 +298,13 @@ const pillars = ["Bio", "Geo", "Method", "People", "Product"];
     inset: 0;
     z-index: 10;
     opacity: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    gap: var(--space-4xl) var(--space-3xl);
+    padding: var(--space-2xl);
     transition: opacity 2s ease;
   }
   .constellation.visible {
@@ -305,8 +312,8 @@ const pillars = ["Bio", "Geo", "Method", "People", "Product"];
   }
 
   .typographic-node {
-    position: absolute;
-    transform: translate(-50%, -50%);
+    position: relative;
+    transform: translate(0, 0);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -318,7 +325,7 @@ const pillars = ["Bio", "Geo", "Method", "People", "Product"];
   }
 
   .typographic-node:hover {
-    transform: translate(-50%, -50%) scale(1.1);
+    transform: scale(1.1);
     opacity: 1;
     z-index: 20;
   }

@@ -1,7 +1,14 @@
 ---
 import '../styles/tokens.css';
-import TheThreshold from '../components/TheThreshold.astro';
-import TheMasterCompass from '../components/TheMasterCompass.astro';
+import CommandCenter from '../components/CommandCenter.astro';
+import CartDrawer from '../components/CartDrawer.astro';
+import HeroStorefront from '../components/HeroStorefront.astro';
+import LivingCanvas from '../components/LivingCanvas.astro';
+import TheDeepDive from '../components/TheDeepDive.astro';
+import { getCollection } from 'astro:content';
+
+const products = await getCollection('products');
+const origins = await getCollection('origins');
 ---
 
 <!DOCTYPE html>
@@ -34,13 +41,52 @@ import TheMasterCompass from '../components/TheMasterCompass.astro';
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Cormorant+Garamond:wght@300;400;500&family=DM+Mono:ital,wght@0,300;0,400;0,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body class="theme-default film-grain">
-    <main>
-        <!-- State 0: The Presentation -->
-        <TheThreshold />
+    
+    <!-- Global HUD Layers -->
+    <CommandCenter />
+    <CartDrawer />
+    
+    <main id="app-container">
+        <!-- State 1: The Presentation (Hero) -->
+        <div id="state-hero" class="app-state is-active">
+            <HeroStorefront />
+        </div>
         
-        <!-- State 1: The Global Canvas -->
-        <TheMasterCompass />
+        <!-- State 2: The Exploration (Canvas) -->
+        <div id="state-canvas" class="app-state">
+            <LivingCanvas />
+        </div>
+        
+        <!-- State 3: The Immersion (Deep Dive) -->
+        <!-- TheDeepDive is self-contained and listens to open-deep-dive event -->
+        <TheDeepDive products={products} origins={origins} />
     </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnShop = document.querySelector('.cta-primary');
+            const stateHero = document.getElementById('state-hero');
+            const stateCanvas = document.getElementById('state-canvas');
+            
+            if (btnShop && stateHero && stateCanvas) {
+                // Prevent default anchor jump, use smooth cinematic transition
+                btnShop.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    // Fade out Hero
+                    stateHero.classList.remove('is-active');
+                    stateHero.style.transform = 'translateY(-5vh) scale(0.98)';
+                    stateHero.style.opacity = '0';
+                    stateHero.style.pointerEvents = 'none';
+                    
+                    // Fade in Canvas
+                    setTimeout(() => {
+                        stateCanvas.classList.add('is-active');
+                    }, 400); // slight delay for cinematic effect
+                });
+            }
+        });
+    </script>
 </body>
 </html>
 
@@ -48,9 +94,36 @@ import TheMasterCompass from '../components/TheMasterCompass.astro';
     body {
         margin: 0;
         padding: 0;
-        background-color: #010201; /* Deep abyssal black */
-        color: var(--color-warm-cream);
+        background-color: var(--color-warm-cream); /* Default before deep dive */
+        color: var(--color-forest-deep);
         font-family: var(--font-mono);
-        overflow: hidden; /* No scrolling on the Threshold */
+        overflow-x: hidden; /* Prevent horizontal scroll only */
+    }
+
+    #app-container {
+        position: relative;
+        width: 100vw;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    .app-state {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        z-index: 10;
+    }
+
+    .app-state.is-active {
+        position: relative;
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0) scale(1);
+    }
+
+    #state-canvas:not(.is-active) {
+        transform: scale(1.05); /* Zoom in from behind */
     }
 </style>

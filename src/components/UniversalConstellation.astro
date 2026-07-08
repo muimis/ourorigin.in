@@ -34,10 +34,6 @@ const pillars = ["BIO", "GEO", "METHOD", "PEOPLE", "PRODUCT"];
   <div class="constellation-container" id="constellation">
     {products.map((product, index) => {
       const origin = getOriginData(product);
-      // Generate some pseudo-random placement for desktop 
-      // (will be overridden by physics JS later, but this is the starting state)
-      const x = 15 + ((index * 23) % 70);
-      const y = 20 + ((index * 37) % 60);
       
       // Fallback image if product packaging is missing, use a moody forest image
       const fallbackImage = "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?q=80&w=2000&auto=format&fit=crop";
@@ -46,7 +42,6 @@ const pillars = ["BIO", "GEO", "METHOD", "PEOPLE", "PRODUCT"];
       return (
         <div 
           class="constellation-node" 
-          style={`--start-x: ${x}%; --start-y: ${y}%;`}
           data-id={product.id}
           data-name={product.data.name}
           data-botanical={product.data.botanicalName}
@@ -168,7 +163,7 @@ const pillars = ["BIO", "GEO", "METHOD", "PEOPLE", "PRODUCT"];
               ty = (dy / dist) * pull;
             }
             
-            node.style.transform = `translate3d(calc(-50% + ${tx}px), calc(-50% + ${ty}px), 0)`;
+            node.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
           });
         }
         requestAnimationFrame(animateNodes);
@@ -337,12 +332,19 @@ const pillars = ["BIO", "GEO", "METHOD", "PEOPLE", "PRODUCT"];
     100% { opacity: 1; filter: blur(0px); }
   }
 
-  /* Desktop Constellation (Absolute Physics) */
+  /* Desktop Constellation (Flexbox Layout) */
   .constellation-container {
     position: absolute;
     inset: 0;
     z-index: 10;
     opacity: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    gap: var(--space-4xl) var(--space-3xl);
+    padding: var(--space-2xl);
     transition: opacity 2s ease, transform 1s cubic-bezier(0.76, 0, 0.24, 1), filter 1s ease;
   }
   .constellation-container.visible {
@@ -350,10 +352,8 @@ const pillars = ["BIO", "GEO", "METHOD", "PEOPLE", "PRODUCT"];
   }
 
   .constellation-node {
-    position: absolute;
-    top: var(--start-y);
-    left: var(--start-x);
-    transform: translate3d(-50%, -50%, 0);
+    position: relative;
+    transform: translate3d(0, 0, 0);
     display: flex;
     flex-direction: column;
     align-items: center;

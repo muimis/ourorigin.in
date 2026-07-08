@@ -85,5 +85,23 @@ class CartState {
   }
 }
 
+// Listen for global events from UI to add items to the cart
+if (typeof window !== 'undefined') {
+  window.addEventListener('cart-add', (e) => {
+    cartState.addItem(e.detail);
+  });
+  
+  window.addEventListener('add-to-ledger', (e) => {
+    cartState.addItem({
+      id: e.detail.id || e.detail.productId,
+      name: e.detail.name,
+      origin: e.detail.origin,
+      price: e.detail.price,
+      weight: e.detail.size || e.detail.weight,
+      quantity: 1
+    });
+  });
+}
+
 // Export a singleton instance
 export const cartState = new CartState();
