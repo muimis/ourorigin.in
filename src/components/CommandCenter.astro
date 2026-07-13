@@ -1,34 +1,42 @@
 ---
 import OriginMark from './OriginMark.astro';
+
+export interface Props {
+  variant?: 'dark' | 'light';
+}
+
+const { variant = 'dark' } = Astro.props;
 ---
 
-<header class="global-header">
+<header class={`global-header header-${variant}`}>
   <div id="command-center-trigger" class="header-logo" aria-label="Open Navigation">
-    <OriginMark variant="gold" size={32} animate={false} />
+    <OriginMark variant={variant === 'light' ? 'reversed' : 'gold'} size={32} animate={false} />
   </div>
 
   <div class="header-actions">
-    <button id="trigger-yields" class="hud-telemetry-btn" aria-label="All Yields">
-      [ ALL YIELDS ]
+    <button id="trigger-yields" class="hud-btn" aria-label="All Yields">
+      All Yields
     </button>
 
-    <button id="trigger-dossier" class="hud-telemetry-btn" aria-label="Open Basket" onclick="window.dispatchEvent(new Event('open-cart'))">
-      [ BASKET : <span class="dossier-count" id="header-basket-count">0</span> ]
+    <button id="trigger-dossier" class="hud-btn" aria-label="Open Basket" onclick="window.dispatchEvent(new Event('open-cart'))">
+      Basket · <span class="dossier-count" id="header-basket-count">0</span>
     </button>
   </div>
 </header>
 
 <div id="command-center-overlay" aria-hidden="true">
-  <div class="cc-close" aria-label="Close Navigation">
-    <OriginMark variant="gold" size={32} animate={false} />
-  </div>
-  
   <nav class="cc-nav">
+    <a href="/">Home</a>
     <a href="/observations">Observations</a>
-    <a href="/why">Why this exists.</a>
+    <a href="/why">Why This Exists</a>
     <a href="/contact">Contact</a>
     <button id="cc-all-yields-btn" class="cc-button">All Yields</button>
   </nav>
+
+  <button class="cc-close" aria-label="Close Navigation">
+    <OriginMark variant="gold" size={28} animate={false} />
+    <span class="cc-close-label">Close</span>
+  </button>
 </div>
 
 <style>
@@ -43,7 +51,7 @@ import OriginMark from './OriginMark.astro';
     align-items: center;
     z-index: 8000;
     box-sizing: border-box;
-    pointer-events: none; /* Let clicks pass through empty space */
+    pointer-events: none;
   }
 
   .header-logo {
@@ -61,21 +69,33 @@ import OriginMark from './OriginMark.astro';
     align-items: center;
     pointer-events: auto;
   }
-  
-  .hud-telemetry-btn {
+
+  .hud-btn {
     font-family: var(--font-mono);
     font-size: 11px;
-    letter-spacing: 0.1em;
-    color: var(--color-forest-deep); /* Dark color for light background */
+    letter-spacing: 0.08em;
     background: none;
     border: none;
     padding: 0;
     cursor: pointer;
-    transition: opacity 0.3s ease;
+    transition: color 0.3s ease, opacity 0.3s ease;
     white-space: nowrap;
   }
-  .hud-telemetry-btn:hover {
+
+  /* Dark variant: dark text for light backgrounds */
+  .header-dark .hud-btn {
+    color: var(--color-forest-deep);
+  }
+  .header-dark .hud-btn:hover {
     color: var(--color-gold);
+  }
+
+  /* Light variant: light text for dark backgrounds */
+  .header-light .hud-btn {
+    color: rgba(245, 237, 216, 0.6);
+  }
+  .header-light .hud-btn:hover {
+    color: var(--color-warm-cream);
   }
 
   @media (max-width: 768px) {
@@ -85,32 +105,31 @@ import OriginMark from './OriginMark.astro';
     .header-actions {
       gap: 1rem;
     }
-    .hud-telemetry-btn {
+    .hud-btn {
       font-size: 10px;
     }
   }
-  
-  /* Force the inner SVG elements to at least 100% opacity for this specific mark */
+
+  /* Force the inner SVG elements to full opacity */
   #command-center-trigger :global(.origin-mark *) {
     opacity: 1 !important;
   }
-  
-  /* Matrix expanded overrides removed since scrolling replaces it */
 
+  /* === Overlay === */
   #command-center-overlay {
     position: fixed;
     inset: 0;
     z-index: 9000;
-    background: rgba(12, 21, 9, 0.95);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: rgba(12, 21, 9, 0.97);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   #command-center-overlay.is-active {
@@ -120,23 +139,37 @@ import OriginMark from './OriginMark.astro';
 
   .cc-close {
     position: absolute;
-    bottom: 8px;
+    bottom: 2rem;
     left: 50%;
     transform: translateX(-50%);
     cursor: pointer;
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: none;
+    padding: 0;
   }
   .cc-close:hover {
     transform: translateX(-50%) scale(0.9);
+  }
+  .cc-close-label {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(245, 237, 216, 0.3);
   }
 
   .cc-nav {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 3.5rem;
-    transform: translateY(20px);
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    gap: 2.5rem;
+    transform: translateY(15px);
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   #command-center-overlay.is-active .cc-nav {
@@ -144,19 +177,19 @@ import OriginMark from './OriginMark.astro';
   }
 
   .cc-nav a, .cc-button {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 3.5rem;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3.5rem);
     font-weight: 300;
     color: var(--color-warm-cream);
     text-decoration: none;
-    letter-spacing: 0.05em;
-    transition: color 0.4s ease, opacity 0.4s ease;
-    opacity: 0.6;
+    letter-spacing: 0.02em;
+    transition: color 0.3s ease, opacity 0.3s ease;
+    opacity: 0.5;
     background: none;
     border: none;
     padding: 0;
     cursor: pointer;
-    line-height: 1;
+    line-height: 1.1;
   }
 
   .cc-nav a:hover, .cc-button:hover {
@@ -164,24 +197,19 @@ import OriginMark from './OriginMark.astro';
     opacity: 1;
   }
 
-  .cc-nav a:hover, .cc-button:hover {
-    color: var(--color-gold);
-    opacity: 1;
-  }
-  
   @media (max-width: 768px) {
-    .cc-nav a, .cc-button { 
-      font-size: 2.5rem; 
+    .cc-nav a, .cc-button {
+      font-size: 2rem;
     }
     .cc-nav {
-      gap: 2.5rem;
+      gap: 2rem;
     }
   }
 </style>
 
 <script>
   import { cartState } from '../scripts/cart.js';
-  
+
   const trigger = document.getElementById('command-center-trigger');
   const close = document.querySelector('.cc-close');
   const overlay = document.getElementById('command-center-overlay');
@@ -191,34 +219,33 @@ import OriginMark from './OriginMark.astro';
       overlay.classList.add('is-active');
       trigger.style.opacity = '0';
       trigger.style.pointerEvents = 'none';
-      document.body.style.overflow = 'hidden'; // Lock scroll if applicable
+      document.body.style.overflow = 'hidden';
     });
-    
+
     close.addEventListener('click', () => {
       overlay.classList.remove('is-active');
-      trigger.style.opacity = '0.8';
+      trigger.style.opacity = '1';
       trigger.style.pointerEvents = 'auto';
       document.body.style.overflow = '';
     });
-    
+
     const ccYieldsBtn = document.getElementById('cc-all-yields-btn');
     if (ccYieldsBtn) {
       ccYieldsBtn.addEventListener('click', () => {
         overlay.classList.remove('is-active');
-        trigger.style.opacity = '0.8';
+        trigger.style.opacity = '1';
         trigger.style.pointerEvents = 'auto';
         document.body.style.overflow = '';
         window.dispatchEvent(new Event('open-all-yields-panel'));
       });
     }
 
-    // Set initial basket count
+    // Basket count
     const basketCountEl = document.getElementById('header-basket-count');
     if (basketCountEl) {
       basketCountEl.textContent = cartState.getTotalItems();
     }
 
-    // Update the Basket count dynamically
     window.addEventListener('cart-updated', (e) => {
       const { totalItems } = e.detail;
       if (basketCountEl) {
@@ -226,11 +253,21 @@ import OriginMark from './OriginMark.astro';
       }
     });
 
-  const triggerYields = document.getElementById('trigger-yields');
+    const triggerYields = document.getElementById('trigger-yields');
     if (triggerYields) {
       triggerYields.addEventListener('click', () => {
         window.dispatchEvent(new Event('open-all-yields-panel'));
       });
     }
+
+    // Escape key to close
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && overlay.classList.contains('is-active')) {
+        overlay.classList.remove('is-active');
+        trigger.style.opacity = '1';
+        trigger.style.pointerEvents = 'auto';
+        document.body.style.overflow = '';
+      }
+    });
   }
 </script>

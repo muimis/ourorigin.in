@@ -1,175 +1,102 @@
 ---
-import '../styles/tokens.css';
-import GlobalNav from '../components/GlobalNav.astro';
+import BaseLayout from '../components/BaseLayout.astro';
+import CommandCenter from '../components/CommandCenter.astro';
 import AllYieldsPanel from '../components/AllYieldsPanel.astro';
 import CartDrawer from '../components/CartDrawer.astro';
+import Footer from '../components/Footer.astro';
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact — OurOrigin</title>
-    
-    <meta name="description" content="Reach out to OurOrigin for inquiries, ledger fulfillment, or journal questions.">
-    <link rel="canonical" href="https://ourorigin.in/contact">
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Contact | OurOrigin">
-    <meta property="og:description" content="Reach out to OurOrigin for inquiries, ledger fulfillment, or journal questions.">
-    <meta property="og:url" content="https://ourorigin.in/contact">
-    <meta property="og:image" content="https://ourorigin.in/og-image.jpg">
-    <meta property="og:site_name" content="OurOrigin">
-
-    <!-- Twitter / X -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Contact | OurOrigin">
-    <meta name="twitter:description" content="Reach out to OurOrigin for inquiries, ledger fulfillment, or journal questions.">
-    <meta name="twitter:image" content="https://ourorigin.in/og-image.jpg">
-
-    <!-- Google Fonts with display=swap as explicitly requested -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Cormorant+Garamond:wght@300;400;500&family=DM+Mono:ital,wght@0,300;0,400;0,500&display=swap" rel="stylesheet">
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            background-color: var(--color-forest-deep);
-            color: var(--color-warm-cream);
-            height: 100%;
-        }
-        .page-container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20vh 5vw;
-            display: flex;
-            flex-direction: column;
-        }
-        h1 {
-            font-family: 'Cinzel', serif;
-            font-size: 24px;
-            margin: 0 0 1rem 0;
-            font-weight: 400;
-        }
-        .intro {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.2rem;
-            line-height: 1.6;
-            margin: 0 0 3rem 0;
-            opacity: 0.8;
-        }
-        .form-group {
-            margin-bottom: 2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        label {
-            font-family: 'DM Mono', monospace;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            opacity: 0.8;
-        }
-        input, textarea {
-            background: transparent;
-            border: none;
-            border-bottom: 1px solid rgba(244, 241, 235, 0.3);
-            color: var(--color-warm-cream);
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.2rem;
-            padding: 0.5rem 0;
-            outline: none;
-            transition: border-color 0.3s ease;
-        }
-        input:focus, textarea:focus {
-            border-bottom-color: var(--color-warm-cream);
-        }
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-        .submit-btn {
-            background: var(--color-warm-cream);
-            color: var(--color-forest-deep);
-            border: none;
-            font-family: 'DM Mono', monospace;
-            font-size: 1rem;
-            padding: 1rem;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-top: 1rem;
-            transition: opacity 0.3s ease;
-        }
-        .submit-btn:hover {
-            opacity: 0.9;
-        }
-        .fallback {
-            margin-top: 3rem;
-            font-family: 'DM Mono', monospace;
-            font-size: 0.8rem;
-            opacity: 0.6;
-            text-align: center;
-        }
-        .fallback a {
-            color: var(--color-warm-cream);
-        }
-        .nav-link {
-            font-family: 'DM Mono', monospace;
-            color: var(--color-warm-cream);
-            text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-top: 4rem;
-            display: inline-block;
-            border-bottom: 1px solid rgba(244, 241, 235, 0.3);
-            padding-bottom: 0.2rem;
-            transition: border-color 0.3s ease;
-            align-self: flex-start;
-        }
-        .nav-link:hover {
-            border-bottom-color: var(--color-warm-cream);
-        }
-        .contact-details p {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 20px;
-            line-height: 1.6;
-            margin: 0 0 2rem 0;
-            opacity: 0.9;
-        }
-        .contact-link {
-            font-family: 'DM Mono', monospace;
-            font-size: 14px;
-            color: var(--color-warm-cream);
-            text-decoration: none;
-            display: block;
-            margin-bottom: 1rem;
-            opacity: 0.8;
-            transition: opacity 0.3s;
-        }
-        .contact-link:hover {
-            opacity: 1;
-        }
-    </style>
-</head>
-<body>
-    <GlobalNav />
+<BaseLayout
+  title="Contact — OurOrigin"
+  description="Reach out to OurOrigin for inquiries, harvest reservations, or questions about our origins."
+  canonicalPath="/contact"
+  ogTitle="Contact | OurOrigin"
+  ogDescription="Reach out to OurOrigin for inquiries, harvest reservations, or questions about our origins."
+>
+    <CommandCenter variant="light" />
     <AllYieldsPanel />
     <CartDrawer />
+
     <main id="main-content" class="page-container">
         <h1>Contact</h1>
-        
+
         <div class="contact-details">
             <p>We operate from Thiruvananthapuram, Kerala. If you have a question about where a yield comes from, or how it is grown, we will tell you everything we know.</p>
             <a href="https://wa.me/919645555668" class="contact-link" target="_blank" rel="noopener noreferrer">+91 96455 55668</a>
             <a href="mailto:ourorigin.in@gmail.com" class="contact-link">ourorigin.in@gmail.com</a>
         </div>
-        
-        <a href="/" class="nav-link">Return to the Matrix</a>
-        
+
         <p class="contact-gifting">For orders of 50 or more, reach us on the same number.</p>
+
+        <a href="/" class="nav-link">← Back to Home</a>
     </main>
-</body>
-</html>
+
+    <Footer />
+</BaseLayout>
+
+<style>
+    .page-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20vh 5vw 10vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    h1 {
+        font-family: var(--font-institutional);
+        font-size: 24px;
+        margin: 0 0 1rem 0;
+        font-weight: 400;
+        color: var(--color-warm-cream);
+    }
+
+    .contact-details p {
+        font-family: var(--font-display);
+        font-size: 20px;
+        line-height: 1.6;
+        margin: 0 0 2rem 0;
+        opacity: 0.9;
+        color: var(--color-warm-cream);
+    }
+
+    .contact-link {
+        font-family: var(--font-mono);
+        font-size: 14px;
+        color: var(--color-warm-cream);
+        text-decoration: none;
+        display: block;
+        margin-bottom: 1rem;
+        opacity: 0.6;
+        transition: opacity 0.3s ease;
+    }
+
+    .contact-link:hover {
+        opacity: 1;
+    }
+
+    .contact-gifting {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        color: rgba(245, 237, 216, 0.4);
+        margin-top: 3rem;
+        letter-spacing: 0.05em;
+        line-height: 1.5;
+    }
+
+    .nav-link {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        color: rgba(245, 237, 216, 0.5);
+        text-decoration: none;
+        letter-spacing: 0.05em;
+        margin-top: 3rem;
+        display: inline-block;
+        transition: color 0.3s ease;
+        align-self: flex-start;
+    }
+
+    .nav-link:hover {
+        color: var(--color-warm-cream);
+    }
+</style>

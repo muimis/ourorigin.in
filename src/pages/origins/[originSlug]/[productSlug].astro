@@ -1,16 +1,15 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
+import BaseLayout from '../../../components/BaseLayout.astro';
 import DepthExperience from '../../../components/DepthExperience.astro';
 import Carousel from '../../../components/Carousel.astro';
 import Ledger from '../../../components/Ledger.astro';
 import AllYieldsPanel from '../../../components/AllYieldsPanel.astro';
-import '../../../styles/tokens.css';
 
 // 1. Generate paths for all products
 export async function getStaticPaths() {
   const products = await getCollection('products');
   return products.map((product) => {
-    // Determine the actual origin slug (product.data.originSlug holds the reference ID)
     const originId = typeof product.data.originSlug === 'object' 
       ? product.data.originSlug.id 
       : product.data.originSlug;
@@ -35,101 +34,82 @@ const origin = await getEntry('origins', originId);
 if (!origin) {
   throw new Error(`Origin not found for product: ${product.id}`);
 }
+
+const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp') 
+  ? 'https://ourorigin.in/og-image.jpg' 
+  : `https://ourorigin.in${origin.data.images?.specimen || '/og-image.jpg'}`;
+
+const structuredData = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": product.data.name,
+  "description": product.data.specimenCopy,
+  "brand": {
+    "@type": "Brand",
+    "name": "OurOrigin"
+  },
+  "offers": {
+    "@type": "AggregateOffer",
+    "priceCurrency": "INR",
+    "lowPrice": product.data.sizes[0]?.priceINR || 0,
+    "highPrice": product.data.sizes[product.data.sizes.length - 1]?.priceINR || 0,
+    "offerCount": product.data.sizes.length,
+    "availability": "https://schema.org/InStock"
+  },
+  "additionalProperty": {
+    "@type": "PropertyValue",
+    "name": "Origin",
+    "value": `${origin.data.name}, ${origin.data.bioregion}`
+  }
+});
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>{product.data.name} from {origin.data.name} — OurOrigin</title>
+<BaseLayout
+  title={`${product.data.name} from ${origin.data.name} — OurOrigin`}
+  description={`${product.data.name} from ${origin.data.name} — ${origin.data.elevation}, ${origin.data.bioregion}. OurOrigin.`}
+  canonicalPath={`/origins/${origin.id}/${product.id}`}
+  ogTitle={`${product.data.name} from ${origin.data.name} — OurOrigin`}
+  ogDescription={product.data.specimenCopy?.slice(0, 160)}
+  ogImage={ogImageUrl}
+>
+    <Fragment slot="head">
+        <script type="application/ld+json" set:html={structuredData} />
+    </Fragment>
 
-    <meta name="description" content={`${product.data.name} from ${origin.data.name} — ${origin.data.elevation}, ${origin.data.bioregion}. OurOrigin.`}>
-    <link rel="canonical" href={`https://ourorigin.in/origins/${origin.id}/${product.id}`}>
-
-    <meta property="og:type" content="product">
-    <meta property="og:title" content={`${product.data.name} from ${origin.data.name} — OurOrigin`}>
-    <meta property="og:description" content={product.data.specimenCopy?.slice(0, 160)}>
-    <meta property="og:url" content={`https://ourorigin.in/origins/${origin.id}/${product.id}`}>
-    <meta property="og:image" content={`https://ourorigin.in${origin.data.images?.specimen?.endsWith('.webp') ? '/og-image.jpg' : (origin.data.images?.specimen || '/og-image.jpg')}`}>
-    <meta property="og:site_name" content="OurOrigin">
-
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content={`${product.data.name} from ${origin.data.name} — OurOrigin`}>
-    <meta name="twitter:description" content={product.data.specimenCopy?.slice(0, 160)}>
-    <meta name="twitter:image" content={`https://ourorigin.in${origin.data.images?.specimen?.endsWith('.webp') ? '/og-image.jpg' : (origin.data.images?.specimen || '/og-image.jpg')}`}>
-
-    <script type="application/ld+json" set:html={`
-    {
-      "@context": "https://schema.org",
-      "@type": "Product",
-      "name": "${product.data.name}",
-      "description": "${product.data.specimenCopy?.replace(/"/g, '\\"')}",
-      "brand": {
-        "@type": "Brand",
-        "name": "OurOrigin"
-      },
-      "offers": {
-        "@type": "AggregateOffer",
-        "priceCurrency": "INR",
-        "lowPrice": "${product.data.sizes[0]?.price || 0}",
-        "highPrice": "${product.data.sizes[product.data.sizes.length - 1]?.price || 0}",
-        "offerCount": "${product.data.sizes.length}",
-        "availability": "https://schema.org/InStock"
-      },
-      "additionalProperty": {
-        "@type": "PropertyValue",
-        "name": "Origin",
-        "value": "${origin.data.name}, ${origin.data.bioregion}"
-      }
-    }
-    `} />
-
-    <!-- Google Fonts with display=swap as explicitly requested -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Cormorant+Garamond:wght@300;400;500&family=DM+Mono:ital,wght@0,300;0,400;0,500&display=swap" rel="stylesheet">
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            background-color: var(--color-forest-deep);
-            color: var(--color-warm-cream);
-        }
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            border: 0;
-        }
-        .skip-nav {
-            position: absolute;
-            top: -100%;
-            left: 0;
-            background: var(--color-warm-cream);
-            color: var(--color-forest-deep);
-            padding: 0.5rem 1rem;
-            font-family: var(--font-evidence);
-            font-size: 0.875rem;
-            z-index: 9999;
-        }
-        .skip-nav:focus {
-            top: 0;
-        }
-    </style>
-</head>
-<body>
     <a href="#main-content" class="skip-nav">Skip to content</a>
-    
+
     <main id="main-content">
       <h1 class="sr-only">{product.data.name} from {origin.data.name} — OurOrigin</h1>
       <DepthExperience origin={origin} product={product} />
       <AllYieldsPanel />
     </main>
     <Ledger />
-</body>
-</html>
+</BaseLayout>
+
+<style>
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        border: 0;
+    }
+    .skip-nav {
+        position: absolute;
+        top: -100%;
+        left: 0;
+        background: var(--color-warm-cream);
+        color: var(--color-forest-deep);
+        padding: 0.5rem 1rem;
+        font-family: var(--font-evidence);
+        font-size: 0.875rem;
+        z-index: 9999;
+        text-decoration: none;
+    }
+    .skip-nav:focus {
+        top: 0;
+    }
+</style>

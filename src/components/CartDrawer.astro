@@ -252,6 +252,72 @@ const whatsappNumber = "+919645555668";
   .whatsapp-checkout-btn:not(:disabled):active {
     transform: translateY(0);
   }
+
+  /* Cart Item Styles (rendered dynamically via JS) */
+  .cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px solid rgba(13, 30, 17, 0.05);
+  }
+
+  .cart-item-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .cart-item-origin {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    opacity: 0.6;
+    color: var(--color-forest-deep);
+  }
+
+  .cart-item-name {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    color: var(--color-forest-deep);
+  }
+
+  .cart-item-price {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    opacity: 0.8;
+    color: var(--color-forest-deep);
+  }
+
+  .cart-item-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+  }
+
+  .qty-stepper {
+    display: flex;
+    align-items: center;
+    border: 1px solid rgba(13, 30, 17, 0.2);
+    border-radius: 99px;
+  }
+
+  .qty-btn {
+    background: none;
+    border: none;
+    padding: 4px 12px;
+    cursor: pointer;
+    color: var(--color-forest-deep);
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  .qty-value {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    min-width: 1ch;
+    text-align: center;
+    color: var(--color-forest-deep);
+  }
 </style>
 
 <script>
@@ -280,17 +346,17 @@ const whatsappNumber = "+919645555668";
 
   // Render Cart Item HTML
   const renderCartItem = (item) => `
-    <li class="cart-item" style="display: flex; justify-content: space-between; align-items: center; padding-bottom: var(--space-lg); border-bottom: 1px solid rgba(13,30,17,0.05);">
-      <div style="display: flex; flex-direction: column;">
-        <span style="font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase; opacity: 0.6;">${item.origin}</span>
-        <span style="font-family: var(--font-display); font-size: 1.25rem;">${item.name}</span>
-        <span style="font-family: var(--font-mono); font-size: 0.75rem; opacity: 0.8;">${formatPrice(item.price)} / ${item.weight}</span>
+    <li class="cart-item">
+      <div class="cart-item-info">
+        <span class="cart-item-origin">${item.origin}</span>
+        <span class="cart-item-name">${item.name}</span>
+        <span class="cart-item-price">${formatPrice(item.price)} / ${item.weight}</span>
       </div>
-      <div style="display: flex; align-items: center; gap: var(--space-md);">
-        <div style="display: flex; align-items: center; border: 1px solid rgba(13,30,17,0.2); border-radius: 99px;">
-          <button data-id="${item.id}" class="qty-btn dec" style="background:none; border:none; padding: 4px 12px; cursor:pointer;">-</button>
-          <span style="font-family: var(--font-mono); font-size: 0.875rem; min-width: 1ch; text-align: center;">${item.quantity}</span>
-          <button data-id="${item.id}" class="qty-btn inc" style="background:none; border:none; padding: 4px 12px; cursor:pointer;">+</button>
+      <div class="cart-item-controls">
+        <div class="qty-stepper">
+          <button data-id="${item.id}" class="qty-btn dec">−</button>
+          <span class="qty-value">${item.quantity}</span>
+          <button data-id="${item.id}" class="qty-btn inc">+</button>
         </div>
       </div>
     </li>

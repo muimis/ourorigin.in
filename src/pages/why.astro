@@ -1,217 +1,23 @@
 ---
-import '../styles/tokens.css';
-import GlobalNav from '../components/GlobalNav.astro';
+import BaseLayout from '../components/BaseLayout.astro';
+import CommandCenter from '../components/CommandCenter.astro';
 import AllYieldsPanel from '../components/AllYieldsPanel.astro';
-import OriginMark from '../components/OriginMark.astro';
 import CartDrawer from '../components/CartDrawer.astro';
+import OriginMark from '../components/OriginMark.astro';
+import Footer from '../components/Footer.astro';
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Why This Exists. — OurOrigin</title>
-    
-    <meta name="description" content="OurOrigin exists because the people and places behind real products deserve to be seen, not kept in the background of a marketing story.">
-    <link rel="canonical" href="https://ourorigin.in/why">
-    <meta property="og:title" content="The Founding Document. | OurOrigin">
-    <meta property="og:description" content="A small business sourcing from the Western Ghats. We show you the origin and let you reach your own conclusions.">
-    <meta property="og:url" content="https://ourorigin.in/why">
-    <meta property="og:image" content="https://ourorigin.in/og-image.jpg">
-
-    <!-- Google Fonts with display=swap as explicitly requested -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Cormorant+Garamond:wght@300;400;500;600&family=DM+Mono:ital,wght@0,300;0,400;0,500&display=swap" rel="stylesheet">
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            background-color: var(--color-forest-deep);
-            color: var(--color-warm-cream);
-            overflow-x: hidden;
-        }
-
-        /* Dossier Layout */
-        .dossier-container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 25vh 5vw 15vh 5vw;
-            position: relative;
-        }
-
-        /* Telemetry Guide Line */
-        .guide-line {
-            position: absolute;
-            left: 5vw;
-            top: 0;
-            bottom: 0;
-            width: 1px;
-            background: linear-gradient(to bottom, transparent, rgba(244, 241, 235, 0.1) 10%, rgba(244, 241, 235, 0.1) 90%, transparent);
-            z-index: 0;
-        }
-
-        @media (min-width: 900px) {
-            .guide-line {
-                left: calc(50% - 480px); /* Align slightly outside the content box */
-            }
-        }
-
-        /* Typographic System */
-        .document-title {
-            font-family: 'DM Mono', monospace;
-            font-size: 0.75rem;
-            letter-spacing: 0.3em;
-            text-transform: uppercase;
-            color: var(--color-gold);
-            margin-bottom: 3rem;
-            opacity: 0.8;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .document-title::after {
-            content: '';
-            flex-grow: 1;
-            height: 1px;
-            background-color: rgba(166, 124, 60, 0.3);
-            max-width: 200px;
-        }
-
-        .preamble {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.5rem;
-            line-height: 1.4;
-            font-style: italic;
-            color: var(--color-warm-cream);
-            opacity: 0.7;
-            margin-bottom: 8rem;
-            max-width: 700px;
-        }
-
-        /* Sections */
-        .dossier-section {
-            margin-bottom: 8rem;
-            position: relative;
-            padding-left: 2rem; /* Give space for the guide line */
-        }
-
-        .section-header {
-            font-family: 'DM Mono', monospace;
-            font-size: 0.85rem;
-            letter-spacing: 0.2em;
-            color: var(--color-gold);
-            text-transform: uppercase;
-            margin-bottom: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .section-header::before {
-            content: '';
-        }
-        .section-header::after {
-            content: '';
-        }
-
-        .prose-block {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.4rem;
-            line-height: 1.6;
-            color: var(--color-warm-cream);
-            max-width: 680px;
-            margin-bottom: 1.5rem;
-        }
-
-        .prose-block strong {
-            font-weight: 600;
-            color: var(--color-gold);
-        }
-
-        .bullet-list {
-            list-style: none;
-            padding-left: 0;
-            margin-top: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .bullet-list li {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.4rem;
-            line-height: 1.6;
-            color: var(--color-warm-cream);
-            margin-bottom: 1.5rem;
-            position: relative;
-            padding-left: 1.5rem;
-            max-width: 680px;
-        }
-
-        .bullet-list li::before {
-            content: '—';
-            position: absolute;
-            left: 0;
-            color: var(--color-gold);
-            opacity: 0.5;
-        }
-
-        /* Visual Decorators */
-        .decorator-mark {
-            position: absolute;
-            left: -1rem;
-            top: 0.2rem;
-            opacity: 0.3;
-            transform: translateX(-50%);
-        }
-
-        .conclusion {
-            text-align: center;
-            margin-top: 15vh;
-            padding-top: 5vh;
-            border-top: 1px solid rgba(244, 241, 235, 0.1);
-        }
-
-        .conclusion-sig {
-            font-family: 'Cinzel', serif;
-            font-size: 1rem;
-            letter-spacing: 0.4em;
-            color: var(--color-gold);
-            margin-top: 3rem;
-            font-family: 'DM Mono', monospace;
-            color: var(--color-gold);
-            letter-spacing: 0.2em;
-            font-size: 0.9rem;
-        }
-
-        .nav-link {
-            font-family: 'DM Mono', monospace;
-            color: var(--color-warm-cream);
-            text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-top: 4rem;
-            display: inline-block;
-            border-bottom: 1px solid rgba(244, 241, 235, 0.3);
-            padding-bottom: 0.2rem;
-            transition: border-color 0.3s ease;
-        }
-        .nav-link:hover {
-            border-bottom-color: var(--color-warm-cream);
-        }
-
-        /* Initial state for GSAP */
-        .gsap-reveal {
-            /* JS will handle opacity to prevent blank pages on error */
-        }
-    </style>
-</head>
-<body>
-    <GlobalNav />
+<BaseLayout
+  title="Why This Exists. — OurOrigin"
+  description="OurOrigin exists because the people and places behind real products deserve to be seen, not kept in the background of a marketing story."
+  canonicalPath="/why"
+  ogTitle="The Founding Document. | OurOrigin"
+  ogDescription="A small business sourcing from the Western Ghats. We show you the origin and let you reach your own conclusions."
+>
+    <CommandCenter variant="light" />
     <AllYieldsPanel />
     <CartDrawer />
-    
+
     <main id="main-content" class="dossier-container">
         <div class="guide-line"></div>
 
@@ -291,9 +97,11 @@ import CartDrawer from '../components/CartDrawer.astro';
 
         <div class="conclusion gsap-reveal">
             <OriginMark variant="gold" size={64} animate={false} />
-            <div class="conclusion-sig">YOU ARE INSIDE THE ORIGIN</div>
+            <div class="conclusion-sig">You Are Inside the Origin</div>
         </div>
     </main>
+
+    <Footer />
 
     <!-- GSAP for cinematic scroll reveals -->
     <script>
@@ -304,10 +112,10 @@ import CartDrawer from '../components/CartDrawer.astro';
             gsap.registerPlugin(ScrollTrigger);
 
             const reveals = document.querySelectorAll('.gsap-reveal');
-            
+
             // Set initial state via JS so fallback is visible
             gsap.set(reveals, { opacity: 0, y: 30 });
-            
+
             reveals.forEach((element) => {
                 gsap.to(element, {
                     scrollTrigger: {
@@ -323,5 +131,158 @@ import CartDrawer from '../components/CartDrawer.astro';
             });
         });
     </script>
-</body>
-</html>
+</BaseLayout>
+
+<style>
+    /* Dossier Layout */
+    .dossier-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 25vh 5vw 15vh 5vw;
+        position: relative;
+    }
+
+    /* Telemetry Guide Line */
+    .guide-line {
+        position: absolute;
+        left: 5vw;
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        background: linear-gradient(to bottom, transparent, rgba(244, 241, 235, 0.1) 10%, rgba(244, 241, 235, 0.1) 90%, transparent);
+        z-index: 0;
+    }
+
+    @media (min-width: 900px) {
+        .guide-line {
+            left: calc(50% - 480px);
+        }
+    }
+
+    /* Typographic System */
+    .document-title {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--color-gold);
+        margin-bottom: 3rem;
+        opacity: 0.8;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .document-title::after {
+        content: '';
+        flex-grow: 1;
+        height: 1px;
+        background-color: rgba(166, 124, 60, 0.3);
+        max-width: 200px;
+    }
+
+    .preamble {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        line-height: 1.4;
+        font-style: italic;
+        color: var(--color-warm-cream);
+        opacity: 0.7;
+        margin-bottom: 8rem;
+        max-width: 700px;
+    }
+
+    /* Sections */
+    .dossier-section {
+        margin-bottom: 8rem;
+        position: relative;
+        padding-left: 2rem;
+    }
+
+    .section-header {
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        letter-spacing: 0.2em;
+        color: var(--color-gold);
+        text-transform: uppercase;
+        margin-bottom: 2rem;
+    }
+
+    .prose-block {
+        font-family: var(--font-display);
+        font-size: 1.4rem;
+        line-height: 1.6;
+        color: var(--color-warm-cream);
+        max-width: 680px;
+        margin-bottom: 1.5rem;
+    }
+
+    .prose-block strong {
+        font-weight: 600;
+        color: var(--color-gold);
+    }
+
+    .bullet-list {
+        list-style: none;
+        padding-left: 0;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .bullet-list li {
+        font-family: var(--font-display);
+        font-size: 1.4rem;
+        line-height: 1.6;
+        color: var(--color-warm-cream);
+        margin-bottom: 1.5rem;
+        position: relative;
+        padding-left: 1.5rem;
+        max-width: 680px;
+    }
+
+    .bullet-list li::before {
+        content: '—';
+        position: absolute;
+        left: 0;
+        color: var(--color-gold);
+        opacity: 0.5;
+    }
+
+    /* Visual Decorators */
+    .decorator-mark {
+        position: absolute;
+        left: -1rem;
+        top: 0.2rem;
+        opacity: 0.3;
+        transform: translateX(-50%);
+    }
+
+    .conclusion {
+        text-align: center;
+        margin-top: 15vh;
+        padding-top: 5vh;
+        border-top: 1px solid rgba(244, 241, 235, 0.1);
+    }
+
+    .conclusion-sig {
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: var(--color-gold);
+        margin-top: 3rem;
+        opacity: 0.6;
+    }
+
+    /* GSAP fallback: if JS fails, content must still be visible */
+    @media (scripting: none) {
+        .gsap-reveal {
+            opacity: 1 !important;
+            transform: none !important;
+        }
+    }
+    /* Also provide noscript-level fallback */
+    .gsap-reveal {
+        /* Visible by default — GSAP sets opacity:0 via JS */
+    }
+</style>

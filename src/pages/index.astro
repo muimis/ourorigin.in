@@ -1,131 +1,51 @@
 ---
-import '../styles/tokens.css';
+import BaseLayout from '../components/BaseLayout.astro';
 import CommandCenter from '../components/CommandCenter.astro';
 import CartDrawer from '../components/CartDrawer.astro';
 import HeroStorefront from '../components/HeroStorefront.astro';
-import LivingCanvas from '../components/LivingCanvas.astro';
-import TheDeepDive from '../components/TheDeepDive.astro';
+import ProductGrid from '../components/ProductGrid.astro';
 import AllYieldsPanel from '../components/AllYieldsPanel.astro';
-import { getCollection } from 'astro:content';
-
-const products = await getCollection('products');
-const origins = await getCollection('origins');
+import Footer from '../components/Footer.astro';
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OurOrigin</title>
-    
-    <meta name="description" content="OurOrigin sources spices and natural ingredients from the Western Ghats — Nilgiris, Idukki, Wayanad, and beyond. From the Source.">
-    <link rel="canonical" href="https://ourorigin.in/">
-    
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="OurOrigin — From the Western Ghats">
-    <meta property="og:description" content="Five origins. Twelve yields. The absolute truth of the earth.">
-    <meta property="og:url" content="https://ourorigin.in/">
-    <meta property="og:image" content="https://ourorigin.in/og-image.jpg">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:site_name" content="OurOrigin">
-    
-    <!-- Twitter / X -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="OurOrigin — From the Western Ghats">
-    
-    <!-- Google Fonts with display=swap -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Cormorant+Garamond:wght@300;400;500&family=DM+Mono:ital,wght@0,300;0,400;0,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-</head>
-<body class="theme-default film-grain">
-    
-    <!-- Global HUD Layers -->
-    <CommandCenter />
+<BaseLayout
+  title="OurOrigin — From the Western Ghats"
+  description="OurOrigin sources spices and natural ingredients from the Western Ghats — Nilgiris, Idukki, Wayanad, and beyond. Traceable to the person who harvested them."
+  canonicalPath="/"
+  ogTitle="OurOrigin — From the Western Ghats"
+  ogDescription="Spices and ingredients from the Western Ghats. Traceable to the person who harvested them."
+>
+    <!-- Global UI Layers -->
+    <CommandCenter variant="dark" />
     <CartDrawer />
     <AllYieldsPanel />
-    
-    <main id="app-container">
-        <!-- State 1: The Presentation (Hero) -->
-        <div id="state-hero" class="app-state is-active">
-            <HeroStorefront />
-        </div>
-        
-        <!-- State 2: The Exploration (Canvas) -->
-        <div id="state-canvas" class="app-state">
-            <LivingCanvas />
-        </div>
-        
-        <!-- State 3: The Immersion (Deep Dive) -->
-        <!-- TheDeepDive is self-contained and listens to open-deep-dive event -->
-        <TheDeepDive products={products} origins={origins} />
+
+    <main>
+        <!-- Hero: Light background, full viewport -->
+        <HeroStorefront />
+
+        <!-- Product Grid: Dark background, scroll-based -->
+        <ProductGrid />
     </main>
 
+    <Footer />
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const btnShop = document.querySelector('.cta-primary');
-            const stateHero = document.getElementById('state-hero');
-            const stateCanvas = document.getElementById('state-canvas');
-            
-            if (btnShop && stateHero && stateCanvas) {
-                // Prevent default anchor jump, use smooth cinematic transition
-                btnShop.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    
-                    // Fade out Hero
-                    stateHero.classList.remove('is-active');
-                    stateHero.style.transform = 'translateY(-5vh) scale(0.98)';
-                    stateHero.style.opacity = '0';
-                    stateHero.style.pointerEvents = 'none';
-                    
-                    // Fade in Canvas
-                    setTimeout(() => {
-                        stateCanvas.classList.add('is-active');
-                    }, 400); // slight delay for cinematic effect
-                });
+        // Smooth scroll for the CTA anchor link
+        document.querySelector('.cta-primary')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = document.getElementById('yields');
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         });
     </script>
-</body>
-</html>
+</BaseLayout>
 
 <style>
-    body {
-        margin: 0;
-        padding: 0;
-        background-color: var(--color-warm-cream); /* Default before deep dive */
-        color: var(--color-forest-deep);
-        font-family: var(--font-mono);
-        overflow-x: hidden; /* Prevent horizontal scroll only */
-    }
-
-    #app-container {
+    main {
         position: relative;
-        width: 100vw;
-        min-height: 100vh;
+        width: 100%;
         overflow-x: hidden;
-    }
-
-    .app-state {
-        position: absolute;
-        inset: 0;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-        z-index: 10;
-    }
-
-    .app-state.is-active {
-        position: relative;
-        opacity: 1;
-        pointer-events: auto;
-        transform: translateY(0) scale(1);
-    }
-
-    #state-canvas:not(.is-active) {
-        transform: scale(1.05); /* Zoom in from behind */
     }
 </style>

@@ -5,7 +5,6 @@
   --color-ruby: #8a2a2b;
   --color-copper: #b87333;
   --color-silver: #c0c0c0;
-  --color-primary: #123456; /* Added for origin marks fallback */
 
   --font-display: 'Cormorant Garamond', serif;
   --font-institutional: 'Cinzel', serif;
@@ -18,13 +17,13 @@
   --text-base: clamp(1rem, 1.2vw, 1.25rem);
   --text-lead: clamp(1.25rem, 1.5vw, 1.5rem);
   --text-title: clamp(2rem, 4vw, 3.5rem);
-  --text-massive: clamp(3.5rem, 8vw, 8rem); /* For true cinematic impact */
+  --text-massive: clamp(3.5rem, 8vw, 8rem);
   
   --line-height-tight: 1.1;
   --line-height-base: 1.4;
   --line-height-loose: 1.8;
 
-  /* Spacing Tokens for UI Consistency */
+  /* Spacing Tokens */
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;
   --space-md: 0.75rem;
@@ -34,17 +33,16 @@
   --space-3xl: 3rem;
   --space-4xl: 4rem;
   
-  /* Fluid typography: 24px on mobile, scaling with viewport, up to 40px on large screens */
   --text-size-stratum-title: var(--text-massive);
   --stratum-text-max-width: 85vw;
   
   /* Stratum Architectural Tokens */
-  --stratum-border-radius: 0; /* Confirmed: explicitly sharp, brutalist, structural bands */
-  --stratum-scroll-distance-multiplier: 200%; /* Confirmed: halved from 400% for punchier velocity */
+  --stratum-border-radius: 0;
+  --stratum-scroll-distance-multiplier: 200%;
   
   /* Origin Mark Design Lock */
-  --origin-mark-gauge-size: 48px; /* Confirmed: Material Design standard touch-target */
-  --origin-mark-stroke-width: 0.5; /* Confirmed: mathematically matches the 1.5 stroke on 280 viewBox */
+  --origin-mark-gauge-size: 48px;
+  --origin-mark-stroke-width: 0.5;
 
   --ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
   --duration-micro: 120ms;
@@ -53,12 +51,12 @@
   --duration-slow: 1000ms;
 }
 
-/* Global mobile tap highlight removal */
+/* Global tap highlight removal */
 a, button, [role="button"], input, select, textarea {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Global overflow protection and rendering polish */
+/* Global base styles */
 html, body {
   overflow-x: hidden;
   max-width: 100%;
@@ -69,18 +67,24 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
   font-family: var(--font-narrative);
   line-height: var(--line-height-base);
+  margin: 0;
+  padding: 0;
 }
 
-/* Global Film Grain Effect */
-.film-grain::before {
-  content: "";
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0.04;
-  /* background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); */
+/* Smooth scroll for anchor links */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Selection styling */
+::selection {
+  background-color: var(--color-gold);
+  color: var(--color-forest-deep);
+}
+
+::-moz-selection {
+  background-color: var(--color-gold);
+  color: var(--color-forest-deep);
 }
 
 /* Screen-reader only utility */
@@ -96,6 +100,7 @@ html, body {
   border-width: 0;
 }
 
+/* Respect reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;

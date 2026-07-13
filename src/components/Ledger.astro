@@ -155,7 +155,7 @@ const companionsJson = JSON.stringify(companionProductsMap);
     const clearBtn = document.getElementById('clear-shipping-btn');
     const copyUpiBtn = document.getElementById('copy-upi-btn');
     
-    let ledgerItems = JSON.parse(localStorage.getItem('ourorigin_ledger') || '[]');
+    let ledgerItems = JSON.parse(localStorage.getItem('ourorigin_cart') || '[]');
     
     // Load shipping details
     const savedShipping = localStorage.getItem('ourorigin_shipping_v1');
@@ -226,9 +226,19 @@ const companionsJson = JSON.stringify(companionProductsMap);
     }
     
     function saveAndRender() {
-      localStorage.setItem('ourorigin_ledger', JSON.stringify(ledgerItems));
+      localStorage.setItem('ourorigin_cart', JSON.stringify(ledgerItems));
       updateTrigger();
       renderItems();
+
+      // Broadcast cart update to CommandCenter & other components
+      const event = new CustomEvent('cart-updated', {
+        detail: {
+          items: ledgerItems,
+          totalItems: ledgerItems.reduce((sum, item) => sum + item.quantity, 0),
+          totalPrice: ledgerItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+        }
+      });
+      window.dispatchEvent(event);
     }
     
     function renderItems() {
@@ -432,7 +442,7 @@ const companionsJson = JSON.stringify(companionProductsMap);
       }, 1500);
       
       // Clear cart
-      localStorage.removeItem('ourorigin_ledger');
+      localStorage.removeItem('ourorigin_cart');
       ledgerItems = [];
       updateTrigger();
       

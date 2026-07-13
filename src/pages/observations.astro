@@ -1,190 +1,172 @@
 ---
-import '../styles/tokens.css';
-import GlobalNav from '../components/GlobalNav.astro';
+import BaseLayout from '../components/BaseLayout.astro';
+import CommandCenter from '../components/CommandCenter.astro';
 import AllYieldsPanel from '../components/AllYieldsPanel.astro';
 import CartDrawer from '../components/CartDrawer.astro';
+import Footer from '../components/Footer.astro';
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Observations — OurOrigin</title>
-    
-    <meta name="description" content="Things noticed in the growing, harvesting, drying, and the distance between origin and kitchen. The OurOrigin evidence archive.">
-    <link rel="canonical" href="https://ourorigin.in/observations">
-    <meta property="og:title" content="Observations | OurOrigin">
-    <meta property="og:description" content="The archive of what we're paying attention to.">
-    <meta property="og:url" content="https://ourorigin.in/observations">
-    <meta property="og:image" content="https://ourorigin.in/og-image.jpg">
-
-    <!-- Google Fonts with display=swap as explicitly requested -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Cormorant+Garamond:wght@300;400;500&family=DM+Mono:ital,wght@0,300;0,400;0,500&display=swap" rel="stylesheet">
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            background-color: var(--color-forest-deep);
-            color: var(--color-warm-cream);
-            height: 100%;
-        }
-        .page-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20vh 5vw;
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-            opacity: 0;
-            animation: cinematicFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        @keyframes cinematicFade {
-            0% { opacity: 0; transform: translateY(15px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-        h1 {
-            font-family: 'Cinzel', serif;
-            font-size: 24px;
-            margin: 0 0 1rem 0;
-            font-weight: 400;
-        }
-        .subtitle {
-            font-family: 'DM Mono', monospace;
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            opacity: 0.4;
-            margin: 0 0 3rem 0;
-        }
-        .empty-state {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.5rem;
-            line-height: 1.6;
-            opacity: 0.8;
-            font-style: italic;
-        }
-        .nav-link {
-            font-family: 'DM Mono', monospace;
-            color: var(--color-warm-cream);
-            text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-top: 4rem;
-            display: inline-block;
-            border-bottom: 1px solid rgba(244, 241, 235, 0.3);
-            padding-bottom: 0.2rem;
-            transition: border-color 0.3s ease;
-            align-self: flex-start;
-        }
-        .nav-link:hover {
-            border-bottom-color: var(--color-warm-cream);
-        }
-        .observation {
-            margin-bottom: 3rem;
-            border-left: 1px solid rgba(244, 241, 235, 0.2);
-            padding-left: 2rem;
-        }
-        .obs-title {
-            font-family: 'DM Mono', monospace;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            font-weight: 400;
-            margin: 0 0 1rem 0;
-            color: var(--color-gold);
-        }
-        .obs-body {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 18px;
-            line-height: 1.6;
-            margin: 0 0 1rem 0;
-            opacity: 0.9;
-        }
-        .obs-meta {
-            font-family: 'DM Mono', monospace;
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            opacity: 0.4;
-            margin: 0;
-        }
-        .obs-title-sentence {
-            font-family: 'DM Mono', monospace;
-            font-size: 11px;
-            letter-spacing: 0.05em;
-            font-weight: 400;
-            margin: 0 0 1rem 0;
-            color: var(--color-gold);
-            text-transform: none;
-            line-height: 1.4;
-        }
-    </style>
-</head>
-<body>
-    <GlobalNav />
+<BaseLayout
+  title="Observations — OurOrigin"
+  description="Things noticed in the growing, harvesting, drying, and the distance between origin and kitchen. The OurOrigin evidence archive."
+  canonicalPath="/observations"
+  ogTitle="Observations | OurOrigin"
+  ogDescription="The archive of what we're paying attention to."
+>
+    <CommandCenter variant="light" />
     <AllYieldsPanel />
     <CartDrawer />
+
     <main id="main-content" class="page-container">
         <h1>Observations</h1>
         <p class="subtitle">Field notes and tracking</p>
-        
+
         <div class="observation">
-            <h2 class="obs-title">01 · THE BERRY WAS NEVER BLACK</h2>
+            <h2 class="obs-title">01 · The Berry Was Never Black</h2>
             <p class="obs-body">Black pepper starts green. The colour change happens entirely after harvest, during sun-drying. The colour you've associated with pepper your entire life is the colour of what happens to the plant after it's picked.</p>
-            <p class="obs-meta">REFERENCE: FOREST BLACK PEPPER</p>
+            <p class="obs-meta">Reference: Forest Black Pepper</p>
         </div>
-        
+
         <div class="observation">
-            <h2 class="obs-title">02 · SHADE IS AN INPUT</h2>
+            <h2 class="obs-title">02 · Shade Is an Input</h2>
             <p class="obs-body">Most spice plants are planted in cleared ground. Cardamom is not. It grows under a canopy — deliberately left intact, because Elettaria cardamomum produces better pods when it receives filtered light. The tall trees above a cardamom garden are not vestiges of forest. They are part of the cultivation.</p>
-            <p class="obs-meta">REFERENCE: CARDAMOM</p>
+            <p class="obs-meta">Reference: Cardamom</p>
         </div>
-        
+
         <div class="observation">
-            <h2 class="obs-title">03 · ONE FRUIT, TWO SPICES</h2>
+            <h2 class="obs-title">03 · One Fruit, Two Spices</h2>
             <p class="obs-body">Myristica fragrans produces a fleshy fruit that splits when ripe to reveal a seed (nutmeg) wrapped in a lace-like red covering (mace). Both are harvested in the same moment. The culinary world treats them as separate spices. The tree makes no such distinction.</p>
-            <p class="obs-meta">REFERENCE: MACE</p>
+            <p class="obs-meta">Reference: Mace</p>
         </div>
-        
+
         <div class="observation">
             <h2 class="obs-title-sentence">04 · What is left in the forest stays in the forest.</h2>
             <p class="obs-body">A pepper vine in the Western Ghats doesn't yield uniformly. Some clusters ripen first; others need more time. Some were reached by the forest before the farmer was — the animals, the birds, the weather. A farmer sourcing for OurOrigin leaves what isn't ready and leaves what was already taken. He doesn't harvest for maximum yield. He harvests for what the forest agreed to give this season.</p>
             <p class="obs-body">This is not a sustainable farming practice or a certification. It is a decision made alone, 12 kilometres into the forest, with no observer. The product that arrives is the record of that decision.</p>
-            <p class="obs-meta">REFERENCE: FOREST BLACK PEPPER · WAYANAD & NILGIRIS · 900–1,100M</p>
+            <p class="obs-meta">Reference: Forest Black Pepper · Wayanad & Nilgiris · 900–1,100m</p>
         </div>
-        
+
         <div class="observation">
             <h2 class="obs-title-sentence">05 · Some things cannot be measured in money. That doesn't mean they aren't in the price.</h2>
             <p class="obs-body">The price of a packet of Forest Black Pepper from OurOrigin reflects: the distance walked to reach the vine, the time taken to pick only what was ready, the weight of what was carried back, and the decision — made without anyone watching — to leave the rest. These things have no market rate. They are absorbed into a price that is set to make this sustainable, not to perform generosity or signal ethics.</p>
             <p class="obs-body">When you pay it, you are not donating to a cause. You are paying for something that actually cost that much to make with this much care.</p>
-            <p class="obs-meta">REFERENCE: FOREST BLACK PEPPER · WAYANAD & NILGIRIS · 900–1,100M</p>
+            <p class="obs-meta">Reference: Forest Black Pepper · Wayanad & Nilgiris · 900–1,100m</p>
         </div>
-        
+
         <div class="observation">
             <h2 class="obs-title-sentence">06 · The origin doesn't end at the farm gate.</h2>
             <p class="obs-body">In the OurOrigin model, the person who buys a product is not downstream from the origin — they are inside it. The farmer who walked 12 kilometres made a decision. The buyer who understands why and pays what it actually cost makes a corresponding one. The origin is completed only when both decisions hold.</p>
             <p class="obs-body">This is not loyalty or values alignment. It is the actual structure of the system. A buyer who doesn't understand what they're paying for isn't wrong — they just haven't been shown. Showing is what this site is for.</p>
-            <p class="obs-meta">REFERENCE: ALL ORIGINS</p>
+            <p class="obs-meta">Reference: All Origins</p>
         </div>
-        
+
         <div class="observation">
             <h2 class="obs-title-sentence">07 · The communities we source from possess something irreplaceable. OurOrigin didn't give them that.</h2>
             <p class="obs-body">The knowledge of when to pick, which vine to climb, which berry to leave, which path through the forest to take at which time of year — this is expertise accumulated across generations that cannot be replicated by a process, a machine, or a programme. It exists because it was kept. The farmer walking into that forest holds something the supply chain has been obscuring for decades: the actual origin of the thing it sells.</p>
             <p class="obs-body">OurOrigin's job is to make that visible, and to ensure that visibility translates into a market that pays for what it actually costs. The dignity was always there. It just needed a connection line.</p>
-            <p class="obs-meta">REFERENCE: COMMUNITY · ALL ORIGINS</p>
+            <p class="obs-meta">Reference: Community · All Origins</p>
         </div>
-        
+
         <div class="observation">
             <h2 class="obs-title-sentence">08 · Some years the forest gives more. Some years less. The product changes accordingly.</h2>
             <p class="obs-body">OurOrigin does not guarantee uniform flavour, colour, or yield across seasons. The pepper from January 2026 is not identical to the pepper from January 2025 — the rainfall differed, the temperature at 1,100 metres differed, the precise moment of harvest differed. This variability is not a quality control failure. It is the proof that the product came from a real place, in a real season, made by a real decision.</p>
             <p class="obs-body">What is consistent is the decision to leave the forest as it was found.</p>
-            <p class="obs-meta">REFERENCE: FOREST BLACK PEPPER · TIME · ALL ORIGINS</p>
+            <p class="obs-meta">Reference: Forest Black Pepper · Time · All Origins</p>
         </div>
-        
-        <a href="/" class="nav-link">Return to the Matrix</a>
+
+        <a href="/" class="nav-link">← Back to Home</a>
     </main>
-</body>
-</html>
+
+    <Footer />
+</BaseLayout>
+
+<style>
+    .page-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20vh 5vw 10vh;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    h1 {
+        font-family: var(--font-institutional);
+        font-size: 24px;
+        margin: 0 0 0.5rem 0;
+        font-weight: 400;
+        color: var(--color-warm-cream);
+    }
+
+    .subtitle {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        opacity: 0.4;
+        margin: 0 0 3rem 0;
+        color: var(--color-warm-cream);
+    }
+
+    .observation {
+        margin-bottom: 3rem;
+        border-left: 1px solid rgba(244, 241, 235, 0.12);
+        padding-left: 2rem;
+    }
+
+    .obs-title {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-weight: 400;
+        margin: 0 0 1rem 0;
+        color: var(--color-gold);
+    }
+
+    .obs-title-sentence {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: 0.05em;
+        font-weight: 400;
+        margin: 0 0 1rem 0;
+        color: var(--color-gold);
+        text-transform: none;
+        line-height: 1.5;
+    }
+
+    .obs-body {
+        font-family: var(--font-display);
+        font-size: 18px;
+        line-height: 1.6;
+        margin: 0 0 1rem 0;
+        opacity: 0.9;
+        color: var(--color-warm-cream);
+    }
+
+    .obs-meta {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        opacity: 0.35;
+        margin: 0;
+        color: var(--color-warm-cream);
+    }
+
+    .nav-link {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        color: rgba(245, 237, 216, 0.5);
+        text-decoration: none;
+        letter-spacing: 0.05em;
+        margin-top: 3rem;
+        display: inline-block;
+        transition: color 0.3s ease;
+        align-self: flex-start;
+    }
+
+    .nav-link:hover {
+        color: var(--color-warm-cream);
+    }
+</style>

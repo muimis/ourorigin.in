@@ -1,0 +1,251 @@
+---
+// src/components/ProductGrid.astro
+import { getCollection } from 'astro:content';
+
+const products = await getCollection('products');
+const origins = await getCollection('origins');
+
+// Group products by origin, ordered by elevation (highest first)
+const orderedSlugs = ['nilgiris', 'idukki', 'wayanad', 'malabar-coast', 'thiruvananthapuram'];
+
+const originMap = new Map();
+origins.forEach(o => {
+  originMap.set(o.id, o);
+});
+
+// Build grouped structure
+const groups = orderedSlugs
+  .map(slug => {
+    const origin = origins.find(o => o.data.slug === slug);
+    if (!origin) return null;
+
+    const originProducts = products
+      .filter(p => {
+        const oid = typeof p.data.originSlug === 'object' ? p.data.originSlug.id : p.data.originSlug;
+        return oid === origin.id;
+      })
+      .sort((a, b) => a.data.name.localeCompare(b.data.name));
+
+    if (originProducts.length === 0) return null;
+
+    return { origin, products: originProducts };
+  })
+  .filter(Boolean);
+
+function getElevation(str: string) {
+  if (!str) return '';
+  const cleaned = str.replace(/,/g, '');
+  const nums = cleaned.match(/\d+/g);
+  if (nums && nums.length >= 2) {
+    return `${nums[0]}–${nums[nums.length - 1]}m`;
+  }
+  return str;
+}
+---
+
+<section class="product-grid-section" id="yields">
+  <div class="grid-header">
+    <h2 class="grid-title">The Harvest</h2>
+    <p class="grid-subtitle">5 Origins · {products.length} Yields · Western Ghats</p>
+  </div>
+
+  {groups.map(group => (
+    <div class="origin-group">
+      <div class="origin-label">
+        <h3 class="origin-name">{group.origin.data.name}</h3>
+        <span class="origin-elevation">{getElevation(group.origin.data.elevation)}</span>
+      </div>
+
+      <div class="products-row">
+        {group.products.map(product => {
+          const href = product.data.isAnchorProduct
+            ? `/origins/${group.origin.id}/${product.id}`
+            : null;
+
+          return (
+            <div class="product-card" data-product-id={product.id}>
+              <span class="card-botanical">{product.data.botanicalName}</span>
+              <h4 class="card-name">{product.data.name}</h4>
+              <div class="card-footer">
+                <span class="card-price">From ₹{product.data.sizes[0].priceINR}</span>
+                {href ? (
+                  <a href={href} class="card-action">Explore →</a>
+                ) : (
+                  <button class="card-action card-add-btn" data-product={JSON.stringify({
+                    id: product.id + '-' + product.data.sizes[0].label,
+                    name: product.data.name,
+                    origin: group.origin.data.name,
+                    price: product.data.sizes[0].priceINR,
+                    size: product.data.sizes[0].label
+                  })}>Add</button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  ))}
+</section>
+
+<script>
+  document.querySelectorAll('.card-add-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const data = JSON.parse(btn.getAttribute('data-product') || '{}');
+      window.dispatchEvent(new CustomEvent('add-to-ledger', { detail: data }));
+
+      const original = btn.textContent;
+      btn.textContent = 'Added ✓';
+      btn.classList.add('is-added');
+      setTimeout(() => {
+        btn.textContent = original;
+        btn.classList.remove('is-added');
+      }, 1200);
+    });
+  });
+</script>
+
+<style>
+  .product-grid-section {
+    background-color: var(--color-forest-deep);
+    color: var(--color-warm-cream);
+    padding: 8rem clamp(1.5rem, 5vw, 4rem) 6rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .grid-header {
+    margin-bottom: 5rem;
+    text-align: center;
+  }
+
+  .grid-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 300;
+    margin: 0 0 1rem;
+    letter-spacing: -0.01em;
+  }
+
+  .grid-subtitle {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.4;
+    margin: 0;
+  }
+
+  .origin-group {
+    margin-bottom: 4rem;
+  }
+
+  .origin-label {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(245, 237, 216, 0.08);
+  }
+
+  .origin-name {
+    font-family: var(--font-institutional);
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    font-weight: 400;
+    margin: 0;
+    color: var(--color-gold);
+  }
+
+  .origin-elevation {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    opacity: 0.35;
+  }
+
+  .products-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1px;
+  }
+
+  .product-card {
+    padding: 2rem;
+    border: 1px solid rgba(245, 237, 216, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    transition: border-color 0.4s ease, background-color 0.4s ease;
+  }
+
+  .product-card:hover {
+    border-color: rgba(245, 237, 216, 0.15);
+    background-color: rgba(245, 237, 216, 0.02);
+  }
+
+  .card-botanical {
+    font-family: var(--font-narrative);
+    font-size: 0.85rem;
+    font-style: italic;
+    opacity: 0.4;
+  }
+
+  .card-name {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-top: auto;
+    padding-top: 1rem;
+  }
+
+  .card-price {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    opacity: 0.5;
+  }
+
+  .card-action {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-warm-cream);
+    text-decoration: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    opacity: 0.5;
+    transition: opacity 0.3s ease, color 0.3s ease;
+  }
+
+  .card-action:hover {
+    opacity: 1;
+    color: var(--color-gold);
+  }
+
+  .card-action.is-added {
+    color: var(--color-gold);
+    opacity: 1;
+  }
+
+  @media (max-width: 600px) {
+    .products-row {
+      grid-template-columns: 1fr;
+    }
+    .product-grid-section {
+      padding: 5rem 1.5rem 4rem;
+    }
+  }
+</style>

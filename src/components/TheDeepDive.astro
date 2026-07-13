@@ -100,7 +100,7 @@ const { products, origins } = Astro.props;
     </div>
 
     <!-- Screen 5 CTA: The Handshake -->
-    <a href="#" class="btn-handshake" id="btn-handshake">Speak to the Curator</a>
+    <a href="#" class="btn-handshake" id="btn-handshake">Message Us on WhatsApp</a>
   </div>
 </div>
 
@@ -353,9 +353,8 @@ const { products, origins } = Astro.props;
 
     // Update WhatsApp link based on state
     function updateWhatsAppLink() {
-      // The number can be updated by the client later
-      const phoneNumber = '1234567890';
-      const text = `Hi OurOrigin, I am exploring the ${currentOriginSlug.toUpperCase()} harvest. I would like to reserve the ${currentProductSlug} yielded by the collective.`;
+      const phoneNumber = '919645555668';
+      const text = `Hi OurOrigin, I am exploring the ${currentOriginSlug.toUpperCase()} harvest. I would like to know more about the ${currentProductSlug}.`;
       if (btnHandshake) {
         btnHandshake.setAttribute('href', `https://wa.me/${phoneNumber}?text=${encodeURIComponent(text)}`);
       }

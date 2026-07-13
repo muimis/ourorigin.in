@@ -1,75 +1,67 @@
 ---
-import '../styles/tokens.css';
+import BaseLayout from '../components/BaseLayout.astro';
+import CommandCenter from '../components/CommandCenter.astro';
+import Footer from '../components/Footer.astro';
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Not Found — OurOrigin</title>
-    <!-- Google Fonts with display=swap as explicitly requested -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Cormorant+Garamond:wght@300;400;500&family=DM+Mono:ital,wght@0,300;0,400;0,500&display=swap" rel="stylesheet">
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            background-color: var(--color-forest-deep);
-            color: var(--color-warm-cream);
-            height: 100%;
-        }
-        .page-container {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 0 5vw;
-        }
-        h1 {
-            font-family: 'Cinzel', serif;
-            font-size: 8rem;
-            margin: 0;
-            font-weight: 400;
-            opacity: 0.1;
-            position: absolute;
-            z-index: 0;
-        }
-        p {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 24px;
-            line-height: 1.4;
-            margin: 0;
-            z-index: 1;
-        }
-        .nav-link {
-            font-family: 'DM Mono', monospace;
-            font-size: 10px;
-            color: rgba(245, 237, 216, 0.4);
-            text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-top: 3rem;
-            display: inline-block;
-            border-bottom: 1px solid rgba(244, 241, 235, 0.3);
-            padding-bottom: 0.2rem;
-            transition: border-color 0.3s ease;
-            z-index: 1;
-        }
-        .nav-link:hover {
-            color: var(--color-warm-cream);
-            border-bottom-color: var(--color-warm-cream);
-        }
-    </style>
-</head>
-<body>
-    <div class="page-container">
+<BaseLayout
+  title="Not Found — OurOrigin"
+  description="The page you're looking for doesn't exist."
+  noIndex={true}
+>
+    <CommandCenter variant="light" />
+
+    <main class="page-container">
         <h1>404</h1>
-        <p>You are off the map.</p>
-        <a href="/" class="nav-link">Return to the Matrix</a>
-    </div>
-</body>
-</html>
+        <p>This path doesn't lead anywhere yet.</p>
+        <a href="/" class="nav-link">← Back to Home</a>
+    </main>
+
+    <Footer />
+</BaseLayout>
+
+<style>
+    .page-container {
+        min-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 0 5vw;
+    }
+
+    h1 {
+        font-family: var(--font-institutional);
+        font-size: clamp(6rem, 15vw, 10rem);
+        margin: 0;
+        font-weight: 400;
+        opacity: 0.06;
+        color: var(--color-warm-cream);
+        line-height: 1;
+    }
+
+    p {
+        font-family: var(--font-display);
+        font-size: clamp(1.25rem, 3vw, 1.5rem);
+        line-height: 1.4;
+        margin: 0;
+        color: var(--color-warm-cream);
+        opacity: 0.7;
+    }
+
+    .nav-link {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        color: rgba(245, 237, 216, 0.4);
+        text-decoration: none;
+        letter-spacing: 0.05em;
+        margin-top: 3rem;
+        display: inline-block;
+        transition: color 0.3s ease;
+    }
+
+    .nav-link:hover {
+        color: var(--color-warm-cream);
+    }
+</style>

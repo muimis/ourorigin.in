@@ -69,6 +69,9 @@ const sizes = product ? product.data.sizes : [];
     <button id="depth-yields-trigger" class="depth-hud-btn" aria-label="All Yields">
       [ ALL YIELDS ]
     </button>
+    <button id="depth-share-trigger" class="depth-hud-btn" aria-label="Share this harvest">
+      [ SHARE ]
+    </button>
   </div>
   <button class="depth-basket-trigger" id="depth-basket-trigger" aria-label="Open Basket">
     [ BASKET : <span class="dossier-count">0</span> ]
@@ -503,15 +506,23 @@ const sizes = product ? product.data.sizes : [];
         addBtn.addEventListener('click', () => {
           const pinContainer = document.querySelector('.pin-container');
           if (!pinContainer || !activeSize || !activePrice) return;
-          
+
+          const pId = pinContainer.getAttribute('data-product-slug');
+          const pName = pinContainer.getAttribute('data-product-name');
+          const oName = pinContainer.getAttribute('data-origin-name');
+          const oId = pinContainer.getAttribute('data-origin-slug');
+
           window.dispatchEvent(new CustomEvent('add-to-ledger', {
             detail: {
-              originId: pinContainer.getAttribute('data-origin-slug'),
-              originName: pinContainer.getAttribute('data-origin-name'),
-              productId: pinContainer.getAttribute('data-product-slug'),
-              productName: pinContainer.getAttribute('data-product-name'),
+              id: `${pId}-${activeSize}`,
+              productId: pId,
+              name: pName,
+              origin: oName,
+              originId: oId,
               size: activeSize,
-              price: parseInt(activePrice, 10)
+              weight: activeSize,
+              price: parseInt(activePrice, 10),
+              quantity: 1
             }
           }));
 
@@ -666,6 +677,29 @@ const sizes = product ? product.data.sizes : [];
   if (yieldsBtn) {
     yieldsBtn.addEventListener('click', () => {
       window.dispatchEvent(new Event('open-all-yields-panel'));
+    });
+  }
+
+  const shareBtn = document.getElementById('depth-share-trigger');
+  if (shareBtn) {
+    shareBtn.addEventListener('click', () => {
+      const shareData = {
+        title: document.title,
+        text: `Explore this harvest from OurOrigin.`,
+        url: window.location.href
+      };
+
+      if (navigator.share) {
+        navigator.share(shareData).catch(err => console.log('Share failed', err));
+      } else {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+          const originalText = shareBtn.textContent;
+          shareBtn.textContent = '[ COPIED ]';
+          setTimeout(() => {
+            shareBtn.textContent = originalText;
+          }, 2000);
+        });
+      }
     });
   }
 </script>
