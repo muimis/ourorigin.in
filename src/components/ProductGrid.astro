@@ -8,12 +8,6 @@ const origins = await getCollection('origins');
 // Group products by origin, ordered by elevation (highest first)
 const orderedSlugs = ['nilgiris', 'idukki', 'wayanad', 'malabar-coast', 'thiruvananthapuram'];
 
-const originMap = new Map();
-origins.forEach(o => {
-  originMap.set(o.id, o);
-});
-
-// Build grouped structure
 const groups = orderedSlugs
   .map(slug => {
     const origin = origins.find(o => o.data.slug === slug);
@@ -25,8 +19,6 @@ const groups = orderedSlugs
         return oid === origin.id;
       })
       .sort((a, b) => a.data.name.localeCompare(b.data.name));
-
-    if (originProducts.length === 0) return null;
 
     return { origin, products: originProducts };
   })
@@ -43,182 +35,378 @@ function getElevation(str: string) {
 }
 ---
 
-<section class="product-grid-section" id="yields">
-  <div class="grid-header">
-    <h2 class="grid-title">The Harvest</h2>
-    <p class="grid-subtitle">5 Origins · {products.length} Yields · Western Ghats</p>
+<section class="origin-journey-section" id="yields">
+  <div class="journey-header gsap-reveal">
+    <span class="journey-label">THE HARVEST REGISTER</span>
+    <h2 class="journey-title">The Origins</h2>
+    <p class="journey-subtitle">A sensory ascent through the receding strata of the Western Ghats.</p>
   </div>
 
-  {groups.map(group => (
-    <div class="origin-group">
-      <div class="origin-label">
-        <h3 class="origin-name">{group.origin.data.name}</h3>
-        <span class="origin-elevation">{getElevation(group.origin.data.elevation)}</span>
-      </div>
-
-      <div class="products-row">
-        {group.products.map(product => {
-          const href = product.data.isAnchorProduct
-            ? `/origins/${group.origin.id}/${product.id}`
-            : null;
-
-          return (
-            <div class="product-card" data-product-id={product.id}>
-              <span class="card-botanical">{product.data.botanicalName}</span>
-              <h4 class="card-name">{product.data.name}</h4>
-              <div class="card-footer">
-                <span class="card-price">From ₹{product.data.sizes[0].priceINR}</span>
-                {href ? (
-                  <a href={href} class="card-action">Explore →</a>
-                ) : (
-                  <button class="card-action card-add-btn" data-product={JSON.stringify({
-                    id: product.id + '-' + product.data.sizes[0].label,
-                    name: product.data.name,
-                    origin: group.origin.data.name,
-                    price: product.data.sizes[0].priceINR,
-                    size: product.data.sizes[0].label
-                  })}>Add</button>
-                )}
-              </div>
+  <div class="origin-rows">
+    {groups.map((group, index) => {
+      const isEven = index % 2 === 0;
+      const originImg = group.origin.data.images.canopy || "/assets/origins/wayanad-canopy.webp";
+      
+      return (
+        <div class={`origin-row ${isEven ? 'row-normal' : 'row-reverse'} gsap-reveal-row`}>
+          <!-- Visual Column -->
+          <div class="origin-image-col">
+            <div class="image-wrapper">
+              <img src={originImg} alt={`${group.origin.data.name} canopy canopy`} class="journey-img" loading="lazy" />
+              <div class="image-overlay"></div>
             </div>
-          );
-        })}
-      </div>
-    </div>
-  ))}
+          </div>
+
+          <!-- Narrative & Products Column -->
+          <div class="origin-text-col">
+            <div class="origin-telemetry">
+              <span class="telemetry-coord">{group.origin.data.coordinates}</span>
+              <span class="telemetry-sep">·</span>
+              <span class="telemetry-elev">{getElevation(group.origin.data.elevation)}</span>
+            </div>
+
+            <h3 class="origin-name-large">{group.origin.data.name}</h3>
+            
+            <p class="origin-desc-short">
+              {group.origin.data.narrative.canopy}
+            </p>
+
+            <div class="yields-list">
+              <span class="yields-list-title">Yielded Ingredients</span>
+              
+              {group.products.map(product => {
+                const href = product.data.isAnchorProduct
+                  ? `/origins/${group.origin.id}/${product.id}`
+                  : null;
+
+                return (
+                  <div class="yield-item" data-product-id={product.id}>
+                    <div class="yield-meta">
+                      <span class="yield-name">{product.data.name}</span>
+                      <span class="yield-botanical">{product.data.botanicalName}</span>
+                    </div>
+                    <div class="yield-purchase">
+                      <span class="yield-price">From ₹{product.data.sizes[0].priceINR}</span>
+                      {href ? (
+                        <a href={href} class="yield-action-btn">Explore &rarr;</a>
+                      ) : (
+                        <button class="yield-action-btn yield-add-btn" data-product={JSON.stringify({
+                          id: product.id + '-' + product.data.sizes[0].label,
+                          productId: product.id,
+                          name: product.data.name,
+                          origin: group.origin.data.name,
+                          originId: group.origin.id,
+                          price: product.data.sizes[0].priceINR,
+                          size: product.data.sizes[0].label,
+                          weight: product.data.sizes[0].label,
+                          quantity: 1
+                        })}>Add</button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      );
+    })}
+  </div>
 </section>
 
 <script>
-  document.querySelectorAll('.card-add-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const data = JSON.parse(btn.getAttribute('data-product') || '{}');
-      window.dispatchEvent(new CustomEvent('add-to-ledger', { detail: data }));
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-      const original = btn.textContent;
-      btn.textContent = 'Added ✓';
-      btn.classList.add('is-added');
-      setTimeout(() => {
-        btn.textContent = original;
-        btn.classList.remove('is-added');
-      }, 1200);
+  document.addEventListener('DOMContentLoaded', () => {
+    // 1. Add to Ledger Event dispatching
+    document.querySelectorAll('.yield-add-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const data = JSON.parse(btn.getAttribute('data-product') || '{}');
+        window.dispatchEvent(new CustomEvent('add-to-ledger', { detail: data }));
+
+        const original = btn.textContent;
+        btn.textContent = 'Added ✓';
+        btn.classList.add('is-added');
+        setTimeout(() => {
+          btn.textContent = original;
+          btn.classList.remove('is-added');
+        }, 1200);
+      });
+    });
+
+    // 2. Cinematic GSAP Row Reveals
+    gsap.registerPlugin(ScrollTrigger);
+
+    const rows = document.querySelectorAll('.gsap-reveal-row');
+    rows.forEach(row => {
+      const img = row.querySelector('.journey-img');
+      const textCol = row.querySelector('.origin-text-col');
+
+      // Subtle parallax slide-up + zoom on the image
+      gsap.fromTo(img, 
+        { scale: 1.1, y: 30 },
+        {
+          scale: 1,
+          y: 0,
+          duration: 1.8,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: row,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse'
+          }
+        }
+      );
+
+      // Fade-in slide-up on text column content
+      gsap.fromTo(textCol,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1.4,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: row,
+            start: 'top 75%',
+            toggleActions: 'play none none reverse'
+          }
+        }
+      );
     });
   });
 </script>
 
 <style>
-  .product-grid-section {
+  .origin-journey-section {
     background-color: var(--color-forest-deep);
     color: var(--color-warm-cream);
-    padding: 8rem clamp(1.5rem, 5vw, 4rem) 6rem;
-    max-width: 1400px;
-    margin: 0 auto;
+    padding: 10rem 0 6rem 0;
+    width: 100%;
+    box-sizing: border-box;
   }
 
-  .grid-header {
-    margin-bottom: 5rem;
+  .journey-header {
+    max-width: 800px;
+    margin: 0 auto 8rem auto;
     text-align: center;
+    padding: 0 1.5rem;
   }
 
-  .grid-title {
-    font-family: var(--font-display);
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    font-weight: 300;
-    margin: 0 0 1rem;
-    letter-spacing: -0.01em;
-  }
-
-  .grid-subtitle {
+  .journey-label {
     font-family: var(--font-mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    opacity: 0.4;
-    margin: 0;
-  }
-
-  .origin-group {
-    margin-bottom: 4rem;
-  }
-
-  .origin-label {
-    display: flex;
-    align-items: baseline;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid rgba(245, 237, 216, 0.08);
-  }
-
-  .origin-name {
-    font-family: var(--font-institutional);
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     letter-spacing: 0.3em;
+    color: var(--color-gold);
     text-transform: uppercase;
-    font-weight: 400;
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .journey-title {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 6vw, 5rem);
+    font-weight: 300;
+    margin: 0 0 1rem 0;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+
+  .journey-subtitle {
+    font-family: var(--font-narrative);
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    opacity: 0.6;
     margin: 0;
+    font-style: italic;
+  }
+
+  .origin-rows {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12rem;
+  }
+
+  .origin-row {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    min-height: 75vh;
+    width: 100%;
+    align-items: center;
+    gap: 5vw;
+    box-sizing: border-box;
+  }
+
+  .row-reverse {
+    grid-template-columns: 0.9fr 1.1fr;
+  }
+
+  .row-reverse .origin-image-col {
+    order: 2;
+  }
+
+  .row-reverse .origin-text-col {
+    order: 1;
+    padding-left: clamp(2rem, 8vw, 10rem);
+    padding-right: 2rem;
+  }
+
+  .row-normal .origin-text-col {
+    padding-right: clamp(2rem, 8vw, 10rem);
+    padding-left: 2rem;
+  }
+
+  /* Image Column Layout */
+  .origin-image-col {
+    width: 100%;
+    height: 100%;
+    min-height: 500px;
+    overflow: hidden;
+  }
+
+  .image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 500px;
+    overflow: hidden;
+  }
+
+  .journey-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(0.75) contrast(1.05);
+    transition: transform 2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .origin-row:hover .journey-img {
+    transform: scale(1.03);
+  }
+
+  .image-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, var(--color-forest-deep) 0%, transparent 15%, transparent 85%, var(--color-forest-deep) 100%);
+    pointer-events: none;
+  }
+
+  /* Narrative/Content Column */
+  .origin-text-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  .origin-telemetry {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0.5;
+    margin-bottom: 1rem;
+  }
+
+  .telemetry-sep {
     color: var(--color-gold);
   }
 
-  .origin-elevation {
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
-    letter-spacing: 0.1em;
-    opacity: 0.35;
+  .origin-name-large {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 300;
+    margin: 0 0 1.5rem 0;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: var(--color-warm-cream);
   }
 
-  .products-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 1px;
+  .origin-desc-short {
+    font-family: var(--font-narrative);
+    font-size: clamp(1.1rem, 1.5vw, 1.3rem);
+    line-height: 1.6;
+    color: rgba(245, 237, 216, 0.8);
+    font-style: italic;
+    margin: 0 0 3rem 0;
+    max-width: 520px;
   }
 
-  .product-card {
-    padding: 2rem;
-    border: 1px solid rgba(245, 237, 216, 0.06);
+  /* Yields Register List */
+  .yields-list {
+    width: 100%;
+    max-width: 520px;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    transition: border-color 0.4s ease, background-color 0.4s ease;
   }
 
-  .product-card:hover {
-    border-color: rgba(245, 237, 216, 0.15);
-    background-color: rgba(245, 237, 216, 0.02);
+  .yields-list-title {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+    border-bottom: 1px solid rgba(166, 124, 60, 0.25);
+    padding-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
+    display: block;
   }
 
-  .card-botanical {
-    font-family: var(--font-narrative);
-    font-size: 0.85rem;
-    font-style: italic;
-    opacity: 0.4;
+  .yield-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 0;
+    border-bottom: 1px solid rgba(245, 237, 216, 0.08);
+    transition: padding-left 0.3s ease;
   }
 
-  .card-name {
+  .yield-item:hover {
+    padding-left: 0.5rem;
+  }
+
+  .yield-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .yield-name {
     font-family: var(--font-display);
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: 400;
-    margin: 0;
+    color: var(--color-warm-cream);
     line-height: 1.2;
   }
 
-  .card-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-top: auto;
-    padding-top: 1rem;
+  .yield-botanical {
+    font-family: var(--font-narrative);
+    font-size: 0.85rem;
+    font-style: italic;
+    opacity: 0.45;
   }
 
-  .card-price {
+  .yield-purchase {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .yield-price {
     font-family: var(--font-mono);
     font-size: 0.75rem;
     opacity: 0.5;
   }
 
-  .card-action {
+  .yield-action-btn {
     font-family: var(--font-mono);
     font-size: 0.7rem;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--color-warm-cream);
     text-decoration: none;
@@ -230,22 +418,48 @@ function getElevation(str: string) {
     transition: opacity 0.3s ease, color 0.3s ease;
   }
 
-  .card-action:hover {
+  .yield-action-btn:hover {
     opacity: 1;
     color: var(--color-gold);
   }
 
-  .card-action.is-added {
+  .yield-action-btn.is-added {
     color: var(--color-gold);
     opacity: 1;
   }
 
-  @media (max-width: 600px) {
-    .products-row {
+  /* Responsive Stacking */
+  @media (max-width: 1024px) {
+    .origin-row {
       grid-template-columns: 1fr;
+      min-height: auto;
+      gap: 3rem;
     }
-    .product-grid-section {
-      padding: 5rem 1.5rem 4rem;
+    
+    .row-reverse .origin-image-col {
+      order: 0;
+    }
+    
+    .row-reverse .origin-text-col,
+    .row-normal .origin-text-col {
+      order: 1;
+      padding: 0 1.5rem;
+    }
+
+    .origin-image-col, .image-wrapper {
+      min-height: 350px;
+    }
+
+    .origin-rows {
+      gap: 8rem;
+    }
+  }
+
+  /* GSAP fallback */
+  @media (scripting: none) {
+    .gsap-reveal-row .origin-text-col {
+      opacity: 1 !important;
+      transform: none !important;
     }
   }
 </style>

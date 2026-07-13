@@ -1,11 +1,11 @@
 {
   "slug": "idukki",
   "name": "Idukki",
-  "elevation": "1200m",
+  "elevation": "1,200m",
   "bioregion": "Western Ghats",
-  "coordinates": "9.85°N, 76.97°E",
-  "rainfall": "[LIVE DATA REQUIRED] Heavy monsoon rainfall",
-  "soil": "DEEP WET SOIL · CANOPY INTACT",
+  "coordinates": "9°51′N, 76°58′E",
+  "rainfall": "3,200–3,800mm annually",
+  "soil": "HUMUS-RICH CLAY · ACID LATOSOL",
   "community": {
     "description": "Indigenous farming communities, Idukki",
     "verified": false

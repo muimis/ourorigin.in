@@ -2,9 +2,6 @@
 import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../../../components/BaseLayout.astro';
 import DepthExperience from '../../../components/DepthExperience.astro';
-import Carousel from '../../../components/Carousel.astro';
-import Ledger from '../../../components/Ledger.astro';
-import AllYieldsPanel from '../../../components/AllYieldsPanel.astro';
 
 // 1. Generate paths for all products
 export async function getStaticPaths() {
@@ -71,6 +68,8 @@ const structuredData = JSON.stringify({
   ogTitle={`${product.data.name} from ${origin.data.name} — OurOrigin`}
   ogDescription={product.data.specimenCopy?.slice(0, 160)}
   ogImage={ogImageUrl}
+  navVariant="light"
+  showFooter={false}
 >
     <Fragment slot="head">
         <script type="application/ld+json" set:html={structuredData} />
@@ -81,9 +80,7 @@ const structuredData = JSON.stringify({
     <main id="main-content">
       <h1 class="sr-only">{product.data.name} from {origin.data.name} — OurOrigin</h1>
       <DepthExperience origin={origin} product={product} />
-      <AllYieldsPanel />
     </main>
-    <Ledger />
 </BaseLayout>
 
 <style>

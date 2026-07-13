@@ -1,10 +1,6 @@
 ---
 import BaseLayout from '../components/BaseLayout.astro';
-import CommandCenter from '../components/CommandCenter.astro';
-import AllYieldsPanel from '../components/AllYieldsPanel.astro';
-import CartDrawer from '../components/CartDrawer.astro';
 import OriginMark from '../components/OriginMark.astro';
-import Footer from '../components/Footer.astro';
 ---
 
 <BaseLayout
@@ -13,11 +9,9 @@ import Footer from '../components/Footer.astro';
   canonicalPath="/why"
   ogTitle="The Founding Document. | OurOrigin"
   ogDescription="A small business sourcing from the Western Ghats. We show you the origin and let you reach your own conclusions."
+  navVariant="light"
+  showFooter={true}
 >
-    <CommandCenter variant="light" />
-    <AllYieldsPanel />
-    <CartDrawer />
-
     <main id="main-content" class="dossier-container">
         <div class="guide-line"></div>
 
@@ -100,37 +94,6 @@ import Footer from '../components/Footer.astro';
             <div class="conclusion-sig">You Are Inside the Origin</div>
         </div>
     </main>
-
-    <Footer />
-
-    <!-- GSAP for cinematic scroll reveals -->
-    <script>
-        import gsap from 'gsap';
-        import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-        document.addEventListener('DOMContentLoaded', () => {
-            gsap.registerPlugin(ScrollTrigger);
-
-            const reveals = document.querySelectorAll('.gsap-reveal');
-
-            // Set initial state via JS so fallback is visible
-            gsap.set(reveals, { opacity: 0, y: 30 });
-
-            reveals.forEach((element) => {
-                gsap.to(element, {
-                    scrollTrigger: {
-                        trigger: element,
-                        start: "top 85%",
-                        toggleActions: "play none none reverse"
-                    },
-                    opacity: 1,
-                    y: 0,
-                    duration: 1.2,
-                    ease: "power2.out"
-                });
-            });
-        });
-    </script>
 </BaseLayout>
 
 <style>
@@ -274,15 +237,37 @@ import Footer from '../components/Footer.astro';
         opacity: 0.6;
     }
 
-    /* GSAP fallback: if JS fails, content must still be visible */
+    /* GSAP fallback */
     @media (scripting: none) {
         .gsap-reveal {
             opacity: 1 !important;
             transform: none !important;
         }
     }
-    /* Also provide noscript-level fallback */
-    .gsap-reveal {
-        /* Visible by default — GSAP sets opacity:0 via JS */
-    }
 </style>
+
+<script>
+    import gsap from 'gsap';
+    import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+    document.addEventListener('DOMContentLoaded', () => {
+        gsap.registerPlugin(ScrollTrigger);
+
+        const reveals = document.querySelectorAll('.gsap-reveal');
+        gsap.set(reveals, { opacity: 0, y: 30 });
+
+        reveals.forEach((element) => {
+            gsap.to(element, {
+                scrollTrigger: {
+                    trigger: element,
+                    start: "top 85%",
+                    toggleActions: "play none none reverse"
+                },
+                opacity: 1,
+                y: 0,
+                duration: 1.2,
+                ease: "power2.out"
+            });
+        });
+    });
+</script>

@@ -1,4 +1,10 @@
 ---
+import '../styles/tokens.css';
+import CommandCenter from './CommandCenter.astro';
+import AllYieldsPanel from './AllYieldsPanel.astro';
+import Ledger from './Ledger.astro';
+import Footer from './Footer.astro';
+
 export interface Props {
   title: string;
   description: string;
@@ -8,6 +14,8 @@ export interface Props {
   ogImage?: string;
   bodyClass?: string;
   noIndex?: boolean;
+  navVariant?: 'dark' | 'light';
+  showFooter?: boolean;
 }
 
 const {
@@ -19,13 +27,13 @@ const {
   ogImage = 'https://ourorigin.in/og-image.jpg',
   bodyClass = '',
   noIndex = false,
+  navVariant = 'light',
+  showFooter = true
 } = Astro.props;
 
 const canonicalUrl = canonicalPath ? `https://ourorigin.in${canonicalPath}` : undefined;
 const resolvedOgTitle = ogTitle || title;
 const resolvedOgDescription = ogDescription || description;
-
-import '../styles/tokens.css';
 ---
 
 <!DOCTYPE html>
@@ -67,6 +75,13 @@ import '../styles/tokens.css';
     <slot name="head" />
 </head>
 <body class={bodyClass}>
+    <!-- Unified global UI navigation and checkout system -->
+    <CommandCenter variant={navVariant} />
+    <AllYieldsPanel />
+    <Ledger />
+
     <slot />
+
+    {showFooter && <Footer />}
 </body>
 </html>

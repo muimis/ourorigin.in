@@ -1,9 +1,5 @@
 ---
 import BaseLayout from '../components/BaseLayout.astro';
-import CommandCenter from '../components/CommandCenter.astro';
-import AllYieldsPanel from '../components/AllYieldsPanel.astro';
-import CartDrawer from '../components/CartDrawer.astro';
-import Footer from '../components/Footer.astro';
 ---
 
 <BaseLayout
@@ -12,11 +8,9 @@ import Footer from '../components/Footer.astro';
   canonicalPath="/observations"
   ogTitle="Observations | OurOrigin"
   ogDescription="The archive of what we're paying attention to."
+  navVariant="light"
+  showFooter={true}
 >
-    <CommandCenter variant="light" />
-    <AllYieldsPanel />
-    <CartDrawer />
-
     <main id="main-content" class="page-container">
         <h1>Observations</h1>
         <p class="subtitle">Field notes and tracking</p>
@@ -76,8 +70,6 @@ import Footer from '../components/Footer.astro';
 
         <a href="/" class="nav-link">← Back to Home</a>
     </main>
-
-    <Footer />
 </BaseLayout>
 
 <style>

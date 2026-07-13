@@ -1,11 +1,7 @@
 ---
 import BaseLayout from '../components/BaseLayout.astro';
-import CommandCenter from '../components/CommandCenter.astro';
-import CartDrawer from '../components/CartDrawer.astro';
 import HeroStorefront from '../components/HeroStorefront.astro';
 import ProductGrid from '../components/ProductGrid.astro';
-import AllYieldsPanel from '../components/AllYieldsPanel.astro';
-import Footer from '../components/Footer.astro';
 ---
 
 <BaseLayout
@@ -14,21 +10,13 @@ import Footer from '../components/Footer.astro';
   canonicalPath="/"
   ogTitle="OurOrigin — From the Western Ghats"
   ogDescription="Spices and ingredients from the Western Ghats. Traceable to the person who harvested them."
+  navVariant="dark"
+  showFooter={true}
 >
-    <!-- Global UI Layers -->
-    <CommandCenter variant="dark" />
-    <CartDrawer />
-    <AllYieldsPanel />
-
     <main>
-        <!-- Hero: Light background, full viewport -->
         <HeroStorefront />
-
-        <!-- Product Grid: Dark background, scroll-based -->
         <ProductGrid />
     </main>
-
-    <Footer />
 
     <script>
         // Smooth scroll for the CTA anchor link

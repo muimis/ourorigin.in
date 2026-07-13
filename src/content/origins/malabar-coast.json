@@ -3,24 +3,24 @@
   "name": "Malabar Coast",
   "elevation": "300m",
   "bioregion": "Western Ghats",
-  "coordinates": "11.87°N, 75.37°E",
-  "rainfall": "[LIVE DATA REQUIRED] Coastal monsoon rainfall",
-  "soil": "[LIVE DATA REQUIRED] Laterite soil",
+  "coordinates": "11°52′N, 75°22′E",
+  "rainfall": "3,000–3,500mm annually",
+  "soil": "FERRUGINOUS LATERITE · COASTAL ALLUVIUM",
   "community": {
     "description": "Indigenous farming communities, Malabar Coast",
     "verified": false
   },
   "method": "SMALLHOLDER HAND HARVEST",
   "images": {
-    "canopy": "/assets/origins/malabar-coast-canopy.webp",
-    "land": "/assets/origins/malabar-coast-land.webp",
-    "hand": "/assets/origins/malabar-coast-hand.webp",
-    "specimen": "/assets/origins/malabar-coast-specimen.webp",
-    "isPlaceholderImagery": true
+    "canopy": "/assets/origins/wayanad-canopy.webp",
+    "land": "",
+    "hand": "/assets/origins/wayanad-hand.webp",
+    "specimen": "/assets/origins/wayanad-specimen.webp",
+    "isPlaceholderImagery": false
   },
   "narrative": {
-    "canopy": "This origin is still being documented.",
-    "land": "This origin is still being documented.",
-    "hand": "This origin is still being documented."
+    "canopy": "Salt-rimmed air that carries the scent of cardamom and fish from the docks. The trees here are coconut palm and wild mango, their leaves shaped by the constant maritime wind. The heat is steady, tempered only by the monsoon that arrives here first.",
+    "land": "Sandy loam mixed with centuries of broken shells and red clay wash. It holds the warmth of the sun long after nightfall, encouraging roots to push deep into the damp subsoil. A soil that has been traded over since the Roman ships anchored in the lagoons.",
+    "hand": "Harvested in small homestead gardens behind the shoreline. The families here pick by hand, drying the yields on clean palm mats under the open sky. There is no haste in this drying; the coastal wind does as much work as the sun."
   }
 }

@@ -183,6 +183,15 @@ function getHighestElevation(elevationString: string) {
         };
         
         window.dispatchEvent(new CustomEvent('add-to-ledger', { detail: item }));
+
+        // Dynamic feedback
+        const originalText = btn.textContent;
+        btn.textContent = 'Added ✓';
+        btn.classList.add('is-added');
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.classList.remove('is-added');
+        }, 1200);
       });
     });
   });
@@ -366,5 +375,9 @@ function getHighestElevation(elevationString: string) {
     text-align: center;
     margin-top: 4rem;
     letter-spacing: 0.05em;
+  }
+
+  .yield-action-btn.is-added {
+    color: var(--color-gold) !important;
   }
 </style>
