@@ -9,13 +9,17 @@ const { variant = 'dark' } = Astro.props;
 ---
 
 <header class={`global-header header-${variant}`}>
-  <div id="command-center-trigger" class="header-logo" aria-label="Open Navigation">
+  <a href="/" class="header-logo" aria-label="OurOrigin Home">
     <OriginMark variant={variant === 'light' ? 'reversed' : 'gold'} size={32} animate={false} />
-  </div>
+  </a>
 
   <div class="header-actions">
     <button id="trigger-yields" class="hud-btn" aria-label="All Yields">
       All Yields
+    </button>
+
+    <button id="command-center-trigger" class="hud-btn" aria-label="Open Navigation">
+      Menu
     </button>
 
     <button id="trigger-dossier" class="hud-btn" aria-label="Open Basket" onclick="window.dispatchEvent(new Event('open-cart'))">

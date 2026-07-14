@@ -20,6 +20,8 @@ const groups = orderedSlugs
       })
       .sort((a, b) => a.data.name.localeCompare(b.data.name));
 
+    if (originProducts.length === 0) return null;
+
     return { origin, products: originProducts };
   })
   .filter(Boolean);

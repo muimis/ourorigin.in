@@ -1,0 +1,131 @@
+---
+import BaseLayout from '../components/BaseLayout.astro';
+import { EMAIL_ADDRESS, FSSAI_NUMBER } from '../utils/constants';
+---
+
+<BaseLayout
+  title="Terms & Conditions — OurOrigin"
+  description="Terms governing orders, seasonal yields, and deliveries from OurOrigin."
+  canonicalPath="/terms"
+  ogTitle="Terms & Conditions | OurOrigin"
+  ogDescription="Terms governing orders, seasonal yields, and deliveries from OurOrigin."
+  navVariant="light"
+  showFooter={true}
+>
+    <main id="main-content" class="page-container">
+        <h1>Terms & Conditions</h1>
+        <p class="subtitle">Effective: January 2026</p>
+
+        <section class="legal-section">
+            <h2>01 · Order Processing</h2>
+            <p>OurOrigin does not function as an automated merchant storefront. All orders represent inquiries initialized by the user via a formatted WhatsApp link. Prices shown are for informational purposes representing current seasonal yields. We confirm availability and finalize order requests manually on our WhatsApp line before receiving payment references.</p>
+        </section>
+
+        <section class="legal-section">
+            <h2>02 · Payments</h2>
+            <p>We collect payments manually using direct UPI transfers. When checking out, we share our UPI ID (`ourorigin@ybl`) for convenient copying. We verify and confirm all transactions individually upon receiving the transaction reference ID over our official WhatsApp support channel.</p>
+        </section>
+
+        <section class="legal-section">
+            <h2>03 · Seasonal Yields & Natural Variation</h2>
+            <p>We source all spices, teas, and ingredients directly from shade-grown forest micro-regions in the Western Ghats. Since these are wild-harvested and hand-selected items, they exhibit natural differences in flavor, color, sizing, and essential oil content across seasons. We prioritize harvest integrity over product uniformity. These natural variations are not considered manufacturing defects.</p>
+        </section>
+
+        <section class="legal-section">
+            <h2>04 · Shipping & Dispatch</h2>
+            <p>Orders are packaged and dispatched from Thiruvananthapuram, Kerala, usually within 2 to 3 working days of payment confirmation. Shipping within India is free for orders of ₹399 and above; orders below ₹399 are subject to a nominal shipping fee of ₹60. Local delivery in Thiruvananthapuram is free with no minimum purchase requirement.</p>
+        </section>
+
+        <section class="legal-section">
+            <h2>05 · Compliance & Registrations</h2>
+            <p>Our operations comply with local food safety guidelines under the Food Safety and Standards Authority of India (FSSAI). Our registration number is: <strong>{FSSAI_NUMBER}</strong>.</p>
+        </section>
+
+        <section class="legal-section">
+            <h2>06 · Contact</h2>
+            <p>For support or wholesale queries (orders above 50 units), contact us at: <a href={`mailto:${EMAIL_ADDRESS}`} class="legal-link">{EMAIL_ADDRESS}</a></p>
+        </section>
+
+        <a href="/" class="nav-link">← Back to Home</a>
+    </main>
+</BaseLayout>
+
+<style>
+    .page-container {
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 20vh 5vw 10vh;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    h1 {
+        font-family: var(--font-institutional);
+        font-size: 24px;
+        margin: 0 0 0.5rem 0;
+        font-weight: 400;
+        color: var(--color-warm-cream);
+    }
+
+    .subtitle {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        opacity: 0.4;
+        margin: 0 0 3rem 0;
+        color: var(--color-warm-cream);
+    }
+
+    .legal-section {
+        margin-bottom: 3rem;
+        border-left: 1px solid rgba(245, 237, 216, 0.12);
+        padding-left: 2rem;
+    }
+
+    .legal-section h2 {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-weight: 400;
+        margin: 0 0 1rem 0;
+        color: var(--color-gold);
+    }
+
+    .legal-section p {
+        font-family: var(--font-display);
+        font-size: 16px;
+        line-height: 1.6;
+        margin: 0 0 1rem 0;
+        opacity: 0.85;
+        color: var(--color-warm-cream);
+    }
+
+    .legal-link {
+        color: var(--color-gold);
+        text-decoration: underline;
+        transition: color 0.3s ease;
+    }
+
+    .legal-link:hover {
+        color: var(--color-warm-cream);
+    }
+
+    .nav-link {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        color: rgba(245, 237, 216, 0.5);
+        text-decoration: none;
+        letter-spacing: 0.05em;
+        margin-top: 3rem;
+        display: inline-block;
+        transition: color 0.3s ease;
+        align-self: flex-start;
+    }
+
+    .nav-link:hover {
+        color: var(--color-warm-cream);
+    }
+</style>

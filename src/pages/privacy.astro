@@ -1,0 +1,126 @@
+---
+import BaseLayout from '../components/BaseLayout.astro';
+import { EMAIL_ADDRESS } from '../utils/constants';
+---
+
+<BaseLayout
+  title="Privacy Policy — OurOrigin"
+  description="How OurOrigin handles and stores your data. Privacy by design."
+  canonicalPath="/privacy"
+  ogTitle="Privacy Policy | OurOrigin"
+  ogDescription="How OurOrigin handles and stores your data. Privacy by design."
+  navVariant="light"
+  showFooter={true}
+>
+    <main id="main-content" class="page-container">
+        <h1>Privacy Policy</h1>
+        <p class="subtitle">Effective: January 2026</p>
+
+        <section class="legal-section">
+            <h2>01 · Local Data Storage</h2>
+            <p>To reduce friction, OurOrigin uses the industry standard local storage (`localStorage`) of your web browser to save your basket items and shipping details (such as full name, shipping address, and phone number). This information is held entirely on your physical device. It is never automatically transmitted to our servers or stored in any database owned by us.</p>
+        </section>
+
+        <section class="legal-section">
+            <h2>02 · Order Processing via WhatsApp</h2>
+            <p>Our checkout flow relies on a manual message transfer. When you click "Initialize Transfer" in the Ledger drawer, our website formats your order details and delivery address into a pre-populated message and redirects you to WhatsApp. Only when you click "Send" inside the WhatsApp application do your shipping details and order list reach us. We receive this data directly over WhatsApp to verify your order, process your payment reference, and prepare delivery.</p>
+        </section>
+
+        <section class="legal-section">
+            <h2>03 · Third-Party Services</h2>
+            <p>We do not sell, trade, or otherwise transfer your personally identifiable information to outside parties. Your data is accessed only by the curators of OurOrigin and the delivery partners who handle shipping. We utilize Open-Meteo for real-time weather coordinates, but no user data is shared with them.</p>
+        </section>
+
+        <section class="legal-section">
+            <h2>04 · Data Deletion</h2>
+            <p>Since your information is stored locally on your device, you can clear it at any time by clicking "Clear saved details" inside the Ledger drawer, or by clearing your browser's site cookies and local storage. If you would like us to delete order chat records on our WhatsApp channel, contact us directly.</p>
+        </section>
+
+        <section class="legal-section">
+            <h2>05 · Contact</h2>
+            <p>For questions regarding our privacy practices, reach us at: <a href={`mailto:${EMAIL_ADDRESS}`} class="legal-link">{EMAIL_ADDRESS}</a></p>
+        </section>
+
+        <a href="/" class="nav-link">← Back to Home</a>
+    </main>
+</BaseLayout>
+
+<style>
+    .page-container {
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 20vh 5vw 10vh;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    h1 {
+        font-family: var(--font-institutional);
+        font-size: 24px;
+        margin: 0 0 0.5rem 0;
+        font-weight: 400;
+        color: var(--color-warm-cream);
+    }
+
+    .subtitle {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        opacity: 0.4;
+        margin: 0 0 3rem 0;
+        color: var(--color-warm-cream);
+    }
+
+    .legal-section {
+        margin-bottom: 3rem;
+        border-left: 1px solid rgba(245, 237, 216, 0.12);
+        padding-left: 2rem;
+    }
+
+    .legal-section h2 {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-weight: 400;
+        margin: 0 0 1rem 0;
+        color: var(--color-gold);
+    }
+
+    .legal-section p {
+        font-family: var(--font-display);
+        font-size: 16px;
+        line-height: 1.6;
+        margin: 0 0 1rem 0;
+        opacity: 0.85;
+        color: var(--color-warm-cream);
+    }
+
+    .legal-link {
+        color: var(--color-gold);
+        text-decoration: underline;
+        transition: color 0.3s ease;
+    }
+
+    .legal-link:hover {
+        color: var(--color-warm-cream);
+    }
+
+    .nav-link {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        color: rgba(245, 237, 216, 0.5);
+        text-decoration: none;
+        letter-spacing: 0.05em;
+        margin-top: 3rem;
+        display: inline-block;
+        transition: color 0.3s ease;
+        align-self: flex-start;
+    }
+
+    .nav-link:hover {
+        color: var(--color-warm-cream);
+    }
+</style>

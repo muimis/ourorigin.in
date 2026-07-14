@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { WHATSAPP_NUMBER, FSSAI_NUMBER } from '../utils/constants';
 
 const products = await getCollection('products');
 
@@ -115,7 +116,7 @@ const companionsJson = JSON.stringify(companionProductsMap);
 
         <button id="ledger-connect-btn" class="ledger-connect" aria-label="Initialize transfer via WhatsApp">INITIALIZE TRANSFER (WHATSAPP)</button>
         
-        <div class="ledger-fssai">FSSAI Reg. No. 21326135000354</div>
+        <div class="ledger-fssai">FSSAI Reg. No. {FSSAI_NUMBER}</div>
       </div>
       
       <!-- Post-checkout state (Gap 4) -->
@@ -133,7 +134,7 @@ const companionsJson = JSON.stringify(companionProductsMap);
   </div>
 </div>
 
-<script define:vars={{ companionsJson }}>
+<script define:vars={{ companionsJson, WHATSAPP_NUMBER }}>
   const companionsMap = JSON.parse(companionsJson);
   
   document.addEventListener('DOMContentLoaded', () => {
@@ -427,8 +428,7 @@ const companionsJson = JSON.stringify(companionProductsMap);
       }
       
       const encodedMessage = encodeURIComponent(message);
-      const phone = '919645555668'; 
-      window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
+      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`, '_blank');
       
       // Post-checkout state (Gap 4)
       itemsContainer.classList.add('hidden');

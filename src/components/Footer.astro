@@ -1,5 +1,9 @@
 ---
 // src/components/Footer.astro
+import { WHATSAPP_NUMBER, EMAIL_ADDRESS, FSSAI_NUMBER } from '../utils/constants';
+
+const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}`;
+const formattedPhone = '+91 96455 55668';
 ---
 
 <footer class="site-footer">
@@ -8,15 +12,17 @@
       <a href="/why" class="footer-link">Why This Exists</a>
       <a href="/observations" class="footer-link">Observations</a>
       <a href="/contact" class="footer-link">Contact</a>
+      <a href="/terms" class="footer-link">Terms & Conditions</a>
+      <a href="/privacy" class="footer-link">Privacy Policy</a>
     </div>
 
     <div class="footer-contact">
-      <a href="https://wa.me/919645555668" class="footer-link" target="_blank" rel="noopener noreferrer">+91 96455 55668</a>
-      <a href="mailto:ourorigin.in@gmail.com" class="footer-link">ourorigin.in@gmail.com</a>
+      <a href={whatsappLink} class="footer-link" target="_blank" rel="noopener noreferrer">{formattedPhone}</a>
+      <a href={`mailto:${EMAIL_ADDRESS}`} class="footer-link">{EMAIL_ADDRESS}</a>
     </div>
 
     <div class="footer-legal">
-      <span class="footer-fssai">FSSAI Reg. No. 21326135000354</span>
+      <span class="footer-fssai">FSSAI Reg. No. {FSSAI_NUMBER}</span>
       <span class="footer-copy">&copy; {new Date().getFullYear()} OurOrigin</span>
     </div>
   </div>

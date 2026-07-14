@@ -1,5 +1,9 @@
 ---
 import BaseLayout from '../components/BaseLayout.astro';
+import { WHATSAPP_NUMBER, EMAIL_ADDRESS } from '../utils/constants';
+
+const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}`;
+const formattedPhone = '+91 96455 55668';
 ---
 
 <BaseLayout
@@ -16,8 +20,8 @@ import BaseLayout from '../components/BaseLayout.astro';
 
         <div class="contact-details">
             <p>We operate from Thiruvananthapuram, Kerala. If you have a question about where a yield comes from, or how it is grown, we will tell you everything we know.</p>
-            <a href="https://wa.me/919645555668" class="contact-link" target="_blank" rel="noopener noreferrer">+91 96455 55668</a>
-            <a href="mailto:ourorigin.in@gmail.com" class="contact-link">ourorigin.in@gmail.com</a>
+            <a href={whatsappLink} class="contact-link" target="_blank" rel="noopener noreferrer">{formattedPhone}</a>
+            <a href={`mailto:${EMAIL_ADDRESS}`} class="contact-link">{EMAIL_ADDRESS}</a>
         </div>
 
         <p class="contact-gifting">For orders of 50 or more, reach us on the same number.</p>

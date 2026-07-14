@@ -1,6 +1,8 @@
 ---
+// src/components/DepthExperience.astro
 import OriginMark from './OriginMark.astro';
 import LiveWeather from './LiveWeather.astro';
+import { FSSAI_NUMBER } from '../utils/constants';
 
 export interface Props {
   origin?: any;
@@ -18,53 +20,117 @@ const botanicalStates = {
 };
 const botanicalState = origin ? botanicalStates[origin.data.slug] : '';
 
-
-// Build the content for the first 4 strata
+// Build the content for all 7 dimensions of the depth experience
 const strata = [
   { 
-    id: 'canopy', 
-    evidence: origin ? `${origin.data.elevation} · ${origin.data.bioregion}`.toUpperCase() : '',
+    id: 'geo', 
+    label: 'GEO',
+    evidence: origin ? `${origin.data.coordinates} · ${origin.data.elevation}`.toUpperCase() : '',
     narrative: origin ? origin.data.narrative.canopy : '',
     image: origin ? origin.data.images.canopy : null, 
-    hasWeather: true 
-  },
-  { 
-    id: 'land', 
-    evidence: origin ? origin.data.soil.toUpperCase() : '',
-    narrative: origin ? origin.data.narrative.land : '',
-    image: origin ? origin.data.images.land : null, 
     hasWeather: false 
   },
   { 
-    id: 'hand', 
-    evidence: origin ? origin.data.method.toUpperCase() : '',
+    id: 'bio', 
+    label: 'BIO',
+    evidence: origin ? `WESTERN GHATS · ${origin.data.soil}`.toUpperCase() : '',
+    narrative: origin ? origin.data.narrative.land : '',
+    image: origin ? origin.data.images.land || origin.data.images.canopy : null, 
+    hasWeather: false 
+  },
+  { 
+    id: 'community', 
+    label: 'COMMUNITY',
+    evidence: origin ? `${origin.data.community?.description || 'Indigenous farming communities'}`.toUpperCase() : '',
     narrative: origin ? origin.data.narrative.hand : '',
     image: origin ? origin.data.images.hand : null, 
     hasWeather: false 
   },
   { 
-    id: 'specimen', 
-    evidence: product ? `${product.data.botanicalName} · BATCH ${product.data.batchRef}${product.data.harvestMonth && !['Seasonal', 'Ongoing'].includes(product.data.harvestMonth) ? ' · ' + product.data.harvestMonth : ''}`.toUpperCase() : '',
+    id: 'method', 
+    label: 'METHOD',
+    evidence: origin ? `${origin.data.method}`.toUpperCase() : '',
+    narrative: origin ? origin.data.methodDescription || 'Polyculture and shade-grown forest harvest.' : '',
+    image: origin ? origin.data.images.hand || origin.data.images.canopy : null, 
+    hasWeather: false 
+  },
+  { 
+    id: 'observation', 
+    label: 'OBSERVATION',
+    evidence: origin ? `${origin.data.name} LIVE WEATHER` : '',
+    narrative: `Observational Log: Recording live conditions at coordinates to confirm physical reality. Current temperature, humidity, and wind details confirm the active state of this micro-region.`,
+    image: origin ? origin.data.images.specimen : null, 
+    hasWeather: true 
+  },
+  { 
+    id: 'time', 
+    label: 'TIME',
+    evidence: product ? `BATCH ${product.data.batchRef} · ${product.data.harvestMonth}`.toUpperCase() : '',
     narrative: product ? product.data.specimenCopy : '',
     botanicalName: product ? product.data.botanicalName : null,
     image: origin ? origin.data.images.specimen : null, 
     hasWeather: false 
+  },
+  { 
+    id: 'offering', 
+    label: 'PRODUCT',
+    evidence: 'THE HARVEST',
+    image: product ? product.data.images?.packaging : null,
+    isOffering: true 
   }
 ];
 
-// Dynamically fetch the origin mask URL, but for Wayanad use the new solid SVG based on the uploaded border
-const maskUrl = origin?.data.slug === 'wayanad' ? encodeURI('/maps/wayanadu map cut_solid.svg') : '';
-
+// Dynamically fetch the origin mask URL (using clean web-safe filename)
+const maskUrl = origin?.data.slug === 'wayanad' ? encodeURI('/maps/wayanad_map_cut_solid.svg') : '';
 
 // Determine sizes for the offering stratum
 const sizes = product ? product.data.sizes : [];
+
+// The 7 inline SVG glyphs representing each of the dimensions
+const dimensions = [
+  { 
+    name: 'Geo', 
+    description: 'The exact coordinates and elevation',
+    d: 'M 50,20 L 50,40 M 50,60 L 50,80 M 20,50 L 40,50 M 60,50 L 80,50 M 40,50 A 10,10 0 1,0 60,50 A 10,10 0 1,0 40,50' 
+  },
+  { 
+    name: 'Bio', 
+    description: 'The soil and ecological system',
+    d: 'M 30,50 A 20,20 0 0,1 70,50 M 20,50 A 30,30 0 0,1 80,50 M 40,50 A 10,10 0 0,1 60,50' 
+  },
+  { 
+    name: 'Community', 
+    description: 'The generational knowledge holders',
+    d: 'M 42,50 A 18,18 0 1,0 78,50 A 18,18 0 1,0 42,50 M 58,50 A 18,18 0 1,0 94,50 A 18,18 0 1,0 58,50' 
+  },
+  { 
+    name: 'Method', 
+    description: 'The polyculture harvesting practice',
+    d: 'M 25,35 L 75,35 M 18,50 L 82,50 M 25,65 L 75,65' 
+  },
+  { 
+    name: 'Observation', 
+    description: 'The live atmospheric evidence',
+    d: 'M 20,50 C 35,25 40,75 50,50 C 60,25 65,75 80,50' 
+  },
+  { 
+    name: 'Time', 
+    description: 'The seasonal harvest cycle',
+    d: 'M 50,20 L 50,80 M 20,50 L 80,50 M 50,50 L 70,30' 
+  },
+  { 
+    name: 'Product', 
+    description: 'The finalized packaging and yield',
+    d: 'M 50,38 A 12,12 0 1,0 62,50 A 12,12 0 1,0 50,38 M 50,32 L 50,15 M 50,68 L 50,85 M 32,50 L 15,50 M 68,50 L 85,50' 
+  }
+];
 ---
 
-<!-- Telemetry Escape Hatch -->
+<!-- Top HUD Navigation -->
 <div class="depth-top-hud">
   <div class="hud-left-group">
-    <a href="/" class="depth-escape-hatch" aria-label="Return to Matrix">
-      [ &larr; MATRIX ]
+    <a href="/" class="depth-escape-hatch" aria-label="Return to Home">
+      [ &larr; HOME ]
     </a>
     <button id="depth-yields-trigger" class="depth-hud-btn" aria-label="All Yields">
       [ ALL YIELDS ]
@@ -78,83 +144,97 @@ const sizes = product ? product.data.sizes : [];
   </button>
 </div>
 
-<div class="depth-experience-container">
-  
-  <!-- Interactive Depth Gauge -->
-  <div class="depth-gauge-wrapper">
-    <OriginMark variant="gold" size={48} id="depth-gauge-mark" />
+<!-- The Cipher glyph progress & navigation rail -->
+<div class="cipher-rail-wrapper" role="navigation" aria-label="Origin dimensions">
+  <div class="cipher-rail">
+    {dimensions.map((dim, idx) => (
+      <button 
+        class={`cipher-glyph-btn ${idx === 0 ? 'is-active' : ''}`} 
+        data-index={idx} 
+        aria-label={`${dim.name} — ${dim.description}`}
+      >
+        <span class="cipher-label">{dim.name}</span>
+        <svg class="cipher-icon" viewBox="0 0 100 100" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <circle cx="50" cy="50" r="48" stroke-dasharray="2" opacity="0.3" />
+          <path d={dim.d} />
+          {idx === 6 && <circle cx="50" cy="50" r="3" fill="currentColor" />}
+        </svg>
+      </button>
+    ))}
   </div>
+</div>
 
+<div class="depth-experience-container">
   <div class="pin-container" data-origin-slug={origin?.data.slug} data-product-slug={product?.id} data-origin-name={origin?.data.name} data-product-name={product?.data.name}>
     <div class="depth-topographic-bg"></div>
     
     {strata.map((s, i) => (
       <section 
-        class={`stratum stratum-${s.id} ${maskUrl && i === 0 ? 'has-terrain-mask' : ''}`} 
+        class={`stratum stratum-${s.id} ${maskUrl && i === 0 ? 'has-terrain-mask' : ''} ${s.isOffering ? 'stratum-offering' : ''}`} 
         style={`z-index: ${i + 1}; height: 100dvh; width: 100%; transform: translateY(${i === 0 ? '0' : '100dvh'}); ${maskUrl && i === 0 ? `--mask-url: url('${maskUrl}');` : ''}`}
       >
         <div class="stratum-content">
           {s.image && !origin?.data.images.isPlaceholderImagery && (
-            <div class={`stratum-image ${s.id === 'hand' ? 'image-preserve-people' : ''}`} style={`background-image: url('${s.image}')`}></div>
+            <img 
+              src={s.image} 
+              alt={s.isOffering ? `Packaging of ${product.data.name}` : `${origin.data.name} — ${s.label}`}
+              class={`stratum-image-el ${s.id === 'community' ? 'image-preserve-people' : ''}`} 
+              loading={i === 0 ? "eager" : "lazy"} 
+            />
           )}
           <div class="stratum-shadow"></div>
-          <div class="stratum-text-container">
-            <h2 class="stratum-evidence">
-              {s.evidence}
-              {s.hasWeather && origin && <><span class="weather-separator">·</span><LiveWeather coordinates={origin.data.coordinates} originName={origin.data.name} /></>}
-            </h2>
-            {s.id === 'specimen' && s.botanicalName && (
-              <>
-                <p class="specimen-botanical-name">{s.botanicalName}</p>
-                <div class="specimen-telemetry-handoff">
-                  <span class="telemetry-label">STATE:</span> <span class="telemetry-value">{botanicalState}</span>
-                </div>
-              </>
-            )}
-            <p class="stratum-narrative">{s.narrative}</p>
-          </div>
+          
+          {s.isOffering ? (
+            <div class="offering-content-wrapper">
+              <h2 class="stratum-evidence">THE HARVEST</h2>
+              {product.data.offeringCopy && (
+                <p class="offering-copy">{product.data.offeringCopy}</p>
+              )}
+              
+              <p class="yield-status">YIELD STATUS: STRICTLY LIMITED (WILD HARVEST)</p>
+              
+              <div class="size-selector">
+                {sizes.map((size, index) => (
+                  <button 
+                    class={`size-btn ${index === 0 ? 'selected' : ''}`} 
+                    data-size={size.label} 
+                    data-price={size.priceINR}>
+                    {size.label}
+                  </button>
+                ))}
+              </div>
+              <div class="offering-price-display">
+                <span class="price-val" id="active-price">₹{sizes[0]?.priceINR}</span>
+              </div>
+              
+              <div class="offering-actions">
+                <button class="add-to-ledger-btn" id="add-to-ledger-btn" aria-label="Add to Ledger">
+                  [ ADD TO BASKET ]
+                </button>
+              </div>
+              
+              <div class="product-fssai">FSSAI Reg. No. {FSSAI_NUMBER}</div>
+            </div>
+          ) : (
+            <div class="stratum-text-container">
+              <h2 class="stratum-evidence">
+                {s.evidence}
+                {s.hasWeather && origin && <><span class="weather-separator">·</span><LiveWeather coordinates={origin.data.coordinates} originName={origin.data.name} /></>}
+              </h2>
+              {s.id === 'time' && s.botanicalName && (
+                <>
+                  <p class="specimen-botanical-name">{s.botanicalName}</p>
+                  <div class="specimen-telemetry-handoff">
+                    <span class="telemetry-label">STATE:</span> <span class="telemetry-value">{botanicalState}</span>
+                  </div>
+                </>
+              )}
+              <p class="stratum-narrative">{s.narrative}</p>
+            </div>
+          )}
         </div>
       </section>
     ))}
-
-    <!-- Offering Stratum (Custom Layout) -->
-    <section class={`stratum stratum-offering ${maskUrl ? 'has-terrain-mask' : ''}`} style={`z-index: 10000; height: 100dvh; width: 100%; transform: translateY(100dvh); ${maskUrl ? `--mask-url: url('${maskUrl}');` : ''}`}>
-      {product.data.images?.packaging && product.data.images.packaging.trim() !== '' && (
-        <div class="stratum-image" style={`background-image: url('${product.data.images.packaging}')`}></div>
-      )}
-      <div class="stratum-content offering-content">
-        <div class="stratum-shadow"></div>
-        <h2 class="stratum-evidence">THE HARVEST</h2>
-        
-        {product.data.offeringCopy && (
-          <p class="offering-copy">{product.data.offeringCopy}</p>
-        )}
-        
-        <p class="yield-status">YIELD STATUS: STRICTLY LIMITED (WILD HARVEST)</p>
-        
-        <div class="size-selector">
-          {sizes.map((size, index) => (
-            <button 
-              class={`size-btn ${index === 0 ? 'selected' : ''}`} 
-              data-size={size.label} 
-              data-price={size.priceINR}>
-              {size.label}
-            </button>
-          ))}
-        </div>
-        <div class="offering-price-display">
-          <span class="price-val" id="active-price">₹{sizes[0]?.priceINR}</span>
-        </div>
-        
-        <div class="offering-actions">
-          <button class="add-to-ledger-btn" id="add-to-ledger-btn" aria-label="Add to Ledger">
-            [ ADD TO BASKET ]
-          </button>
-        </div>
-        
-        <div class="product-fssai">FSSAI Reg. No. 21326135000354</div>
-      </div>
-    </section>
   </div>
 </div>
 
@@ -164,7 +244,6 @@ const sizes = product ? product.data.sizes : [];
     width: 100%;
     background-color: var(--color-forest-deep);
     color: var(--color-warm-cream);
-    /* GSAP will pin this container */
   }
 
   .depth-topographic-bg {
@@ -176,7 +255,7 @@ const sizes = product ? product.data.sizes : [];
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    opacity: 0.6; /* Bumped slightly to ensure visibility through the dark mask */
+    opacity: 0.4;
     pointer-events: none;
     z-index: 0;
   }
@@ -188,19 +267,11 @@ const sizes = product ? product.data.sizes : [];
     position: relative;
   }
 
-  .depth-gauge-wrapper {
-    position: fixed;
-    right: 24px;
-    top: 0; 
-    z-index: 9999;
-    pointer-events: none;
-  }
-
   .stratum {
     position: absolute;
     top: 0;
     left: 0;
-    width: 110vw; /* Extended to allow right-side overlap during diagonal left stack */
+    width: 110vw;
     will-change: transform;
   }
 
@@ -228,35 +299,26 @@ const sizes = product ? product.data.sizes : [];
     z-index: 5;
   }
 
-  .stratum-image {
+  .stratum-image-el {
     position: absolute;
     inset: 0;
-    background-size: cover;
-    background-position: center;
-    opacity: 0.8; /* Acceptable green overlay effect showing topography and background */
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.8;
     z-index: 1;
     pointer-events: none;
+    filter: saturate(0.8) contrast(1.1);
   }
-  
-  /* Hand stratum uses default or preserve-people styling */
 
-  /* Terrain Cuts / Map Borders - Dynamically injected via --mask-url to match the active origin */
+  /* Terrain Cuts / Map Borders */
   .has-terrain-mask {
-    /* We use two masks:
-       1. The map cut SVG (placed top right, preserves its aspect ratio of ~0.61).
-       2. A solid black gradient (placed top left, fills the remaining width of the screen). 
-       This flawlessly handles all screen sizes (mobile and desktop) without hitting SVG rendering limits. */
     -webkit-mask-image: var(--mask-url), linear-gradient(black, black);
     mask-image: var(--mask-url), linear-gradient(black, black);
-    
     -webkit-mask-repeat: no-repeat, no-repeat;
     mask-repeat: no-repeat, no-repeat;
-    
-    /* The map height is 100%. The map width naturally becomes 0.61 * 100vh. 
-       The gradient covers the remaining width (100% - 60vh) so it overlaps slightly to prevent gaps. */
     -webkit-mask-size: auto 100%, calc(100% - 60vh) 100%;
     mask-size: auto 100%, calc(100% - 60vh) 100%;
-    
     -webkit-mask-position: top right, top left;
     mask-position: top right, top left;
   }
@@ -274,16 +336,17 @@ const sizes = product ? product.data.sizes : [];
   @media (max-width: 768px) {
     .stratum-content {
       padding-top: 12vh;
-      padding-right: 10vw;
+      padding-right: 0;
     }
   }
 
-  .stratum-image.image-preserve-people {
+  .stratum-image-el.image-preserve-people {
     opacity: 0.8;
   }
 
   /* Basic typographic styling */
-  .stratum-text-container {
+  .stratum-text-container,
+  .offering-content-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -294,10 +357,11 @@ const sizes = product ? product.data.sizes : [];
     max-width: 480px;
     padding: 0 2rem;
     text-align: center;
+    margin: auto;
   }
 
   .stratum-evidence {
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     font-weight: 400;
     letter-spacing: 0.1em;
@@ -311,8 +375,9 @@ const sizes = product ? product.data.sizes : [];
     gap: 0.5rem;
   }
 
-  .stratum-narrative {
-    font-family: 'Cormorant Garamond', serif;
+  .stratum-narrative,
+  .offering-copy {
+    font-family: var(--font-display);
     font-size: 18px;
     font-weight: 400;
     color: var(--color-warm-cream);
@@ -321,7 +386,7 @@ const sizes = product ? product.data.sizes : [];
   }
   
   .specimen-botanical-name {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: var(--font-display);
     font-size: 16px;
     font-style: italic;
     color: var(--color-gold);
@@ -329,7 +394,7 @@ const sizes = product ? product.data.sizes : [];
   }
 
   .specimen-telemetry-handoff {
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 0.1em;
     color: var(--color-warm-cream);
@@ -345,7 +410,7 @@ const sizes = product ? product.data.sizes : [];
   }
 
   .yield-status {
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     letter-spacing: 0.1em;
     color: var(--color-gold);
@@ -358,10 +423,6 @@ const sizes = product ? product.data.sizes : [];
     margin: 0 0.2rem;
   }
 
-  .offering-content {
-    flex-direction: column;
-  }
-
   .size-selector {
     display: flex;
     gap: 0.5rem;
@@ -370,17 +431,19 @@ const sizes = product ? product.data.sizes : [];
     justify-content: center;
     z-index: 10;
   }
+  
   .size-btn {
     background: none;
     border: 1px solid rgba(245, 237, 216, 0.3);
     color: var(--color-warm-cream);
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     padding: 0.6rem 1rem;
     border-radius: 20px;
     cursor: pointer;
     transition: all 0.2s ease;
   }
+  
   .size-btn.selected {
     background: var(--color-warm-cream);
     color: var(--color-forest-deep);
@@ -390,8 +453,9 @@ const sizes = product ? product.data.sizes : [];
     text-align: center;
     margin-bottom: 2rem;
   }
+  
   .price-val {
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 16px;
     color: var(--color-gold);
   }
@@ -401,13 +465,14 @@ const sizes = product ? product.data.sizes : [];
     display: flex;
     justify-content: center;
     margin-top: 2rem;
+    width: 100%;
   }
 
   .add-to-ledger-btn {
     background: transparent;
     color: var(--color-warm-cream);
     border: 1px solid rgba(245, 237, 216, 0.3);
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     padding: 1rem 2rem;
     cursor: pointer;
@@ -415,8 +480,17 @@ const sizes = product ? product.data.sizes : [];
     width: 100%;
     max-width: 320px;
   }
+  
   .add-to-ledger-btn:hover {
     color: var(--color-gold);
+  }
+
+  .product-fssai {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    opacity: 0.3;
+    margin-top: 2rem;
+    letter-spacing: 0.05em;
   }
 
   /* Fixed Top HUD Elements */
@@ -438,7 +512,8 @@ const sizes = product ? product.data.sizes : [];
   }
 
   .depth-escape-hatch,
-  .depth-escape-hatch, .depth-basket-trigger, .depth-hud-btn {
+  .depth-basket-trigger,
+  .depth-hud-btn {
     color: var(--color-warm-cream);
     text-decoration: none;
     background: none;
@@ -447,19 +522,119 @@ const sizes = product ? product.data.sizes : [];
     padding: 0;
     opacity: 0.8;
     transition: opacity 0.3s ease;
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 0.1em;
     pointer-events: auto;
   }
   
   .depth-basket-trigger {
-    display: none; /* Hidden by default until Ledger logic reveals it */
+    display: none;
   }
 
   .depth-escape-hatch:hover, .depth-basket-trigger:hover, .depth-hud-btn:hover {
     opacity: 1;
     color: var(--color-gold);
+  }
+
+  /* === Cipher Rail Styling === */
+  .cipher-rail-wrapper {
+    position: fixed;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 9990;
+    display: flex;
+    align-items: center;
+    pointer-events: auto;
+  }
+
+  .cipher-rail {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: flex-end;
+  }
+
+  .cipher-glyph-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    color: var(--color-warm-cream);
+    opacity: 0.35;
+    transition: opacity 0.3s ease, color 0.3s ease;
+  }
+
+  .cipher-glyph-btn:hover,
+  .cipher-glyph-btn.is-active {
+    opacity: 1;
+    color: var(--color-gold);
+  }
+
+  .cipher-icon {
+    width: 24px;
+    height: 24px;
+    stroke-width: 1.5px;
+    transition: transform 0.3s ease;
+  }
+
+  .cipher-glyph-btn.is-active .cipher-icon {
+    transform: scale(1.15);
+  }
+
+  .cipher-label {
+    position: absolute;
+    right: 36px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--color-gold);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    white-space: nowrap;
+    text-transform: uppercase;
+  }
+
+  .cipher-glyph-btn:hover .cipher-label,
+  .cipher-glyph-btn.show-label .cipher-label,
+  .cipher-glyph-btn.show-label-temp .cipher-label {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* Responsive / Mobile Layout */
+  @media (max-width: 768px) {
+    .cipher-rail-wrapper {
+      right: 0;
+      bottom: 24px;
+      top: auto;
+      left: 0;
+      transform: none;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .cipher-rail {
+      flex-direction: row;
+      gap: 1.2rem;
+      background: rgba(12, 21, 9, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 0.6rem 1.2rem;
+      border: 1px solid rgba(245, 237, 216, 0.1);
+      border-radius: 30px;
+    }
+
+    .cipher-label {
+      display: none !important;
+    }
   }
 </style>
 
@@ -472,7 +647,6 @@ const sizes = product ? product.data.sizes : [];
   class DepthExperience {
     constructor() {
       this.initStrata();
-      this.initDepthGauge();
       this.initPurchaseAction();
       
       document.fonts.ready.then(() => {
@@ -490,7 +664,7 @@ const sizes = product ? product.data.sizes : [];
       sizeBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
           sizeBtns.forEach(b => b.classList.remove('selected'));
-          const target = e.currentTarget;
+          const target = e.currentTarget as HTMLButtonElement;
           target.classList.add('selected');
           activeSize = target.getAttribute('data-size');
           activePrice = target.getAttribute('data-price');
@@ -548,20 +722,25 @@ const sizes = product ? product.data.sizes : [];
 
     initStrata() {
       const strata = document.querySelectorAll('.stratum');
+      const pinContainer = document.querySelector('.pin-container');
+      const originSlug = pinContainer?.getAttribute('data-origin-slug');
+      const productSlug = pinContainer?.getAttribute('data-product-slug');
       
-      // Start all strata below the viewport EXCEPT the first one
-      // We start X at 0 so they stay perfectly vertically aligned for a pure top-stack effect
+      const exploreKey = `ourorigin_explored_${originSlug}_${productSlug}`;
+      const isFirstVisit = localStorage.getItem(exploreKey) !== 'true';
+
+      // Start all strata below viewport except the first one
       gsap.set(strata, { 
         y: (i) => i === 0 ? "0dvh" : "100dvh",
         x: "0vw"
       });
 
-      // Create a master pinned timeline
+      // Create master pinned timeline
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: ".depth-experience-container",
           start: "top top",
-          end: "+=350%", // Slowed down from 150% to give a luxurious, deliberate pace
+          end: "+=350%", // Slowed down for luxurious pace
           scrub: true,
           pin: ".pin-container",
           anticipatePin: 1,
@@ -574,42 +753,36 @@ const sizes = product ? product.data.sizes : [];
         }
       });
       
-      tl.addLabel("step0"); // Base state
+      tl.addLabel("step0");
 
       strata.forEach((stratum, index) => {
-        if (index === 0) return; // First stratum is already at y:0
+        if (index === 0) return;
 
         const prevStratum = strata[index - 1];
-        const prevContent = prevStratum.querySelector('.stratum-content');
         const prevShadow = prevStratum.querySelector('.stratum-shadow');
-        const prevTitle = prevStratum.querySelector('.stratum-title');
-        const prevSelector = prevStratum.querySelector('.size-selector'); 
 
-        let topOffset = index * 2; // Halved distance (2vh down)
+        let topOffset = index * 2; // Halved distance
         
-        // The offering page shouldn't be stacked; it should cover the full screen
+        // Offering page sits full screen
         if (stratum.classList.contains('stratum-offering')) {
           topOffset = 0;
         }
 
         const label = `step${index}`;
 
-        // 1. Current stratum slides straight up to its designated resting offset (top-stacking)
         tl.to(stratum, {
           y: `${topOffset}dvh`,
           ease: "none",
           duration: 1
         }, label)
         
-        // 2. Previous stratum darkens completely so it becomes a receding shadow band
         .to(prevShadow, {
           opacity: 0.5,
           ease: "none",
           duration: 1
         }, label)
         
-        // 3. Previous stratum text transforms into a large, faint watermark behind the organic terrain cut
-        .to(prevStratum.querySelector('.stratum-text-container'), {
+        .to(prevStratum.querySelector('.stratum-text-container, .offering-content-wrapper'), {
           y: "-30dvh",
           scale: 1.8,
           opacity: 0.08,
@@ -618,59 +791,60 @@ const sizes = product ? product.data.sizes : [];
         }, label);
       });
       
-      tl.addLabel("step" + strata.length); // Final snap point
-      
-      // Gap 5: Mark as explored when reaching the Offering stratum
-      const pinContainer = document.querySelector('.pin-container');
-      const originSlug = pinContainer?.getAttribute('data-origin-slug');
-      const productSlug = pinContainer?.getAttribute('data-product-slug');
-      
-      if (originSlug && productSlug) {
-        ScrollTrigger.create({
-          trigger: ".stratum-offering",
-          start: "top center",
-          containerAnimation: tl, 
-          // Note: since we are animating the strata via timeline and pinning the container,
-          // it's easier to just use the timeline's progress.
-          // The offering stratum is the last index.
-        });
-        
-        // Wait, since we are doing manual y translates instead of x translates, ScrollTrigger containerAnimation doesn't apply to vertical y translations directly.
-        // We can just use the timeline's onUpdate or onComplete.
-        // When progress > 0.8, we assume they reached the end.
-      }
-      
-      // Update: we just attach an onUpdate to the main timeline.
+      tl.addLabel("step" + strata.length);
+
+      // Track active stratum and update Cipher rail & explore state
       tl.eventCallback('onUpdate', function() {
-        if (this.progress() > 0.8 && originSlug && productSlug) {
-          localStorage.setItem(`ourorigin_explored_${originSlug}_${productSlug}`, 'true');
+        const progress = this.progress();
+        const activeIdx = Math.min(Math.floor(progress * strata.length), strata.length - 1);
+        
+        // Update active class on Cipher rail glyphs
+        document.querySelectorAll('.cipher-glyph-btn').forEach((btn, idx) => {
+          if (idx === activeIdx) {
+            btn.classList.add('is-active');
+            if (isFirstVisit) {
+              btn.classList.add('show-label');
+            }
+          } else {
+            btn.classList.remove('is-active');
+            btn.classList.remove('show-label');
+          }
+        });
+
+        // Mark as explored when reaching offering stratum (last slide)
+        if (progress > 0.8 && originSlug && productSlug) {
+          localStorage.setItem(exploreKey, 'true');
         }
       });
-    }
 
-    initDepthGauge() {
-      const gauge = document.querySelector('.depth-gauge-wrapper');
-      const container = document.querySelector('.depth-experience-container');
+      // Wire up Cipher rail click events to scroll directly to the target stratum
+      document.querySelectorAll('.cipher-glyph-btn').forEach((btn, index) => {
+        btn.addEventListener('click', () => {
+          const scrollTriggerInstance = tl.scrollTrigger;
+          if (scrollTriggerInstance) {
+            const start = scrollTriggerInstance.start;
+            const end = scrollTriggerInstance.end;
+            const totalScroll = end - start;
+            // Snaps directly to the start of the stratum slide
+            const targetScroll = start + (index / (strata.length - 1)) * totalScroll;
+            
+            window.scrollTo({
+              top: targetScroll,
+              behavior: 'smooth'
+            });
 
-      if (gauge && container) {
-        gsap.fromTo(gauge, 
-          { y: "10dvh" }, 
-          { 
-            y: "80dvh",
-            ease: "none",
-            scrollTrigger: {
-              trigger: container,
-              start: "top top",
-              end: "+=200%", // Matches the new faster pin duration
-              scrub: true
-            }
+            // Briefly show label when clicked
+            btn.classList.add('show-label-temp');
+            setTimeout(() => {
+              btn.classList.remove('show-label-temp');
+            }, 1800);
           }
-        );
-      }
+        });
+      });
     }
   }
 
-  // Ensure initialization happens safely
+  // Safe instantiation
   new DepthExperience();
   
   const yieldsBtn = document.getElementById('depth-yields-trigger');
