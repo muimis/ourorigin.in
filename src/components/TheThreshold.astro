@@ -359,23 +359,14 @@
       });
     }
 
-    // The Transition
+    // The Smooth Scroll Transition
     const btn = document.getElementById('step-btn');
-
-    if (btn && container) {
+    if (btn) {
       btn.addEventListener('click', () => {
-        // Fire the cinematic transition
-        container.classList.add('is-entering');
-        
-        // Dispatch State 1 transition just before the violent green bleed finishes (2s)
-        setTimeout(() => {
-          window.dispatchEvent(new Event('enter-state-1'));
-        }, 2000);
-        
-        // Remove Threshold from DOM flow after animation finishes completely
-        setTimeout(() => {
-          container.style.display = 'none';
-        }, 3000);
+        const manifesto = document.getElementById('manifesto');
+        if (manifesto) {
+          manifesto.scrollIntoView({ behavior: 'smooth' });
+        }
       });
     }
   });

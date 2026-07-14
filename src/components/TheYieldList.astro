@@ -1,0 +1,397 @@
+---
+// src/components/TheYieldList.astro
+import LiveWeather from './LiveWeather.astro';
+import { getCollection } from 'astro:content';
+
+const yields = await getCollection('products');
+const origins = await getCollection('origins');
+
+// We group yields by origin
+const groupedYields = {};
+origins.forEach(origin => {
+  const matchingYields = yields.filter(y => {
+    const originId = typeof y.data.originSlug === 'object' ? y.data.originSlug?.id : y.data.originSlug;
+    return originId === origin.data.slug;
+  });
+  if (matchingYields.length > 0) {
+    groupedYields[origin.data.slug] = {
+      origin,
+      products: matchingYields
+    };
+  }
+});
+
+// Ordering origins logically (Wayanad, Idukki, Nilgiris, Thiruvananthapuram)
+const originOrder = ['wayanad', 'idukki', 'nilgiris', 'thiruvananthapuram'];
+const orderedGroupedKeys = Object.keys(groupedYields).sort((a, b) => {
+  return originOrder.indexOf(a) - originOrder.indexOf(b);
+});
+---
+
+<section id="yields-matrix" class="yields-matrix-section">
+  {orderedGroupedKeys.map(slug => {
+    const group = groupedYields[slug];
+    const origin = group.origin;
+    return (
+      <div class="origin-chapter">
+        <!-- Chapter Header (The Sourcing Frame) -->
+        <div class="chapter-header">
+          <div class="chapter-title-group">
+            <span class="chapter-tag">[ COLLECTION ]</span>
+            <h2 class="chapter-name">{origin.data.name} Collective</h2>
+          </div>
+          
+          <div class="chapter-telemetry">
+            <div class="telemetry-line">
+              <span class="lbl">ALTITUDE</span>
+              <span class="val">{origin.data.elevation}</span>
+            </div>
+            <div class="telemetry-line">
+              <span class="lbl">COORDINATES</span>
+              <span class="val">{origin.data.coordinates}</span>
+            </div>
+            <div class="telemetry-line">
+              <span class="lbl">WEATHER</span>
+              <span class="val"><LiveWeather coordinates={origin.data.coordinates} originName={origin.data.name} /></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Yields Showcase Grid -->
+        <div class="chapter-yields-grid">
+          {group.products.map(y => (
+            <div class="yield-card" data-slug={y.id} data-origin={slug}>
+              <!-- Left Side: Product Packaging Mockup -->
+              <div class="yield-card-left">
+                <div class="yield-image-wrapper">
+                  <img 
+                    src={y.data.images?.packaging || '/assets/products/black-pepper.png'} 
+                    alt={`Packaging of ${y.data.name}`} 
+                    class="yield-floating-img" 
+                    width="500"
+                    height="500"
+                    loading="lazy"
+                  />
+                  <div class="yield-glow"></div>
+                </div>
+                <div class="yield-specs">
+                  <div class="spec-row">
+                    <span>BATCH RECORD</span>
+                    <span>{y.data.batchRef}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Side: Narrative Details -->
+              <div class="yield-card-right">
+                <div class="yield-header">
+                  <h3 class="yield-title">{y.data.name}</h3>
+                  <p class="yield-botanical">{y.data.botanicalName}</p>
+                </div>
+
+                <div class="yield-desc">
+                  <p>{y.data.specimenCopy}</p>
+                </div>
+
+                <div class="yield-pricing">
+                  <span class="pricing-label">[ AVAILABLE SIZES ]</span>
+                  <div class="sizes-row">
+                    {y.data.sizes.map(size => (
+                      <div class="size-pill">
+                        <span class="sz-name">{size.label}</span>
+                        <span class="sz-price">₹{size.priceINR}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div class="yield-action">
+                  <a href={`/origins/${slug}/${y.id}`} class="descend-btn">
+                    [ DESCEND INTO ORIGIN DETAILS ]
+                  </a>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  })}
+</section>
+
+<style>
+  .yields-matrix-section {
+    background-color: var(--color-forest-deep);
+    color: var(--color-warm-cream);
+    padding: 6vh 0;
+  }
+
+  .origin-chapter {
+    border-bottom: 1px solid rgba(245, 237, 216, 0.1);
+    padding: 8vh 8vw;
+  }
+
+  .origin-chapter:last-child {
+    border-bottom: none;
+  }
+
+  /* Chapter Header */
+  .chapter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 1px solid rgba(245, 237, 216, 0.15);
+    padding-bottom: 2rem;
+    margin-bottom: 4rem;
+  }
+
+  .chapter-title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: left;
+  }
+
+  .chapter-tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--color-gold);
+  }
+
+  .chapter-name {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3.5vw, 4.5rem);
+    font-weight: 300;
+    line-height: 1;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  .chapter-telemetry {
+    display: flex;
+    gap: 3rem;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-align: left;
+  }
+
+  .telemetry-line {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .telemetry-line .lbl {
+    color: rgba(245, 237, 216, 0.4);
+  }
+
+  .telemetry-line .val {
+    color: var(--color-warm-cream);
+  }
+
+  /* Yields Showcase cards vertical stack */
+  .chapter-yields-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 5rem;
+  }
+
+  .yield-card {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 6vw;
+    align-items: center;
+    border-bottom: 1px dashed rgba(245, 237, 216, 0.1);
+    padding-bottom: 5rem;
+  }
+
+  .yield-card:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  /* Left Side packaging */
+  .yield-card-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .yield-image-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .yield-floating-img {
+    max-height: 40vh;
+    max-width: 90%;
+    object-fit: contain;
+    z-index: 2;
+    filter: drop-shadow(0 20px 40px rgba(0,0,0,0.6));
+    transition: transform 0.6s var(--ease-settle);
+  }
+
+  .yield-card:hover .yield-floating-img {
+    transform: scale(1.03) translateY(-5px);
+  }
+
+  .yield-glow {
+    position: absolute;
+    width: 60%;
+    height: 60%;
+    background: radial-gradient(circle, rgba(166, 124, 60, 0.06) 0%, transparent 70%);
+    z-index: 1;
+  }
+
+  .yield-specs {
+    width: 100%;
+    max-width: 400px;
+    border-top: 1px solid rgba(245, 237, 216, 0.12);
+    padding-top: 1rem;
+  }
+
+  .spec-row {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: rgba(245, 237, 216, 0.45);
+  }
+
+  /* Right Side narrative */
+  .yield-card-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2rem;
+    text-align: left;
+  }
+
+  .yield-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .yield-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3vw, 3.5rem);
+    font-weight: 300;
+    margin: 0;
+    line-height: 1;
+  }
+
+  .yield-botanical {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-style: italic;
+    color: rgba(245, 237, 216, 0.55);
+    margin: 0;
+  }
+
+  .yield-desc p {
+    font-family: var(--font-display);
+    font-size: clamp(1rem, 1.2vw, 1.15rem);
+    line-height: 1.6;
+    color: var(--color-warm-cream);
+    opacity: 0.8;
+    margin: 0;
+    max-width: 480px;
+  }
+
+  .yield-pricing {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    width: 100%;
+  }
+
+  .pricing-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: rgba(245, 237, 216, 0.4);
+  }
+
+  .sizes-row {
+    display: flex;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+  }
+
+  .size-pill {
+    border: 1px solid rgba(245, 237, 216, 0.15);
+    padding: 0.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    min-width: 70px;
+  }
+
+  .size-pill .sz-name {
+    font-family: var(--font-mono);
+    font-size: 8px;
+    color: rgba(245, 237, 216, 0.5);
+  }
+
+  .size-pill .sz-price {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-warm-cream);
+  }
+
+  .yield-action {
+    margin-top: 1rem;
+  }
+
+  .descend-btn {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--color-warm-cream);
+    text-decoration: none;
+    border: 1px solid rgba(245, 237, 216, 0.35);
+    padding: 1rem 2rem;
+    transition: all 0.3s ease;
+    display: inline-block;
+  }
+
+  .descend-btn:hover {
+    color: var(--color-gold);
+    border-color: var(--color-gold);
+    background: rgba(166, 124, 60, 0.05);
+  }
+
+  /* Responsive styling */
+  @media (max-width: 1024px) {
+    .chapter-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.5rem;
+    }
+    .yield-card {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+      padding-bottom: 4rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .origin-chapter {
+      padding: 6vh 5vw;
+    }
+    .chapter-telemetry {
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+  }
+</style>

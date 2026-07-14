@@ -1,7 +1,11 @@
 ---
 import BaseLayout from '../components/BaseLayout.astro';
 import TheThreshold from '../components/TheThreshold.astro';
-import TheMasterCompass from '../components/TheMasterCompass.astro';
+import TheManifesto from '../components/TheManifesto.astro';
+import TheYieldList from '../components/TheYieldList.astro';
+import TheHorizonLog from '../components/TheHorizonLog.astro';
+import TheIndexLedger from '../components/TheIndexLedger.astro';
+import TheObservationsList from '../components/TheObservationsList.astro';
 ---
 
 <BaseLayout
@@ -11,34 +15,42 @@ import TheMasterCompass from '../components/TheMasterCompass.astro';
   ogTitle="OurOrigin — The Absolute Truth of the Soil"
   ogDescription="Spices and ingredients from the Western Ghats. Traceable to the person who harvested them."
   navVariant="light"
-  showFooter={false}
+  showFooter={true}
   bodyClass="homepage-body"
 >
     <main>
-        <!-- State 0: The Presentation -->
+        <!-- Chapter 01: Hero Gate -->
         <TheThreshold />
-        
-        <!-- State 1: The Global Canvas -->
-        <TheMasterCompass />
+
+        <!-- Chapter 02: Ethos & Manifesto -->
+        <TheManifesto />
+
+        <!-- Chapter 03: Yields Grouped by Sourcing Collectives -->
+        <TheYieldList />
+
+        <!-- Chapter 04: Sun Curing Log -->
+        <TheHorizonLog />
+
+        <!-- Chapter 05: Sourcing Ledger Database Index -->
+        <TheIndexLedger />
+
+        <!-- Chapter 06: Curated Field Observation Records -->
+        <TheObservationsList />
     </main>
 </BaseLayout>
 
 <style is:global>
     body.homepage-body {
         background-color: #010201 !important;
-        overflow: hidden !important;
-        width: 100vw;
-        height: 100vh;
-        height: 100dvh;
+        overflow-x: hidden !important;
+        width: 100%;
     }
 </style>
 
 <style>
     main {
         position: relative;
-        width: 100vw;
-        height: 100vh;
-        height: 100dvh;
-        overflow: hidden;
+        width: 100%;
+        background-color: var(--color-forest-deep);
     }
 </style>

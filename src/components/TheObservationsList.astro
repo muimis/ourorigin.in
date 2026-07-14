@@ -1,0 +1,201 @@
+---
+// src/components/TheObservationsList.astro
+---
+
+<section id="observations-archive" class="observations-archive-section">
+  <div class="obs-container">
+    <div class="obs-section-header">
+      <span class="obs-section-tag">[ ARCHIVAL LOGS ]</span>
+      <h2 class="obs-section-title">The Observation Archives</h2>
+      <p class="obs-section-subtitle">THE DOCUMENTED RECORD OF DECISIONS MADE IN THE FOREST</p>
+    </div>
+
+    <div class="obs-grid">
+      <!-- Obs 01 -->
+      <article class="obs-card">
+        <span class="obs-num">01</span>
+        <div class="obs-body">
+          <h3 class="obs-title">The Berry Was Never Black</h3>
+          <p class="obs-text">
+            Black pepper starts green. The colour change happens entirely after harvest, during sun-drying. The colour you've associated with pepper your entire life is the colour of what happens to the plant after it's picked.
+          </p>
+          <span class="obs-ref">REF: FOREST BLACK PEPPER · WAYANAD</span>
+        </div>
+      </article>
+
+      <!-- Obs 02 -->
+      <article class="obs-card">
+        <span class="obs-num">02</span>
+        <div class="obs-body">
+          <h3 class="obs-title">Shade Is an Input</h3>
+          <p class="obs-text">
+            Most spice plants are planted in cleared ground. Cardamom is not. It grows under a canopy — deliberately left intact, because Elettaria cardamomum produces better pods when it receives filtered light. The tall trees above a cardamom garden are not vestiges of forest. They are part of the cultivation.
+          </p>
+          <span class="obs-ref">REF: CARDAMOM · IDUKKI</span>
+        </div>
+      </article>
+
+      <!-- Obs 03 -->
+      <article class="obs-card">
+        <span class="obs-num">03</span>
+        <div class="obs-body">
+          <h3 class="obs-title">What is left in the forest stays in the forest</h3>
+          <p class="obs-text">
+            A pepper vine in the Western Ghats doesn't yield uniformly. Some clusters ripen first; others need more time. Some were reached by the forest before the farmer was — the animals, the birds, the weather. A farmer sourcing for OurOrigin leaves what isn't ready and leaves what was already taken. He doesn't harvest for maximum yield. He harvests for what the forest agreed to give this season.
+          </p>
+          <span class="obs-ref">REF: FOREST HARVEST CONVENTIONS</span>
+        </div>
+      </article>
+    </div>
+
+    <div class="obs-footer">
+      <a href="/observations" class="obs-archive-link">[ VIEW COMPLETE OBSERVATION RECORD ]</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .observations-archive-section {
+    background-color: var(--color-forest-deep);
+    color: var(--color-warm-cream);
+    padding: 12vh 8vw;
+    border-bottom: 1px solid rgba(245, 237, 216, 0.1);
+  }
+
+  .obs-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+  }
+
+  .obs-section-header {
+    border-bottom: 1px solid rgba(245, 237, 216, 0.15);
+    padding-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    text-align: left;
+  }
+
+  .obs-section-tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--color-gold);
+  }
+
+  .obs-section-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 5vw, 6rem);
+    font-weight: 300;
+    margin: 0;
+    line-height: 1;
+  }
+
+  .obs-section-subtitle {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: rgba(245, 237, 216, 0.4);
+    margin: 0;
+  }
+
+  /* Observations Grid */
+  .obs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3rem;
+  }
+
+  .obs-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    border-left: 1px solid rgba(245, 237, 216, 0.15);
+    padding-left: 1.8rem;
+    text-align: left;
+  }
+
+  .obs-num {
+    font-family: var(--font-mono);
+    font-size: clamp(2.5rem, 4vw, 5rem);
+    font-weight: 300;
+    line-height: 0.8;
+    color: rgba(245, 237, 216, 0.08);
+  }
+
+  .obs-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  .obs-title {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--color-gold);
+    margin: 0;
+    text-transform: uppercase;
+  }
+
+  .obs-text {
+    font-family: var(--font-display);
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--color-warm-cream);
+    opacity: 0.8;
+    margin: 0;
+  }
+
+  .obs-ref {
+    font-family: var(--font-mono);
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    color: rgba(245, 237, 216, 0.4);
+    margin-top: 0.5rem;
+  }
+
+  .obs-footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+
+  .obs-archive-link {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--color-warm-cream);
+    text-decoration: none;
+    border: 1px solid rgba(245, 237, 216, 0.35);
+    padding: 1rem 2.2rem;
+    transition: all 0.3s ease;
+  }
+
+  .obs-archive-link:hover {
+    color: var(--color-gold);
+    border-color: var(--color-gold);
+    background: rgba(166, 124, 60, 0.05);
+  }
+
+  /* Grid breaking for tablet and mobile */
+  @media (max-width: 1024px) {
+    .obs-grid {
+      grid-template-columns: 1fr;
+      gap: 4rem;
+    }
+    .obs-card {
+      border-left: none;
+      border-bottom: 1px solid rgba(245, 237, 216, 0.1);
+      padding-left: 0;
+      padding-bottom: 3rem;
+    }
+    .obs-card:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+  }
+</style>
