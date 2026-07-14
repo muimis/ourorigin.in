@@ -1,0 +1,487 @@
+---
+import OriginMark from './OriginMark.astro';
+import TheDeepDive from './TheDeepDive.astro';
+import { getCollection } from 'astro:content';
+
+// We fetch the yields to populate the views
+// For Horizon, we might filter by a 'status' field in the future, but we'll use all for now as mock data
+const yields = await getCollection('products');
+const origins = await getCollection('origins');
+
+// Sort alphabetically for the Index (safeguard against missing name)
+const sortedYields = [...yields].sort((a, b) => {
+  const nameA = a.data.name || '';
+  const nameB = b.data.name || '';
+  return nameA.localeCompare(nameB);
+});
+---
+
+<div id="master-compass" class="master-compass is-hidden">
+  
+  <!-- Fixed Top Left: Origin Mark -->
+  <div class="compass-header">
+    <OriginMark variant="gold" size={32} animate={false} />
+  </div>
+
+  <!-- VIEW LOBBY: THE CROSSROADS -->
+  <div id="view-lobby" class="compass-view is-active">
+    <div class="lobby-container">
+      <nav class="lobby-menu">
+        <button class="lobby-link" data-target="view-yield">
+          <span class="lobby-title">THE YIELD</span>
+          <span class="lobby-subtitle">What the earth has surrendered. The active harvest.</span>
+        </button>
+        <button class="lobby-link" data-target="view-horizon">
+          <span class="lobby-title">THE HORIZON</span>
+          <span class="lobby-subtitle">What the soil is preparing. Curing and future yields.</span>
+        </button>
+        <button class="lobby-link" data-target="view-index">
+          <span class="lobby-title">THE INDEX</span>
+          <span class="lobby-subtitle">The absolute ledger. Our complete global catalog.</span>
+        </button>
+      </nav>
+    </div>
+  </div>
+
+  <!-- VIEW A: THE YIELD (Active Harvests) -->
+  <div id="view-yield" class="compass-view">
+    <div class="horizontal-stream">
+      {yields.map((y, index) => (
+        <div class="stream-item">
+          <div class="artifact-texture" style={`background-image: url('${y.data.image}')`}>
+            <div class="texture-overlay"></div>
+          </div>
+          <div class="stream-content">
+            <button class="stream-btn-trigger" data-slug={y.id || y.slug} style="background:none;border:none;cursor:pointer;padding:0;">
+              <h2 class="stream-title">{y.data.name}</h2>
+            </button>
+            <p class="stream-collective">[{String((typeof y.data.originSlug === 'object' ? y.data.originSlug?.id : y.data.originSlug) || '').toUpperCase()} COLLECTIVE]</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <!-- VIEW B: THE HORIZON (Future Harvests) -->
+  <div id="view-horizon" class="compass-view">
+    <div class="horizontal-stream">
+      <!-- Mocking future harvests for now -->
+      <div class="stream-item">
+        <div class="artifact-texture" style="background: linear-gradient(135deg, #1a150e, #0a0805)">
+          <div class="texture-overlay"></div>
+        </div>
+        <div class="stream-content">
+          <button class="stream-btn-trigger" data-slug="vanilla-mock" style="background:none;border:none;cursor:pointer;padding:0;">
+            <h2 class="stream-title">Winter Curing Vanilla</h2>
+          </button>
+          <p class="stream-collective">[IDUKKI HORIZON]</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW C: THE INDEX (Typographic Ledger) -->
+  <div id="view-index" class="compass-view">
+    <div class="ledger-container">
+      <div class="ledger-list">
+        {sortedYields.map((y) => (
+          <div class="ledger-row" data-slug={y.id || y.slug}>
+            <span class="col-yield">{y.data.name}</span>
+            <span class="col-collective">{typeof y.data.originSlug === 'object' ? y.data.originSlug?.id : y.data.originSlug}</span>
+            <span class="col-status status-active">ACTIVE</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- Fixed Bottom Center: Master Toggle -->
+  <div class="compass-toggle is-hidden-initially" id="master-toggle">
+    <button class="toggle-btn" data-target="view-yield">YIELD</button>
+    <button class="toggle-btn" data-target="view-horizon">HORIZON</button>
+    <button class="toggle-btn" data-target="view-index">INDEX</button>
+  </div>
+
+  <!-- THE DEEP DIVE OVERLAY -->
+  <TheDeepDive products={yields} origins={origins} />
+
+</div>
+
+<style>
+  .master-compass {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background-color: var(--color-forest-deep);
+    color: var(--color-warm-cream);
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 1.5s ease, visibility 1.5s;
+  }
+  
+  .master-compass.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .compass-header {
+    position: absolute;
+    top: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+  }
+
+  /* Views Base */
+  .compass-view {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s;
+  }
+
+  .compass-view.is-active {
+    opacity: 1;
+    visibility: inherit;
+    pointer-events: inherit;
+  }
+
+  /* HORIZONTAL STREAM (Yield & Horizon) */
+  .horizontal-stream {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .horizontal-stream::-webkit-scrollbar { display: none; }
+
+  .stream-item {
+    position: relative;
+    flex: 0 0 100vw;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .artifact-texture {
+    position: absolute;
+    inset: -5%; /* Prevent edge bleed on mobile scroll */
+    background-size: cover;
+    background-position: center;
+    filter: saturate(0.8) contrast(1.2);
+    z-index: 1;
+  }
+
+  .texture-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(1, 2, 1, 0.3) 0%, rgba(1, 2, 1, 0.9) 100%);
+  }
+
+  .stream-content {
+    position: absolute;
+    bottom: 8vh;
+    left: 5vw;
+    z-index: 10;
+    text-align: left;
+    max-width: 90vw;
+  }
+
+  .stream-title {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 10vw, 12rem);
+    font-weight: 300;
+    line-height: 0.85;
+    margin: 0 0 1.5rem 0;
+    color: var(--color-warm-cream);
+    text-shadow: 0 10px 40px rgba(0,0,0,0.9);
+    letter-spacing: -0.02em;
+    mix-blend-mode: normal; /* Safe default, relies on deep shadow for contrast */
+  }
+
+  .stream-collective {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    letter-spacing: 0.5em;
+    color: var(--color-warm-cream);
+    margin: 0;
+    text-transform: uppercase;
+    display: inline-block;
+    border-top: 1px solid rgba(245, 237, 216, 0.4);
+    padding-top: 0.5rem;
+  }
+
+  /* THE LOBBY (CROSSROADS) */
+  .lobby-container {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at center, rgba(12, 21, 9, 0.8) 0%, var(--color-forest-deep) 100%);
+  }
+
+  .lobby-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+    text-align: left; /* Shifted to left-align for brutalist architecture */
+  }
+
+  /* Hover Physics */
+  .lobby-menu:hover .lobby-link:not(:hover) {
+    opacity: 0.15;
+  }
+
+  .lobby-link {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    opacity: 0.8;
+    position: relative;
+  }
+  
+  .lobby-link:hover, .lobby-link:focus {
+    opacity: 1;
+  }
+
+  /* Architectural hover line */
+  .lobby-link::before {
+    content: '';
+    position: absolute;
+    left: -2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 2px;
+    background-color: var(--color-warm-cream);
+    transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .lobby-link:hover::before {
+    width: 1rem;
+  }
+
+  .lobby-title {
+    font-family: var(--font-display);
+    font-size: var(--text-massive);
+    font-weight: 300;
+    color: var(--color-warm-cream);
+    letter-spacing: 0.02em;
+    line-height: 1;
+  }
+
+  .lobby-subtitle {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    color: rgba(245, 237, 216, 0.6);
+    text-transform: uppercase;
+  }
+
+  /* THE INDEX (Brutalist Ledger) */
+  .ledger-container {
+    width: 100%;
+    height: 100%;
+    padding: 15vh clamp(1.5rem, 5vw, 6vw);
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+  .ledger-container::-webkit-scrollbar { display: none; }
+
+  .ledger-list {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid rgba(245, 237, 216, 0.2); /* Stark top boundary */
+  }
+
+  .ledger-row {
+    display: grid;
+    grid-template-columns: 3fr 1fr 1fr;
+    align-items: center;
+    padding: 2.5rem 0;
+    border-bottom: 1px solid rgba(245, 237, 216, 0.15);
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  
+  .ledger-row:hover {
+    padding-left: 2rem; /* Indent on hover */
+    background: rgba(245, 237, 216, 0.02);
+  }
+
+  .ledger-row .col-yield {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 5vw, 5rem);
+    font-weight: 300;
+    line-height: 1;
+    color: var(--color-warm-cream);
+    transition: color 0.4s ease;
+  }
+
+  .ledger-row:hover .col-yield {
+    color: #fff;
+  }
+
+  .ledger-row .col-collective {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(245, 237, 216, 0.6);
+  }
+
+  .ledger-row .col-status {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    text-align: right;
+  }
+  .status-active { color: var(--color-warm-cream); opacity: 0.5; }
+
+  @media (max-width: 768px) {
+    .ledger-row {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+      padding: 2rem 0;
+    }
+  }
+
+  /* BOTTOM MASTER TOGGLE */
+  .compass-toggle {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: flex;
+    background: var(--color-forest-deep);
+    border: 1px solid rgba(245, 237, 216, 0.15); /* Stark structural line */
+    transition: opacity 1s ease, visibility 1s;
+  }
+  
+  .compass-toggle.is-hidden-initially {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .toggle-btn {
+    background: transparent;
+    border: none;
+    border-right: 1px solid rgba(245, 237, 216, 0.15); /* Gauge separators */
+    padding: 16px 32px;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    color: rgba(245, 237, 216, 0.4);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .toggle-btn:last-child {
+    border-right: none;
+  }
+
+  .toggle-btn.is-active {
+    background: var(--color-warm-cream);
+    color: var(--color-forest-deep);
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // State Machine Logic for Compass Toggles
+    const toggles = document.querySelectorAll('.toggle-btn');
+    const views = document.querySelectorAll('.compass-view');
+    const lobbyLinks = document.querySelectorAll('.lobby-link');
+    const masterToggle = document.getElementById('master-toggle');
+
+    function activateView(targetId) {
+      // Update toggle states
+      toggles.forEach(t => {
+        if(t.getAttribute('data-target') === targetId) {
+          t.classList.add('is-active');
+        } else {
+          t.classList.remove('is-active');
+        }
+      });
+
+      // Update view states
+      views.forEach(v => {
+        if (v.id === targetId) {
+          v.classList.add('is-active');
+        } else {
+          v.classList.remove('is-active');
+        }
+      });
+      
+      // If we are leaving the lobby, reveal the master toggle permanently
+      if (targetId !== 'view-lobby' && masterToggle) {
+        masterToggle.classList.remove('is-hidden-initially');
+      }
+    }
+
+    toggles.forEach(btn => {
+      btn.addEventListener('click', () => {
+        activateView(btn.getAttribute('data-target'));
+      });
+    });
+
+    lobbyLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        activateView(link.getAttribute('data-target'));
+      });
+    });
+
+    // State 0 -> State 1 Transition Event Listener
+    window.addEventListener('enter-state-1', () => {
+      const compass = document.getElementById('master-compass');
+      if (compass) {
+        compass.classList.remove('is-hidden');
+      }
+    });
+
+    // Deep Dive Triggers
+    const streamTriggers = document.querySelectorAll('.stream-btn-trigger');
+    const ledgerRows = document.querySelectorAll('.ledger-row');
+
+    function triggerDeepDive(slug) {
+      if (!slug) return;
+      window.dispatchEvent(new CustomEvent('open-deep-dive', { detail: { slug } }));
+    }
+
+    streamTriggers.forEach(btn => {
+      btn.addEventListener('click', () => {
+        triggerDeepDive(btn.getAttribute('data-slug'));
+      });
+    });
+
+    ledgerRows.forEach(row => {
+      row.addEventListener('click', () => {
+        triggerDeepDive(row.getAttribute('data-slug'));
+      });
+    });
+  });
+</script>

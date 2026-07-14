@@ -1,0 +1,435 @@
+---
+import LiveWeather from './LiveWeather.astro';
+
+export interface Props {
+  products: any[];
+  origins: any[];
+}
+
+const { products, origins } = Astro.props;
+---
+
+<div id="view-deep-dive" class="compass-view">
+  
+  {products.map(product => {
+    const originId = typeof product.data.originSlug === 'object' ? product.data.originSlug?.id : product.data.originSlug;
+    const origin = origins.find(o => o.id === originId || o.slug === originId);
+    
+    // Fallback backgrounds
+    const bgBio = product.data.images?.packaging || product.data.image || '';
+    const bgGeo = origin?.data.images?.land || bgBio;
+    const bgMethod = origin?.data.images?.hand || bgBio;
+    const bgPeople = origin?.data.images?.canopy || bgBio;
+    const bgProduct = origin?.data.images?.specimen || bgBio;
+
+    return (
+      <div class="deep-dive-product" data-product={product.id || product.slug} style="display: none;">
+        
+        <!-- Backgrounds for pillars -->
+        <div class="pillar-bg is-active" data-pillar="bio" style={`background-image: url('${bgBio}')`}></div>
+        <div class="pillar-bg" data-pillar="geo" style={`background-image: url('${bgGeo}')`}></div>
+        <div class="pillar-bg" data-pillar="method" style={`background-image: url('${bgMethod}')`}></div>
+        <div class="pillar-bg" data-pillar="people" style={`background-image: url('${bgPeople}')`}></div>
+        <div class="pillar-bg" data-pillar="product" style={`background-image: url('${bgProduct}')`}></div>
+        
+        <!-- Dark overlay to dim the background texture (20% dim as per blueprint) -->
+        <div class="deep-dive-overlay"></div>
+
+        <!-- Pillar Contents -->
+        <div class="pillar-container">
+          
+          <div class="pillar-content is-active" data-pillar="bio">
+            <span class="pillar-label">BIO</span>
+            <h2 class="pillar-heading">{product.data.botanicalName || product.data.name}</h2>
+            <p class="pillar-body">{product.data.name}</p>
+          </div>
+
+          <div class="pillar-content" data-pillar="geo">
+            <span class="pillar-label">GEO</span>
+            <h2 class="pillar-heading">
+              {origin?.data.name} <sup>{origin?.data.elevation}</sup>
+            </h2>
+            <div class="pillar-meta">
+              <span class="meta-item">{origin?.data.bioregion}</span>
+              <span class="meta-separator">·</span>
+              <span class="meta-item">{origin?.data.soil}</span>
+            </div>
+            {origin?.data.coordinates && (
+              <div class="weather-wrapper">
+                <LiveWeather coordinates={origin.data.coordinates} originName={origin.data.name} />
+              </div>
+            )}
+          </div>
+
+          <div class="pillar-content" data-pillar="method">
+            <span class="pillar-label">METHOD</span>
+            <h2 class="pillar-heading">{origin?.data.method || 'TRADITIONAL AGRARIAN'}</h2>
+            <p class="pillar-body">{product.data.methodDescription}</p>
+          </div>
+
+          <div class="pillar-content" data-pillar="people">
+            <span class="pillar-label">PEOPLE</span>
+            <h2 class="pillar-heading">{origin?.data.community?.description || 'Indigenous Collective'}</h2>
+            <p class="pillar-body">{origin?.data.narrative?.hand || 'Cultivated by generational hands.'}</p>
+          </div>
+
+          <div class="pillar-content" data-pillar="product">
+            <span class="pillar-label">PRODUCT</span>
+            <h2 class="pillar-heading">{product.data.name}</h2>
+            <p class="pillar-body">{product.data.specimenCopy}</p>
+            <p class="pillar-body">{product.data.offeringCopy}</p>
+          </div>
+
+        </div>
+      </div>
+    );
+  })}
+  
+  <!-- Bottom Ribbon -->
+  <div class="deep-dive-footer">
+    <div class="ribbon-container">
+      <button class="ribbon-item is-active" data-target="bio">BIO</button>
+      <span class="ribbon-dot">·</span>
+      <button class="ribbon-item" data-target="geo">GEO</button>
+      <span class="ribbon-dot">·</span>
+      <button class="ribbon-item" data-target="method">METHOD</button>
+      <span class="ribbon-dot">·</span>
+      <button class="ribbon-item" data-target="people">PEOPLE</button>
+      <span class="ribbon-dot">·</span>
+      <button class="ribbon-item" data-target="product">PRODUCT</button>
+    </div>
+
+    <!-- Screen 5 CTA: The Handshake -->
+    <a href="#" class="btn-handshake" id="btn-handshake">Message Us on WhatsApp</a>
+  </div>
+</div>
+
+<style>
+  /* The View Container */
+  #view-deep-dive {
+    z-index: 200; /* sits on top of everything else if active */
+    background-color: var(--color-forest-deep);
+  }
+
+  .deep-dive-product {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* Background Media */
+  .pillar-bg {
+    position: absolute;
+    inset: -5%; /* Prevent edge bleed */
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(1);
+    transition: opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 1.5s;
+    will-change: opacity, transform;
+    z-index: 1;
+    filter: saturate(0.8) contrast(1.2);
+  }
+
+  .pillar-bg.is-active {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1.05);
+    transition: opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 1.5s, transform 20s linear;
+  }
+
+  .deep-dive-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(1,2,1,0.6) 0%, rgba(1,2,1,0.95) 100%);
+    z-index: 2;
+  }
+
+  /* Typographic Content */
+  .pillar-container {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    align-items: flex-end; /* Anchor to bottom for editorial look */
+    justify-content: flex-start;
+    padding: 0 clamp(2rem, 5vw, 6rem) 20vh clamp(2rem, 5vw, 6rem);
+    text-align: left;
+  }
+
+  .pillar-content {
+    position: absolute;
+    opacity: 0;
+    visibility: hidden;
+    transition: visibility 1.5s;
+    max-width: 800px;
+  }
+
+  .pillar-content.is-active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Staggered Animations */
+  .pillar-content > * {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .pillar-content.is-active .pillar-label { animation: fadeUpText 1s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards; }
+  .pillar-content.is-active .pillar-heading { animation: fadeUpText 1s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards; }
+  .pillar-content.is-active .pillar-meta { animation: fadeUpText 1s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards; }
+  .pillar-content.is-active .pillar-body { animation: fadeUpText 1s cubic-bezier(0.22, 1, 0.36, 1) 0.5s forwards; }
+  .pillar-content.is-active .weather-wrapper { animation: fadeUpText 1s cubic-bezier(0.22, 1, 0.36, 1) 0.6s forwards; }
+
+  @keyframes fadeUpText {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .pillar-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.4em;
+    color: var(--color-gold);
+    display: block;
+    margin-bottom: 2rem;
+  }
+
+  .pillar-heading {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 6vw, 6rem);
+    font-weight: 300;
+    color: var(--color-warm-cream);
+    line-height: 1.1;
+    margin: 0 0 1.5rem 0;
+  }
+  
+  .pillar-heading sup {
+    font-size: 0.4em;
+    vertical-align: super;
+    font-family: var(--font-mono);
+    letter-spacing: 0.1em;
+    color: rgba(245, 237, 216, 0.6);
+    margin-left: 0.5rem;
+  }
+
+  .pillar-body {
+    font-family: var(--font-sans);
+    font-size: clamp(1rem, 1.5vw, 1.25rem);
+    line-height: 1.6;
+    color: rgba(245, 237, 216, 0.8);
+    max-width: 600px;
+    margin: 0 0 1.5rem 0;
+  }
+
+  .pillar-meta {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    color: var(--color-gold);
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+  }
+
+  .meta-separator {
+    margin: 0 0.5rem;
+    opacity: 0.5;
+  }
+
+  .weather-wrapper {
+    margin-top: 2rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    color: var(--color-warm-cream);
+    padding: 1rem 2rem;
+    border: 1px solid rgba(245, 237, 216, 0.15);
+    display: inline-block;
+  }
+
+  /* Footer Navigation Ribbon & CTA */
+  .deep-dive-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 2rem clamp(1.5rem, 5vw, 4rem);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 20;
+    background: linear-gradient(to top, rgba(1,2,1,0.9) 0%, rgba(1,2,1,0) 100%);
+  }
+
+  .ribbon-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .ribbon-container::-webkit-scrollbar { display: none; }
+
+  .ribbon-item {
+    background: transparent;
+    border: none;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    color: rgba(245, 237, 216, 0.4);
+    cursor: pointer;
+    transition: color 0.3s ease;
+    padding: 0.5rem 0;
+    white-space: nowrap;
+    position: relative;
+  }
+
+  .ribbon-item::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0%;
+    height: 1px;
+    background-color: var(--color-warm-cream);
+    transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .ribbon-item:hover, .ribbon-item.is-active {
+    color: var(--color-warm-cream);
+  }
+  
+  .ribbon-item.is-active::after {
+    width: 100%;
+  }
+
+  .ribbon-dot {
+    color: rgba(245, 237, 216, 0.2);
+  }
+
+  .btn-handshake {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    color: var(--color-forest-deep);
+    background: var(--color-warm-cream);
+    text-decoration: none;
+    padding: 1rem 2rem;
+    text-transform: uppercase;
+    transition: background 0.3s ease;
+    white-space: nowrap;
+  }
+
+  .btn-handshake:hover {
+    background: var(--color-gold);
+  }
+
+  @media (max-width: 768px) {
+    .deep-dive-footer {
+      flex-direction: column-reverse;
+      gap: 2rem;
+      padding-bottom: 2rem;
+    }
+    .btn-handshake {
+      width: 100%;
+      text-align: center;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // 1. Listen for global events to activate the deep dive
+    const deepDiveView = document.getElementById('view-deep-dive');
+    const allProducts = document.querySelectorAll('.deep-dive-product');
+    const ribbonItems = document.querySelectorAll('.ribbon-item');
+    const masterToggle = document.getElementById('master-toggle');
+    const btnHandshake = document.getElementById('btn-handshake');
+
+    let currentProductSlug = '';
+    let currentOriginSlug = '';
+    let currentPillar = 'bio';
+
+    // Update WhatsApp link based on state
+    function updateWhatsAppLink() {
+      const phoneNumber = '919645555668';
+      const text = `Hi OurOrigin, I am exploring the ${currentOriginSlug.toUpperCase()} harvest. I would like to know more about the ${currentProductSlug}.`;
+      if (btnHandshake) {
+        btnHandshake.setAttribute('href', `https://wa.me/${phoneNumber}?text=${encodeURIComponent(text)}`);
+      }
+    }
+
+    window.addEventListener('open-deep-dive', (e: any) => {
+      const slug = e.detail?.slug;
+      if (!slug) return;
+
+      currentProductSlug = slug;
+      
+      // Hide all products, show the active one
+      allProducts.forEach((p: any) => {
+        if (p.getAttribute('data-product') === slug) {
+          p.style.display = 'block';
+          // Extract origin for WhatsApp string (we can grab it from GEO pillar)
+          const geoPillar = p.querySelector('[data-pillar="geo"] .pillar-heading');
+          if (geoPillar) {
+            currentOriginSlug = geoPillar.textContent?.split('^')[0]?.trim() || 'ORIGIN';
+          }
+        } else {
+          p.style.display = 'none';
+        }
+      });
+
+      // Show Deep Dive View, Hide Master Toggle
+      if (deepDiveView) deepDiveView.classList.add('is-active');
+      if (masterToggle) masterToggle.classList.add('is-hidden-initially');
+
+      updateWhatsAppLink();
+    });
+
+    // 2. Ribbon Navigation
+    ribbonItems.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetPillar = btn.getAttribute('data-target');
+        if (!targetPillar) return;
+        currentPillar = targetPillar;
+
+        // Update Ribbon
+        ribbonItems.forEach(r => r.classList.remove('is-active'));
+        btn.classList.add('is-active');
+
+        // Update active product's backgrounds and content
+        const activeProduct = Array.from(allProducts).find((p: any) => p.style.display === 'block');
+        if (activeProduct) {
+          const bgs = activeProduct.querySelectorAll('.pillar-bg');
+          const contents = activeProduct.querySelectorAll('.pillar-content');
+
+          bgs.forEach(bg => {
+            if (bg.getAttribute('data-pillar') === targetPillar) bg.classList.add('is-active');
+            else bg.classList.remove('is-active');
+          });
+
+          contents.forEach(content => {
+            if (content.getAttribute('data-pillar') === targetPillar) content.classList.add('is-active');
+            else content.classList.remove('is-active');
+          });
+        }
+      });
+    });
+
+    // 3. Escape Mechanism (Swipe Down to close)
+    let startY = 0;
+    deepDiveView?.addEventListener('touchstart', (e: any) => {
+      startY = e.touches[0].clientY;
+    }, { passive: true });
+
+    deepDiveView?.addEventListener('touchend', (e: any) => {
+      const endY = e.changedTouches[0].clientY;
+      if (endY - startY > 100) {
+        // Swiped down
+        deepDiveView.classList.remove('is-active');
+        if (masterToggle) masterToggle.classList.remove('is-hidden-initially');
+      }
+    });
+  });
+</script>

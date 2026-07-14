@@ -1,0 +1,227 @@
+---
+// TheThreshold.astro
+---
+
+<div id="threshold-container" class="threshold-container">
+  
+  <!-- The Breathing SVG Noise Filter -->
+  <svg class="noise-svg">
+    <filter id="breathing-noise">
+      <feTurbulence 
+        id="turbulence"
+        type="fractalNoise" 
+        baseFrequency="0.015" 
+        numOctaves="4" 
+        seed="1"
+        result="noise"
+      />
+      <!-- We map the noise to a rich, earthy color palette -->
+      <feColorMatrix 
+        type="matrix" 
+        values="
+          0.05 0 0 0 0.02
+          0.04 0 0 0 0.04
+          0.02 0 0 0 0.02
+          0 0 0 1 0" 
+      />
+    </filter>
+  </svg>
+
+  <!-- The Physical Canvas that holds the noise -->
+  <div class="soil-canvas" id="soil-canvas"></div>
+  
+  <!-- The Deep Gradient Overlay to create depth -->
+  <div class="abyss-overlay" id="abyss-overlay"></div>
+
+  <!-- The Typographic Core -->
+  <div class="monument-content" id="monument-content">
+    <h1 class="ethos-text">
+      We do not greet the visitor with a catalog.<br/>
+      We greet them with our absolute truth.
+    </h1>
+    
+    <button class="step-btn" id="step-btn">
+      [ STEP INTO THE ORIGIN ]
+    </button>
+  </div>
+</div>
+
+<style>
+  .threshold-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    background-color: var(--color-forest-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1000px;
+  }
+
+  .noise-svg {
+    position: absolute;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+
+  .soil-canvas {
+    position: absolute;
+    inset: -20%; /* Bleed past edges for scale animation */
+    filter: url(#breathing-noise);
+    opacity: 0.8;
+    z-index: 1;
+    pointer-events: none; /* Prevent blocking button clicks */
+    /* Hardware accelerated scaling */
+    transform: scale3d(1, 1, 1);
+    transform-origin: center center;
+    will-change: transform, opacity;
+    transition: transform 3s cubic-bezier(0.76, 0, 0.24, 1), opacity 3s ease;
+  }
+
+  .abyss-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: radial-gradient(circle at center, transparent 0%, var(--color-forest-deep) 85%);
+    pointer-events: none;
+    transition: background 3s cubic-bezier(0.76, 0, 0.24, 1);
+    will-change: background;
+  }
+
+  .monument-content {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5rem;
+    transition: filter 1.5s ease, opacity 1.5s ease, transform 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: filter, opacity, transform;
+    max-width: 90vw;
+  }
+
+  .ethos-text {
+    font-family: var(--font-display);
+    font-size: var(--text-massive);
+    font-weight: 300;
+    line-height: var(--line-height-tight);
+    color: var(--color-warm-cream);
+    margin: 0;
+    text-align: center;
+    letter-spacing: -0.01em;
+    text-shadow: 0 10px 40px rgba(0,0,0,0.9);
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUpText 2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: 0.5s;
+  }
+
+  .step-btn {
+    font-family: var(--font-sans); /* Use clean sans-serif for UI */
+    font-size: 0.8rem;
+    letter-spacing: 0.3em;
+    color: var(--color-warm-cream);
+    background: transparent;
+    border: none;
+    padding: 1rem 0;
+    cursor: pointer;
+    text-transform: uppercase;
+    position: relative;
+    opacity: 0;
+    animation: fadeUpText 2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: 1.2s;
+  }
+
+  /* Architectural line hover effect */
+  .step-btn::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0%;
+    height: 1px;
+    background-color: var(--color-warm-cream);
+    transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .step-btn:hover::after {
+    width: 100%;
+  }
+
+  @keyframes fadeUpText {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* --- Animation States --- */
+  
+  .threshold-container.is-entering .monument-content {
+    opacity: 0;
+    filter: blur(20px);
+    transform: scale3d(1.1, 1.1, 1);
+    pointer-events: none;
+  }
+
+  .threshold-container.is-entering .soil-canvas {
+    transform: scale3d(5, 5, 1); /* Pull viewer deeply into the soil */
+    opacity: 1;
+  }
+
+  .threshold-container.is-entering .abyss-overlay {
+    /* Violent bleed into hyper-real forest green */
+    background: radial-gradient(circle at center, rgba(12, 21, 9, 0) 0%, var(--color-forest-deep) 100%);
+  }
+
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Advanced invisible engineering: SVG breathing noise
+    const turbulence = document.getElementById('turbulence');
+    const baseFreqX = 0.015;
+    const baseFreqY = 0.015;
+    let startTime = Date.now();
+
+    function animateSoil() {
+      // We create a very slow, sine-wave oscillation to shift the frequency, creating a "breathing" texture
+      const elapsed = (Date.now() - startTime) / 1000;
+      const shift = Math.sin(elapsed * 0.5) * 0.003;
+      
+      if (turbulence) {
+        turbulence.setAttribute('baseFrequency', `${baseFreqX + shift} ${baseFreqY + shift}`);
+      }
+      requestAnimationFrame(animateSoil);
+    }
+    
+    // Start the microscopic breathing
+    animateSoil();
+
+    // The Transition
+    const btn = document.getElementById('step-btn');
+    const container = document.getElementById('threshold-container');
+
+    if (btn && container) {
+      btn.addEventListener('click', () => {
+        // Fire the cinematic transition
+        container.classList.add('is-entering');
+        
+        // Dispatch State 1 transition just before the violent green bleed finishes (2s)
+        setTimeout(() => {
+          window.dispatchEvent(new Event('enter-state-1'));
+        }, 2000);
+        
+        // Remove Threshold from DOM flow after animation finishes completely
+        setTimeout(() => {
+          container.style.display = 'none';
+        }, 3000);
+      });
+    }
+  });
+</script>
