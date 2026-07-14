@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../components/BaseLayout.astro';
-import HeroStorefront from '../components/HeroStorefront.astro';
-import ProductGrid from '../components/ProductGrid.astro';
+import TheThreshold from '../components/TheThreshold.astro';
+import TheMasterCompass from '../components/TheMasterCompass.astro';
 ---
 
 <BaseLayout
@@ -10,30 +10,35 @@ import ProductGrid from '../components/ProductGrid.astro';
   canonicalPath="/"
   ogTitle="OurOrigin — From the Western Ghats"
   ogDescription="Spices and ingredients from the Western Ghats. Traceable to the person who harvested them."
-  navVariant="dark"
-  showFooter={true}
+  navVariant="light"
+  showFooter={false}
+  bodyClass="homepage-body"
 >
     <main>
-        <HeroStorefront />
-        <ProductGrid />
+        <!-- State 0: The Presentation -->
+        <TheThreshold />
+        
+        <!-- State 1: The Global Canvas -->
+        <TheMasterCompass />
     </main>
-
-    <script>
-        // Smooth scroll for the CTA anchor link
-        document.querySelector('.cta-primary')?.addEventListener('click', (e) => {
-            e.preventDefault();
-            const target = document.getElementById('yields');
-            if (target) {
-                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        });
-    </script>
 </BaseLayout>
+
+<style is:global>
+    body.homepage-body {
+        background-color: #010201 !important;
+        overflow: hidden !important;
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+    }
+</style>
 
 <style>
     main {
         position: relative;
-        width: 100%;
-        overflow-x: hidden;
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
     }
 </style>
