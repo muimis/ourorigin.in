@@ -56,6 +56,24 @@ const { coordinates, originName = 'origin' } = Astro.props;
     }
 
     async fetchWeather(lat: number, lon: number) {
+      const cacheKey = `ourorigin_weather_${lat.toFixed(4)}_${lon.toFixed(4)}`;
+      
+      try {
+        const cached = localStorage.getItem(cacheKey);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (parsed && typeof parsed.expiry === 'number' && Date.now() < parsed.expiry) {
+            const textEl = this.querySelector('.weather-text');
+            if (textEl) {
+              textEl.textContent = `· ${parsed.temp}°C, ${parsed.condition} (Live)`;
+            }
+            return;
+          }
+        }
+      } catch (e) {
+        // Fallback on parsing error
+      }
+
       try {
         const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
         const data = await res.json();
@@ -66,8 +84,18 @@ const { coordinates, originName = 'origin' } = Astro.props;
           
           const textEl = this.querySelector('.weather-text');
           if (textEl) {
-            // "· 22°C, Rain"
             textEl.textContent = `· ${temp}°C, ${condition} (Live)`;
+          }
+
+          // Cache for 30 minutes (1800000 ms)
+          try {
+            localStorage.setItem(cacheKey, JSON.stringify({
+              temp,
+              condition,
+              expiry: Date.now() + 1800000
+            }));
+          } catch (e) {
+            // localStorage full or disabled
           }
         }
       } catch (err) {

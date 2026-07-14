@@ -123,6 +123,10 @@ const companionsJson = JSON.stringify(companionProductsMap);
       <div id="ledger-post-checkout" class="ledger-post-checkout hidden">
         <p class="post-title">Your order is on its way to us.</p>
         <p class="post-subtitle">We'll reply on WhatsApp.</p>
+        <div class="post-copy-fallback">
+          <p class="fallback-note">If WhatsApp did not open, you can copy the order details manually to paste:</p>
+          <button type="button" id="copy-order-details-btn" class="copy-order-details-btn">[ COPY ORDER TEXT ]</button>
+        </div>
         <p id="post-reinvite" class="post-reinvite hidden">Four other origins are still waiting.</p>
       </div>
       
@@ -415,19 +419,20 @@ const companionsJson = JSON.stringify(companionProductsMap);
       const shippingText = shippingForm.getAttribute('data-shipping-text') || 'Free';
       const orderTotal = shippingForm.getAttribute('data-total') || '0';
 
-      let message = '';
+      let currentOrderMessage = '';
+
       if (ledgerItems.length === 1 && ledgerItems[0].quantity === 1) {
         const item = ledgerItems[0];
-        message = `Hi — I'd like to order ${item.name} (${item.size}) from OurOrigin.\nTotal: ₹${orderTotal}. Shipping: ${shippingText}.\n\nName: ${data.name}\nAddress: ${data.house}, ${data.street}, ${data.city}, ${data.state} – ${data.pin}\nPhone: ${data.phone}\n\nFound you at ourorigin.in.`;
+        currentOrderMessage = `Hi — I'd like to order ${item.name} (${item.size}) from OurOrigin.\nTotal: ₹${orderTotal}. Shipping: ${shippingText}.\n\nName: ${data.name}\nAddress: ${data.house}, ${data.street}, ${data.city}, ${data.state} – ${data.pin}\nPhone: ${data.phone}\n\nFound you at ourorigin.in.`;
       } else {
-        message = `Hi — I'd like to order the following from OurOrigin.\n\n`;
+        currentOrderMessage = `Hi — I'd like to order the following from OurOrigin.\n\n`;
         ledgerItems.forEach(item => {
-          message += `– ${item.name} (${item.size}) × ${item.quantity} · ₹${item.price * item.quantity}\n`;
+          currentOrderMessage += `– ${item.name} (${item.size}) × ${item.quantity} · ₹${item.price * item.quantity}\n`;
         });
-        message += `\nTotal: ₹${orderTotal}\nShipping: ${shippingText}\n\nName: ${data.name}\nAddress: ${data.house}, ${data.street}, ${data.city}, ${data.state} – ${data.pin}\nPhone: ${data.phone}\n\nFound you at ourorigin.in.`;
+        currentOrderMessage += `\nTotal: ₹${orderTotal}\nShipping: ${shippingText}\n\nName: ${data.name}\nAddress: ${data.house}, ${data.street}, ${data.city}, ${data.state} – ${data.pin}\nPhone: ${data.phone}\n\nFound you at ourorigin.in.`;
       }
       
-      const encodedMessage = encodeURIComponent(message);
+      const encodedMessage = encodeURIComponent(currentOrderMessage);
       window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`, '_blank');
       
       // Post-checkout state (Gap 4)
@@ -440,13 +445,27 @@ const companionsJson = JSON.stringify(companionProductsMap);
       setTimeout(() => {
         document.getElementById('post-reinvite').classList.remove('hidden');
       }, 1500);
+
+      // Wire up copy button click
+      const copyOrderBtn = document.getElementById('copy-order-details-btn');
+      if (copyOrderBtn) {
+        copyOrderBtn.addEventListener('click', () => {
+          navigator.clipboard.writeText(currentOrderMessage).then(() => {
+            const originalText = copyOrderBtn.textContent;
+            copyOrderBtn.textContent = '[ COPIED TO CLIPBOARD ]';
+            setTimeout(() => {
+              copyOrderBtn.textContent = originalText;
+            }, 1500);
+          });
+        });
+      }
       
       // Clear cart
       localStorage.removeItem('ourorigin_cart');
       ledgerItems = [];
       updateTrigger();
       
-      // Close after 3s
+      // Close after 15s to give the user enough time to copy order details manually if needed
       setTimeout(() => {
         closeLedger();
         // Reset DOM for future opens
@@ -455,7 +474,7 @@ const companionsJson = JSON.stringify(companionProductsMap);
           itemsContainer.classList.remove('hidden');
           document.getElementById('post-reinvite').classList.add('hidden');
         }, 500);
-      }, 3000);
+      }, 15000);
     });
     
     // Listen to add events
@@ -1016,5 +1035,37 @@ const companionsJson = JSON.stringify(companionProductsMap);
     font-size: 12px;
     color: rgba(245, 237, 216, 0.45);
     margin: 0;
+  }
+
+  .post-copy-fallback {
+    margin: 2rem auto;
+    padding: 1.5rem;
+    border: 1px solid rgba(245, 237, 216, 0.15);
+    background: rgba(245, 237, 216, 0.02);
+    text-align: center;
+    max-width: 400px;
+  }
+  .fallback-note {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    color: rgba(245, 237, 216, 0.7);
+    margin: 0 0 1rem 0;
+    line-height: 1.4;
+  }
+  .copy-order-details-btn {
+    background: transparent;
+    border: 1px solid rgba(245, 237, 216, 0.4);
+    color: var(--color-warm-cream);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 0.8rem 1.5rem;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+  }
+  .copy-order-details-btn:hover {
+    background-color: rgba(245, 237, 216, 0.05);
+    border-color: var(--color-gold);
+    color: var(--color-gold);
   }
 </style>
