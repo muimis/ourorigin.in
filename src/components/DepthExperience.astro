@@ -160,12 +160,14 @@ const dimensions = [
         style={`z-index: ${i + 1}; height: 100dvh; width: 100%; transform: translateY(${i === 0 ? '0' : '100dvh'}); ${maskUrl && i === 0 ? `--mask-url: url('${maskUrl}');` : ''}`}
       >
         <div class="stratum-content">
-          {s.image && !origin?.data.images.isPlaceholderImagery && (
+           {s.image && !origin?.data.images.isPlaceholderImagery && (
             <img 
               src={s.image} 
               alt={`${origin.data.name} — ${s.id}`} 
               class={`stratum-image-el ${s.id === 'hand' ? 'image-preserve-people' : ''}`} 
               loading={i === 0 ? "eager" : "lazy"} 
+              width="1920"
+              height="1080"
             />
           )}
           <div class="stratum-shadow"></div>
@@ -196,6 +198,8 @@ const dimensions = [
           alt={`Packaging of ${product.data.name}`} 
           class="stratum-image-el" 
           loading="lazy" 
+          width="800"
+          height="800"
         />
       )}
       <div class="stratum-content offering-content">
@@ -208,18 +212,24 @@ const dimensions = [
         
         <p class="yield-status">YIELD STATUS: STRICTLY LIMITED (WILD HARVEST)</p>
         
-        <div class="size-selector">
+        <div class="size-ledger">
+          <div class="size-ledger-header">
+            <span class="hdr-size">SIZE</span>
+            <span class="hdr-status">COMPLIANCE</span>
+            <span class="hdr-val">VALUE</span>
+          </div>
           {sizes.map((size, index) => (
             <button 
-              class={`size-btn ${index === 0 ? 'selected' : ''}`} 
+              class={`size-ledger-row ${index === 0 ? 'selected' : ''}`} 
               data-size={size.label} 
-              data-price={size.priceINR}>
-              {size.label}
+              data-price={size.priceINR}
+              aria-label={`Select size ${size.label} for ₹${size.priceINR}`}
+            >
+              <span class="spec-size">{size.label}</span>
+              <span class="spec-status">[ {size.isPriceVerified ? 'PRICE VERIFIED' : 'PENDING'} ]</span>
+              <span class="spec-val">₹{size.priceINR}</span>
             </button>
           ))}
-        </div>
-        <div class="offering-price-display">
-          <span class="price-val" id="active-price">₹{sizes[0]?.priceINR}</span>
         </div>
         
         <div class="offering-actions">
@@ -277,6 +287,14 @@ const dimensions = [
     left: 0;
     width: 110vw;
     will-change: transform;
+    content-visibility: auto;
+    contain-intrinsic-size: 100dvh;
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+  }
+
+  .stratum.active-in-view {
+    content-visibility: visible;
   }
 
   .stratum-content {
@@ -427,41 +445,83 @@ const dimensions = [
     margin: 0 0.2rem;
   }
 
-  .size-selector {
+  /* === Redesigned Size Ledger === */
+  .size-ledger {
+    width: 100%;
+    max-width: 380px;
     display: flex;
-    gap: 0.5rem;
-    margin: 2rem 0 0.5rem 0;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-direction: column;
+    margin: 2rem 0 1rem 0;
+    border-top: 1px solid rgba(245, 237, 216, 0.15);
     z-index: 10;
   }
-  
-  .size-btn {
-    background: none;
-    border: 1px solid rgba(245, 237, 216, 0.3);
-    color: var(--color-warm-cream);
+
+  .size-ledger-header {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    align-items: center;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid rgba(245, 237, 216, 0.15);
     font-family: var(--font-mono);
-    font-size: 11px;
-    padding: 0.6rem 1rem;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: all 0.2s ease;
+    font-size: 8px;
+    letter-spacing: 0.25em;
+    color: rgba(245, 237, 216, 0.4);
+    text-transform: uppercase;
+    pointer-events: none;
+    text-align: left;
   }
   
-  .size-btn.selected {
-    background: var(--color-warm-cream);
-    color: var(--color-forest-deep);
+  .size-ledger-header .hdr-val {
+    text-align: right;
   }
 
-  .offering-price-display {
-    text-align: center;
-    margin-bottom: 2rem;
+  .size-ledger-row {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(245, 237, 216, 0.08);
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    align-items: center;
+    padding: 1.2rem 0;
+    cursor: pointer;
+    transition: all 0.3s var(--ease-settle);
+    color: var(--color-warm-cream);
+    text-align: left;
+    width: 100%;
+  }
+
+  .size-ledger-row:hover {
+    padding-left: 0.5rem;
+    color: var(--color-gold);
+  }
+
+  .size-ledger-row.selected {
+    color: var(--color-gold);
+    font-weight: 500;
+    border-bottom: 1px solid var(--color-gold);
+  }
+
+  .spec-size {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+  }
+
+  .spec-status {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    opacity: 0.5;
   }
   
-  .price-val {
+  .size-ledger-row.selected .spec-status {
+    opacity: 0.8;
+  }
+
+  .spec-val {
     font-family: var(--font-mono);
-    font-size: 16px;
-    color: var(--color-gold);
+    font-size: 13px;
+    text-align: right;
   }
 
   /* Action Styles */
@@ -661,8 +721,7 @@ const dimensions = [
 
     initPurchaseAction() {
       // 1. Size Selection Logic
-      const sizeBtns = document.querySelectorAll('.size-btn');
-      const priceDisplay = document.getElementById('active-price');
+      const sizeBtns = document.querySelectorAll('.size-ledger-row');
       let activeSize = sizeBtns[0]?.getAttribute('data-size');
       let activePrice = sizeBtns[0]?.getAttribute('data-price');
 
@@ -673,9 +732,6 @@ const dimensions = [
           target.classList.add('selected');
           activeSize = target.getAttribute('data-size');
           activePrice = target.getAttribute('data-price');
-          if (priceDisplay) {
-            priceDisplay.textContent = `₹${activePrice}`;
-          }
         });
       });
 
@@ -830,6 +886,19 @@ const dimensions = [
       // Track active stratum and update Cipher rail & explore state
       tl.eventCallback('onUpdate', function() {
         const progress = this.progress();
+        
+        // Calculate the current active step index
+        const t = this.time();
+        let activeStep = 0;
+        for (let i = 0; i <= strata.length; i++) {
+          const label = this.labels['step' + i];
+          if (label !== undefined && t >= label) activeStep = i;
+        }
+
+        // Toggle active-in-view class to optimize rendering with content-visibility
+        strata.forEach((stratum, idx) => {
+          stratum.classList.toggle('active-in-view', idx === activeStep || idx === activeStep + 1);
+        });
         
         // Mark as explored when reaching offering stratum (last slide)
         if (progress > 0.8 && originSlug && productSlug) {

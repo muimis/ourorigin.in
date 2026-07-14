@@ -41,8 +41,8 @@ const sortedYields = [...yields].sort((a, b) => {
             <p class="brand-subtext">THE ARCHIVAL CHRONICLES</p>
             <div class="telemetry-log">
               <div>STATUS: SYSTEM DISPATCH ACTIVE</div>
-              <div>COORDINATES: WESTERN GHATS</div>
-              <div>YIELDS: 12 SPECIMENS</div>
+              <div>GHATS TIME: <span id="telemetry-time">15:45:00</span> (GMT+5:30)</div>
+              <div>TELEMETRY LINK: <span id="telemetry-flicker">11.3621°N 76.0405°E</span></div>
             </div>
           </div>
         </div>
@@ -97,6 +97,8 @@ const sortedYields = [...yields].sort((a, b) => {
                   src={y.data.images?.packaging || '/assets/products/black-pepper.png'} 
                   alt={`Packaging of ${y.data.name}`} 
                   class="product-floating-img" 
+                  width="500"
+                  height="500"
                 />
                 <div class="product-glow-backdrop"></div>
               </div>
@@ -154,73 +156,61 @@ const sortedYields = [...yields].sort((a, b) => {
     <div class="stream-position" aria-live="polite">
       <span class="stream-index-val">1</span> / <span class="stream-total-val"></span>
     </div>
+    <!-- Horizontal navigation arrows for desktop -->
+    <div class="stream-nav-controls">
+      <button class="stream-nav-btn prev-btn" aria-label="Previous Product">[ &larr; ]</button>
+      <button class="stream-nav-btn next-btn" aria-label="Next Product">[ &rarr; ]</button>
+    </div>
   </div>
 
-  <!-- VIEW B: THE HORIZON (Future Harvests) -->
+  <!-- VIEW B: THE HORIZON (Future Harvests - Journal Format) -->
   <div id="view-horizon" class="compass-view">
-    <div class="horizontal-stream">
-      <div class="stream-item">
-        <!-- Left Side: Horizon Mock Showcase -->
-        <div class="stream-split-left">
-          <div class="product-showcase-wrapper">
-            <div style="width: 280px; height: 380px; background: linear-gradient(135deg, #161a13, #090c07); border: 1px dashed rgba(245, 237, 216, 0.2); display: flex; align-items: center; justify-content: center; position: relative;">
-              <span style="font-family: var(--font-mono); font-size: 10px; color: var(--color-gold); letter-spacing: 0.1em;">[ SPECIMEN IN CURING ]</span>
-            </div>
-            <div class="product-glow-backdrop"></div>
-          </div>
-          
-          <div class="product-technical-specs">
-            <div class="spec-line">
-              <span class="label">BATCH RECORD</span>
-              <span class="value">IDK-VN-2026</span>
-            </div>
-            <div class="spec-line">
-              <span class="label">COORDINATES</span>
-              <span class="value">9°51'N 77°14'E</span>
-            </div>
-            <div class="spec-line">
-              <span class="label">ALTITUDE</span>
-              <span class="value">1200M</span>
-            </div>
-          </div>
+    <div class="horizon-journal-container">
+      <div class="horizon-journal-header">
+        <span class="journal-tag">[ IDUKKI EXPEDITION LOG ]</span>
+        <h2 class="journal-title">Winter Curing Vanilla</h2>
+        <p class="journal-subtitle">SPECIMEN RECORD: IDK-VN-2026 · CURING PHASE</p>
+      </div>
+      
+      <div class="horizon-journal-body">
+        <div class="journal-column">
+          <h3>ECOLOGICAL TELEMETRY</h3>
+          <table class="telemetry-table">
+            <tbody>
+              <tr>
+                <td class="label">LOCATION</td>
+                <td class="value">9°51'N, 77°14'E</td>
+              </tr>
+              <tr>
+                <td class="label">ALTITUDE</td>
+                <td class="value">1,200M Elevation</td>
+              </tr>
+              <tr>
+                <td class="label">SOIL BASE</td>
+                <td class="value">Cardamom Transition Loam</td>
+              </tr>
+              <tr>
+                <td class="label">STATUS</td>
+                <td class="value status-curing">CURING IN WOOL WRAP</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
         
-        <!-- Right Side: Horizon Description -->
-        <div class="stream-split-right">
-          <div class="product-header-block">
-            <span class="origin-tag">[IDUKKI HORIZON]</span>
-            <h2 class="stream-title">Winter Curing Vanilla</h2>
-            <p class="botanical-line">Vanilla planifolia</p>
-          </div>
-          
-          <div class="product-description-block">
-            <p class="description-text">The vines are currently dormant, holding the pods for the final curing phase. Our curing process takes up to four months of direct sun manipulation and wool wrapping to lock in the true vanillin compounds.</p>
-          </div>
-          
-          <div class="product-pricing-block">
-            <div class="price-grid-title">[ HARVEST SCHEDULE ]</div>
-            <div class="price-grid">
-              <div class="price-cell">
-                <span class="cell-label">CURING COMPLETE</span>
-                <span class="cell-val">OCT 2026</span>
-              </div>
-              <div class="price-cell">
-                <span class="cell-label">EST. QUANTITY</span>
-                <span class="cell-val">12 KG ONLY</span>
-              </div>
-            </div>
-          </div>
-          
-          <div class="product-action-block">
-            <button class="descend-action-btn" data-slug="vanilla-mock" data-origin="idukki" style="opacity: 0.5; cursor: not-allowed;" disabled>
-              [ CURING IN PROGRESS ]
-            </button>
+        <div class="journal-column">
+          <h3>CURATOR'S OBSERVATION</h3>
+          <p class="journal-text">
+            The vines are currently dormant, holding the pods for the final curing phase. Our curing process takes up to four months of direct sun manipulation and wool wrapping to lock in the true vanillin compounds. The target yield is strictly limited to 12 kilograms.
+          </p>
+          <div class="journal-timeline">
+            <span class="timeline-point">HARVEST: JAN 2026</span>
+            <span class="timeline-arrow">&rarr;</span>
+            <span class="timeline-point">CURING: FEB-SEP</span>
+            <span class="timeline-arrow">&rarr;</span>
+            <span class="timeline-point">DISPATCH: OCT 2026</span>
           </div>
         </div>
       </div>
-    </div>
-    <div class="stream-position" aria-live="polite">
-      <span class="stream-index-val">1</span> / <span class="stream-total-val"></span>
     </div>
   </div>
 
@@ -701,6 +691,122 @@ const sortedYields = [...yields].sort((a, b) => {
     background: rgba(166, 124, 60, 0.05);
   }
 
+  /* --- Horizon Journal Layout --- */
+  .horizon-journal-container {
+    width: 100%;
+    height: 100%;
+    padding: 15vh 8vw 8vh 8vw;
+    display: flex;
+    flex-direction: column;
+    gap: 3.5rem;
+    box-sizing: border-box;
+    overflow-y: auto;
+  }
+
+  .horizon-journal-header {
+    border-bottom: 1px solid rgba(245, 237, 216, 0.15);
+    padding-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .journal-tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--color-gold);
+  }
+
+  .journal-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 5vw, 6rem);
+    font-weight: 300;
+    margin: 0;
+    line-height: 1;
+    color: var(--color-warm-cream);
+  }
+
+  .journal-subtitle {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: rgba(245, 237, 216, 0.4);
+    margin: 0;
+  }
+
+  .horizon-journal-body {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 6vw;
+  }
+
+  .journal-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .journal-column h3 {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--color-gold);
+    margin: 0;
+    border-bottom: 1px dashed rgba(245, 237, 216, 0.15);
+    padding-bottom: 0.5rem;
+  }
+
+  .telemetry-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+
+  .telemetry-table td {
+    padding: 0.8rem 0;
+    border-bottom: 1px solid rgba(245, 237, 216, 0.08);
+  }
+
+  .telemetry-table .label {
+    color: rgba(245, 237, 216, 0.4);
+  }
+
+  .telemetry-table .value {
+    color: var(--color-warm-cream);
+    text-align: right;
+  }
+
+  .telemetry-table .status-curing {
+    color: var(--color-gold);
+    font-weight: 500;
+  }
+
+  .journal-text {
+    font-family: var(--font-display);
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--color-warm-cream);
+    opacity: 0.85;
+    margin: 0;
+  }
+
+  .journal-timeline {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--color-gold);
+    margin-top: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .timeline-arrow {
+    opacity: 0.5;
+  }
+
   /* THE INDEX (Brutalist Ledger) */
   .ledger-container {
     width: 100%;
@@ -739,6 +845,33 @@ const sortedYields = [...yields].sort((a, b) => {
     border-bottom: 1px solid rgba(245, 237, 216, 0.15);
     cursor: pointer;
     transition: all 0.4s var(--ease-settle);
+    position: relative;
+  }
+
+  /* Tactile grid borders on hover */
+  .ledger-row::before,
+  .ledger-row::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 1px;
+    background-color: rgba(245, 237, 216, 0.08);
+    opacity: 0;
+    transition: opacity 0.4s var(--ease-settle);
+    pointer-events: none;
+  }
+
+  .ledger-row::before {
+    left: calc(3 / 5.5 * 100%);
+  }
+  .ledger-row::after {
+    left: calc(4.5 / 5.5 * 100%);
+  }
+
+  .ledger-row:hover::before,
+  .ledger-row:hover::after {
+    opacity: 1;
   }
 
   .ledger-row:hover {
@@ -853,6 +986,34 @@ const sortedYields = [...yields].sort((a, b) => {
     pointer-events: none;
   }
 
+  /* Horizontal desktop navigation controls */
+  .stream-nav-controls {
+    position: absolute;
+    bottom: 28px;
+    right: 6vw;
+    z-index: 60;
+    display: flex;
+    gap: 1rem;
+  }
+
+  .stream-nav-btn {
+    background: transparent;
+    border: none;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--color-warm-cream);
+    opacity: 0.5;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: opacity 0.3s ease, color 0.3s ease;
+  }
+
+  .stream-nav-btn:hover {
+    opacity: 1;
+    color: var(--color-gold);
+  }
+
   @media (max-width: 960px) {
     .stream-item {
       grid-template-columns: 1fr;
@@ -917,6 +1078,11 @@ const sortedYields = [...yields].sort((a, b) => {
       display: none;
     }
 
+    .horizon-journal-body {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+
     .ledger-header-row {
       display: none;
     }
@@ -930,6 +1096,10 @@ const sortedYields = [...yields].sort((a, b) => {
     .ledger-row .col-status {
       text-align: left;
       margin-top: 0.5rem;
+    }
+
+    .stream-nav-controls {
+      display: none;
     }
   }
 </style>
@@ -1030,5 +1200,47 @@ const sortedYields = [...yields].sort((a, b) => {
     }
     
     document.querySelectorAll('.horizontal-stream').forEach(el => initStreamPosition(el as HTMLElement));
+
+    // Horizontal navigation arrow controls
+    document.querySelectorAll('.compass-view').forEach(view => {
+      const stream = view.querySelector('.horizontal-stream');
+      const prevBtn = view.querySelector('.prev-btn');
+      const nextBtn = view.querySelector('.next-btn');
+      
+      if (stream && prevBtn && nextBtn) {
+        prevBtn.addEventListener('click', () => {
+          stream.scrollBy({ left: -window.innerWidth, behavior: 'smooth' });
+        });
+        nextBtn.addEventListener('click', () => {
+          stream.scrollBy({ left: window.innerWidth, behavior: 'smooth' });
+        });
+      }
+    });
+
+    // Telemetry log real-time updates (UTC+5:30)
+    const timeEl = document.getElementById('telemetry-time');
+    const flickerEl = document.getElementById('telemetry-flicker');
+    
+    if (timeEl) {
+      setInterval(() => {
+        const now = new Date();
+        const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+        const ghatsOffset = 5.5; // GMT+5:30
+        const ghatsDate = new Date(utc + (3600000 * ghatsOffset));
+        
+        const hrs = ghatsDate.getHours().toString().padStart(2, '0');
+        const mins = ghatsDate.getMinutes().toString().padStart(2, '0');
+        const secs = ghatsDate.getSeconds().toString().padStart(2, '0');
+        timeEl.textContent = `${hrs}:${mins}:${secs}`;
+      }, 1000);
+    }
+
+    if (flickerEl) {
+      setInterval(() => {
+        const lat = (11.58 + (Math.random() - 0.5) * 0.04).toFixed(4);
+        const lng = (76.08 + (Math.random() - 0.5) * 0.04).toFixed(4);
+        flickerEl.textContent = `${lat}°N ${lng}°E`;
+      }, 1500);
+    }
   });
 </script>
