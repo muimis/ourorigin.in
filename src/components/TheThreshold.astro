@@ -1,5 +1,5 @@
 ---
-// TheThreshold.astro
+// src/components/TheThreshold.astro
 ---
 
 <div id="threshold-container" class="threshold-container">
@@ -27,11 +27,37 @@
     </filter>
   </svg>
 
+  <!-- Forest Canopy Background Image (Cinematic Single Held Shot) -->
+  <div class="canopy-backdrop"></div>
+
   <!-- The Physical Canvas that holds the noise -->
   <div class="soil-canvas" id="soil-canvas"></div>
   
   <!-- The Deep Gradient Overlay to create depth -->
   <div class="abyss-overlay" id="abyss-overlay"></div>
+
+  <!-- Editorial Gallery Frame -->
+  <div class="gallery-frame">
+    <span class="corner-coordinate top-left">NILGIRIS · 11°29'N 76°42'E</span>
+    <span class="corner-coordinate top-right">IDUKKI · 9°51'N 77°14'E</span>
+    <span class="corner-coordinate bottom-left">WAYANAD · 11°36'N 76°04'E</span>
+    <span class="corner-coordinate bottom-right">T'PURAM · 8°29'N 76°57'E</span>
+    
+    <div class="side-log left-log">WESTERN GHATS RANGE SYSTEM</div>
+    <div class="side-log right-log">TELEMETRY MONITORING ACTIVE</div>
+  </div>
+
+  <!-- Central Origin Mark Sacred Geometry -->
+  <div class="central-geometry" id="central-geometry">
+    <svg class="geometry-circle" viewBox="0 0 100 100" width="220" height="220" fill="none" stroke="var(--color-gold)" stroke-width="0.5">
+      <circle cx="50" cy="50" r="48" stroke-dasharray="2" opacity="0.3" />
+      <circle cx="50" cy="50" r="32" stroke-linecap="round" />
+      <circle cx="50" cy="50" r="16" stroke-dasharray="4" opacity="0.6" />
+      <line x1="50" y1="2" x2="50" y2="98" stroke-dasharray="2" opacity="0.15" />
+      <line x1="2" y1="50" x2="98" y2="50" stroke-dasharray="2" opacity="0.15" />
+      <circle cx="50" cy="50" r="3" fill="var(--color-gold)" />
+    </svg>
+  </div>
 
   <!-- The Typographic Core -->
   <div class="monument-content" id="monument-content">
@@ -67,13 +93,34 @@
     pointer-events: none;
   }
 
+  .canopy-backdrop {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/assets/origins/wayanad-canopy.webp');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.18;
+    z-index: 1;
+    filter: saturate(0.4) contrast(1.3) brightness(0.5);
+    transform: scale(1);
+    transition: transform 4s cubic-bezier(0.22, 1, 0.36, 1), opacity 3s ease;
+    will-change: transform, opacity;
+  }
+
+  .threshold-container.is-entering .canopy-backdrop {
+    transform: scale(1.08);
+    opacity: 0;
+  }
+
   .soil-canvas {
     position: absolute;
     inset: -20%; /* Bleed past edges for scale animation */
     filter: url(#breathing-noise);
-    opacity: 0.8;
-    z-index: 1;
-    pointer-events: none; /* Prevent blocking button clicks */
+    opacity: 0.6;
+    z-index: 2;
+    pointer-events: none;
     /* Hardware accelerated scaling */
     transform: scale3d(1, 1, 1);
     transform-origin: center center;
@@ -84,11 +131,90 @@
   .abyss-overlay {
     position: absolute;
     inset: 0;
-    z-index: 2;
+    z-index: 3;
     background: radial-gradient(circle at center, transparent 0%, var(--color-forest-deep) 85%);
     pointer-events: none;
     transition: background 3s cubic-bezier(0.76, 0, 0.24, 1);
     will-change: background;
+  }
+
+  /* Editorial Gallery Frame */
+  .gallery-frame {
+    position: absolute;
+    inset: 24px;
+    border: 1px solid rgba(245, 237, 216, 0.1);
+    z-index: 8;
+    pointer-events: none;
+    box-sizing: border-box;
+    transition: opacity 1.5s ease;
+  }
+
+  .threshold-container.is-entering .gallery-frame {
+    opacity: 0;
+  }
+
+  .corner-coordinate {
+    position: absolute;
+    font-family: var(--font-mono);
+    font-size: 8px;
+    letter-spacing: 0.15em;
+    color: rgba(245, 237, 216, 0.35);
+    text-transform: uppercase;
+  }
+
+  .corner-coordinate.top-left { top: 12px; left: 16px; }
+  .corner-coordinate.top-right { top: 12px; right: 16px; }
+  .corner-coordinate.bottom-left { bottom: 12px; left: 16px; }
+  .corner-coordinate.bottom-right { bottom: 12px; right: 16px; }
+
+  .side-log {
+    position: absolute;
+    top: 50%;
+    font-family: var(--font-mono);
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    color: rgba(245, 237, 216, 0.2);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .left-log {
+    left: 12px;
+    transform: translateY(-50%) rotate(-90deg);
+    transform-origin: left center;
+  }
+
+  .right-log {
+    right: 12px;
+    transform: translateY(-50%) rotate(90deg);
+    transform-origin: right center;
+  }
+
+  /* Central Geometry Compass Dial */
+  .central-geometry {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    pointer-events: none;
+    opacity: 0.5;
+    transition: transform 3s cubic-bezier(0.76, 0, 0.24, 1), opacity 2s ease;
+    will-change: transform, opacity;
+  }
+
+  .geometry-circle {
+    animation: spinGeometry 45s linear infinite;
+    transform-origin: center center;
+  }
+
+  @keyframes spinGeometry {
+    to { transform: rotate(360deg); }
+  }
+
+  .threshold-container.is-entering .central-geometry {
+    transform: translate(-50%, -50%) scale(20);
+    opacity: 0;
   }
 
   .monument-content {
@@ -98,7 +224,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 5rem;
+    gap: 4rem;
     transition: filter 1.5s ease, opacity 1.5s ease, transform 1.5s cubic-bezier(0.16, 1, 0.3, 1);
     will-change: filter, opacity, transform;
     max-width: 90vw;
@@ -175,10 +301,23 @@
   }
 
   .threshold-container.is-entering .abyss-overlay {
-    /* Violent bleed into hyper-real forest green */
     background: radial-gradient(circle at center, rgba(12, 21, 9, 0) 0%, var(--color-forest-deep) 100%);
   }
 
+  @media (max-width: 768px) {
+    .gallery-frame {
+      inset: 12px;
+    }
+    .corner-coordinate {
+      font-size: 7px;
+    }
+    .side-log {
+      display: none;
+    }
+    .central-geometry {
+      transform: translate(-50%, -50%) scale(0.75);
+    }
+  }
 </style>
 
 <script>
@@ -203,9 +342,25 @@
     // Start the microscopic breathing
     animateSoil();
 
+    // Parallax background cursor effect
+    const container = document.getElementById('threshold-container');
+    const backdrop = document.querySelector('.canopy-backdrop') as HTMLElement;
+    const geometry = document.getElementById('central-geometry') as HTMLElement;
+    
+    if (container && backdrop && geometry) {
+      container.addEventListener('mousemove', (e) => {
+        if (container.classList.contains('is-entering')) return;
+        const rect = container.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5; // -0.5 to 0.5
+        const y = (e.clientY - rect.top) / rect.height - 0.5; // -0.5 to 0.5
+        
+        backdrop.style.transform = `scale(1.02) translate3d(${x * -20}px, ${y * -20}px, 0)`;
+        geometry.style.transform = `translate3d(calc(-50% + ${x * 15}px), calc(-50% + ${y * 15}px), 0)`;
+      });
+    }
+
     // The Transition
     const btn = document.getElementById('step-btn');
-    const container = document.getElementById('threshold-container');
 
     if (btn && container) {
       btn.addEventListener('click', () => {
