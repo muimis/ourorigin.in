@@ -6,6 +6,42 @@ import { getCollection } from 'astro:content';
 const yields = await getCollection('products');
 const origins = await getCollection('origins');
 
+// Define Sourcing Metadata (Deliverables & Upcoming Crops) for each origin slug
+const originMetadata = {
+  wayanad: {
+    deliverable: 'High-Heat Volcanic Laterite Loam & Essential Pinene Oils',
+    upcoming: {
+      badge: 'ROOT CURING',
+      name: 'Wild Celery Seed',
+      date: 'JAN 2027'
+    }
+  },
+  idukki: {
+    deliverable: 'Pristine Cloud Forest Canopy & Mist-Settled Terpenes',
+    upcoming: {
+      badge: 'WOOL WRAP CURING',
+      name: 'Winter Curing Vanilla',
+      date: 'OCT 2026'
+    }
+  },
+  nilgiris: {
+    deliverable: 'Slow-Growth Acidic Clay & Mountain Frost Tannins',
+    upcoming: {
+      badge: 'SUN WITHERING',
+      name: 'Silver Needle Tea',
+      date: 'DEC 2026'
+    }
+  },
+  thiruvananthapuram: {
+    deliverable: 'Coastal Sun-Baked Silicified Sand & Zingerone Heat',
+    upcoming: {
+      badge: 'SHADE DRYING',
+      name: 'Sun-Dried Galangal Root',
+      date: 'FEB 2027'
+    }
+  }
+};
+
 // We group yields by origin
 const groupedYields = {};
 origins.forEach(origin => {
@@ -13,385 +49,334 @@ origins.forEach(origin => {
     const originId = typeof y.data.originSlug === 'object' ? y.data.originSlug?.id : y.data.originSlug;
     return originId === origin.data.slug;
   });
-  if (matchingYields.length > 0) {
-    groupedYields[origin.data.slug] = {
-      origin,
-      products: matchingYields
-    };
-  }
+  
+  groupedYields[origin.data.slug] = {
+    origin,
+    products: matchingYields
+  };
 });
 
-// Ordering origins logically (Wayanad, Idukki, Nilgiris, Thiruvananthapuram)
 const originOrder = ['wayanad', 'idukki', 'nilgiris', 'thiruvananthapuram'];
-const orderedGroupedKeys = Object.keys(groupedYields).sort((a, b) => {
-  return originOrder.indexOf(a) - originOrder.indexOf(b);
-});
 ---
 
-<section id="yields-matrix" class="yields-matrix-section">
-  {orderedGroupedKeys.map(slug => {
-    const group = groupedYields[slug];
-    const origin = group.origin;
-    return (
-      <div class="origin-chapter">
-        <!-- Chapter Header (The Sourcing Frame) -->
-        <div class="chapter-header">
-          <div class="chapter-title-group">
-            <span class="chapter-tag">[ COLLECTION ]</span>
-            <h2 class="chapter-name">{origin.data.name} Collective</h2>
-          </div>
-          
-          <div class="chapter-telemetry">
-            <div class="telemetry-line">
-              <span class="lbl">ALTITUDE</span>
-              <span class="val">{origin.data.elevation}</span>
-            </div>
-            <div class="telemetry-line">
-              <span class="lbl">COORDINATES</span>
-              <span class="val">{origin.data.coordinates}</span>
-            </div>
-            <div class="telemetry-line">
-              <span class="lbl">WEATHER</span>
-              <span class="val"><LiveWeather coordinates={origin.data.coordinates} originName={origin.data.name} /></span>
+<section id="sourcing-matrix" class="sourcing-matrix-section">
+  <div class="matrix-grid">
+    {originOrder.map((slug, idx) => {
+      const group = groupedYields[slug];
+      if (!group) return null;
+      
+      const origin = group.origin;
+      const meta = originMetadata[slug];
+      const products = group.products.sort((a, b) => a.data.name.localeCompare(b.data.name));
+      const quadrantNum = String(idx + 1).padStart(2, '0');
+
+      return (
+        <div class="matrix-quadrant" data-origin={slug}>
+          <!-- Quadrant Header -->
+          <div class="quadrant-header">
+            <span class="quadrant-index">[ COLLECTIVE {quadrantNum} ]</span>
+            <div class="quadrant-coordinates">
+              <span>{origin.data.coordinates}</span>
+              <span class="coord-dot">·</span>
+              <span>{origin.data.elevation}</span>
             </div>
           </div>
-        </div>
 
-        <!-- Yields Showcase Grid -->
-        <div class="chapter-yields-grid">
-          {group.products.map(y => (
-            <div class="yield-card" data-slug={y.id} data-origin={slug}>
-              <!-- Left Side: Product Packaging Mockup -->
-              <div class="yield-card-left">
-                <div class="yield-image-wrapper">
-                  <img 
-                    src={y.data.images?.packaging || '/assets/products/black-pepper.png'} 
-                    alt={`Packaging of ${y.data.name}`} 
-                    class="yield-floating-img" 
-                    width="500"
-                    height="500"
-                    loading="lazy"
-                  />
-                  <div class="yield-glow"></div>
-                </div>
-                <div class="yield-specs">
-                  <div class="spec-row">
-                    <span>BATCH RECORD</span>
-                    <span>{y.data.batchRef}</span>
-                  </div>
-                </div>
-              </div>
+          <!-- Quadrant Identity -->
+          <div class="quadrant-identity">
+            <h2 class="quadrant-title">{origin.data.name} Collective</h2>
+            <div class="quadrant-weather">
+              <span class="weather-label">LIVE TELEMETRY:</span>
+              <LiveWeather coordinates={origin.data.coordinates} originName={origin.data.name} />
+            </div>
+          </div>
 
-              <!-- Right Side: Narrative Details -->
-              <div class="yield-card-right">
-                <div class="yield-header">
-                  <h3 class="yield-title">{y.data.name}</h3>
-                  <p class="yield-botanical">{y.data.botanicalName}</p>
-                </div>
+          <!-- Signature Deliverable Callout -->
+          <div class="quadrant-deliverable">
+            <span class="section-label">[ SIGNATURE ECOLOGICAL CHARACTER ]</span>
+            <p class="deliverable-text">{meta.deliverable}</p>
+          </div>
 
-                <div class="yield-desc">
-                  <p>{y.data.specimenCopy}</p>
-                </div>
-
-                <div class="yield-pricing">
-                  <span class="pricing-label">[ AVAILABLE SIZES ]</span>
-                  <div class="sizes-row">
-                    {y.data.sizes.map(size => (
-                      <div class="size-pill">
-                        <span class="sz-name">{size.label}</span>
-                        <span class="sz-price">₹{size.priceINR}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div class="yield-action">
-                  <a href={`/origins/${slug}/${y.id}`} class="descend-btn">
-                    [ DESCEND INTO ORIGIN DETAILS ]
+          <!-- Yields Catalog (Active & Upcoming) -->
+          <div class="quadrant-yields-wrapper">
+            <span class="section-label">[ ACTIVE SPECIMEN YIELDS ]</span>
+            <ul class="yield-list">
+              {products.map(p => (
+                <li class="yield-item">
+                  <a href={`/origins/${slug}/${p.id}`} class="yield-link" aria-label={`Descend into ${p.data.name}`}>
+                    <div class="yield-info">
+                      <span class="yield-name">{p.data.name}</span>
+                      <span class="yield-botanical">{p.data.botanicalName}</span>
+                    </div>
+                    <span class="yield-arrow">[ DESCEND &rarr; ]</span>
                   </a>
-                </div>
-              </div>
-            </div>
-          ))}
+                </li>
+              ))}
+
+              <!-- Horizon Upcoming Crop -->
+              {meta.upcoming && (
+                <li class="yield-item yield-item-upcoming">
+                  <div class="yield-info">
+                    <span class="yield-name upcoming-name">
+                      {meta.upcoming.name}
+                      <span class="upcoming-tag">[{meta.upcoming.badge}]</span>
+                    </span>
+                    <span class="yield-botanical">Curing Phase</span>
+                  </div>
+                  <span class="upcoming-date">EST: {meta.upcoming.date}</span>
+                </li>
+              )}
+            </ul>
+          </div>
         </div>
-      </div>
-    );
-  })}
+      );
+    })}
+  </div>
 </section>
 
 <style>
-  .yields-matrix-section {
+  .sourcing-matrix-section {
     background-color: var(--color-forest-deep);
     color: var(--color-warm-cream);
-    padding: 6vh 0;
-  }
-
-  .origin-chapter {
-    border-bottom: 1px solid rgba(245, 237, 216, 0.1);
-    padding: 8vh 8vw;
-  }
-
-  .origin-chapter:last-child {
-    border-bottom: none;
-  }
-
-  /* Chapter Header */
-  .chapter-header {
+    border-top: 1px solid rgba(245, 237, 216, 0.12);
+    border-bottom: 1px solid rgba(245, 237, 216, 0.12);
+    min-height: 100vh;
     display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    border-bottom: 1px solid rgba(245, 237, 216, 0.15);
-    padding-bottom: 2rem;
-    margin-bottom: 4rem;
+    align-items: stretch;
   }
 
-  .chapter-title-group {
+  .matrix-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    width: 100%;
+    align-items: stretch;
+  }
+
+  /* Grid dividers mapping equal weightage */
+  .matrix-quadrant {
+    padding: 6rem 5vw;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 3.5rem;
+    box-sizing: border-box;
+    align-items: flex-start;
     text-align: left;
   }
 
-  .chapter-tag {
+  /* Thin 1px structural lines for brutalist grid blueprint */
+  .matrix-quadrant:nth-child(1) {
+    border-right: 1px solid rgba(245, 237, 216, 0.12);
+    border-bottom: 1px solid rgba(245, 237, 216, 0.12);
+  }
+
+  .matrix-quadrant:nth-child(2) {
+    border-bottom: 1px solid rgba(245, 237, 216, 0.12);
+  }
+
+  .matrix-quadrant:nth-child(3) {
+    border-right: 1px solid rgba(245, 237, 216, 0.12);
+  }
+
+  /* Header specs */
+  .quadrant-header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
     font-family: var(--font-mono);
     font-size: 10px;
-    letter-spacing: 0.25em;
+    letter-spacing: 0.15em;
+    color: rgba(245, 237, 216, 0.45);
+    border-bottom: 1px dashed rgba(245, 237, 216, 0.1);
+    padding-bottom: 0.8rem;
+  }
+
+  .quadrant-index {
     color: var(--color-gold);
   }
 
-  .chapter-name {
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 3.5vw, 4.5rem);
-    font-weight: 300;
-    line-height: 1;
-    margin: 0;
-    letter-spacing: -0.01em;
-  }
-
-  .chapter-telemetry {
+  .quadrant-coordinates {
     display: flex;
-    gap: 3rem;
-    font-family: var(--font-mono);
-    font-size: 9px;
-    letter-spacing: 0.15em;
-    text-align: left;
-  }
-
-  .telemetry-line {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-  }
-
-  .telemetry-line .lbl {
-    color: rgba(245, 237, 216, 0.4);
-  }
-
-  .telemetry-line .val {
-    color: var(--color-warm-cream);
-  }
-
-  /* Yields Showcase cards vertical stack */
-  .chapter-yields-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 5rem;
-  }
-
-  .yield-card {
-    display: grid;
-    grid-template-columns: 1.15fr 0.85fr;
-    gap: 6vw;
-    align-items: center;
-    border-bottom: 1px dashed rgba(245, 237, 216, 0.1);
-    padding-bottom: 5rem;
-  }
-
-  .yield-card:last-child {
-    border-bottom: none;
-    padding-bottom: 0;
-  }
-
-  /* Left Side packaging */
-  .yield-card-left {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2rem;
-  }
-
-  .yield-image-wrapper {
-    position: relative;
-    width: 100%;
-    max-width: 400px;
-    aspect-ratio: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .yield-floating-img {
-    max-height: 40vh;
-    max-width: 90%;
-    object-fit: contain;
-    z-index: 2;
-    filter: drop-shadow(0 20px 40px rgba(0,0,0,0.6));
-    transition: transform 0.6s var(--ease-settle);
-  }
-
-  .yield-card:hover .yield-floating-img {
-    transform: scale(1.03) translateY(-5px);
-  }
-
-  .yield-glow {
-    position: absolute;
-    width: 60%;
-    height: 60%;
-    background: radial-gradient(circle, rgba(166, 124, 60, 0.06) 0%, transparent 70%);
-    z-index: 1;
-  }
-
-  .yield-specs {
-    width: 100%;
-    max-width: 400px;
-    border-top: 1px solid rgba(245, 237, 216, 0.12);
-    padding-top: 1rem;
-  }
-
-  .spec-row {
-    display: flex;
-    justify-content: space-between;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    color: rgba(245, 237, 216, 0.45);
-  }
-
-  /* Right Side narrative */
-  .yield-card-right {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2rem;
-    text-align: left;
-  }
-
-  .yield-header {
-    display: flex;
-    flex-direction: column;
     gap: 0.5rem;
   }
 
-  .yield-title {
+  .coord-dot {
+    color: var(--color-gold);
+  }
+
+  /* Identity details */
+  .quadrant-identity {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .quadrant-title {
     font-family: var(--font-display);
-    font-size: clamp(2rem, 3vw, 3.5rem);
+    font-size: clamp(2rem, 3.2vw, 4rem);
     font-weight: 300;
-    margin: 0;
     line-height: 1;
+    margin: 0;
+  }
+
+  .quadrant-weather {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: rgba(245, 237, 216, 0.5);
+  }
+
+  .weather-label {
+    color: var(--color-gold);
+  }
+
+  /* Deliverable specifications */
+  .quadrant-deliverable {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: rgba(245, 237, 216, 0.35);
+  }
+
+  .deliverable-text {
+    font-family: var(--font-display);
+    font-size: clamp(1.15rem, 1.5vw, 1.45rem);
+    line-height: 1.5;
+    color: var(--color-warm-cream);
+    margin: 0;
+    font-style: italic;
+    opacity: 0.95;
+  }
+
+  /* Yield list & Links */
+  .quadrant-yields-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    width: 100%;
+  }
+
+  .yield-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .yield-item {
+    border-bottom: 1px solid rgba(245, 237, 216, 0.08);
+    width: 100%;
+  }
+
+  .yield-item:last-child {
+    border-bottom: none;
+  }
+
+  .yield-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 0;
+    color: var(--color-warm-cream);
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    width: 100%;
+  }
+
+  .yield-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    align-items: flex-start;
+  }
+
+  .yield-name {
+    font-family: var(--font-display);
+    font-size: clamp(1.2rem, 1.5vw, 1.5rem);
+    font-weight: 300;
+    transition: color 0.3s ease;
   }
 
   .yield-botanical {
     font-family: var(--font-display);
-    font-size: 1.05rem;
     font-style: italic;
-    color: rgba(245, 237, 216, 0.55);
-    margin: 0;
+    font-size: 0.85rem;
+    color: rgba(245, 237, 216, 0.45);
   }
 
-  .yield-desc p {
-    font-family: var(--font-display);
-    font-size: clamp(1rem, 1.2vw, 1.15rem);
-    line-height: 1.6;
-    color: var(--color-warm-cream);
-    opacity: 0.8;
-    margin: 0;
-    max-width: 480px;
-  }
-
-  .yield-pricing {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    width: 100%;
-  }
-
-  .pricing-label {
-    font-family: var(--font-mono);
-    font-size: 9px;
-    letter-spacing: 0.15em;
-    color: rgba(245, 237, 216, 0.4);
-  }
-
-  .sizes-row {
-    display: flex;
-    gap: 1.2rem;
-    flex-wrap: wrap;
-  }
-
-  .size-pill {
-    border: 1px solid rgba(245, 237, 216, 0.15);
-    padding: 0.5rem 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.1rem;
-    min-width: 70px;
-  }
-
-  .size-pill .sz-name {
-    font-family: var(--font-mono);
-    font-size: 8px;
-    color: rgba(245, 237, 216, 0.5);
-  }
-
-  .size-pill .sz-price {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--color-warm-cream);
-  }
-
-  .yield-action {
-    margin-top: 1rem;
-  }
-
-  .descend-btn {
+  .yield-arrow {
     font-family: var(--font-mono);
     font-size: 10px;
-    letter-spacing: 0.15em;
-    color: var(--color-warm-cream);
-    text-decoration: none;
-    border: 1px solid rgba(245, 237, 216, 0.35);
-    padding: 1rem 2rem;
-    transition: all 0.3s ease;
-    display: inline-block;
+    letter-spacing: 0.05em;
+    color: rgba(245, 237, 216, 0.4);
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: all 0.4s var(--ease-settle);
   }
 
-  .descend-btn:hover {
+  /* Hover transitions mapping high-art feel */
+  .yield-link:hover .yield-name {
     color: var(--color-gold);
-    border-color: var(--color-gold);
-    background: rgba(166, 124, 60, 0.05);
+  }
+
+  .yield-link:hover .yield-arrow {
+    opacity: 1;
+    transform: translateX(0);
+    color: var(--color-gold);
+  }
+
+  /* Upcoming Crop specific styling */
+  .yield-item-upcoming {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 0;
+    opacity: 0.5;
+  }
+
+  .upcoming-name {
+    color: rgba(245, 237, 216, 0.8);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .upcoming-tag {
+    font-family: var(--font-mono);
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    color: var(--color-gold);
+  }
+
+  .upcoming-date {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: rgba(245, 237, 216, 0.6);
   }
 
   /* Responsive styling */
   @media (max-width: 1024px) {
-    .chapter-header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 1.5rem;
-    }
-    .yield-card {
+    .matrix-grid {
       grid-template-columns: 1fr;
-      gap: 3rem;
-      padding-bottom: 4rem;
     }
-  }
-
-  @media (max-width: 768px) {
-    .origin-chapter {
-      padding: 6vh 5vw;
+    .matrix-quadrant {
+      border-right: none !important;
+      border-bottom: 1px solid rgba(245, 237, 216, 0.12) !important;
+      padding: 5rem 6vw;
     }
-    .chapter-telemetry {
-      gap: 1.5rem;
-      flex-wrap: wrap;
+    .matrix-quadrant:last-child {
+      border-bottom: none !important;
     }
   }
 </style>
