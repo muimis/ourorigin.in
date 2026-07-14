@@ -1,4 +1,5 @@
 ---
+// src/components/TheMasterCompass.astro
 import OriginMark from './OriginMark.astro';
 import { getCollection } from 'astro:content';
 
@@ -21,23 +22,61 @@ const sortedYields = [...yields].sort((a, b) => {
     <OriginMark variant="gold" size={32} animate={false} />
   </div>
 
-  <!-- VIEW LOBBY: THE CROSSROADS -->
+  <!-- VIEW LOBBY: THE CROSSROADS COMPASS -->
   <div id="view-lobby" class="compass-view is-active">
     <div class="lobby-container">
-      <nav class="lobby-menu">
-        <button class="lobby-link" data-target="view-yield">
-          <span class="lobby-title">THE YIELD</span>
-          <span class="lobby-subtitle">What the earth has surrendered. The active harvest.</span>
+      <!-- High-End Circular Compass Dial Axis -->
+      <div class="lobby-axis">
+        <div class="compass-dial-ring"></div>
+        <div class="compass-dial-coordinates">GHATS : 10°N 76°E</div>
+      </div>
+
+      <!-- Quadrant grid design -->
+      <div class="lobby-grid">
+        <!-- Quadrant 1: Brand Monolith -->
+        <div class="lobby-quad quad-telemetry">
+          <div class="quad-header">[ IDENTIFIER ]</div>
+          <div class="quad-body">
+            <h1 class="brand-monolith">OurOrigin</h1>
+            <p class="brand-subtext">THE ARCHIVAL CHRONICLES</p>
+            <div class="telemetry-log">
+              <div>STATUS: SYSTEM DISPATCH ACTIVE</div>
+              <div>COORDINATES: WESTERN GHATS</div>
+              <div>YIELDS: 12 SPECIMENS</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quadrant 2: Path 01 (The Yield) -->
+        <button class="lobby-quad quad-link" data-target="view-yield" aria-label="Open Yield section">
+          <div class="quad-header">[ PATH 01 ]</div>
+          <div class="quad-body">
+            <span class="quad-num">01</span>
+            <h2 class="quad-title">THE YIELD</h2>
+            <p class="quad-desc">What the earth has surrendered. The active wild harvest.</p>
+          </div>
         </button>
-        <button class="lobby-link" data-target="view-horizon">
-          <span class="lobby-title">THE HORIZON</span>
-          <span class="lobby-subtitle">What the soil is preparing. Curing and future yields.</span>
+
+        <!-- Quadrant 3: Path 02 (The Horizon) -->
+        <button class="lobby-quad quad-link" data-target="view-horizon" aria-label="Open Horizon section">
+          <div class="quad-header">[ PATH 02 ]</div>
+          <div class="quad-body">
+            <span class="quad-num">02</span>
+            <h2 class="quad-title">THE HORIZON</h2>
+            <p class="quad-desc">What the soil is preparing. Curing and future crops.</p>
+          </div>
         </button>
-        <button class="lobby-link" data-target="view-index">
-          <span class="lobby-title">THE INDEX</span>
-          <span class="lobby-subtitle">The absolute ledger. Our complete global catalog.</span>
+
+        <!-- Quadrant 4: Path 03 (The Index) -->
+        <button class="lobby-quad quad-link" data-target="view-index" aria-label="Open Index section">
+          <div class="quad-header">[ PATH 03 ]</div>
+          <div class="quad-body">
+            <span class="quad-num">03</span>
+            <h2 class="quad-title">THE INDEX</h2>
+            <p class="quad-desc">The absolute ledger. Our complete global catalog.</p>
+          </div>
         </button>
-      </nav>
+      </div>
     </div>
   </div>
 
@@ -46,16 +85,67 @@ const sortedYields = [...yields].sort((a, b) => {
     <div class="horizontal-stream">
       {yields.map((y) => {
         const originId = typeof y.data.originSlug === 'object' ? y.data.originSlug?.id : y.data.originSlug;
+        const origin = origins.find(o => o.data.slug === originId);
+        const elevation = origin ? origin.data.elevation : '950M';
+        const coordinates = origin ? origin.data.coordinates : '10°N 76°E';
         return (
           <div class="stream-item">
-            <div class="artifact-texture" style={`background-image: url('${y.data.images?.packaging || '/assets/products/black-pepper.png'}')`}>
-              <div class="texture-overlay"></div>
+            <!-- Left Side: Product Showcase -->
+            <div class="stream-split-left">
+              <div class="product-showcase-wrapper">
+                <img 
+                  src={y.data.images?.packaging || '/assets/products/black-pepper.png'} 
+                  alt={`Packaging of ${y.data.name}`} 
+                  class="product-floating-img" 
+                />
+                <div class="product-glow-backdrop"></div>
+              </div>
+              
+              <div class="product-technical-specs">
+                <div class="spec-line">
+                  <span class="label">BATCH RECORD</span>
+                  <span class="value">{y.data.batchRef}</span>
+                </div>
+                <div class="spec-line">
+                  <span class="label">COORDINATES</span>
+                  <span class="value">{coordinates}</span>
+                </div>
+                <div class="spec-line">
+                  <span class="label">ALTITUDE</span>
+                  <span class="value">{elevation}</span>
+                </div>
+              </div>
             </div>
-            <div class="stream-content">
-              <button class="stream-btn-trigger" data-slug={y.id} data-origin={originId} style="background:none;border:none;cursor:pointer;padding:0;">
+            
+            <!-- Right Side: Narrative and Price Details -->
+            <div class="stream-split-right">
+              <div class="product-header-block">
+                <span class="origin-tag">[{String(originId || '').toUpperCase()} COLLECTIVE]</span>
                 <h2 class="stream-title">{y.data.name}</h2>
-              </button>
-              <p class="stream-collective">[{String(originId || '').toUpperCase()} COLLECTIVE]</p>
+                <p class="botanical-line">{y.data.botanicalName}</p>
+              </div>
+              
+              <div class="product-description-block">
+                <p class="description-text">{y.data.specimenCopy}</p>
+              </div>
+              
+              <div class="product-pricing-block">
+                <div class="price-grid-title">[ SIZES & VALUES ]</div>
+                <div class="price-grid">
+                  {y.data.sizes.map(size => (
+                    <div class="price-cell">
+                      <span class="cell-label">{size.label}</span>
+                      <span class="cell-val">₹{size.priceINR}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div class="product-action-block">
+                <button class="descend-action-btn" data-slug={y.id} data-origin={originId}>
+                  [ DESCEND INTO ORIGIN DETAILS ]
+                </button>
+              </div>
             </div>
           </div>
         );
@@ -69,16 +159,63 @@ const sortedYields = [...yields].sort((a, b) => {
   <!-- VIEW B: THE HORIZON (Future Harvests) -->
   <div id="view-horizon" class="compass-view">
     <div class="horizontal-stream">
-      <!-- Mocking future harvests for now -->
       <div class="stream-item">
-        <div class="artifact-texture" style="background: linear-gradient(135deg, #1a150e, #0a0805)">
-          <div class="texture-overlay"></div>
+        <!-- Left Side: Horizon Mock Showcase -->
+        <div class="stream-split-left">
+          <div class="product-showcase-wrapper">
+            <div style="width: 280px; height: 380px; background: linear-gradient(135deg, #161a13, #090c07); border: 1px dashed rgba(245, 237, 216, 0.2); display: flex; align-items: center; justify-content: center; position: relative;">
+              <span style="font-family: var(--font-mono); font-size: 10px; color: var(--color-gold); letter-spacing: 0.1em;">[ SPECIMEN IN CURING ]</span>
+            </div>
+            <div class="product-glow-backdrop"></div>
+          </div>
+          
+          <div class="product-technical-specs">
+            <div class="spec-line">
+              <span class="label">BATCH RECORD</span>
+              <span class="value">IDK-VN-2026</span>
+            </div>
+            <div class="spec-line">
+              <span class="label">COORDINATES</span>
+              <span class="value">9°51'N 77°14'E</span>
+            </div>
+            <div class="spec-line">
+              <span class="label">ALTITUDE</span>
+              <span class="value">1200M</span>
+            </div>
+          </div>
         </div>
-        <div class="stream-content">
-          <button class="stream-btn-trigger" data-slug="vanilla-mock" data-origin="idukki" style="background:none;border:none;cursor:pointer;padding:0;">
+        
+        <!-- Right Side: Horizon Description -->
+        <div class="stream-split-right">
+          <div class="product-header-block">
+            <span class="origin-tag">[IDUKKI HORIZON]</span>
             <h2 class="stream-title">Winter Curing Vanilla</h2>
-          </button>
-          <p class="stream-collective">[IDUKKI HORIZON]</p>
+            <p class="botanical-line">Vanilla planifolia</p>
+          </div>
+          
+          <div class="product-description-block">
+            <p class="description-text">The vines are currently dormant, holding the pods for the final curing phase. Our curing process takes up to four months of direct sun manipulation and wool wrapping to lock in the true vanillin compounds.</p>
+          </div>
+          
+          <div class="product-pricing-block">
+            <div class="price-grid-title">[ HARVEST SCHEDULE ]</div>
+            <div class="price-grid">
+              <div class="price-cell">
+                <span class="cell-label">CURING COMPLETE</span>
+                <span class="cell-val">OCT 2026</span>
+              </div>
+              <div class="price-cell">
+                <span class="cell-label">EST. QUANTITY</span>
+                <span class="cell-val">12 KG ONLY</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="product-action-block">
+            <button class="descend-action-btn" data-slug="vanilla-mock" data-origin="idukki" style="opacity: 0.5; cursor: not-allowed;" disabled>
+              [ CURING IN PROGRESS ]
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -91,13 +228,21 @@ const sortedYields = [...yields].sort((a, b) => {
   <div id="view-index" class="compass-view">
     <div class="ledger-container">
       <div class="ledger-list">
+        <div class="ledger-header-row">
+          <span class="col-yield">NOMENCLATURE</span>
+          <span class="col-collective">PROVENANCE</span>
+          <span class="col-status">COMPLIANCE / ACTION</span>
+        </div>
         {sortedYields.map((y) => {
           const originId = typeof y.data.originSlug === 'object' ? y.data.originSlug?.id : y.data.originSlug;
           return (
             <div class="ledger-row" data-slug={y.id} data-origin={originId}>
-              <span class="col-yield">{y.data.name}</span>
-              <span class="col-collective">{originId}</span>
-              <span class="col-status status-active">ACTIVE</span>
+              <span class="col-yield">
+                <span class="yield-name">{y.data.name}</span>
+                <span class="yield-botanical">{y.data.botanicalName}</span>
+              </span>
+              <span class="col-collective">{String(originId || '').toUpperCase()} COLLECTIVE</span>
+              <span class="col-status"><span class="status-action">[ DESCEND ]</span></span>
             </div>
           );
         })}
@@ -156,6 +301,192 @@ const sortedYields = [...yields].sort((a, b) => {
     pointer-events: inherit;
   }
 
+  /* --- Quadrant Compass Lobby --- */
+  .lobby-container {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    background-color: var(--color-forest-deep);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .lobby-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+
+  /* Dividing lines */
+  .lobby-grid::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 1px;
+    height: 100%;
+    background-color: rgba(245, 237, 216, 0.1);
+    z-index: 5;
+    pointer-events: none;
+  }
+  .lobby-grid::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: rgba(245, 237, 216, 0.1);
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  .lobby-quad {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 4vw;
+    box-sizing: border-box;
+    position: relative;
+    background: transparent;
+    border: none;
+    text-align: left;
+  }
+
+  .quad-link {
+    cursor: pointer;
+    transition: background-color 0.4s var(--ease-settle);
+  }
+
+  .quad-link:hover {
+    background-color: rgba(245, 237, 216, 0.015);
+  }
+
+  .quad-header {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: rgba(245, 237, 216, 0.35);
+  }
+
+  .quad-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+    margin-top: auto;
+  }
+
+  .brand-monolith {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 5vw, 6rem);
+    font-weight: 300;
+    color: var(--color-warm-cream);
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  .brand-subtext {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    color: var(--color-gold);
+    margin: 0;
+  }
+
+  .telemetry-log {
+    margin-top: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: rgba(245, 237, 216, 0.4);
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .quad-num {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 6vw, 7.5rem);
+    font-weight: 300;
+    line-height: 0.9;
+    color: rgba(245, 237, 216, 0.08);
+    transition: color 0.4s var(--ease-settle), transform 0.4s var(--ease-settle);
+  }
+
+  .quad-link:hover .quad-num {
+    color: var(--color-gold);
+    opacity: 0.15;
+    transform: scale(1.05) translateY(-5px);
+  }
+
+  .quad-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3.5vw, 4.5rem);
+    font-weight: 300;
+    margin: 0;
+    color: var(--color-warm-cream);
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+  }
+
+  .quad-desc {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1.6;
+    letter-spacing: 0.05em;
+    color: rgba(245, 237, 216, 0.55);
+    margin: 0;
+    max-width: 280px;
+    text-transform: uppercase;
+    transition: color 0.3s ease;
+  }
+
+  .quad-link:hover .quad-desc {
+    color: var(--color-warm-cream);
+  }
+
+  /* --- Compass Dial in Center --- */
+  .lobby-axis {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    z-index: 10;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .compass-dial-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 1px dashed rgba(245, 237, 216, 0.12);
+    border-radius: 50%;
+    animation: rotateCompassDial 60s linear infinite;
+  }
+
+  .compass-dial-coordinates {
+    position: absolute;
+    bottom: -32px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    color: var(--color-gold);
+    white-space: nowrap;
+  }
+
+  @keyframes rotateCompassDial {
+    to { transform: rotate(360deg); }
+  }
+
   /* HORIZONTAL STREAM (Yield & Horizon) */
   .horizontal-stream {
     width: 100vw;
@@ -171,140 +502,203 @@ const sortedYields = [...yields].sort((a, b) => {
   }
   .horizontal-stream::-webkit-scrollbar { display: none; }
 
+  /* SPLIT COLUMN PRODUCT ARRANGEMENT */
   .stream-item {
-    position: relative;
-    flex: 0 0 100vw;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
     width: 100vw;
     height: 100vh;
     height: 100dvh;
+    padding: 12vh 6vw 8vh 6vw;
+    gap: 5vw;
+    align-items: center;
+    background-color: var(--color-forest-deep);
+    position: relative;
+    box-sizing: border-box;
     scroll-snap-align: center;
     scroll-snap-stop: always;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    flex: 0 0 100vw;
     overflow: hidden;
   }
 
-  .artifact-texture {
+  .stream-split-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 3rem;
+    height: 100%;
+  }
+
+  .product-showcase-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .product-floating-img {
+    max-height: 50vh;
+    max-width: 90%;
+    object-fit: contain;
+    z-index: 2;
+    filter: drop-shadow(0 20px 50px rgba(0, 0, 0, 0.7));
+    transition: transform 0.6s var(--ease-settle);
+  }
+
+  .stream-item:hover .product-floating-img {
+    transform: scale(1.05) translateY(-5px);
+  }
+
+  .product-glow-backdrop {
     position: absolute;
-    inset: -5%; /* Prevent edge bleed on mobile scroll */
-    background-size: cover;
-    background-position: center;
-    filter: saturate(0.8) contrast(1.2);
+    width: 60%;
+    height: 60%;
+    background: radial-gradient(circle, rgba(166, 124, 60, 0.08) 0%, transparent 70%);
     z-index: 1;
   }
 
-  .texture-overlay {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at center, rgba(1, 2, 1, 0.3) 0%, rgba(1, 2, 1, 0.9) 100%);
+  .product-technical-specs {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    border-top: 1px solid rgba(245, 237, 216, 0.15);
+    padding-top: 1.2rem;
   }
 
-  .stream-content {
-    position: absolute;
-    bottom: 8vh;
-    left: 5vw;
-    z-index: 10;
+  .spec-line {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+  }
+
+  .spec-line .label {
+    color: rgba(245, 237, 216, 0.4);
+  }
+
+  .spec-line .value {
+    color: var(--color-warm-cream);
+  }
+
+  .stream-split-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2.5rem;
+    height: 100%;
     text-align: left;
-    max-width: 90vw;
+  }
+
+  .product-header-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .origin-tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--color-gold);
   }
 
   .stream-title {
     font-family: var(--font-display);
-    font-size: clamp(3rem, 10vw, 12rem);
+    font-size: clamp(2rem, 4vw, 5.5rem);
     font-weight: 300;
-    line-height: 0.85;
-    margin: 0 0 1.5rem 0;
+    line-height: 0.95;
+    margin: 0;
     color: var(--color-warm-cream);
-    text-shadow: 0 10px 40px rgba(0,0,0,0.9);
     letter-spacing: -0.02em;
-    mix-blend-mode: normal; /* Safe default, relies on deep shadow for contrast */
   }
 
-  .stream-collective {
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-    letter-spacing: 0.5em;
+  .botanical-line {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-style: italic;
+    color: rgba(245, 237, 216, 0.6);
+    margin: 0;
+  }
+
+  .product-description-block {
+    max-width: 480px;
+  }
+
+  .description-text {
+    font-family: var(--font-display);
+    font-size: 16px;
+    line-height: 1.5;
     color: var(--color-warm-cream);
     margin: 0;
-    text-transform: uppercase;
-    display: inline-block;
-    border-top: 1px solid rgba(245, 237, 216, 0.4);
-    padding-top: 0.5rem;
+    opacity: 0.85;
   }
 
-  /* THE LOBBY (CROSSROADS) */
-  .lobby-container {
-    width: 100vw;
-    height: 100vh;
-    height: 100dvh;
+  .product-pricing-block {
+    width: 100%;
+    max-width: 480px;
+  }
+
+  .price-grid-title {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: rgba(245, 237, 216, 0.4);
+    margin-bottom: 0.8rem;
+  }
+
+  .price-grid {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    background: radial-gradient(circle at center, rgba(12, 21, 9, 0.8) 0%, var(--color-forest-deep) 100%);
+    gap: 1.5rem;
   }
 
-  .lobby-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 4rem;
-    text-align: left; /* Shifted to left-align for brutalist architecture */
-  }
-
-  /* Hover Physics */
-  .lobby-menu:hover .lobby-link:not(:hover) {
-    opacity: 0.15;
-  }
-
-  .lobby-link {
-    background: transparent;
-    border: none;
-    cursor: pointer;
+  .price-cell {
+    border: 1px solid rgba(245, 237, 216, 0.15);
+    padding: 0.6rem 1.2rem;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-    transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-    opacity: 0.8;
-    position: relative;
-  }
-  
-  .lobby-link:hover, .lobby-link:focus {
-    opacity: 1;
+    gap: 0.2rem;
   }
 
-  /* Architectural hover line */
-  .lobby-link::before {
-    content: '';
-    position: absolute;
-    left: -2rem;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 0;
-    height: 2px;
-    background-color: var(--color-warm-cream);
-    transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  .price-cell .cell-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: rgba(245, 237, 216, 0.5);
   }
 
-  .lobby-link:hover::before {
-    width: 1rem;
-  }
-
-  .lobby-title {
-    font-family: var(--font-display);
-    font-size: var(--text-massive);
-    font-weight: 300;
+  .price-cell .cell-val {
+    font-family: var(--font-mono);
+    font-size: 12px;
     color: var(--color-warm-cream);
-    letter-spacing: 0.02em;
-    line-height: 1;
   }
 
-  .lobby-subtitle {
-    font-family: var(--font-sans);
-    font-size: 0.75rem;
-    letter-spacing: 0.25em;
-    color: rgba(245, 237, 216, 0.6);
-    text-transform: uppercase;
+  .product-action-block {
+    width: 100%;
+  }
+
+  .descend-action-btn {
+    background: transparent;
+    color: var(--color-warm-cream);
+    border: 1px solid rgba(245, 237, 216, 0.3);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    padding: 1.2rem 2.5rem;
+    cursor: pointer;
+    transition: all 0.3s var(--ease-settle);
+  }
+
+  .descend-action-btn:hover {
+    color: var(--color-gold);
+    border-color: var(--color-gold);
+    background: rgba(166, 124, 60, 0.05);
   }
 
   /* THE INDEX (Brutalist Ledger) */
@@ -314,6 +708,7 @@ const sortedYields = [...yields].sort((a, b) => {
     padding: 15vh clamp(1.5rem, 5vw, 6vw);
     overflow-y: auto;
     scrollbar-width: none;
+    box-sizing: border-box;
   }
   .ledger-container::-webkit-scrollbar { display: none; }
 
@@ -323,56 +718,84 @@ const sortedYields = [...yields].sort((a, b) => {
     border-top: 1px solid rgba(245, 237, 216, 0.2); /* Stark top boundary */
   }
 
+  .ledger-header-row {
+    display: grid;
+    grid-template-columns: 3fr 1.5fr 1fr;
+    align-items: center;
+    padding: 1.5rem 0;
+    border-bottom: 2px solid rgba(245, 237, 216, 0.3);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--color-gold);
+    pointer-events: none;
+  }
+
   .ledger-row {
     display: grid;
-    grid-template-columns: 3fr 1fr 1fr;
+    grid-template-columns: 3fr 1.5fr 1fr;
     align-items: center;
-    padding: 2.5rem 0;
+    padding: 2rem 0;
     border-bottom: 1px solid rgba(245, 237, 216, 0.15);
     cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: all 0.4s var(--ease-settle);
   }
-  
+
   .ledger-row:hover {
-    padding-left: 2rem; /* Indent on hover */
-    background: rgba(245, 237, 216, 0.02);
+    padding-left: 1.5rem;
+    background: rgba(245, 237, 216, 0.015);
   }
 
   .ledger-row .col-yield {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .yield-name {
     font-family: var(--font-display);
-    font-size: clamp(2.5rem, 5vw, 5rem);
+    font-size: clamp(1.8rem, 3.5vw, 3.8rem);
     font-weight: 300;
-    line-height: 1;
     color: var(--color-warm-cream);
+    line-height: 1;
     transition: color 0.4s ease;
   }
 
-  .ledger-row:hover .col-yield {
-    color: #fff;
+  .ledger-row:hover .yield-name {
+    color: var(--color-gold);
+  }
+
+  .yield-botanical {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-style: italic;
+    color: rgba(245, 237, 216, 0.4);
   }
 
   .ledger-row .col-collective {
     font-family: var(--font-mono);
-    font-size: 0.85rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: rgba(245, 237, 216, 0.6);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: rgba(245, 237, 216, 0.7);
   }
 
   .ledger-row .col-status {
-    font-family: var(--font-sans);
-    font-size: 0.75rem;
-    letter-spacing: 0.3em;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--color-warm-cream);
     text-align: right;
   }
-  .status-active { color: var(--color-warm-cream); opacity: 0.5; }
 
-  @media (max-width: 768px) {
-    .ledger-row {
-      grid-template-columns: 1fr;
-      gap: 0.5rem;
-      padding: 2rem 0;
-    }
+  .status-action {
+    display: inline-block;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s ease, color 0.3s ease;
+  }
+
+  .ledger-row:hover .status-action {
+    color: var(--color-gold);
+    border-color: var(--color-gold);
   }
 
   /* BOTTOM MASTER TOGGLE */
@@ -427,6 +850,87 @@ const sortedYields = [...yields].sort((a, b) => {
     color: var(--color-warm-cream);
     opacity: 0.7;
     z-index: 50;
+    pointer-events: none;
+  }
+
+  @media (max-width: 960px) {
+    .stream-item {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto;
+      gap: 3rem;
+      padding: 12vh 6vw 10vh 6vw;
+      overflow-y: auto;
+    }
+
+    .stream-split-left,
+    .stream-split-right {
+      height: auto;
+      align-items: center;
+      text-align: center;
+    }
+
+    .stream-split-right {
+      align-items: center;
+    }
+
+    .product-floating-img {
+      max-height: 35vh;
+    }
+
+    .product-description-block {
+      text-align: center;
+    }
+
+    .price-grid {
+      justify-content: center;
+    }
+
+    .descend-action-btn {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .lobby-grid {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto auto auto;
+      overflow-y: auto;
+    }
+
+    .lobby-grid::after,
+    .lobby-grid::before {
+      display: none;
+    }
+
+    .lobby-quad {
+      padding: 3rem 2rem;
+      border-bottom: 1px solid rgba(245, 237, 216, 0.08);
+      justify-content: flex-start;
+      gap: 1.5rem;
+    }
+
+    .quad-body {
+      margin-top: 0;
+    }
+
+    .lobby-axis {
+      display: none;
+    }
+
+    .ledger-header-row {
+      display: none;
+    }
+    
+    .ledger-row {
+      grid-template-columns: 1fr;
+      gap: 0.8rem;
+      padding: 1.5rem 0;
+    }
+    
+    .ledger-row .col-status {
+      text-align: left;
+      margin-top: 0.5rem;
+    }
   }
 </style>
 
@@ -435,7 +939,7 @@ const sortedYields = [...yields].sort((a, b) => {
     // State Machine Logic for Compass Toggles
     const toggles = document.querySelectorAll('.toggle-btn');
     const views = document.querySelectorAll('.compass-view');
-    const lobbyLinks = document.querySelectorAll('.lobby-link');
+    const lobbyLinks = document.querySelectorAll('.lobby-link, .quad-link');
     const masterToggle = document.getElementById('master-toggle');
 
     function activateView(targetId) {
@@ -484,7 +988,7 @@ const sortedYields = [...yields].sort((a, b) => {
     });
 
     // Navigation Triggers to dynamic product pages
-    const streamTriggers = document.querySelectorAll('.stream-btn-trigger');
+    const streamTriggers = document.querySelectorAll('.stream-btn-trigger, .descend-action-btn');
     const ledgerRows = document.querySelectorAll('.ledger-row');
 
     function triggerDeepDive(slug, origin) {
