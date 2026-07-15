@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../components/BaseLayout.astro';
-import TheThreshold from '../components/TheThreshold.astro';
-import TheYieldList from '../components/TheYieldList.astro';
+import OpeningSequence from '../components/OpeningSequence.astro';
+import TheCore from '../components/TheCore.astro';
 import TheIndexLedger from '../components/TheIndexLedger.astro';
 import TheObservationsList from '../components/TheObservationsList.astro';
 ---
@@ -17,16 +17,16 @@ import TheObservationsList from '../components/TheObservationsList.astro';
   bodyClass="homepage-body"
 >
     <main>
-        <!-- Chapter 01: Universal Hero Gate -->
-        <TheThreshold />
+        <!-- Act I: Concept Opening Sequence -->
+        <OpeningSequence />
 
-        <!-- Chapter 02: Interconnected Sourcing Matrix (2x2 Grid) -->
-        <TheYieldList />
+        <!-- Act II: The Core (Origins Accordion) -->
+        <TheCore />
 
-        <!-- Chapter 03: The Archival Ledger Index -->
+        <!-- Act III: The Archival Ledger Index -->
         <TheIndexLedger />
 
-        <!-- Chapter 04: Curated Field Observation Records -->
+        <!-- Act IV: Curated Field Observation Records -->
         <TheObservationsList />
     </main>
 </BaseLayout>

@@ -1,0 +1,606 @@
+---
+// src/components/TheCore.astro
+import { getCollection } from 'astro:content';
+import LiveWeather from './LiveWeather.astro';
+
+const products = await getCollection('products');
+const origins = await getCollection('origins');
+
+function parseElevation(elevStr: string) {
+  const match = String(elevStr || '').match(/[\d,]+/);
+  return match ? parseInt(match[0].replace(/,/g, ''), 10) : 0;
+}
+
+// Sorted: highest elevation first (Nilgiris -> Idukki -> Wayanad -> Thiruvananthapuram)
+const sortedOrigins = [...origins].sort((a, b) => {
+  return parseElevation(b.data.elevation) - parseElevation(a.data.elevation);
+});
+
+// Group products by origin
+const productsByOrigin = {};
+sortedOrigins.forEach(origin => {
+  const originSlug = origin.data.slug;
+  productsByOrigin[originSlug] = products.filter(p => {
+    const originId = typeof p.data.originSlug === 'object' ? p.data.originSlug?.id : p.data.originSlug;
+    return originId === originSlug;
+  });
+});
+---
+
+<section id="the-core" class="the-core-section">
+  <!-- Core Title -->
+  <div class="core-header-banner">
+    <span class="core-tag">[ ACT II · THE CORE ]</span>
+    <h2 class="core-banner-title">Provenances</h2>
+    <p class="core-banner-subtitle">THE EQUALLY WEIGHTED MATRIX OF THE WESTERN GHATS</p>
+  </div>
+
+  <!-- Origins Accordion Container -->
+  <div class="origins-accordion">
+    {sortedOrigins.map((origin) => {
+      const originProducts = productsByOrigin[origin.data.slug] || [];
+      const elevationVal = origin.data.elevation;
+      const coordsVal = origin.data.coordinates;
+      // Use canopy image for card background
+      const cardBg = origin.data.images?.canopy || '';
+
+      return (
+        <div class="origin-node" data-origin-slug={origin.data.slug}>
+          <!-- Origin Header / Toggle Card -->
+          <button class="origin-toggle-card" aria-expanded="false" aria-controls={`products-${origin.data.slug}`}>
+            <div class="card-bg-image" style={`background-image: url('${cardBg}');`}></div>
+            <div class="card-wash"></div>
+            
+            <div class="card-header-info">
+              <span class="origin-elevation-tag">{elevationVal.toUpperCase()}</span>
+              <span class="origin-coords-tag">{coordsVal}</span>
+            </div>
+
+            <div class="card-footer-info">
+              <h3 class="origin-card-title">{origin.data.name}</h3>
+              <div class="origin-card-weather">
+                <span class="weather-label">TELEMETRY:</span>
+                <LiveWeather coordinates={coordsVal} originName={origin.data.name} />
+              </div>
+            </div>
+            
+            <div class="card-expand-indicator">
+              <span class="indicator-plus">+</span>
+              <span class="indicator-minus">&minus;</span>
+            </div>
+          </button>
+
+          <!-- Accordion Panel (Products) -->
+          <div id={`products-${origin.data.slug}`} class="origin-products-panel" aria-hidden="true">
+            <div class="panel-inner-container">
+              <div class="panel-desc-container">
+                <span class="panel-section-label">[ BIO-CHARACTER ]</span>
+                <p class="panel-origin-desc">{origin.data.narrative.canopy}</p>
+                <div class="panel-origin-soil-method">
+                  <span class="info-pill">SOIL: {origin.data.soil.toUpperCase()}</span>
+                  <span class="info-pill">METHOD: {origin.data.method.toUpperCase()}</span>
+                </div>
+              </div>
+
+              <div class="products-carousel-wrapper">
+                <span class="panel-section-label">[ ACTIVE SPECIMEN YIELDS ]</span>
+                <div class="products-horizontal-stream">
+                  {originProducts.map((p) => {
+                    const priceRange = p.data.sizes.length > 1
+                      ? `₹${Math.min(...p.data.sizes.map(s => s.priceINR))} - ₹${Math.max(...p.data.sizes.map(s => s.priceINR))}`
+                      : `₹${p.data.sizes[0].priceINR}`;
+                    
+                    const firstSize = p.data.sizes[0];
+                    const productDataString = JSON.stringify({
+                      id: p.id + '-' + firstSize.label,
+                      productId: p.id,
+                      name: p.data.name,
+                      origin: origin.data.name,
+                      originId: origin.id,
+                      price: firstSize.priceINR,
+                      size: firstSize.label,
+                      weight: firstSize.label,
+                      quantity: 1
+                    });
+
+                    // Use packaging image if available, else fallback
+                    const packagingImg = p.data.images?.packaging || '/assets/products/clove.png';
+
+                    return (
+                      <div class="product-stream-card">
+                        <div class="product-card-visual">
+                          <img src={packagingImg} alt={`Packaging of ${p.data.name}`} class="product-packaging-img" loading="lazy" />
+                        </div>
+                        <div class="product-card-body">
+                          <h4 class="product-card-title">{p.data.name}</h4>
+                          <span class="product-card-botanical">{p.data.botanicalName}</span>
+                          <span class="product-card-price">{priceRange}</span>
+                        </div>
+                        <div class="product-card-actions">
+                          <button class="core-product-add-btn" data-product={productDataString}>
+                            [ ADD ]
+                          </button>
+                          <a href={`/origins/${origin.data.slug}/${p.id}`} class="core-product-explore-btn">
+                            [ DESCEND &rarr; ]
+                          </a>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    })}
+  </div>
+</section>
+
+<style>
+  .the-core-section {
+    background-color: var(--color-forest-deep);
+    color: var(--color-warm-cream);
+    padding: 10vh clamp(1.5rem, 5vw, 4rem);
+    border-top: 1px solid rgba(245, 237, 216, 0.1);
+    border-bottom: 1px solid rgba(245, 237, 216, 0.1);
+  }
+
+  .core-header-banner {
+    max-width: 1200px;
+    margin: 0 auto 3rem auto;
+    text-align: left;
+    border-bottom: 1px solid rgba(245, 237, 216, 0.1);
+    padding-bottom: 1.5rem;
+  }
+
+  .core-tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--color-gold);
+  }
+
+  .core-banner-title {
+    font-family: var(--font-institutional);
+    font-size: clamp(2.5rem, 5vw, 6rem);
+    font-weight: 300;
+    margin: 0.5rem 0 0 0;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .core-banner-subtitle {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: rgba(245, 237, 216, 0.45);
+    margin: 0.5rem 0 0 0;
+  }
+
+  .origins-accordion {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .origin-node {
+    border: 1px solid rgba(245, 237, 216, 0.1);
+    background: rgba(12, 21, 9, 0.4);
+    box-sizing: border-box;
+    width: 100%;
+    transition: border-color 0.4s ease;
+  }
+
+  .origin-node:hover {
+    border-color: rgba(245, 237, 216, 0.3);
+  }
+
+  .origin-toggle-card {
+    position: relative;
+    width: 100%;
+    min-height: 180px;
+    background: none;
+    border: none;
+    padding: 2rem;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    color: var(--color-warm-cream);
+  }
+
+  .card-bg-image {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.25;
+    z-index: 1;
+    filter: saturate(0.2) contrast(1.1) brightness(0.6);
+    transition: transform 0.6s var(--ease-settle), opacity 0.4s ease;
+  }
+
+  .origin-toggle-card:hover .card-bg-image {
+    transform: scale(1.03);
+    opacity: 0.35;
+  }
+
+  .card-wash {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(12, 21, 9, 0.5) 0%, var(--color-forest-deep) 100%);
+    z-index: 2;
+  }
+
+  .card-header-info, .card-footer-info {
+    position: relative;
+    z-index: 3;
+  }
+
+  .card-header-info {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: rgba(245, 237, 216, 0.45);
+  }
+
+  .origin-elevation-tag {
+    color: var(--color-gold);
+  }
+
+  .origin-card-title {
+    font-family: var(--font-institutional);
+    font-size: clamp(1.8rem, 3.5vw, 3rem);
+    font-weight: 300;
+    margin: 0 0 0.5rem 0;
+    letter-spacing: 0.05em;
+  }
+
+  .origin-card-weather {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    color: rgba(245, 237, 216, 0.5);
+  }
+
+  .weather-label {
+    color: var(--color-gold);
+  }
+
+  .card-expand-indicator {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    z-index: 3;
+    font-family: var(--font-mono);
+    font-size: 24px;
+    color: rgba(245, 237, 216, 0.5);
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .indicator-minus {
+    display: none;
+  }
+
+  .origin-toggle-card[aria-expanded="true"] .indicator-plus {
+    display: none;
+  }
+
+  .origin-toggle-card[aria-expanded="true"] .indicator-minus {
+    display: block;
+  }
+
+  /* Products Panel */
+  .origin-products-panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.6s var(--ease-settle), border-color 0.4s ease;
+    border-top: 1px solid transparent;
+    overflow: hidden;
+  }
+
+  .origin-node.active .origin-products-panel {
+    grid-template-rows: 1fr;
+    border-top-color: rgba(245, 237, 216, 0.08);
+  }
+
+  .panel-inner-container {
+    min-height: 0;
+    padding: 0 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    transition: padding 0.6s var(--ease-settle);
+  }
+
+  .origin-node.active .panel-inner-container {
+    padding: 2.5rem 2rem;
+  }
+
+  .panel-desc-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    text-align: left;
+    max-width: 600px;
+  }
+
+  .panel-section-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--color-gold);
+  }
+
+  .panel-origin-desc {
+    font-family: var(--font-display);
+    font-size: var(--type-narrative);
+    line-height: 1.5;
+    color: var(--color-warm-cream);
+    opacity: 0.9;
+    margin: 0;
+  }
+
+  .panel-origin-soil-method {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  .info-pill {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.05em;
+    color: rgba(245, 237, 216, 0.4);
+    border: 1px solid rgba(245, 237, 216, 0.15);
+    padding: 4px 10px;
+  }
+
+  .products-carousel-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  .products-horizontal-stream {
+    display: flex;
+    gap: 1.5rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 1rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Product Card */
+  .product-stream-card {
+    flex: 0 0 280px;
+    border: 1px solid rgba(245, 237, 216, 0.08);
+    background: rgba(12, 21, 9, 0.3);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.2rem;
+    scroll-snap-align: start;
+    box-sizing: border-box;
+    text-align: left;
+  }
+
+  .product-card-visual {
+    width: 100%;
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .product-packaging-img {
+    max-width: 80%;
+    max-height: 80%;
+    object-fit: contain;
+    filter: brightness(0.9) contrast(1.05);
+    transition: transform 0.4s var(--ease-settle);
+  }
+
+  .product-stream-card:hover .product-packaging-img {
+    transform: scale(1.04);
+  }
+
+  .product-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .product-card-title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--color-warm-cream);
+    margin: 0;
+  }
+
+  .product-card-botanical {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.85rem;
+    color: rgba(245, 237, 216, 0.45);
+  }
+
+  .product-card-price {
+    font-family: var(--font-mono);
+    font-size: var(--type-whisper);
+    color: var(--color-gold);
+    margin-top: 0.3rem;
+  }
+
+  .product-card-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .core-product-add-btn {
+    flex: 1;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: var(--color-gold);
+    background: transparent;
+    border: 1px solid rgba(166, 124, 60, 0.5);
+    padding: 8px 12px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s ease;
+    min-height: 44px; /* Touch target minimum */
+  }
+
+  .core-product-add-btn:hover, .core-product-add-btn.is-added {
+    background-color: var(--color-gold);
+    color: var(--color-forest-deep);
+    border-color: var(--color-gold);
+  }
+
+  .core-product-explore-btn {
+    flex: 1.2;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    color: rgba(245, 237, 216, 0.6);
+    text-decoration: none;
+    text-align: center;
+    border: 1px solid transparent;
+    padding: 8px 10px;
+    transition: color 0.3s ease;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .core-product-explore-btn:hover {
+    color: var(--color-warm-cream);
+  }
+
+  /* Mobile Snap Scroll */
+  @media (max-width: 768px) {
+    .origins-accordion {
+      flex-direction: row;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding-bottom: 1.5rem;
+      -webkit-overflow-scrolling: touch;
+      gap: 1rem;
+    }
+
+    .origin-node {
+      flex: 0 0 85vw;
+      scroll-snap-align: start;
+    }
+
+    .origin-products-panel {
+      grid-template-rows: 0fr !important;
+      border-top-color: transparent !important;
+      position: absolute;
+      left: clamp(1.5rem, 5vw, 4rem);
+      right: clamp(1.5rem, 5vw, 4rem);
+      background: var(--color-forest-deep);
+      z-index: 10;
+      border: 1px solid rgba(245, 237, 216, 0.1);
+      margin-top: 10px;
+    }
+
+    .origin-node.active .origin-products-panel {
+      grid-template-rows: 1fr !important;
+      border-top-color: rgba(245, 237, 216, 0.1) !important;
+    }
+
+    .panel-inner-container {
+      padding: 0 !important;
+    }
+
+    .origin-node.active .panel-inner-container {
+      padding: 1.5rem !important;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const toggleCards = document.querySelectorAll('.origin-toggle-card');
+    const nodes = document.querySelectorAll('.origin-node');
+
+    // Click handler for accordion toggling
+    toggleCards.forEach((card, idx) => {
+      card.addEventListener('click', (e) => {
+        const node = nodes[idx];
+        const panel = card.nextElementSibling as HTMLElement;
+        if (!panel) return;
+
+        const isExpanded = card.getAttribute('aria-expanded') === 'true';
+
+        // Close all other accordions
+        nodes.forEach((n, nIdx) => {
+          if (nIdx !== idx) {
+            n.classList.remove('active');
+            const otherCard = n.querySelector('.origin-toggle-card');
+            if (otherCard) {
+              otherCard.setAttribute('aria-expanded', 'false');
+              otherCard.nextElementSibling?.setAttribute('aria-hidden', 'true');
+            }
+          }
+        });
+
+        // Toggle this accordion
+        if (isExpanded) {
+          card.setAttribute('aria-expanded', 'false');
+          panel.setAttribute('aria-hidden', 'true');
+          node.classList.remove('active');
+        } else {
+          card.setAttribute('aria-expanded', 'true');
+          panel.setAttribute('aria-hidden', 'false');
+          node.classList.add('active');
+
+          // Scroll target expanded origin into viewport smoothly on mobile
+          if (window.innerWidth <= 768) {
+            node.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+          }
+        }
+      });
+    });
+
+    // Wire up Add to Ledger events
+    document.querySelectorAll('.core-product-add-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Stop click from propagating to accordion trigger/slide
+        const data = JSON.parse(btn.getAttribute('data-product') || '{}');
+        window.dispatchEvent(new CustomEvent('add-to-ledger', { detail: data }));
+
+        const original = btn.textContent;
+        btn.textContent = '[ ADDED ✓ ]';
+        btn.classList.add('is-added');
+        setTimeout(() => {
+          btn.textContent = original;
+          btn.classList.remove('is-added');
+        }, 1200);
+      });
+    });
+  });
+</script>

@@ -12,141 +12,232 @@ import BaseLayout from '../components/BaseLayout.astro';
   showFooter={true}
 >
     <main id="main-content" class="page-container">
-        <h1>Observations</h1>
-        <p class="subtitle">The documented record of decisions made in the forest</p>
-
-        <div class="observation">
-            <h2 class="obs-title">01 · The Berry Was Never Black</h2>
-            <p class="obs-body">Black pepper starts green. The colour change happens entirely after harvest, during sun-drying. The colour you've associated with pepper your entire life is the colour of what happens to the plant after it's picked.</p>
-            <p class="obs-meta">Reference: Forest Black Pepper</p>
+        <div class="observations-header">
+            <span class="obs-section-tag">[ OBSERVATION ARCHIVES ]</span>
+            <h1 class="obs-page-title">Observations</h1>
+            <p class="subtitle">THE DOCUMENTED RECORD OF DECISIONS MADE IN THE FOREST</p>
         </div>
 
-        <div class="observation">
-            <h2 class="obs-title">02 · Shade Is an Input</h2>
-            <p class="obs-body">Most spice plants are planted in cleared ground. Cardamom is not. It grows under a canopy — deliberately left intact, because Elettaria cardamomum produces better pods when it receives filtered light. The tall trees above a cardamom garden are not vestiges of forest. They are part of the cultivation.</p>
-            <p class="obs-meta">Reference: Cardamom</p>
+        <div class="observations-bento-grid">
+            <!-- Obs 01 -->
+            <div class="obs-tile tile-small">
+                <div>
+                    <span class="obs-number">01</span>
+                    <h2 class="obs-tile-title">The Berry Was Never Black</h2>
+                    <p class="obs-body">Black pepper starts green. The colour change happens entirely after harvest, during sun-drying. The colour you've associated with pepper your entire life is the colour of what happens to the plant after it's picked.</p>
+                </div>
+                <span class="obs-meta">REF: FOREST BLACK PEPPER</span>
+            </div>
+
+            <!-- Obs 02 -->
+            <div class="obs-tile tile-small">
+                <div>
+                    <span class="obs-number">02</span>
+                    <h2 class="obs-tile-title">Shade Is an Input</h2>
+                    <p class="obs-body">Most spice plants are planted in cleared ground. Cardamom is not. It grows under a canopy — deliberately left intact, because Elettaria cardamomum produces better pods when it receives filtered light. The tall trees above a cardamom garden are not vestiges of forest. They are part of the cultivation.</p>
+                </div>
+                <span class="obs-meta">REF: CARDAMOM</span>
+            </div>
+
+            <!-- Obs 03 -->
+            <div class="obs-tile tile-small">
+                <div>
+                    <span class="obs-number">03</span>
+                    <h2 class="obs-tile-title">One Fruit, Two Spices</h2>
+                    <p class="obs-body">Myristica fragrans produces a fleshy fruit that splits when ripe to reveal a seed (nutmeg) wrapped in a lace-like red covering (mace). Both are harvested in the same moment. The culinary world treats them as separate spices. The tree makes no such distinction.</p>
+                </div>
+                <span class="obs-meta">REF: MACE</span>
+            </div>
+
+            <!-- Obs 04 (Large) -->
+            <div class="obs-tile tile-large">
+                <div>
+                    <span class="obs-number">04</span>
+                    <h2 class="obs-tile-title">What is left in the forest stays in the forest.</h2>
+                    <p class="obs-body">A pepper vine in the Western Ghats doesn't yield uniformly. Some clusters ripen first; others need more time. Some were reached by the forest before the farmer was — the animals, the birds, the weather. A farmer sourcing for OurOrigin leaves what isn't ready and leaves what was already taken. He doesn't harvest for maximum yield. He harvests for what the forest agreed to give this season.</p>
+                    <p class="obs-body">This is not a sustainable farming practice or a certification. It is a decision made alone, 12 kilometres into the forest, with no observer. The product that arrives is the record of that decision.</p>
+                </div>
+                <span class="obs-meta">REF: FOREST BLACK PEPPER · WAYANAD & NILGIRIS · 900–1,100M</span>
+            </div>
+
+            <!-- Obs 06 (Small) -->
+            <div class="obs-tile tile-small">
+                <div>
+                    <span class="obs-number">06</span>
+                    <h2 class="obs-tile-title">The origin gate</h2>
+                    <p class="obs-body">In the OurOrigin model, the person who buys a product is not downstream from the origin — they are inside it. The farmer who walked 12 kilometres made a decision. The buyer who understands why and pays what it actually cost makes a corresponding one. The origin is completed only when both decisions hold.</p>
+                </div>
+                <span class="obs-meta">REF: ALL ORIGINS</span>
+            </div>
+
+            <!-- Obs 05 (Large) -->
+            <div class="obs-tile tile-large">
+                <div>
+                    <span class="obs-number">05</span>
+                    <h2 class="obs-tile-title">Some things cannot be measured in money. That doesn't mean they aren't in the price.</h2>
+                    <p class="obs-body">The price of a packet of Forest Black Pepper from OurOrigin reflects: the distance walked to reach the vine, the time taken to pick only what was ready, the weight of what was carried back, and the decision — made without anyone watching — to leave the rest. These things have no market rate. They are absorbed into a price that is set to make this sustainable, not to perform generosity or signal ethics.</p>
+                    <p class="obs-body">When you pay it, you are not donating to a cause. You are paying for something that actually cost that much to make with this much care.</p>
+                </div>
+                <span class="obs-meta">REF: FOREST BLACK PEPPER · WAYANAD & NILGIRIS · 900–1,100M</span>
+            </div>
+
+            <!-- Obs 08 (Small) -->
+            <div class="obs-tile tile-small">
+                <div>
+                    <span class="obs-number">08</span>
+                    <h2 class="obs-tile-title">Seasonal drift</h2>
+                    <p class="obs-body">OurOrigin does not guarantee uniform flavour, colour, or yield across seasons. The pepper from January 2026 is not identical to the pepper from January 2025 — the rainfall differed, the temperature at 1,100 metres differed, the precise moment of harvest differed. This variability is not a quality control failure.</p>
+                </div>
+                <span class="obs-meta">REF: TIME · ALL ORIGINS</span>
+            </div>
+
+            <!-- Obs 07 (Large) -->
+            <div class="obs-tile tile-large">
+                <div>
+                    <span class="obs-number">07</span>
+                    <h2 class="obs-tile-title">The communities we source from possess something irreplaceable. OurOrigin didn't give them that.</h2>
+                    <p class="obs-body">The knowledge of when to pick, which vine to climb, which berry to leave, which path through the forest to take at which time of year — this is expertise accumulated across generations that cannot be replicated by a process, a machine, or a programme. It exists because it was kept. The farmer walking into that forest holds something the supply chain has been obscuring for decades: the actual origin of the thing it sells.</p>
+                    <p class="obs-body">OurOrigin's job is to make that visible, and to ensure that visibility translates into a market that pays for what it actually costs. The dignity was always there. It just needed a connection line.</p>
+                </div>
+                <span class="obs-meta">REF: COMMUNITY · ALL ORIGINS</span>
+            </div>
         </div>
 
-        <div class="observation">
-            <h2 class="obs-title">03 · One Fruit, Two Spices</h2>
-            <p class="obs-body">Myristica fragrans produces a fleshy fruit that splits when ripe to reveal a seed (nutmeg) wrapped in a lace-like red covering (mace). Both are harvested in the same moment. The culinary world treats them as separate spices. The tree makes no such distinction.</p>
-            <p class="obs-meta">Reference: Mace</p>
-        </div>
-
-        <div class="observation">
-            <h2 class="obs-title-sentence">04 · What is left in the forest stays in the forest.</h2>
-            <p class="obs-body">A pepper vine in the Western Ghats doesn't yield uniformly. Some clusters ripen first; others need more time. Some were reached by the forest before the farmer was — the animals, the birds, the weather. A farmer sourcing for OurOrigin leaves what isn't ready and leaves what was already taken. He doesn't harvest for maximum yield. He harvests for what the forest agreed to give this season.</p>
-            <p class="obs-body">This is not a sustainable farming practice or a certification. It is a decision made alone, 12 kilometres into the forest, with no observer. The product that arrives is the record of that decision.</p>
-            <p class="obs-meta">Reference: Forest Black Pepper · Wayanad & Nilgiris · 900–1,100m</p>
-        </div>
-
-        <div class="observation">
-            <h2 class="obs-title-sentence">05 · Some things cannot be measured in money. That doesn't mean they aren't in the price.</h2>
-            <p class="obs-body">The price of a packet of Forest Black Pepper from OurOrigin reflects: the distance walked to reach the vine, the time taken to pick only what was ready, the weight of what was carried back, and the decision — made without anyone watching — to leave the rest. These things have no market rate. They are absorbed into a price that is set to make this sustainable, not to perform generosity or signal ethics.</p>
-            <p class="obs-body">When you pay it, you are not donating to a cause. You are paying for something that actually cost that much to make with this much care.</p>
-            <p class="obs-meta">Reference: Forest Black Pepper · Wayanad & Nilgiris · 900–1,100m</p>
-        </div>
-
-        <div class="observation">
-            <h2 class="obs-title-sentence">06 · The origin doesn't end at the farm gate.</h2>
-            <p class="obs-body">In the OurOrigin model, the person who buys a product is not downstream from the origin — they are inside it. The farmer who walked 12 kilometres made a decision. The buyer who understands why and pays what it actually cost makes a corresponding one. The origin is completed only when both decisions hold.</p>
-            <p class="obs-body">This is not loyalty or values alignment. It is the actual structure of the system. A buyer who doesn't understand what they're paying for isn't wrong — they just haven't been shown. Showing is what this site is for.</p>
-            <p class="obs-meta">Reference: All Origins</p>
-        </div>
-
-        <div class="observation">
-            <h2 class="obs-title-sentence">07 · The communities we source from possess something irreplaceable. OurOrigin didn't give them that.</h2>
-            <p class="obs-body">The knowledge of when to pick, which vine to climb, which berry to leave, which path through the forest to take at which time of year — this is expertise accumulated across generations that cannot be replicated by a process, a machine, or a programme. It exists because it was kept. The farmer walking into that forest holds something the supply chain has been obscuring for decades: the actual origin of the thing it sells.</p>
-            <p class="obs-body">OurOrigin's job is to make that visible, and to ensure that visibility translates into a market that pays for what it actually costs. The dignity was always there. It just needed a connection line.</p>
-            <p class="obs-meta">Reference: Community · All Origins</p>
-        </div>
-
-        <div class="observation">
-            <h2 class="obs-title-sentence">08 · Some years the forest gives more. Some years less. The product changes accordingly.</h2>
-            <p class="obs-body">OurOrigin does not guarantee uniform flavour, colour, or yield across seasons. The pepper from January 2026 is not identical to the pepper from January 2025 — the rainfall differed, the temperature at 1,100 metres differed, the precise moment of harvest differed. This variability is not a quality control failure. It is the proof that the product came from a real place, in a real season, made by a real decision.</p>
-            <p class="obs-body">What is consistent is the decision to leave the forest as it was found.</p>
-            <p class="obs-meta">Reference: Forest Black Pepper · Time · All Origins</p>
-        </div>
-
-        <a href="/" class="nav-link">← Back to Home</a>
+        <a href="/" class="nav-link">&larr; Return to Home</a>
     </main>
 </BaseLayout>
 
 <style>
     .page-container {
-        max-width: 800px;
+        max-width: 1200px;
         margin: 0 auto;
         padding-top: max(140px, 20vh);
-        padding-left: 5vw;
-        padding-right: 5vw;
+        padding-left: clamp(1.5rem, 5vw, 4rem);
+        padding-right: clamp(1.5rem, 5vw, 4rem);
         padding-bottom: 10vh;
         display: flex;
         flex-direction: column;
-        gap: 2rem;
+        gap: 3rem;
+        box-sizing: border-box;
     }
 
-    h1 {
+    .observations-header {
+        border-bottom: 1px solid rgba(245, 237, 216, 0.15);
+        padding-bottom: 2rem;
+        text-align: left;
+    }
+
+    .obs-section-tag {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        letter-spacing: 0.25em;
+        color: var(--color-gold);
+    }
+
+    .obs-page-title {
         font-family: var(--font-institutional);
-        font-size: 24px;
-        margin: 0 0 0.5rem 0;
+        font-size: clamp(2.5rem, 5vw, 6rem);
         font-weight: 400;
+        margin: 0.5rem 0 0 0;
         color: var(--color-warm-cream);
+        line-height: 1;
+        text-transform: uppercase;
     }
 
     .subtitle {
         font-family: var(--font-mono);
         font-size: 10px;
         text-transform: uppercase;
-        letter-spacing: 0.1em;
-        opacity: 0.4;
-        margin: 0 0 3rem 0;
-        color: var(--color-warm-cream);
+        letter-spacing: 0.15em;
+        color: rgba(245, 237, 216, 0.4);
+        margin: 0.5rem 0 0 0;
     }
 
-    .observation {
-        margin-bottom: 3rem;
-        border-left: 1px solid rgba(244, 241, 235, 0.12);
-        padding-left: 2rem;
+    /* Bento Grid */
+    .observations-bento-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+        width: 100%;
     }
 
-    .obs-title {
+    .obs-tile {
+        border: 1px solid rgba(245, 237, 216, 0.1);
+        padding: 2.2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+        background: rgba(12, 21, 9, 0.2);
+        box-sizing: border-box;
+        text-align: left;
+        transition: border-color 0.4s ease;
+    }
+
+    .obs-tile:hover {
+        border-color: rgba(245, 237, 216, 0.35);
+    }
+
+    .tile-small {
+        grid-column: span 1;
+    }
+
+    .tile-large {
+        grid-column: span 2;
+    }
+
+    .obs-number {
+        font-family: var(--font-mono);
+        font-size: var(--type-whisper);
+        color: var(--color-gold);
+        opacity: 0.6;
+        margin-bottom: 1.5rem;
+        display: block;
+    }
+
+    .tile-small .obs-tile-title {
         font-family: var(--font-mono);
         font-size: 11px;
+        letter-spacing: 0.1em;
         text-transform: uppercase;
-        letter-spacing: 0.1em;
-        font-weight: 400;
-        margin: 0 0 1rem 0;
         color: var(--color-gold);
+        margin: 0 0 1rem 0;
+        line-height: 1.4;
     }
 
-    .obs-title-sentence {
-        font-family: var(--font-mono);
-        font-size: 11px;
-        letter-spacing: 0.05em;
-        font-weight: 400;
-        margin: 0 0 1rem 0;
-        color: var(--color-gold);
-        text-transform: none;
-        line-height: 1.5;
-    }
-
-    .obs-body {
+    .tile-large .obs-tile-title {
         font-family: var(--font-display);
-        font-size: 18px;
-        line-height: 1.6;
-        margin: 0 0 1rem 0;
-        opacity: 0.9;
+        font-size: var(--type-statement);
+        font-style: italic;
         color: var(--color-warm-cream);
+        margin: 0 0 1.5rem 0;
+        line-height: 1.3;
+    }
+
+    .tile-small .obs-body {
+        font-family: var(--font-display);
+        font-size: 15px;
+        line-height: 1.5;
+        color: var(--color-warm-cream);
+        opacity: 0.85;
+        margin: 0 0 1.5rem 0;
+    }
+
+    .tile-large .obs-body {
+        font-family: var(--font-display);
+        font-size: var(--type-narrative);
+        line-height: 1.6;
+        color: var(--color-warm-cream);
+        opacity: 0.9;
+        margin: 0 0 1.5rem 0;
     }
 
     .obs-meta {
         font-family: var(--font-mono);
-        font-size: 10px;
-        text-transform: uppercase;
+        font-size: var(--type-whisper);
         letter-spacing: 0.05em;
-        opacity: 0.35;
+        color: rgba(245, 237, 216, 0.45);
         margin: 0;
-        color: var(--color-warm-cream);
     }
 
     .nav-link {
@@ -163,5 +254,28 @@ import BaseLayout from '../components/BaseLayout.astro';
 
     .nav-link:hover {
         color: var(--color-warm-cream);
+    }
+
+    @media (max-width: 1024px) {
+        .observations-bento-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        .tile-large {
+            grid-column: span 1;
+        }
+        /* Mobile padding differences */
+        .tile-large {
+            padding: 2.5rem 2rem;
+        }
+        .tile-small {
+            padding: 1.8rem 1.5rem;
+        }
+        .tile-large .obs-tile-title {
+            font-size: 22px;
+        }
+        .tile-small .obs-body {
+            font-size: 14px;
+        }
     }
 </style>

@@ -676,24 +676,43 @@ const dimensions = [
   /* Responsive / Mobile Layout */
   @media (max-width: 768px), (max-height: 600px) {
     .cipher-rail-wrapper {
-      right: 0;
-      bottom: 24px;
-      top: auto;
-      left: 0;
+      right: 24px;
+      top: 24px;
+      left: 24px;
+      bottom: auto;
       transform: none;
       justify-content: center;
-      width: 100%;
+      width: auto;
+      z-index: 9999;
     }
 
     .cipher-rail {
       flex-direction: row;
-      gap: 1.2rem;
-      background: rgba(12, 21, 9, 0.85);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      padding: 0.6rem 1.2rem;
-      border: 1px solid rgba(245, 237, 216, 0.1);
-      border-radius: 30px;
+      gap: 3px;
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 0;
+      border-radius: 0;
+    }
+
+    .cipher-glyph {
+      flex: 1;
+      height: 3px;
+      background: rgba(245, 237, 216, 0.2);
+      opacity: 1;
+      border-radius: 0;
+      transition: background-color 0.3s ease;
+    }
+
+    .cipher-glyph.active,
+    .cipher-glyph.filled-preceding {
+      background-color: var(--color-gold);
+      opacity: 1;
+    }
+
+    .cipher-icon {
+      display: none !important;
     }
 
     .cipher-label {
@@ -871,10 +890,20 @@ const dimensions = [
           if (label !== undefined && t >= label) activeStep = i;
         }
         const activeDims = STEP_DIMS[activeStep] || [];
-        document.querySelectorAll('.cipher-glyph').forEach(btn => {
+        document.querySelectorAll('.cipher-glyph').forEach((btn, idx) => {
           const dimKey = btn.getAttribute('data-dim');
           const isActive = activeDims.includes(dimKey);
           btn.classList.toggle('active', isActive);
+          
+          let isPrecedingFilled = false;
+          if (activeStep === 0 && idx <= 1) isPrecedingFilled = true;
+          else if (activeStep === 1 && idx <= 2) isPrecedingFilled = true;
+          else if (activeStep === 2 && idx <= 4) isPrecedingFilled = true;
+          else if (activeStep === 3 && idx <= 5) isPrecedingFilled = true;
+          else if (activeStep === 4 && idx <= 6) isPrecedingFilled = true;
+          
+          btn.classList.toggle('filled-preceding', isPrecedingFilled);
+
           if (isActive && isFirstVisit) {
             btn.classList.add('show-label');
           } else {

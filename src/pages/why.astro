@@ -15,10 +15,10 @@ import OriginMark from '../components/OriginMark.astro';
     <main id="main-content" class="dossier-container">
         <div class="guide-line"></div>
 
-        <div class="gsap-reveal">
+        <section class="dossier-section gsap-reveal">
             <h1 class="document-title">The Final Inch</h1>
             <p class="preamble">You are standing at the final inch of a very long journey. You are no longer just a spectator; you are inside the origin.</p>
-        </div>
+        </section>
 
         <section class="dossier-section gsap-reveal">
             <div class="decorator-mark">
@@ -160,9 +160,16 @@ import OriginMark from '../components/OriginMark.astro';
 
     /* Sections */
     .dossier-section {
-        margin-bottom: 8rem;
+        min-height: 100vh;
+        min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
         position: relative;
         padding-left: 2rem;
+        box-sizing: border-box;
+        padding-top: var(--space-4xl);
+        padding-bottom: var(--space-4xl);
     }
 
     .section-header {
@@ -225,9 +232,14 @@ import OriginMark from '../components/OriginMark.astro';
 
     .conclusion {
         text-align: center;
-        margin-top: 15vh;
-        padding-top: 5vh;
+        min-height: 100vh;
+        min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
         border-top: 1px solid rgba(244, 241, 235, 0.1);
+        box-sizing: border-box;
     }
 
     .conclusion-sig {

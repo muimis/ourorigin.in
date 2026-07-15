@@ -1,0 +1,233 @@
+---
+// src/pages/catalog.astro
+import { getCollection } from 'astro:content';
+import BaseLayout from '../components/BaseLayout.astro';
+
+const products = await getCollection('products');
+const origins = await getCollection('origins');
+
+function parseElevation(elevStr: string) {
+  const match = String(elevStr || '').match(/[\d,]+/);
+  return match ? parseInt(match[0].replace(/,/g, ''), 10) : 0;
+}
+
+const elevationById = Object.fromEntries(
+  origins.map(o => [o.id, parseElevation(o.data.elevation)])
+);
+
+function originIdOf(y: any) {
+  return typeof y.data.originSlug === 'object' ? y.data.originSlug?.id : y.data.originSlug;
+}
+
+// Descend through the Ghats, highest origin first (same sort as The Core)
+const sortedYields = [...products].sort((a, b) => {
+  const elevA = elevationById[originIdOf(a)] ?? 0;
+  const elevB = elevationById[originIdOf(b)] ?? 0;
+  if (elevB !== elevA) return elevB - elevA;
+  return (a.data.name || '').localeCompare(b.data.name || '');
+});
+---
+
+<BaseLayout
+  title="The Sourcing Index: Active Specimens — OurOrigin"
+  description="Flat database index of active specimens from the Western Ghats range. For fast direct navigation."
+  canonicalPath="/catalog"
+  ogTitle="The Sourcing Index: Active Specimens | OurOrigin"
+  ogDescription="Complete flat ledger database catalog of active spice specimens and harvests."
+  navVariant="light"
+  showFooter={true}
+>
+  <main id="main-content" class="catalog-page-container">
+    <div class="catalog-header">
+      <span class="catalog-tag">[ ARCHIVAL LEDGER INDEX ]</span>
+      <h1 class="catalog-title">The Index</h1>
+      <p class="catalog-subtitle">COMPLETE DATABASE OF ACTIVE SPECIMENS & PROVENANCES</p>
+    </div>
+
+    <div class="catalog-table-wrapper">
+      <div class="dense-table" role="table" aria-label="Specimens Flat Catalog">
+        <!-- Table Header -->
+        <div class="table-header-row" role="row">
+          <span class="col-yield" role="columnheader">NOMENCLATURE</span>
+          <span class="col-collective" role="columnheader">PROVENANCE COLLECTIVE</span>
+          <span class="col-status" role="columnheader">STATUS / COMPLIANCE</span>
+          <span class="col-action" role="columnheader">ACTION</span>
+        </div>
+
+        <!-- Table Body -->
+        {sortedYields.map((y) => {
+          const originId = originIdOf(y);
+          const originName = origins.find(o => o.id === originId)?.data.name || originId;
+          const href = `/origins/${originId}/${y.id}`;
+
+          return (
+            <a href={href} class="catalog-row-link" role="row" aria-label={`Descend into ${y.data.name}`}>
+              <div class="dense-row">
+                <span class="col-yield">
+                  <span class="yield-name">{y.data.name.toUpperCase()}</span>
+                  <span class="yield-botanical">{y.data.botanicalName.toUpperCase()}</span>
+                </span>
+                <span class="col-collective">{String(originName).toUpperCase()} COLLECTIVE</span>
+                <span class="col-status">
+                  <span class="status-badge">[ PRICE VERIFIED ]</span>
+                </span>
+                <span class="col-action">
+                  <span class="action-text">[ DESCEND ]</span>
+                </span>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .catalog-page-container {
+    padding-top: max(140px, 20vh);
+    padding-bottom: 10vh;
+    background-color: var(--color-forest-deep);
+    color: var(--color-warm-cream);
+    box-sizing: border-box;
+  }
+
+  .catalog-header {
+    max-width: 1200px;
+    margin: 0 auto 4rem auto;
+    padding: 0 clamp(1.5rem, 5vw, 4rem);
+    text-align: left;
+    border-bottom: 1px solid rgba(245, 237, 216, 0.15);
+    padding-bottom: 2rem;
+  }
+
+  .catalog-tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--color-gold);
+  }
+
+  .catalog-title {
+    font-family: var(--font-institutional);
+    font-size: clamp(2.5rem, 5vw, 6rem);
+    font-weight: 300;
+    margin: 0.5rem 0 0 0;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .catalog-subtitle {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: rgba(245, 237, 216, 0.4);
+    margin: 0.5rem 0 0 0;
+  }
+
+  /* Table Style */
+  .catalog-table-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 clamp(1.5rem, 5vw, 4rem);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .dense-table {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-width: 800px;
+    text-align: left;
+    font-family: var(--font-mono);
+  }
+
+  .table-header-row {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr 0.5fr;
+    padding: 0.8rem 1rem; /* sm padding */
+    border-bottom: 1px solid rgba(245, 237, 216, 0.3);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: rgba(245, 237, 216, 0.5);
+  }
+
+  .catalog-row-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .dense-row {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr 0.5fr;
+    padding: 1.2rem 1rem; /* sm padding */
+    border-bottom: 1px solid rgba(245, 237, 216, 0.1);
+    align-items: center;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+
+  .catalog-row-link:hover .dense-row {
+    background-color: rgba(245, 237, 216, 0.02);
+    border-bottom-color: var(--color-gold);
+  }
+
+  .col-yield {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .yield-name {
+    font-size: var(--type-evidence);
+    letter-spacing: 0.05em;
+    color: var(--color-warm-cream);
+  }
+
+  .yield-botanical {
+    font-size: 10px;
+    color: rgba(245, 237, 216, 0.45);
+    font-style: italic;
+  }
+
+  .col-collective {
+    font-size: var(--type-evidence);
+    letter-spacing: 0.05em;
+    color: var(--color-warm-cream);
+  }
+
+  .col-status {
+    font-size: var(--type-evidence);
+    letter-spacing: 0.05em;
+  }
+
+  .status-badge {
+    color: var(--color-gold);
+  }
+
+  .col-action {
+    font-size: var(--type-evidence);
+    letter-spacing: 0.15em;
+    text-align: right;
+  }
+
+  .action-text {
+    color: rgba(245, 237, 216, 0.5);
+    transition: color 0.3s ease;
+  }
+
+  .catalog-row-link:hover .action-text {
+    color: var(--color-gold);
+  }
+
+  @media (max-width: 768px) {
+    .table-header-row, .dense-row {
+      grid-template-columns: 1.2fr 1fr;
+      gap: 1rem;
+    }
+    .col-status, .col-action {
+      display: none;
+    }
+  }
+</style>

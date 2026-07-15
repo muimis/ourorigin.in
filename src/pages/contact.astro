@@ -35,8 +35,8 @@ const formattedPhone = '+91 96455 55668';
         max-width: 600px;
         margin: 0 auto;
         padding-top: max(140px, 20vh);
-        padding-left: 5vw;
-        padding-right: 5vw;
+        padding-left: clamp(1.5rem, 5vw, 4rem);
+        padding-right: clamp(1.5rem, 5vw, 4rem);
         padding-bottom: 10vh;
         display: flex;
         flex-direction: column;
@@ -44,52 +44,55 @@ const formattedPhone = '+91 96455 55668';
 
     h1 {
         font-family: var(--font-institutional);
-        font-size: 24px;
-        margin: 0 0 1rem 0;
+        font-size: var(--type-display);
+        margin: 0 0 var(--space-xl) 0;
         font-weight: 400;
         color: var(--color-warm-cream);
+        text-transform: uppercase;
+        line-height: var(--line-height-tight);
     }
 
     .contact-details p {
         font-family: var(--font-display);
-        font-size: 20px;
-        line-height: 1.6;
-        margin: 0 0 2rem 0;
+        font-size: var(--type-narrative);
+        line-height: var(--line-height-loose);
+        margin: 0 0 var(--space-2xl) 0;
         opacity: 0.9;
         color: var(--color-warm-cream);
     }
 
     .contact-link {
         font-family: var(--font-mono);
-        font-size: 14px;
+        font-size: var(--type-evidence);
         color: var(--color-warm-cream);
         text-decoration: none;
         display: block;
-        margin-bottom: 1rem;
+        margin-bottom: var(--space-md);
         opacity: 0.6;
         transition: opacity 0.3s ease;
     }
 
     .contact-link:hover {
         opacity: 1;
+        color: var(--color-gold);
     }
 
     .contact-gifting {
         font-family: var(--font-mono);
-        font-size: 0.75rem;
+        font-size: var(--type-whisper);
         color: rgba(245, 237, 216, 0.4);
-        margin-top: 3rem;
+        margin-top: var(--space-3xl);
         letter-spacing: 0.05em;
-        line-height: 1.5;
+        line-height: var(--line-height-base);
     }
 
     .nav-link {
         font-family: var(--font-mono);
-        font-size: 0.75rem;
+        font-size: var(--type-whisper);
         color: rgba(245, 237, 216, 0.5);
         text-decoration: none;
         letter-spacing: 0.05em;
-        margin-top: 3rem;
+        margin-top: var(--space-3xl);
         display: inline-block;
         transition: color 0.3s ease;
         align-self: flex-start;
