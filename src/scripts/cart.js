@@ -94,11 +94,14 @@ if (typeof window !== 'undefined') {
   window.addEventListener('add-to-ledger', (e) => {
     cartState.addItem({
       id: e.detail.id || e.detail.productId,
+      productId: e.detail.productId || e.detail.id,
       name: e.detail.name,
       origin: e.detail.origin,
+      originId: e.detail.originId,
       price: e.detail.price,
       weight: e.detail.size || e.detail.weight,
-      quantity: 1
+      size: e.detail.size || e.detail.weight,
+      quantity: e.detail.quantity || 1
     });
   });
 }

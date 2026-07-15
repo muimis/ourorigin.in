@@ -550,32 +550,28 @@ sortedOrigins.forEach(origin => {
     color: var(--color-warm-cream);
   }
 
-  /* Mobile Snap Scroll */
+  /* Mobile Stacking Accordion */
   @media (max-width: 768px) {
     .origins-accordion {
-      flex-direction: row;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      padding-bottom: 1.5rem;
-      -webkit-overflow-scrolling: touch;
+      flex-direction: column;
       gap: 1rem;
+      padding-bottom: 0;
     }
 
     .origin-node {
-      flex: 0 0 85vw;
-      scroll-snap-align: start;
+      width: 100%;
     }
 
     .origin-products-panel {
       grid-template-rows: 0fr !important;
       border-top-color: transparent !important;
-      position: absolute;
-      left: clamp(1.5rem, 5vw, 4rem);
-      right: clamp(1.5rem, 5vw, 4rem);
-      background: var(--color-forest-deep);
-      z-index: 10;
-      border: 1px solid rgba(245, 237, 216, 0.1);
-      margin-top: 10px;
+      position: relative;
+      left: 0;
+      right: 0;
+      background: transparent;
+      z-index: 5;
+      border: none;
+      margin-top: 0;
     }
 
     .origin-node.active .origin-products-panel {
@@ -588,7 +584,11 @@ sortedOrigins.forEach(origin => {
     }
 
     .origin-node.active .panel-inner-container {
-      padding: 1.5rem !important;
+      padding: 1rem 0 !important;
+    }
+
+    .product-stream-card {
+      flex: 0 0 82vw; /* Snap nicely on mobile widths */
     }
   }
 </style>
@@ -631,7 +631,7 @@ sortedOrigins.forEach(origin => {
 
           // Scroll target expanded origin into viewport smoothly on mobile
           if (window.innerWidth <= 768) {
-            node.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+            node.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }
         }
       });

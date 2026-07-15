@@ -33,7 +33,7 @@ const companionsJson = JSON.stringify(companionProductsMap);
 </div>
 
 <!-- Slide-up Panel -->
-<div id="ledger-overlay" class="ledger-overlay hidden">
+<div id="ledger-overlay" class="ledger-overlay hidden" data-whatsapp={WHATSAPP_NUMBER} data-companions={companionsJson}>
   <div class="ledger-backdrop" id="ledger-close-backdrop"></div>
   <div class="ledger-panel" role="complementary" aria-label="Your Ledger">
     <div class="ledger-header">
@@ -138,13 +138,18 @@ const companionsJson = JSON.stringify(companionProductsMap);
   </div>
 </div>
 
-<script define:vars={{ companionsJson, WHATSAPP_NUMBER }}>
-  const companionsMap = JSON.parse(companionsJson);
-  
+<script>
+  import { cartState } from '../scripts/cart.js';
+
   document.addEventListener('DOMContentLoaded', () => {
+    const overlay = document.getElementById('ledger-overlay');
+    if (!overlay) return;
+
+    const whatsappNumber = overlay.getAttribute('data-whatsapp') || '';
+    const companionsMap = JSON.parse(overlay.getAttribute('data-companions') || '{}');
+
     const trigger = document.getElementById('ledger-trigger');
     const countDisplay = document.getElementById('ledger-count');
-    const overlay = document.getElementById('ledger-overlay');
     const closeBtn = document.getElementById('ledger-close-btn');
     const backdrop = document.getElementById('ledger-close-backdrop');
     const itemsContainer = document.getElementById('ledger-items-container');
@@ -155,47 +160,47 @@ const companionsJson = JSON.stringify(companionProductsMap);
     const discoveryText = document.getElementById('discovery-text');
     const connectBtn = document.getElementById('ledger-connect-btn');
     const toast = document.getElementById('ledger-toast');
-    const shippingForm = document.getElementById('shipping-form');
+    const shippingForm = document.getElementById('shipping-form') as HTMLFormElement;
     const savedNote = document.getElementById('shipping-saved-note');
     const clearBtn = document.getElementById('clear-shipping-btn');
     const copyUpiBtn = document.getElementById('copy-upi-btn');
     
-    let ledgerItems = JSON.parse(localStorage.getItem('ourorigin_cart') || '[]');
-    
     // Load shipping details
     const savedShipping = localStorage.getItem('ourorigin_shipping_v1');
-    if (savedShipping) {
+    if (savedShipping && shippingForm) {
       try {
         const data = JSON.parse(savedShipping);
         Object.keys(data).forEach(key => {
-          const el = shippingForm.elements[key];
+          const el = shippingForm.elements[key] as HTMLInputElement;
           if (el) el.value = data[key];
         });
-        savedNote.classList.remove('hidden');
-        clearBtn.classList.remove('hidden');
+        if (savedNote) savedNote.classList.remove('hidden');
+        if (clearBtn) clearBtn.classList.remove('hidden');
       } catch (e) {}
     }
     
-    clearBtn.addEventListener('click', () => {
-      shippingForm.reset();
-      localStorage.removeItem('ourorigin_shipping_v1');
-      savedNote.classList.add('hidden');
-      clearBtn.classList.add('hidden');
-    });
-
-    copyUpiBtn.addEventListener('click', () => {
-      const upiText = document.getElementById('upi-text').textContent;
-      navigator.clipboard.writeText(upiText).then(() => {
-        const originalText = copyUpiBtn.textContent;
-        copyUpiBtn.textContent = 'Copied.';
-        setTimeout(() => copyUpiBtn.textContent = originalText, 1500);
+    if (clearBtn && shippingForm) {
+      clearBtn.addEventListener('click', () => {
+        shippingForm.reset();
+        localStorage.removeItem('ourorigin_shipping_v1');
+        if (savedNote) savedNote.classList.add('hidden');
+        clearBtn.classList.add('hidden');
       });
-    });
+    }
+
+    if (copyUpiBtn) {
+      copyUpiBtn.addEventListener('click', () => {
+        const upiText = document.getElementById('upi-text')?.textContent || '';
+        navigator.clipboard.writeText(upiText).then(() => {
+          const originalText = copyUpiBtn.textContent;
+          copyUpiBtn.textContent = 'Copied.';
+          setTimeout(() => copyUpiBtn.textContent = originalText, 1500);
+        });
+      });
+    }
     
-    function updateTrigger() {
-      const count = ledgerItems.reduce((acc, item) => acc + item.quantity, 0);
-      
-      // Update the Ledger trigger
+    function updateTrigger(count) {
+      if (!trigger || !countDisplay) return;
       if (count > 0) {
         countDisplay.textContent = count;
         trigger.classList.remove('hidden');
@@ -212,14 +217,9 @@ const companionsJson = JSON.stringify(companionProductsMap);
       
       const depthBasket = document.getElementById('depth-basket-trigger');
       if (depthBasket) {
-        if (count > 0) {
-          depthBasket.style.display = 'block';
-        } else {
-          depthBasket.style.display = 'none';
-        }
+        depthBasket.style.display = count > 0 ? 'block' : 'none';
       }
       
-      // Update the yields triggers to act as invitations when basket is empty
       const depthYields = document.getElementById('depth-yields-trigger');
       if (depthYields) {
         depthYields.textContent = count > 0 ? '[ ALL YIELDS ]' : '[ EXPLORE YIELDS ]';
@@ -230,26 +230,11 @@ const companionsJson = JSON.stringify(companionProductsMap);
       }
     }
     
-    function saveAndRender() {
-      localStorage.setItem('ourorigin_cart', JSON.stringify(ledgerItems));
-      updateTrigger();
-      renderItems();
-
-      // Broadcast cart update to CommandCenter & other components
-      const event = new CustomEvent('cart-updated', {
-        detail: {
-          items: ledgerItems,
-          totalItems: ledgerItems.reduce((sum, item) => sum + item.quantity, 0),
-          totalPrice: ledgerItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-        }
-      });
-      window.dispatchEvent(event);
-    }
-    
-    function renderItems() {
+    function renderItems(items) {
+      if (!itemsContainer || !emptyState || !footer || !discoverySection) return;
       itemsContainer.innerHTML = '';
       
-      if (ledgerItems.length === 0) {
+      if (!items || items.length === 0) {
         emptyState.classList.remove('hidden');
         footer.classList.add('hidden');
         discoverySection.classList.add('hidden');
@@ -260,10 +245,10 @@ const companionsJson = JSON.stringify(companionProductsMap);
       footer.classList.remove('hidden');
       
       let total = 0;
-      let originsInLedger = new Set();
+      let originsInLedger = new Set<{id: string, name: string}>();
       let summaryHtml = '';
       
-      ledgerItems.forEach(item => {
+      items.forEach(item => {
         const lineTotal = item.price * item.quantity;
         total += lineTotal;
         originsInLedger.add({id: item.originId, name: item.origin});
@@ -278,7 +263,7 @@ const companionsJson = JSON.stringify(companionProductsMap);
               <span class="qty-val price-font">${item.quantity}</span>
               <button class="qty-btn inc" data-id="${item.id}" aria-label="Increase quantity of ${item.name}">+</button>
             </div>
-            <span class="item-size">${item.size} · ₹${item.price}</span>
+            <span class="item-size">${item.size || item.weight} · ₹${item.price}</span>
             <span class="item-line-total price-font">${item.quantity} &times; ₹${item.price} = ₹${lineTotal}</span>
           </div>
         `;
@@ -286,13 +271,14 @@ const companionsJson = JSON.stringify(companionProductsMap);
         
         summaryHtml += `
           <div class="summary-item-row">
-            <span>${item.name} (${item.size}) &times; ${item.quantity}</span>
+            <span>${item.name} (${item.size || item.weight}) &times; ${item.quantity}</span>
             <span>₹${lineTotal}</span>
           </div>
         `;
       });
       
-      document.getElementById('ledger-subtotal-price').textContent = `₹${total}`;
+      const subtotalPriceEl = document.getElementById('ledger-subtotal-price');
+      if (subtotalPriceEl) subtotalPriceEl.textContent = `₹${total}`;
       
       // Update Invoice Summary
       const summaryItems = document.getElementById('summary-items');
@@ -301,10 +287,10 @@ const companionsJson = JSON.stringify(companionProductsMap);
       const summaryTot = document.getElementById('summary-total');
       const shipNote = document.getElementById('shipping-prompt-note');
       
-      summaryItems.innerHTML = summaryHtml;
-      summarySub.textContent = `₹${total}`;
+      if (summaryItems) summaryItems.innerHTML = summaryHtml;
+      if (summarySub) summarySub.textContent = `₹${total}`;
       
-      const cityVal = (shippingForm.elements['city']?.value || '').toLowerCase();
+      const cityVal = ((shippingForm?.elements['city'] as HTMLInputElement)?.value || '').toLowerCase();
       const isLocal = cityVal.includes('thiruvananthapuram') || cityVal.includes('trivandrum');
       
       let shippingCost = 0;
@@ -312,42 +298,35 @@ const companionsJson = JSON.stringify(companionProductsMap);
       
       if (isLocal) {
         shippingText = 'Free — local delivery';
-        shipNote.classList.add('hidden');
+        if (shipNote) shipNote.classList.add('hidden');
       } else if (total < 399) {
         shippingCost = 60;
         shippingText = `₹${shippingCost}`;
-        shipNote.textContent = `Add ₹${399 - total} more for free shipping.`;
-        shipNote.classList.remove('hidden');
+        if (shipNote) {
+          shipNote.textContent = `Add ₹${399 - total} more for free shipping.`;
+          shipNote.classList.remove('hidden');
+        }
       } else {
         shippingText = 'Free';
-        shipNote.classList.add('hidden');
+        if (shipNote) shipNote.classList.add('hidden');
       }
       
-      summaryShip.textContent = shippingText;
-      summaryTot.textContent = `₹${total + shippingCost}`;
+      if (summaryShip) summaryShip.textContent = shippingText;
+      if (summaryTot) summaryTot.textContent = `₹${total + shippingCost}`;
       
-      // We attach shipping cost to the form element so checkout logic can read it
-      shippingForm.setAttribute('data-shipping-cost', shippingCost.toString());
-      shippingForm.setAttribute('data-shipping-text', shippingText);
-      shippingForm.setAttribute('data-total', (total + shippingCost).toString());
+      if (shippingForm) {
+        shippingForm.setAttribute('data-shipping-cost', shippingCost.toString());
+        shippingForm.setAttribute('data-shipping-text', shippingText);
+        shippingForm.setAttribute('data-total', (total + shippingCost).toString());
+      }
       
       // Wire up qty buttons
       document.querySelectorAll('.qty-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
-          const id = e.target.getAttribute('data-id');
-          const isInc = e.target.classList.contains('inc');
-          
-          const index = ledgerItems.findIndex(i => i.id === id);
-          if (index !== -1) {
-            if (isInc) {
-              ledgerItems[index].quantity++;
-            } else {
-              ledgerItems[index].quantity--;
-              if (ledgerItems[index].quantity <= 0) {
-                ledgerItems.splice(index, 1);
-              }
-            }
-            saveAndRender();
+          const id = (e.target as HTMLElement).getAttribute('data-id');
+          const isInc = (e.target as HTMLElement).classList.contains('inc');
+          if (id) {
+            cartState.updateQuantity(id, isInc ? 1 : -1);
           }
         });
       });
@@ -360,28 +339,24 @@ const companionsJson = JSON.stringify(companionProductsMap);
       uniqueOriginsMap.forEach((originName, originId) => {
         const companions = companionsMap[originId];
         if (companions && companions.length > 0) {
-          // Filter out companions that are already in the ledger
-          const availableCompanions = companions.filter(c => !ledgerItems.some(i => i.productId === c.id));
-          
+          const availableCompanions = companions.filter(c => !items.some(i => i.productId === c.id));
           if (availableCompanions.length > 0) {
             const linksHtml = availableCompanions.map(c => 
               `<a href="#" class="discovery-link" data-origin="${originId}" data-product="${c.id}" aria-label="Browse more yields from ${originName}">${c.name}</a>`
             ).join(', ');
-            
             discoveryHtmlChunks.push(`Also from ${originName}: ${linksHtml}`);
           }
         }
       });
       
-      if (discoveryHtmlChunks.length > 0) {
+      if (discoveryHtmlChunks.length > 0 && discoveryText) {
         discoveryText.innerHTML = discoveryHtmlChunks.join('<br>');
         discoverySection.classList.remove('hidden');
         
-        // Wire up discovery links
         document.querySelectorAll('.discovery-link').forEach(link => {
           link.addEventListener('click', (e) => {
             e.preventDefault();
-            const originId = e.target.getAttribute('data-origin');
+            const originId = (e.target as HTMLElement).getAttribute('data-origin');
             closeLedger();
             window.dispatchEvent(new CustomEvent('open-carousel', { detail: { originId: originId, excludeAnchor: true } }));
           });
@@ -394,137 +369,141 @@ const companionsJson = JSON.stringify(companionProductsMap);
     // Re-render when shipping city changes to update shipping logic instantly
     const cityInput = document.getElementById('ship-city');
     if (cityInput) {
-      cityInput.addEventListener('input', renderItems);
+      cityInput.addEventListener('input', () => renderItems(cartState.items));
     }
     
     // Connection logic
-    connectBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      
-      if (ledgerItems.length === 0) return;
-      
-      // Native HTML5 Validation
-      if (!shippingForm.checkValidity()) {
-        shippingForm.reportValidity();
-        return;
-      }
-      
-      const formData = new FormData(shippingForm);
-      const data = Object.fromEntries(formData.entries());
-      localStorage.setItem('ourorigin_shipping_v1', JSON.stringify(data));
-      savedNote.classList.remove('hidden');
-      clearBtn.classList.remove('hidden');
+    if (connectBtn) {
+      connectBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        
+        if (cartState.items.length === 0) return;
+        
+        if (shippingForm && !shippingForm.checkValidity()) {
+          shippingForm.reportValidity();
+          return;
+        }
+        
+        const formData = new FormData(shippingForm);
+        const data = Object.fromEntries(formData.entries());
+        localStorage.setItem('ourorigin_shipping_v1', JSON.stringify(data));
+        if (savedNote) savedNote.classList.remove('hidden');
+        if (clearBtn) clearBtn.classList.remove('hidden');
 
-      const shippingCost = parseInt(shippingForm.getAttribute('data-shipping-cost') || '0', 10);
-      const shippingText = shippingForm.getAttribute('data-shipping-text') || 'Free';
-      const orderTotal = shippingForm.getAttribute('data-total') || '0';
+        const shippingCost = parseInt(shippingForm?.getAttribute('data-shipping-cost') || '0', 10);
+        const shippingText = shippingForm?.getAttribute('data-shipping-text') || 'Free';
+        const orderTotal = shippingForm?.getAttribute('data-total') || '0';
 
-      let currentOrderMessage = '';
+        let currentOrderMessage = '';
 
-      if (ledgerItems.length === 1 && ledgerItems[0].quantity === 1) {
-        const item = ledgerItems[0];
-        currentOrderMessage = `Hi — I'd like to order ${item.name} (${item.size}) from OurOrigin.\nTotal: ₹${orderTotal}. Shipping: ${shippingText}.\n\nName: ${data.name}\nAddress: ${data.house}, ${data.street}, ${data.city}, ${data.state} – ${data.pin}\nPhone: ${data.phone}\n\nFound you at ourorigin.in.`;
-      } else {
-        currentOrderMessage = `Hi — I'd like to order the following from OurOrigin.\n\n`;
-        ledgerItems.forEach(item => {
-          currentOrderMessage += `– ${item.name} (${item.size}) × ${item.quantity} · ₹${item.price * item.quantity}\n`;
-        });
-        currentOrderMessage += `\nTotal: ₹${orderTotal}\nShipping: ${shippingText}\n\nName: ${data.name}\nAddress: ${data.house}, ${data.street}, ${data.city}, ${data.state} – ${data.pin}\nPhone: ${data.phone}\n\nFound you at ourorigin.in.`;
-      }
-      
-      const encodedMessage = encodeURIComponent(currentOrderMessage);
-      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`, '_blank');
-      
-      // Post-checkout state (Gap 4)
-      itemsContainer.classList.add('hidden');
-      footer.classList.add('hidden');
-      discoverySection.classList.add('hidden');
-      const postCheckout = document.getElementById('ledger-post-checkout');
-      postCheckout.classList.remove('hidden');
-      
-      setTimeout(() => {
-        document.getElementById('post-reinvite').classList.remove('hidden');
-      }, 1500);
-
-      // Wire up copy button click
-      const copyOrderBtn = document.getElementById('copy-order-details-btn');
-      if (copyOrderBtn) {
-        copyOrderBtn.addEventListener('click', () => {
-          navigator.clipboard.writeText(currentOrderMessage).then(() => {
-            const originalText = copyOrderBtn.textContent;
-            copyOrderBtn.textContent = '[ COPIED TO CLIPBOARD ]';
-            setTimeout(() => {
-              copyOrderBtn.textContent = originalText;
-            }, 1500);
+        if (cartState.items.length === 1 && cartState.items[0].quantity === 1) {
+          const item = cartState.items[0];
+          currentOrderMessage = `Hi — I'd like to order ${item.name} (${item.size || item.weight}) from OurOrigin.\nTotal: ₹${orderTotal}. Shipping: ${shippingText}.\n\nName: ${data.name}\nAddress: ${data.house}, ${data.street}, ${data.city}, ${data.state} – ${data.pin}\nPhone: ${data.phone}\n\nFound you at ourorigin.in.`;
+        } else {
+          currentOrderMessage = `Hi — I'd like to order the following from OurOrigin.\n\n`;
+          cartState.items.forEach(item => {
+            currentOrderMessage += `– ${item.name} (${item.size || item.weight}) × ${item.quantity} · ₹${item.price * item.quantity}\n`;
           });
-        });
-      }
-      
-      // Clear cart
-      localStorage.removeItem('ourorigin_cart');
-      ledgerItems = [];
-      updateTrigger();
-      
-      // Close after 15s to give the user enough time to copy order details manually if needed
-      setTimeout(() => {
-        closeLedger();
-        // Reset DOM for future opens
+          currentOrderMessage += `\nTotal: ₹${orderTotal}\nShipping: ${shippingText}\n\nName: ${data.name}\nAddress: ${data.house}, ${data.street}, ${data.city}, ${data.state} – ${data.pin}\nPhone: ${data.phone}\n\nFound you at ourorigin.in.`;
+        }
+        
+        const encodedMessage = encodeURIComponent(currentOrderMessage);
+        window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, '_blank');
+        
+        if (itemsContainer) itemsContainer.classList.add('hidden');
+        if (footer) footer.classList.add('hidden');
+        if (discoverySection) discoverySection.classList.add('hidden');
+        const postCheckout = document.getElementById('ledger-post-checkout');
+        if (postCheckout) postCheckout.classList.remove('hidden');
+        
         setTimeout(() => {
-          postCheckout.classList.add('hidden');
-          itemsContainer.classList.remove('hidden');
-          document.getElementById('post-reinvite').classList.add('hidden');
-        }, 500);
-      }, 15000);
-    });
+          const reinvite = document.getElementById('post-reinvite');
+          if (reinvite) reinvite.classList.remove('hidden');
+        }, 1500);
+
+        const copyOrderBtn = document.getElementById('copy-order-details-btn');
+        if (copyOrderBtn) {
+          copyOrderBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(currentOrderMessage).then(() => {
+              const originalText = copyOrderBtn.textContent;
+              copyOrderBtn.textContent = '[ COPIED TO CLIPBOARD ]';
+              setTimeout(() => {
+                copyOrderBtn.textContent = originalText;
+              }, 1500);
+            });
+          });
+        }
+        
+        // Clear cart
+        cartState.clear();
+        
+        // Close after 15s to give the user enough time to copy order details manually if needed
+        setTimeout(() => {
+          closeLedger();
+          setTimeout(() => {
+            if (postCheckout) postCheckout.classList.add('hidden');
+            if (itemsContainer) itemsContainer.classList.remove('hidden');
+            const reinvite = document.getElementById('post-reinvite');
+            if (reinvite) reinvite.classList.add('hidden');
+          }, 500);
+        }, 15000);
+      });
+    }
     
-    // Listen to add events
-    window.addEventListener('add-to-ledger', (e) => {
-      const item = e.detail;
-      const existingItem = ledgerItems.find(i => i.id === item.id);
+    // Listen to cart-updated broadcasts from cartState
+    window.addEventListener('cart-updated', (e: any) => {
+      const { items, totalItems } = e.detail;
+      updateTrigger(totalItems);
+      renderItems(items);
       
-      if (existingItem) {
-        existingItem.quantity += item.quantity;
-      } else {
-        ledgerItems.push(item);
+      // Pulse trigger on add
+      if (trigger && totalItems > 0) {
+        trigger.classList.add('pulse-anim');
+        setTimeout(() => {
+          trigger.classList.remove('pulse-anim');
+        }, 500);
       }
-      
-      saveAndRender();
 
-      // Show toast
-      toast.classList.remove('hidden');
-      toast.classList.add('visible');
-      setTimeout(() => {
-        toast.classList.remove('visible');
-        setTimeout(() => toast.classList.add('hidden'), 300);
-      }, 2500);
-
-      // Pulse trigger
-      trigger.classList.add('pulse-anim');
-      setTimeout(() => {
-        trigger.classList.remove('pulse-anim');
-      }, 500);
+      // Show toast if an item was added (we detect if totalItems increased)
+      const prevTotal = parseInt(trigger?.getAttribute('data-prev-total') || '0', 10);
+      if (totalItems > prevTotal && prevTotal >= 0) {
+        if (toast) {
+          toast.classList.remove('hidden');
+          toast.classList.add('visible');
+          setTimeout(() => {
+            toast.classList.remove('visible');
+            setTimeout(() => toast.classList.add('hidden'), 300);
+          }, 2500);
+        }
+      }
+      trigger?.setAttribute('data-prev-total', totalItems.toString());
     });
     
     const openLedger = () => {
-      renderItems();
-      overlay.classList.remove('hidden');
+      renderItems(cartState.items);
+      if (overlay) overlay.classList.remove('hidden');
     };
     
     const closeLedger = () => {
-      overlay.classList.add('hidden');
+      if (overlay) overlay.classList.add('hidden');
     };
     
-    trigger.addEventListener('click', openLedger);
-    closeBtn.addEventListener('click', closeLedger);
-    backdrop.addEventListener('click', closeLedger);
+    if (trigger) trigger.addEventListener('click', openLedger);
+    if (closeBtn) closeBtn.addEventListener('click', closeLedger);
+    if (backdrop) backdrop.addEventListener('click', closeLedger);
     
     const triggerDossier = document.getElementById('trigger-dossier');
     if (triggerDossier) {
       triggerDossier.addEventListener('click', openLedger);
     }
+
+    // Global listeners for direct open-cart/close-cart calls
+    window.addEventListener('open-cart', openLedger);
+    window.addEventListener('close-cart', closeLedger);
+    window.addEventListener('trigger-dossier', openLedger);
     
-    // Initial render
-    updateTrigger();
+    // Initial sync
+    updateTrigger(cartState.getTotalItems());
   });
 </script>
 

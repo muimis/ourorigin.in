@@ -99,9 +99,34 @@ const dimensions = [
       [ ENTER ]
     </button>
   </div>
+
+  <!-- Skip Button -->
+  <button id="skip-intro-btn" class="skip-intro-button" aria-label="Skip Intro">
+    [ SKIP INTRO ]
+  </button>
 </div>
 
 <style>
+  .skip-intro-button {
+    position: absolute;
+    bottom: 40px;
+    right: 24px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: rgba(245, 237, 216, 0.4);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 100;
+    transition: color 0.3s ease;
+    padding: 10px;
+  }
+
+  .skip-intro-button:hover {
+    color: var(--color-gold);
+  }
+
   .opening-sequence-container {
     position: fixed;
     inset: 0;
@@ -353,6 +378,7 @@ const dimensions = [
     const progressSegments = Array.from(document.querySelectorAll('.progress-segment')) as HTMLElement[];
     const resolutionSlide = document.querySelector('.resolution-slide') as HTMLElement;
     const enterBtn = document.getElementById('enter-btn');
+    const skipBtn = document.getElementById('skip-intro-btn');
 
     if (!slideContainer || slides.length === 0 || !resolutionSlide || !enterBtn) return;
 
@@ -434,9 +460,11 @@ const dimensions = [
             advance();
           }, beatDuration);
         }
+        if (skipBtn) skipBtn.style.display = 'block';
       } else {
         // Show Resolution Beat
         resolutionSlide.classList.add('active');
+        if (skipBtn) skipBtn.style.display = 'none';
         progressSegments.forEach(seg => {
           const fill = seg.querySelector('.progress-segment-fill') as HTMLElement;
           if (fill) fill.style.width = '100%';
@@ -449,6 +477,14 @@ const dimensions = [
         activeIndex++;
         renderSlide(activeIndex);
       }
+    }
+
+    if (skipBtn) {
+      skipBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        activeIndex = 7;
+        renderSlide(7);
+      });
     }
 
     // Tap to advance anywhere
