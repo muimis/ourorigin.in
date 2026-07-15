@@ -17,5 +17,14 @@
   "specimenCopy": "Mace is not a separate plant from nutmeg. It's the lace-like covering wrapped around the nutmeg seed inside its fruit. One tree. One harvest. Two spices. Most people who have cooked with both have never noticed.",
   "images": {
     "packaging": "/assets/products/clove.png"
+  },
+  "sensoryProfile": {
+    "aroma": "Nutmeg blossom, sweet orange peel, wood resin",
+    "flavor": "Warm, delicate woody-floral spice, subtler than nutmeg seed",
+    "appearance": "Dried, lace-like reddish-orange arils"
+  },
+  "chemistry": {
+    "activeCompound": "Myristicin: 1.4%",
+    "moistureContent": "Moisture: 10.0%"
   }
 }

@@ -17,5 +17,14 @@
   "specimenCopy": "Grown in the same terraces as tea — often within sight of each other, two crops that ask for almost the same altitude and shade. Processed simply. Few interventions.",
   "images": {
     "packaging": "/assets/products/tea.png"
+  },
+  "sensoryProfile": {
+    "aroma": "Roasted cacao, damp soil, molasses",
+    "flavor": "Deep dark chocolate, caramelized stone fruit, low acidity",
+    "appearance": "Medium-roasted, uniform arabica beans with satin oil finish"
+  },
+  "chemistry": {
+    "activeCompound": "Caffeine: 1.2%",
+    "moistureContent": "Moisture: 11.0%"
   }
 }

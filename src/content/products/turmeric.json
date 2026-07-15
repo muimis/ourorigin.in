@@ -17,5 +17,14 @@
   "specimenCopy": "A root lifted from the soil, boiled briefly, then sun-dried for days. The drying concentrates it. What you use in the kitchen is not fresh turmeric aged — it's a different material, transformed on purpose.",
   "images": {
     "packaging": "/assets/products/black-pepper.png"
+  },
+  "sensoryProfile": {
+    "aroma": "Earthy ginger, orange peel, warm wood dust",
+    "flavor": "Warm bitter-spice, citrusy-woody undertones, lingering dry finish",
+    "appearance": "Deep, golden-orange fine powder"
+  },
+  "chemistry": {
+    "activeCompound": "Curcumin: 6.4%",
+    "moistureContent": "Moisture: 9.0%"
   }
 }

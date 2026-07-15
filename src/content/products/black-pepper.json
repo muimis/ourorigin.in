@@ -28,5 +28,14 @@
   "offeringCopy": "If you've read this far, you already know more about this pepper than its label could tell you.",
   "images": {
     "packaging": "/assets/products/black-pepper.png"
+  },
+  "sensoryProfile": {
+    "aroma": "Sharp wood smoke, crushed pine needle, citrus oil",
+    "flavor": "Direct, searing heat with slow-blooming notes of resin and dried tea",
+    "appearance": "Deep purple-black, heavily wrinkled, dense uniform berries"
+  },
+  "chemistry": {
+    "activeCompound": "Piperine: 5.8%",
+    "moistureContent": "Moisture: 10.2%"
   }
 }

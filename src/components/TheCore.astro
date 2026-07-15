@@ -115,6 +115,18 @@ sortedOrigins.forEach(origin => {
                           <h4 class="product-card-title">{p.data.name}</h4>
                           <span class="product-card-botanical">{p.data.botanicalName}</span>
                           <span class="product-card-price">{priceRange}</span>
+                          {p.data.sensoryProfile && (
+                            <div class="product-card-sensory">
+                              <div class="sensory-item">
+                                <span class="sensory-label">AROMA</span>
+                                <span class="sensory-value">{p.data.sensoryProfile.aroma}</span>
+                              </div>
+                              <div class="sensory-item">
+                                <span class="sensory-label">FLAVOR</span>
+                                <span class="sensory-value">{p.data.sensoryProfile.flavor}</span>
+                              </div>
+                            </div>
+                          )}
                         </div>
                         <div class="product-card-actions">
                           <button class="core-product-add-btn" data-product={productDataString}>
@@ -387,7 +399,7 @@ sortedOrigins.forEach(origin => {
 
   /* Product Card */
   .product-stream-card {
-    flex: 0 0 280px;
+    flex: 0 0 320px;
     border: 1px solid rgba(245, 237, 216, 0.08);
     background: rgba(12, 21, 9, 0.3);
     padding: 1.5rem;
@@ -398,6 +410,45 @@ sortedOrigins.forEach(origin => {
     scroll-snap-align: start;
     box-sizing: border-box;
     text-align: left;
+    transition: transform 0.4s var(--ease-settle), border-color 0.4s ease, box-shadow 0.4s ease;
+  }
+
+  .product-stream-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(245, 237, 216, 0.25);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  }
+
+  .product-card-sensory {
+    margin-top: 0.8rem;
+    padding-top: 0.8rem;
+    border-top: 1px dashed rgba(245, 237, 216, 0.12);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .sensory-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .sensory-label {
+    font-family: var(--font-mono);
+    font-size: 8px;
+    letter-spacing: 0.15em;
+    color: var(--color-gold);
+    opacity: 0.6;
+    text-transform: uppercase;
+  }
+
+  .sensory-value {
+    font-family: var(--font-display);
+    font-size: 11px;
+    line-height: 1.4;
+    color: var(--color-warm-cream);
+    opacity: 0.8;
   }
 
   .product-card-visual {

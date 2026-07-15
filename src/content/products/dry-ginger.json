@@ -18,5 +18,14 @@
   "offeringCopy": "From the flatlands at the edge of the Western Ghats.",
   "images": {
     "packaging": "/assets/products/black-pepper.png"
+  },
+  "sensoryProfile": {
+    "aroma": "Earthy, warm ginger oil, pungent citrus zest",
+    "flavor": "Sharp, radiating spice, sweet herbal undertones, intense heat",
+    "appearance": "Fibrous, sun-bleached beige rhizomes"
+  },
+  "chemistry": {
+    "activeCompound": "Gingerol: 2.1%",
+    "moistureContent": "Moisture: 9.8%"
   }
 }

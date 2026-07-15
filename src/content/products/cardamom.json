@@ -18,5 +18,14 @@
   "offeringCopy": "From the hills named for it. Nowhere else grows this quite the same way.",
   "images": {
     "packaging": "/assets/products/cardamom.png"
+  },
+  "sensoryProfile": {
+    "aroma": "Sweet camphor, menthol, crushed eucalyptus leaf",
+    "flavor": "Warm, highly aromatic citrus with a clean, spicy-floral finish",
+    "appearance": "Plump, pale-green pods, containing oily black seeds"
+  },
+  "chemistry": {
+    "activeCompound": "Cineole & Terpinyl Acetate: 6.2%",
+    "moistureContent": "Moisture: 9.5%"
   }
 }

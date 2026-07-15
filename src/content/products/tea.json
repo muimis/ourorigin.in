@@ -18,5 +18,14 @@
   "offeringCopy": "You've been at 2,600 metres. The tea was too.",
   "images": {
     "packaging": "/assets/products/tea.png"
+  },
+  "sensoryProfile": {
+    "aroma": "Damp malt, forest honey, eucalyptus tree bark",
+    "flavor": "Rich copper body, mild astringency, sweet honey finish",
+    "appearance": "Long, dark twisted black tea leaves"
+  },
+  "chemistry": {
+    "activeCompound": "Polyphenols: 18.0%",
+    "moistureContent": "Moisture: 5.2%"
   }
 }

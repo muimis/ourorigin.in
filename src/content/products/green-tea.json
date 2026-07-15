@@ -17,5 +17,14 @@
   "specimenCopy": "The same leaf as our Nilgiris tea, stopped before it could darken. Green tea is not a different plant. It's a decision made within hours of picking.",
   "images": {
     "packaging": "/assets/products/tea.png"
+  },
+  "sensoryProfile": {
+    "aroma": "Steamed spinach, toasted rice, sea breeze",
+    "flavor": "Clean, mineral sweetness with a delicate astringent edge and umami finish",
+    "appearance": "Curly, dark emerald green needles"
+  },
+  "chemistry": {
+    "activeCompound": "Catechins: 12.5%",
+    "moistureContent": "Moisture: 4.8%"
   }
 }

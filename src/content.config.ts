@@ -68,7 +68,16 @@ const products = defineCollection({
       packaging: z.string().optional()
     }).optional(),
     specimenCopy: z.string(),
-    offeringCopy: z.string().optional()
+    offeringCopy: z.string().optional(),
+    sensoryProfile: z.object({
+      aroma: z.string(),
+      flavor: z.string(),
+      appearance: z.string()
+    }).optional(),
+    chemistry: z.object({
+      activeCompound: z.string(),
+      moistureContent: z.string()
+    }).optional()
   })
 });
 

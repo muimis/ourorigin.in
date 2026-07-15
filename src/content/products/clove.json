@@ -17,5 +17,14 @@
   "specimenCopy": "A flower bud, picked before it opened. Too early and the oils aren't ready; too late and they're already leaving. This clove comes from communities across the Western Ghats — Idukki, Kottayam, Pathanamthitta, south to Nagercoil. Single origin means single bioregion, honestly sourced.",
   "images": {
     "packaging": "/assets/products/clove.png"
+  },
+  "sensoryProfile": {
+    "aroma": "Sharp camphor, warm wood, spicy eugenol core",
+    "flavor": "Intense pungent warmth, tongue-numbing spice, sweet background",
+    "appearance": "Plump, reddish-brown dried buds with uniform crowns"
+  },
+  "chemistry": {
+    "activeCompound": "Eugenol: 15.4%",
+    "moistureContent": "Moisture: 8.2%"
   }
 }

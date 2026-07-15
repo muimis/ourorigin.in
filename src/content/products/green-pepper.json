@@ -17,5 +17,14 @@
   "specimenCopy": "The same berry as Forest Black Pepper, picked at the same time — preserved green instead of dried black. Two different products from one harvest, caught at different stages.",
   "images": {
     "packaging": "/assets/products/black-pepper.png"
+  },
+  "sensoryProfile": {
+    "aroma": "Fresh-cut grass, crushed pine needles, green citrus zest",
+    "flavor": "Bright, herbal heat, mild resinous warmth, crisp snap",
+    "appearance": "Dehydrated olive-green berries, light and brittle"
+  },
+  "chemistry": {
+    "activeCompound": "Piperine: 3.8%",
+    "moistureContent": "Moisture: 8.5%"
   }
 }

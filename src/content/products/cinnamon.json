@@ -17,5 +17,14 @@
   "specimenCopy": "True cinnamon rolls into paper-soft layers. What's usually sold as cinnamon — cassia — peels off in a single hard curl. Different plants. Different results. This is the one that earned the name first.",
   "images": {
     "packaging": "/assets/products/clove.png"
+  },
+  "sensoryProfile": {
+    "aroma": "Sweet bark, delicate clove bud, warm oil",
+    "flavor": "Mild, woody sweetness with complex aromatic overtones",
+    "appearance": "Delicate, multi-layered quill rolls, fragile texture"
+  },
+  "chemistry": {
+    "activeCompound": "Cinnamaldehyde: 1.8%",
+    "moistureContent": "Moisture: 11.5%"
   }
 }
