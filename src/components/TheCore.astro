@@ -70,20 +70,16 @@ sortedOrigins.forEach(origin => {
             </div>
           </button>
 
-          <!-- Accordion Panel (Products) -->
+          <!-- Accordion Panel (Products) — kept deliberately minimal: this is the
+               browsing layer, not the deep-dive. Bio-character, soil/method, and
+               sensory detail now live only inside the Depth Experience per product. -->
           <div id={`products-${origin.data.slug}`} class="origin-products-panel" aria-hidden="true">
             <div class="panel-inner-container">
-              <div class="panel-desc-container">
-                <span class="panel-section-label">[ BIO-CHARACTER ]</span>
-                <p class="panel-origin-desc">{origin.data.narrative.canopy}</p>
-                <div class="panel-origin-soil-method">
-                  <span class="info-pill">SOIL: {origin.data.soil.toUpperCase()}</span>
-                  <span class="info-pill">METHOD: {origin.data.method.toUpperCase()}</span>
-                </div>
-              </div>
-
               <div class="products-carousel-wrapper">
                 <span class="panel-section-label">[ ACTIVE SPECIMEN YIELDS ]</span>
+                {originProducts.length === 0 ? (
+                  <p class="panel-no-yields">This origin is still being documented. No yields are listed yet.</p>
+                ) : (
                 <div class="products-horizontal-stream">
                   {originProducts.map((p) => {
                     const priceRange = p.data.sizes.length > 1
@@ -115,18 +111,6 @@ sortedOrigins.forEach(origin => {
                           <h4 class="product-card-title">{p.data.name}</h4>
                           <span class="product-card-botanical">{p.data.botanicalName}</span>
                           <span class="product-card-price">{priceRange}</span>
-                          {p.data.sensoryProfile && (
-                            <div class="product-card-sensory">
-                              <div class="sensory-item">
-                                <span class="sensory-label">AROMA</span>
-                                <span class="sensory-value">{p.data.sensoryProfile.aroma}</span>
-                              </div>
-                              <div class="sensory-item">
-                                <span class="sensory-label">FLAVOR</span>
-                                <span class="sensory-value">{p.data.sensoryProfile.flavor}</span>
-                              </div>
-                            </div>
-                          )}
                         </div>
                         <div class="product-card-actions">
                           <button class="core-product-add-btn" data-product={productDataString}>
@@ -140,6 +124,7 @@ sortedOrigins.forEach(origin => {
                     );
                   })}
                 </div>
+                )}
               </div>
             </div>
           </div>
