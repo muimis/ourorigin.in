@@ -3,11 +3,27 @@
 import { getCollection } from 'astro:content';
 
 const yields = await getCollection('products');
+const origins = await getCollection('origins');
 
+function parseElevation(elevStr: string) {
+  const match = String(elevStr || '').match(/[\d,]+/);
+  return match ? parseInt(match[0].replace(/,/g, ''), 10) : 0;
+}
+
+const elevationById = Object.fromEntries(
+  origins.map(o => [o.data.slug || o.id, parseElevation(o.data.elevation)])
+);
+
+function originIdOf(y: any) {
+  return typeof y.data.originSlug === 'object' ? y.data.originSlug?.id : y.data.originSlug;
+}
+
+// Descend through the Ghats, highest origin first — not the alphabet
 const sortedYields = [...yields].sort((a, b) => {
-  const nameA = a.data.name || '';
-  const nameB = b.data.name || '';
-  return nameA.localeCompare(nameB);
+  const elevA = elevationById[originIdOf(a)] ?? 0;
+  const elevB = elevationById[originIdOf(b)] ?? 0;
+  if (elevB !== elevA) return elevB - elevA;
+  return (a.data.name || '').localeCompare(b.data.name || '');
 });
 ---
 
