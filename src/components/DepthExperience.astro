@@ -50,7 +50,7 @@ const strata = [
     botanicalName: product ? product.data.botanicalName : null,
     sensoryProfile: product ? product.data.sensoryProfile : null,
     chemistry: product ? product.data.chemistry : null,
-    image: origin ? origin.data.images.specimen : null, 
+    image: (product && product.data.images?.product) ? product.data.images.product : (origin ? origin.data.images.specimen : null), 
     hasWeather: false 
   }
 ];

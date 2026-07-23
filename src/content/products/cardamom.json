@@ -10,14 +10,15 @@
     {
       "label": "50g",
       "priceINR": 399,
-      "isPriceVerified": false
+      "isPriceVerified": true
     }
   ],
   "methodDescription": "Wild-harvested, low-temperature drying.",
   "specimenCopy": "Picked before the pods split, dried at low temperature so the seeds keep the oils that define the flavour. Most cardamom loses a measurable amount of those oils in aggressive drying. This one doesn't.",
   "offeringCopy": "From the hills named for it. Nowhere else grows this quite the same way.",
   "images": {
-    "packaging": "/assets/products/cardamom.png"
+    "packaging": "/assets/products/cardamom-packaging.png",
+    "product": "/assets/products/cardamom-product.png"
   },
   "sensoryProfile": {
     "aroma": "Sweet camphor, menthol, crushed eucalyptus leaf",

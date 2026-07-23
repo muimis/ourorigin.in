@@ -10,13 +10,13 @@
     {
       "label": "100g",
       "priceINR": 299,
-      "isPriceVerified": false
+      "isPriceVerified": true
     }
   ],
   "methodDescription": "Shade grown, minimal intervention.",
   "specimenCopy": "Grown in the same terraces as tea — often within sight of each other, two crops that ask for almost the same altitude and shade. Processed simply. Few interventions.",
   "images": {
-    "packaging": ""
+    "packaging": "/assets/products/coffee-packaging.png"
   },
   "sensoryProfile": {
     "aroma": "Roasted cacao, damp soil, molasses",

@@ -10,13 +10,13 @@
     {
       "label": "50g",
       "priceINR": 179,
-      "isPriceVerified": false
+      "isPriceVerified": true
     }
   ],
   "methodDescription": "Unoxidized, pan-fired.",
   "specimenCopy": "The same leaf as our Nilgiris tea, stopped before it could darken. Green tea is not a different plant. It's a decision made within hours of picking.",
   "images": {
-    "packaging": ""
+    "packaging": "/assets/products/green-tea-packaging.png"
   },
   "sensoryProfile": {
     "aroma": "Steamed spinach, toasted rice, sea breeze",
