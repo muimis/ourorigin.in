@@ -1,43 +1,45 @@
-# Astro Starter Kit: Minimal
+# OurOrigin
 
-```sh
-npm create astro@latest -- --template minimal
-```
+**The Absolute Truth of the Soil.**  
+An origin is five specific, connected things: a place (Geo), a living ecology (Bio), the people who understand it (Community), a way of working with it (Method), and a yield that proves the rest is real (Product) — kept honest by two more: Observation and Time.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Currently tied to the Western Ghats. Not forever.
 
-## 🚀 Project Structure
+## Stack
 
-Inside of your Astro project, you'll see the following folders and files:
+- **Astro** 6.x — static site generation
+- **Content Collections** — origins, products, observations as typed data
+- **Zero client-side framework** — vanilla JS where interactivity is required
+- **Cloudflare Pages** — static deploy target
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+## Design Lock (Do Not Change Without Founder Approval)
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+| Token | Value |
+|-------|-------|
+| Forest Deep | `#0c1509` |
+| Warm Cream | `#F5EDD8` |
+| Gold | `#A67C3C` |
+| Institutional | Cinzel, serif |
+| Narrative | Cormorant Garamond, serif |
+| Evidence | DM Mono, monospace |
+| Border Radius | `0` everywhere |
+| Origin Mark Gauge | 48px, stroke 0.5 |
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+## Origin Order (Single Source of Truth)
 
-Any static assets, like images, can be placed in the `public/` directory.
+All catalog views must use this elevation sort:
 
-## 🧞 Commands
+1. `nilgiris`
+2. `idukki`
+3. `wayanad`
+4. `malabar-coast`
+5. `thiruvananthapuram`
 
-All commands are run from the root of the project, from a terminal:
+Constant lives in `src/utils/constants.ts`. Hardcode nowhere else.
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+## Constants (Never Hardcode)
 
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+```ts
+// src/utils/constants.ts
+WHATSAPP_NUMBER = '...'      // Your actual number
+EMAIL_ADDRESS = 'ourorigin.in@gmail.com'
