@@ -30,19 +30,18 @@ const sortedYields = [...yields].sort((a, b) => {
 <section id="archival-index" class="archival-index-section">
   <div class="index-container">
     <div class="index-header" data-reveal>
-      <span class="index-tag">[ SOURCING MATRIX ]</span>
-      <h2 class="index-title">The Archival Ledger</h2>
-      <p class="index-subtitle">COMPLETE DATABASE OF ACTIVE SPECIMENS & HARVEST HISTORIES</p>
+      <h2 class="index-title">All Products</h2>
+      <p class="index-subtitle">Everything we source, and where it comes from.</p>
     </div>
 
     <div class="ledger-table-wrapper" data-reveal data-delay="150">
       <div class="ledger-table" role="table" aria-label="Sourcing Ledger Database">
         <!-- Header Row -->
         <div class="ledger-header-row" role="row">
-          <span class="col-yield" role="columnheader">NOMENCLATURE</span>
-          <span class="col-collective" role="columnheader">PROVENANCE COLLECTIVE</span>
-          <span class="col-status" role="columnheader">STATUS / COMPLIANCE</span>
-          <span class="col-action" role="columnheader">ACTION</span>
+          <span class="col-yield" role="columnheader">PRODUCT</span>
+          <span class="col-collective" role="columnheader">ORIGIN</span>
+          <span class="col-status" role="columnheader">STATUS</span>
+          <span class="col-action" role="columnheader"></span>
         </div>
 
         <!-- Body Rows -->
@@ -55,12 +54,12 @@ const sortedYields = [...yields].sort((a, b) => {
                   <span class="yield-name">{y.data.name}</span>
                   <span class="yield-botanical">{y.data.botanicalName}</span>
                 </span>
-                <span class="col-collective">{String(originId || '').toUpperCase()} COLLECTIVE</span>
+                <span class="col-collective">{String(originId || '').charAt(0).toUpperCase() + String(originId || '').slice(1)}</span>
                 <span class="col-status">
-                  <span class="status-badge">[ PRICE VERIFIED ]</span>
+                  <span class="status-badge">Verified</span>
                 </span>
                 <span class="col-action">
-                  <span class="action-btn">[ DESCEND ]</span>
+                  <span class="action-btn">View &rarr;</span>
                 </span>
               </div>
             </a>

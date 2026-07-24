@@ -29,29 +29,28 @@ const sortedYields = [...products].sort((a, b) => {
 ---
 
 <BaseLayout
-  title="The Sourcing Index: Active Specimens — OurOrigin"
-  description="Flat database index of active specimens from the Western Ghats range. For fast direct navigation."
+  title="Catalog — OurOrigin"
+  description="Single-estate spices and natural ingredients from the Western Ghats."
   canonicalPath="/catalog"
-  ogTitle="The Sourcing Index: Active Specimens | OurOrigin"
-  ogDescription="Complete flat ledger database catalog of active spice specimens and harvests."
+  ogTitle="Catalog | OurOrigin"
+  ogDescription="Complete catalog of active spice specimens and single-estate harvests."
   navVariant="light"
   showFooter={true}
 >
   <main id="main-content" class="catalog-page-container">
-    <div class="catalog-header">
-      <span class="catalog-tag">[ ARCHIVAL LEDGER INDEX ]</span>
-      <h1 class="catalog-title">The Index</h1>
-      <p class="catalog-subtitle">COMPLETE DATABASE OF ACTIVE SPECIMENS & PROVENANCES</p>
+    <div class="catalog-header" data-reveal>
+      <h1 class="catalog-title">Catalog</h1>
+      <p class="catalog-subtitle">Single-estate spices & natural ingredients from the Western Ghats.</p>
     </div>
 
-    <div class="catalog-table-wrapper">
-      <div class="dense-table" role="table" aria-label="Specimens Flat Catalog">
+    <div class="catalog-table-wrapper" data-reveal data-delay="100">
+      <div class="dense-table" role="table" aria-label="Products Catalog">
         <!-- Table Header -->
         <div class="table-header-row" role="row">
-          <span class="col-yield" role="columnheader">NOMENCLATURE</span>
-          <span class="col-collective" role="columnheader">PROVENANCE COLLECTIVE</span>
-          <span class="col-status" role="columnheader">STATUS / COMPLIANCE</span>
-          <span class="col-action" role="columnheader">ACTION</span>
+          <span class="col-yield" role="columnheader">PRODUCT</span>
+          <span class="col-collective" role="columnheader">ORIGIN</span>
+          <span class="col-status" role="columnheader">STATUS</span>
+          <span class="col-action" role="columnheader"></span>
         </div>
 
         <!-- Table Body -->
@@ -61,18 +60,18 @@ const sortedYields = [...products].sort((a, b) => {
           const href = `/origins/${originId}/${y.id}`;
 
           return (
-            <a href={href} class="catalog-row-link" role="row" aria-label={`Descend into ${y.data.name}`}>
+            <a href={href} class="catalog-row-link" role="row" aria-label={`View ${y.data.name}`}>
               <div class="dense-row">
                 <span class="col-yield">
-                  <span class="yield-name">{y.data.name.toUpperCase()}</span>
-                  <span class="yield-botanical">{y.data.botanicalName.toUpperCase()}</span>
+                  <span class="yield-name">{y.data.name}</span>
+                  <span class="yield-botanical">{y.data.botanicalName}</span>
                 </span>
-                <span class="col-collective">{String(originName).toUpperCase()} COLLECTIVE</span>
+                <span class="col-collective">{originName}</span>
                 <span class="col-status">
-                  <span class="status-badge">[ PRICE VERIFIED ]</span>
+                  <span class="status-badge">Verified</span>
                 </span>
                 <span class="col-action">
-                  <span class="action-text">[ DESCEND ]</span>
+                  <span class="action-text">View &rarr;</span>
                 </span>
               </div>
             </a>

@@ -14,16 +14,16 @@ const { variant = 'dark' } = Astro.props;
   </a>
 
   <div class="header-actions">
-    <button id="trigger-yields" class="hud-btn" aria-label="All Yields">
-      All Yields
-    </button>
+    <a href="/catalog" class="hud-btn" aria-label="Shop All">
+      Shop
+    </a>
 
     <button id="command-center-trigger" class="hud-btn" aria-label="Open Navigation">
       Menu
     </button>
 
     <button id="trigger-dossier" class="hud-btn" aria-label="Open Basket" onclick="window.dispatchEvent(new Event('open-cart'))">
-      Basket · <span class="dossier-count" id="header-basket-count">0</span>
+      Basket (<span class="dossier-count" id="header-basket-count">0</span>)
     </button>
   </div>
 </header>

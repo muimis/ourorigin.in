@@ -11,24 +11,30 @@ function parseElevation(elevStr: string) {
   return match ? parseInt(match[0].replace(/,/g, ''), 10) : 0;
 }
 
-// Sorted: highest elevation first (Nilgiris -> Idukki -> Wayanad -> Thiruvananthapuram)
-const sortedOrigins = [...origins].sort((a, b) => {
-  return parseElevation(b.data.elevation) - parseElevation(a.data.elevation);
+const originsBySlug = Object.fromEntries(origins.map(o => [o.data.slug, o]));
+
+// Map each product with its origin data
+const productList = products.map(p => {
+  const oSlug = typeof p.data.originSlug === 'object' ? p.data.originSlug?.id : p.data.originSlug;
+  const originObj = originsBySlug[oSlug];
+  return {
+    ...p,
+    originData: originObj ? originObj.data : null
+  };
+}).sort((a, b) => {
+  const elevA = a.originData ? parseElevation(a.originData.elevation) : 0;
+  const elevB = b.originData ? parseElevation(b.originData.elevation) : 0;
+  if (elevB !== elevA) return elevB - elevA;
+  return (a.data.name || '').localeCompare(b.data.name || '');
 });
 
-// Group products by origin
-const productsByOrigin = {};
-sortedOrigins.forEach(origin => {
-  const originSlug = origin.data.slug;
-  productsByOrigin[originSlug] = products.filter(p => {
-    const originId = typeof p.data.originSlug === 'object' ? p.data.originSlug?.id : p.data.originSlug;
-    return originId === originSlug;
-  });
+const sortedOrigins = [...origins].sort((a, b) => {
+  return parseElevation(b.data.elevation) - parseElevation(a.data.elevation);
 });
 ---
 
 <section id="the-core" class="the-core-section">
-  <!-- Cinematic Backgrounds -->
+  <!-- Cinematic Ambient Backgrounds -->
   <div class="core-cinematic-bg">
     {sortedOrigins.map(origin => (
       <div 
@@ -41,105 +47,83 @@ sortedOrigins.forEach(origin => {
   </div>
 
   <div class="core-content-wrapper">
-    <!-- Core Title -->
-    <div class="core-header-banner" data-reveal>
-      <span class="core-tag">[ ACT II · THE CORE ]</span>
-      <h2 class="core-banner-title">Provenances</h2>
-      <p class="core-banner-subtitle">THE EQUALLY WEIGHTED MATRIX OF THE WESTERN GHATS</p>
+    <!-- Hero Banner -->
+    <div class="core-hero" data-reveal>
+      <span class="hero-tag">[ THE WESTERN GHATS ]</span>
+      <h1 class="hero-title">OurOrigin</h1>
+      <p class="hero-subtitle">Single-estate harvests, directly traceable to the soil and the person who picked them.</p>
     </div>
 
-    <!-- Origins Accordion Container (Borderless List) -->
-    <div class="origins-list" data-reveal="stagger">
-      {sortedOrigins.map((origin) => {
-        const originProducts = productsByOrigin[origin.data.slug] || [];
-        const elevationVal = origin.data.elevation;
-        const coordsVal = origin.data.coordinates;
+    <!-- Origin Filter Pills -->
+    <div class="origin-filter-bar" data-reveal data-delay="100">
+      <button class="filter-btn active" data-filter="all">All Harvests</button>
+      {sortedOrigins.map(o => (
+        <button class="filter-btn" data-filter={o.data.slug}>
+          {o.data.name} ({o.data.elevation})
+        </button>
+      ))}
+    </div>
+
+    <!-- Direct Product Gallery Grid (Zero Mazes) -->
+    <div class="product-gallery-grid" data-reveal="stagger">
+      {productList.map((p) => {
+        const oSlug = typeof p.data.originSlug === 'object' ? p.data.originSlug?.id : p.data.originSlug;
+        const originObj = originsBySlug[oSlug];
+        const priceRange = p.data.sizes.length > 1
+          ? `₹${Math.min(...p.data.sizes.map(s => s.priceINR))} - ₹${Math.max(...p.data.sizes.map(s => s.priceINR))}`
+          : `₹${p.data.sizes[0].priceINR}`;
+        
+        const firstSize = p.data.sizes[0];
+        const productDataString = JSON.stringify({
+          id: p.id + '-' + firstSize.label,
+          productId: p.id,
+          name: p.data.name,
+          origin: originObj ? originObj.data.name : oSlug,
+          originId: oSlug,
+          price: firstSize.priceINR,
+          size: firstSize.label,
+          weight: firstSize.label,
+          quantity: 1
+        });
+
+        const hasRealPackaging = !!(p.data.images?.packaging && p.data.images.packaging.trim() !== '');
 
         return (
-          <div class="origin-node" data-origin-slug={origin.data.slug}>
-            <!-- Origin Header / Toggle Card -->
-            <button class="origin-toggle" aria-expanded="false" aria-controls={`products-${origin.data.slug}`}>
-              
-              <div class="card-header-info">
-                <span class="origin-elevation-tag">{elevationVal.toUpperCase()}</span>
-                <span class="origin-coords-tag">{coordsVal}</span>
+          <article class="gallery-card" data-origin={oSlug}>
+            <div class="card-image-wrap">
+              {hasRealPackaging ? (
+                <img src={p.data.images.packaging} alt={`Packaging of ${p.data.name}`} class="card-img" loading="lazy" />
+              ) : (
+                <div class="card-img-pending" role="img" aria-label={`Photography pending for ${p.data.name}`}>
+                  <svg viewBox="0 0 100 100" width="48" height="48" aria-hidden="true">
+                    <circle cx="50" cy="50" r="49" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                    <circle cx="50" cy="50" r="4" fill="currentColor"/>
+                  </svg>
+                </div>
+              )}
+              <span class="card-origin-pill">{originObj ? `${originObj.data.name} · ${originObj.data.elevation}` : oSlug}</span>
+            </div>
+
+            <div class="card-content">
+              <div class="card-meta">
+                <h3 class="card-title">{p.data.name}</h3>
+                <span class="card-botanical">{p.data.botanicalName}</span>
               </div>
 
-              <div class="card-footer-info">
-                <h3 class="origin-card-title">{origin.data.name}</h3>
-                <div class="origin-card-weather">
-                  <span class="weather-label">TELEMETRY:</span>
-                  <LiveWeather coordinates={coordsVal} originName={origin.data.name} />
-                </div>
+              <div class="card-price-row">
+                <span class="card-price">{priceRange}</span>
               </div>
-              
-            </button>
 
-            <!-- Accordion Panel (Products) -->
-            <div id={`products-${origin.data.slug}`} class="origin-products-panel" aria-hidden="true">
-              <div class="panel-inner-container">
-                <div class="products-carousel-wrapper">
-                  <span class="panel-section-label">[ ACTIVE SPECIMEN YIELDS ]</span>
-                  {originProducts.length === 0 ? (
-                    <p class="panel-no-yields">This origin is still being documented. No yields are listed yet.</p>
-                  ) : (
-                  <div class="products-horizontal-stream">
-                    {originProducts.map((p) => {
-                      const priceRange = p.data.sizes.length > 1
-                        ? `₹${Math.min(...p.data.sizes.map(s => s.priceINR))} - ₹${Math.max(...p.data.sizes.map(s => s.priceINR))}`
-                        : `₹${p.data.sizes[0].priceINR}`;
-                      
-                      const firstSize = p.data.sizes[0];
-                      const productDataString = JSON.stringify({
-                        id: p.id + '-' + firstSize.label,
-                        productId: p.id,
-                        name: p.data.name,
-                        origin: origin.data.name,
-                        originId: origin.id,
-                        price: firstSize.priceINR,
-                        size: firstSize.label,
-                        weight: firstSize.label,
-                        quantity: 1
-                      });
-
-                      const hasRealPackaging = !!(p.data.images?.packaging && p.data.images.packaging.trim() !== '');
-
-                      return (
-                        <div class="product-stream-card">
-                          <div class="product-card-visual">
-                            {hasRealPackaging ? (
-                              <img src={p.data.images.packaging} alt={`Packaging of ${p.data.name}`} class="product-packaging-img" loading="lazy" />
-                            ) : (
-                              <div class="product-card-visual-pending" role="img" aria-label={`Photography pending for ${p.data.name}`}>
-                                <svg viewBox="0 0 100 100" width="36" height="36" aria-hidden="true">
-                                  <circle cx="50" cy="50" r="49" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                                  <circle cx="50" cy="50" r="3" fill="currentColor"/>
-                                </svg>
-                              </div>
-                            )}
-                          </div>
-                          <div class="product-card-body">
-                            <h4 class="product-card-title">{p.data.name}</h4>
-                            <span class="product-card-botanical">{p.data.botanicalName}</span>
-                            <span class="product-card-price">{priceRange}</span>
-                          </div>
-                          <div class="product-card-actions">
-                            <button class="core-product-add-btn" data-product={productDataString}>
-                              [ ADD ]
-                            </button>
-                            <a href={`/origins/${origin.data.slug}/${p.id}`} class="core-product-explore-btn">
-                              [ DESCEND &rarr; ]
-                            </a>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  )}
-                </div>
+              <div class="card-actions">
+                <button class="add-basket-btn" data-product={productDataString}>
+                  Add to basket
+                </button>
+                <a href={`/origins/${oSlug}/${p.id}`} class="explore-story-link">
+                  Story &rarr;
+                </a>
               </div>
             </div>
-          </div>
+          </article>
         );
       })}
     </div>
@@ -170,8 +154,8 @@ sortedOrigins.forEach(origin => {
     background-attachment: fixed;
     opacity: 0;
     transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1), transform 1.2s ease-out;
-    filter: saturate(0.2) contrast(1.1) brightness(0.4);
-    transform: scale(1.05);
+    filter: saturate(0.2) contrast(1.1) brightness(0.35);
+    transform: scale(1.04);
   }
 
   .core-bg-layer.is-active {
@@ -182,429 +166,279 @@ sortedOrigins.forEach(origin => {
   .core-content-wrapper {
     position: relative;
     z-index: 2;
-    padding: 15vh clamp(1.5rem, 5vw, 6rem);
+    padding: 18vh clamp(1.5rem, 5vw, 6rem) 12vh;
     max-width: 1400px;
     margin: 0 auto;
   }
 
-  .core-header-banner {
-    margin-bottom: 6rem;
+  /* Hero Banner */
+  .core-hero {
+    margin-bottom: 4rem;
     text-align: left;
   }
 
-  .core-tag {
+  .hero-tag {
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 0.25em;
     color: var(--color-gold);
-  }
-
-  .core-banner-title {
-    font-family: var(--font-institutional);
-    font-size: clamp(3rem, 8vw, 8rem);
-    font-weight: 300;
-    margin: 1rem 0 0 0;
-    line-height: 1;
     text-transform: uppercase;
   }
 
-  .core-banner-subtitle {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.15em;
-    color: rgba(245, 237, 216, 0.45);
-    margin: 1rem 0 0 0;
-  }
-
-  .origins-list {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .origin-node {
-    border-bottom: 1px solid rgba(245, 237, 216, 0.1);
-    box-sizing: border-box;
-    width: 100%;
-    transition: border-color 0.4s ease;
-  }
-
-  .origin-node:first-child {
-    border-top: 1px solid rgba(245, 237, 216, 0.1);
-  }
-
-  .origin-node:hover {
-    border-color: rgba(245, 237, 216, 0.4);
-  }
-
-  .origin-toggle {
-    position: relative;
-    width: 100%;
-    padding: 3rem 0;
-    background: none;
-    border: none;
-    cursor: pointer;
-    text-align: left;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    color: var(--color-warm-cream);
-    opacity: 0.6;
-    transition: opacity 0.4s ease, padding-left 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-  }
-
-  .origin-toggle:hover,
-  .origin-node.active .origin-toggle {
-    opacity: 1;
-  }
-
-  .origin-node.active .origin-toggle {
-    padding-left: 2rem;
-  }
-
-  .card-header-info, .card-footer-info {
-    position: relative;
-    z-index: 3;
-  }
-
-  .card-header-info {
-    display: flex;
-    justify-content: flex-start;
-    gap: 1.5rem;
-    width: 100%;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.15em;
-    color: rgba(245, 237, 216, 0.6);
-    margin-bottom: 0.5rem;
-  }
-
-  .origin-elevation-tag {
-    color: var(--color-gold);
-  }
-
-  .origin-card-title {
+  .hero-title {
     font-family: var(--font-institutional);
-    font-size: clamp(3rem, 6vw, 5rem);
+    font-size: clamp(3.5rem, 9vw, 8.5rem);
     font-weight: 300;
-    margin: 0.5rem 0;
-    letter-spacing: 0.02em;
-    line-height: 1;
+    margin: 1rem 0 1.5rem 0;
+    line-height: 0.95;
+    letter-spacing: -0.01em;
   }
 
-  .origin-card-weather {
+  .hero-subtitle {
+    font-family: var(--font-narrative);
+    font-size: clamp(1.2rem, 2vw, 1.6rem);
+    font-weight: 300;
+    color: rgba(245, 237, 216, 0.75);
+    max-width: 680px;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  /* Filter Bar */
+  .origin-filter-bar {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 4rem;
+    border-bottom: 1px solid rgba(245, 237, 216, 0.1);
+    padding-bottom: 1.5rem;
+  }
+
+  .filter-btn {
+    background: transparent;
+    border: none;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: rgba(245, 237, 216, 0.45);
+    cursor: pointer;
+    padding: 6px 12px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+  }
+
+  .filter-btn:hover,
+  .filter-btn.active {
+    color: var(--color-gold);
+    background: rgba(166, 124, 60, 0.08);
+  }
+
+  /* Direct Product Gallery Grid */
+  .product-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3rem;
+  }
+
+  .gallery-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .gallery-card.is-filtered-out {
+    display: none;
+  }
+
+  .gallery-card:hover {
+    transform: translateY(-6px);
+  }
+
+  .card-image-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    background: rgba(0, 0, 0, 0.35);
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    justify-content: center;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+
+  .card-img {
+    max-width: 75%;
+    max-height: 75%;
+    object-fit: contain;
+    filter: brightness(0.92) contrast(1.05);
+    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .gallery-card:hover .card-img {
+    transform: scale(1.06);
+  }
+
+  .card-img-pending {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-warm-cream);
+    opacity: 0.3;
+    width: 100%;
+    height: 100%;
+  }
+
+  .card-origin-pill {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
     font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.05em;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--color-gold);
+    background: rgba(12, 21, 9, 0.85);
+    backdrop-filter: blur(8px);
+    padding: 4px 10px;
+    text-transform: uppercase;
+  }
+
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    text-align: left;
+  }
+
+  .card-title {
+    font-family: var(--font-institutional);
+    font-size: 1.6rem;
+    font-weight: 300;
+    color: var(--color-warm-cream);
+    margin: 0 0 0.2rem 0;
+    line-height: 1.1;
+  }
+
+  .card-botanical {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.95rem;
     color: rgba(245, 237, 216, 0.5);
   }
 
-  .weather-label {
-    color: var(--color-gold);
-  }
-
-  /* Removed indicator plus/minus completely */
-
-  /* Products Panel */
-  .origin-products-panel {
-    display: grid;
-    grid-template-rows: 0fr;
-    transition: grid-template-rows 0.6s var(--ease-settle), border-color 0.4s ease;
-    border-top: 1px solid transparent;
-    overflow: hidden;
-  }
-
-  .origin-node.active .origin-products-panel {
-    grid-template-rows: 1fr;
-  }
-
-  .panel-inner-container {
-    min-height: 0;
-    padding: 0 2rem;
+  .card-price-row {
     display: flex;
-    flex-direction: column;
-    gap: 2.5rem;
-    transition: padding 0.6s var(--ease-settle);
+    align-items: center;
+    justify-content: space-between;
   }
 
-  .origin-node.active .panel-inner-container {
-    padding: 2.5rem 2rem;
-  }
-
-  .panel-desc-container {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-    text-align: left;
-    max-width: 600px;
-  }
-
-  .panel-section-label {
+  .card-price {
     font-family: var(--font-mono);
-    font-size: 9px;
-    letter-spacing: 0.15em;
+    font-size: 12px;
     color: var(--color-gold);
+    letter-spacing: 0.05em;
   }
 
-  .panel-origin-desc {
-    font-family: var(--font-display);
-    font-size: var(--type-narrative);
-    line-height: 1.5;
-    color: var(--color-warm-cream);
-    opacity: 0.9;
-    margin: 0;
-  }
-
-  .panel-origin-soil-method {
+  .card-actions {
     display: flex;
     gap: 1rem;
+    align-items: center;
     margin-top: 0.5rem;
   }
 
-  .info-pill {
-    font-family: var(--font-mono);
-    font-size: 9px;
-    letter-spacing: 0.05em;
-    color: rgba(245, 237, 216, 0.4);
-    border: 1px solid rgba(245, 237, 216, 0.15);
-    padding: 4px 10px;
-  }
-
-  .products-carousel-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
-  }
-
-  .products-horizontal-stream {
-    display: flex;
-    gap: 1.5rem;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    padding-bottom: 1rem;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* Product Card */
-  .product-stream-card {
-    flex: 0 0 320px;
-    border: 1px solid rgba(245, 237, 216, 0.08);
-    background: rgba(12, 21, 9, 0.3);
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 1.2rem;
-    scroll-snap-align: start;
-    box-sizing: border-box;
-    text-align: left;
-    transition: transform 0.4s var(--ease-settle), border-color 0.4s ease, box-shadow 0.4s ease;
-  }
-
-  .product-stream-card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(245, 237, 216, 0.25);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
-  }
-
-  .product-card-sensory {
-    margin-top: 0.8rem;
-    padding-top: 0.8rem;
-    border-top: 1px dashed rgba(245, 237, 216, 0.12);
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .sensory-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-  }
-
-  .sensory-label {
-    font-family: var(--font-mono);
-    font-size: 8px;
-    letter-spacing: 0.15em;
-    color: var(--color-gold);
-    opacity: 0.6;
-    text-transform: uppercase;
-  }
-
-  .sensory-value {
-    font-family: var(--font-display);
-    font-size: 11px;
-    line-height: 1.4;
-    color: var(--color-warm-cream);
-    opacity: 0.8;
-  }
-
-  .product-card-visual {
-    width: 100%;
-    aspect-ratio: 1;
-    overflow: hidden;
-    background: rgba(0, 0, 0, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .product-card-visual-pending {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--color-warm-cream, #F5EDD8);
-    opacity: 0.35;
-  }
-
-  .product-packaging-img {
-    max-width: 80%;
-    max-height: 80%;
-    object-fit: contain;
-    filter: brightness(0.9) contrast(1.05);
-    transition: transform 0.4s var(--ease-settle);
-  }
-
-  .product-stream-card:hover .product-packaging-img {
-    transform: scale(1.04);
-  }
-
-  .product-card-body {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-  }
-
-  .product-card-title {
-    font-family: var(--font-display);
-    font-size: 18px;
-    font-weight: 400;
-    color: var(--color-warm-cream);
-    margin: 0;
-  }
-
-  .product-card-botanical {
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: 0.85rem;
-    color: rgba(245, 237, 216, 0.45);
-  }
-
-  .product-card-price {
-    font-family: var(--font-mono);
-    font-size: var(--type-whisper);
-    color: var(--color-gold);
-    margin-top: 0.3rem;
-  }
-
-  .product-card-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .core-product-add-btn {
+  .add-basket-btn {
     flex: 1;
     font-family: var(--font-mono);
     font-size: 11px;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
     color: var(--color-gold);
     background: transparent;
-    border: 1px solid rgba(166, 124, 60, 0.5);
-    padding: 8px 12px;
+    border: 1px solid rgba(166, 124, 60, 0.4);
+    padding: 10px 14px;
     cursor: pointer;
-    text-align: center;
     transition: all 0.3s ease;
-    min-height: 44px; /* Touch target minimum */
+    text-align: center;
   }
 
-  .core-product-add-btn:hover, .core-product-add-btn.is-added {
-    background-color: var(--color-gold);
+  .add-basket-btn:hover,
+  .add-basket-btn.is-added {
+    background: var(--color-gold);
     color: var(--color-forest-deep);
     border-color: var(--color-gold);
   }
 
-  .core-product-explore-btn {
-    flex: 1.2;
+  .explore-story-link {
     font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.05em;
+    font-size: 11px;
+    letter-spacing: 0.08em;
     color: rgba(245, 237, 216, 0.6);
     text-decoration: none;
-    text-align: center;
-    border: 1px solid transparent;
-    padding: 8px 10px;
+    padding: 10px 14px;
     transition: color 0.3s ease;
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
 
-  .core-product-explore-btn:hover {
+  .explore-story-link:hover {
     color: var(--color-warm-cream);
   }
 
-  /* Mobile Stacking Accordion */
-  @media (max-width: 768px) {
-    .origins-accordion {
-      flex-direction: column;
-      gap: 1rem;
-      padding-bottom: 0;
+  /* Responsive Grid */
+  @media (max-width: 1024px) {
+    .product-gallery-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2.5rem;
     }
+  }
 
-    .origin-node {
-      width: 100%;
-    }
-
-    .origin-products-panel {
-      grid-template-rows: 0fr !important;
-      border-top-color: transparent !important;
-      position: relative;
-      left: 0;
-      right: 0;
-      background: transparent;
-      z-index: 5;
-      border: none;
-      margin-top: 0;
-    }
-
-    .origin-node.active .origin-products-panel {
-      grid-template-rows: 1fr !important;
-      border-top-color: rgba(245, 237, 216, 0.1) !important;
-    }
-
-    .panel-inner-container {
-      padding: 0 !important;
-    }
-
-    .origin-node.active .panel-inner-container {
-      padding: 1rem 0 !important;
-    }
-
-    .product-stream-card {
-      flex: 0 0 82vw; /* Snap nicely on mobile widths */
+  @media (max-width: 640px) {
+    .product-gallery-grid {
+      grid-template-columns: 1fr;
+      gap: 3rem;
     }
   }
 </style>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const toggleCards = document.querySelectorAll('.origin-toggle');
-    const nodes = document.querySelectorAll('.origin-node');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const cards = document.querySelectorAll('.gallery-card');
     const bgLayers = document.querySelectorAll('.core-bg-layer');
 
-    // Hover background effect
-    nodes.forEach((node, idx) => {
-      node.addEventListener('mouseenter', () => {
-        const slug = node.getAttribute('data-origin-slug');
+    // Origin Filter Logic
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const filter = btn.getAttribute('data-filter');
+
+        // Background highlight
         bgLayers.forEach(layer => {
-          if (layer.id === `bg-${slug}`) {
+          if (filter !== 'all' && layer.id === `bg-${filter}`) {
+            layer.classList.add('is-active');
+          } else {
+            layer.classList.remove('is-active');
+          }
+        });
+
+        // Filter cards
+        cards.forEach(card => {
+          const origin = card.getAttribute('data-origin');
+          if (filter === 'all' || origin === filter) {
+            card.classList.remove('is-filtered-out');
+          } else {
+            card.classList.add('is-filtered-out');
+          }
+        });
+      });
+    });
+
+    // Card Hover Ambient Effect
+    cards.forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        const origin = card.getAttribute('data-origin');
+        bgLayers.forEach(layer => {
+          if (layer.id === `bg-${origin}`) {
             layer.classList.add('is-active');
           } else {
             layer.classList.remove('is-active');
@@ -613,62 +447,29 @@ sortedOrigins.forEach(origin => {
       });
     });
 
-    // Leave container restores darkness
-    const list = document.querySelector('.origins-list');
-    if (list) {
-      list.addEventListener('mouseleave', () => {
-        bgLayers.forEach(layer => layer.classList.remove('is-active'));
+    const grid = document.querySelector('.product-gallery-grid');
+    if (grid) {
+      grid.addEventListener('mouseleave', () => {
+        const activeFilter = document.querySelector('.filter-btn.active')?.getAttribute('data-filter');
+        bgLayers.forEach(layer => {
+          if (activeFilter !== 'all' && layer.id === `bg-${activeFilter}`) {
+            layer.classList.add('is-active');
+          } else {
+            layer.classList.remove('is-active');
+          }
+        });
       });
     }
 
-    // Click handler for accordion toggling
-    toggleCards.forEach((card, idx) => {
-      card.addEventListener('click', (e) => {
-        const node = nodes[idx];
-        const panel = card.nextElementSibling as HTMLElement;
-        if (!panel) return;
-
-        const isExpanded = card.getAttribute('aria-expanded') === 'true';
-
-        // Close all other accordions
-        nodes.forEach((n, nIdx) => {
-          if (nIdx !== idx) {
-            n.classList.remove('active');
-            const otherCard = n.querySelector('.origin-toggle');
-            if (otherCard) {
-              otherCard.setAttribute('aria-expanded', 'false');
-              otherCard.nextElementSibling?.setAttribute('aria-hidden', 'true');
-            }
-          }
-        });
-
-        // Toggle this accordion
-        if (isExpanded) {
-          card.setAttribute('aria-expanded', 'false');
-          panel.setAttribute('aria-hidden', 'true');
-          node.classList.remove('active');
-        } else {
-          card.setAttribute('aria-expanded', 'true');
-          panel.setAttribute('aria-hidden', 'false');
-          node.classList.add('active');
-
-          // Scroll target expanded origin into viewport smoothly on mobile
-          if (window.innerWidth <= 768) {
-            node.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }
-        }
-      });
-    });
-
-    // Wire up Add to Ledger events
-    document.querySelectorAll('.core-product-add-btn').forEach(btn => {
+    // Add to Basket Event Trigger
+    document.querySelectorAll('.add-basket-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
-        e.stopPropagation(); // Stop click from propagating to accordion trigger/slide
+        e.stopPropagation();
         const data = JSON.parse(btn.getAttribute('data-product') || '{}');
         window.dispatchEvent(new CustomEvent('add-to-ledger', { detail: data }));
 
         const original = btn.textContent;
-        btn.textContent = '[ ADDED ✓ ]';
+        btn.textContent = 'Added ✓';
         btn.classList.add('is-added');
         setTimeout(() => {
           btn.textContent = original;

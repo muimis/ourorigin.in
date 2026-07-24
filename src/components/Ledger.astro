@@ -24,21 +24,21 @@ const companionsJson = JSON.stringify(companionProductsMap);
 
 <!-- Global Toast -->
 <div id="ledger-toast" class="ledger-toast hidden" role="status" aria-live="polite" aria-atomic="true">
-  Added to your Ledger.
+  Added to your basket.
 </div>
 
 <!-- Persistent Trigger -->
 <div id="ledger-trigger" class="ledger-trigger hidden" aria-live="polite" role="button" tabindex="0">
-  <span id="ledger-count"></span> held
+  <span id="ledger-count"></span> in basket
 </div>
 
 <!-- Slide-up Panel -->
 <div id="ledger-overlay" class="ledger-overlay hidden" data-whatsapp={WHATSAPP_NUMBER} data-companions={companionsJson}>
   <div class="ledger-backdrop" id="ledger-close-backdrop"></div>
-  <div class="ledger-panel" role="complementary" aria-label="Your Ledger">
+  <div class="ledger-panel" role="complementary" aria-label="Your Basket">
     <div class="ledger-header">
-      <h2 class="ledger-title">Your Ledger</h2>
-      <button id="ledger-close-btn" class="ledger-close" aria-label="Close Ledger">Close</button>
+      <h2 class="ledger-title">Your Basket</h2>
+      <button id="ledger-close-btn" class="ledger-close" aria-label="Close Basket">Close</button>
     </div>
     
     <div class="ledger-content">
@@ -47,7 +47,7 @@ const companionsJson = JSON.stringify(companionProductsMap);
       </div>
       
       <div id="ledger-empty-state" class="ledger-empty hidden">
-        The ledger is empty.<br>Explore the origins.
+        Your basket is empty.<br>Explore our harvests.
       </div>
       
       <div id="ledger-footer" class="ledger-footer hidden">
