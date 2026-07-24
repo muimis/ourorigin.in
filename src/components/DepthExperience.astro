@@ -49,6 +49,7 @@ const storySections = [
 ];
 
 const sizes = product ? product.data.sizes : [];
+const hasRealPackaging = !!(product?.data.images?.packaging && product.data.images.packaging.trim() !== '');
 
 const navDimensions = [
   { id: 'purchase', name: 'Purchase' },
@@ -101,7 +102,7 @@ const navDimensions = [
         
         <!-- Left: Product Image -->
         <div class="hero-visual-col">
-          {product.data.images?.packaging && product.data.images.packaging.trim() !== '' ? (
+          {hasRealPackaging ? (
             <img 
               src={product.data.images.packaging} 
               alt={`Packaging of ${product.data.name}`} 
@@ -109,6 +110,7 @@ const navDimensions = [
               loading="eager" 
               width="800"
               height="800"
+              transition:name={`product-img-${product.id}`}
             />
           ) : (
             <div class="hero-img-fallback">

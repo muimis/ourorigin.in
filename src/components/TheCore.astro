@@ -92,7 +92,13 @@ const sortedOrigins = [...origins].sort((a, b) => {
           <article class="gallery-card" data-origin={oSlug}>
             <div class="card-image-wrap">
               {hasRealPackaging ? (
-                <img src={p.data.images.packaging} alt={`Packaging of ${p.data.name}`} class="card-img" loading="lazy" />
+                <img 
+                  src={p.data.images.packaging} 
+                  alt={`Packaging of ${p.data.name}`} 
+                  class="card-img" 
+                  loading="lazy" 
+                  transition:name={`product-img-${p.id}`}
+                />
               ) : (
                 <div class="card-img-pending" role="img" aria-label={`Photography pending for ${p.data.name}`}>
                   <svg viewBox="0 0 100 100" width="48" height="48" aria-hidden="true">
