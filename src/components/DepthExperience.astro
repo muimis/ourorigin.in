@@ -741,25 +741,23 @@ const dimensions = [
       border-radius: 0;
     }
 
-    .cipher-glyph {
+    .cipher-node {
       flex: 1;
       height: 3px;
       background: rgba(245, 237, 216, 0.2);
       opacity: 1;
       border-radius: 0;
       transition: background-color 0.3s ease;
+      padding: 0;
+      gap: 0;
     }
 
-    .cipher-glyph.active,
-    .cipher-glyph.filled-preceding {
+    .cipher-node.active {
       background-color: var(--color-gold);
       opacity: 1;
     }
 
-    .cipher-icon {
-      display: none !important;
-    }
-
+    .cipher-dot,
     .cipher-label {
       display: none !important;
     }
@@ -767,20 +765,11 @@ const dimensions = [
 </style>
 
 <script>
-  import gsap from 'gsap';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-  gsap.registerPlugin(ScrollTrigger);
 
   class DepthExperience {
     constructor() {
       this.initStrata();
-      this.initDepthGauge();
       this.initPurchaseAction();
-      
-      document.fonts.ready.then(() => {
-        ScrollTrigger.refresh();
-      });
     }
 
     initPurchaseAction() {
@@ -803,13 +792,13 @@ const dimensions = [
       const addBtn = document.getElementById('add-to-ledger-btn');
       if (addBtn) {
         addBtn.addEventListener('click', () => {
-          const pinContainer = document.querySelector('.pin-container');
-          if (!pinContainer || !activeSize || !activePrice) return;
+          const container = document.querySelector('.documentary-scroll-container');
+          if (!container || !activeSize || !activePrice) return;
 
-          const pId = pinContainer.getAttribute('data-product-slug');
-          const pName = pinContainer.getAttribute('data-product-name');
-          const oName = pinContainer.getAttribute('data-origin-name');
-          const oId = pinContainer.getAttribute('data-origin-slug');
+          const pId = container.getAttribute('data-product-slug');
+          const pName = container.getAttribute('data-product-name');
+          const oName = container.getAttribute('data-origin-name');
+          const oId = container.getAttribute('data-origin-slug');
 
           window.dispatchEvent(new CustomEvent('add-to-ledger', {
             detail: {
@@ -873,10 +862,6 @@ const dimensions = [
       });
       
       updateCipher();
-    }
-
-    initDepthGauge() {
-      // Depth gauge removed for simpler documentary experience
     }
   }
 

@@ -42,14 +42,14 @@ sortedOrigins.forEach(origin => {
 
   <div class="core-content-wrapper">
     <!-- Core Title -->
-    <div class="core-header-banner">
+    <div class="core-header-banner" data-reveal>
       <span class="core-tag">[ ACT II · THE CORE ]</span>
       <h2 class="core-banner-title">Provenances</h2>
       <p class="core-banner-subtitle">THE EQUALLY WEIGHTED MATRIX OF THE WESTERN GHATS</p>
     </div>
 
     <!-- Origins Accordion Container (Borderless List) -->
-    <div class="origins-list">
+    <div class="origins-list" data-reveal="stagger">
       {sortedOrigins.map((origin) => {
         const originProducts = productsByOrigin[origin.data.slug] || [];
         const elevationVal = origin.data.elevation;

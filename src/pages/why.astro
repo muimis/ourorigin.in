@@ -15,12 +15,12 @@ import OriginMark from '../components/OriginMark.astro';
     <main id="main-content" class="dossier-container">
         <div class="guide-line"></div>
 
-        <section class="dossier-section gsap-reveal">
+        <section class="dossier-section" data-reveal>
             <h1 class="document-title">The Final Inch</h1>
             <p class="preamble">You are standing at the final inch of a very long journey. You are no longer just a spectator; you are inside the origin.</p>
         </section>
 
-        <section class="dossier-section gsap-reveal">
+        <section class="dossier-section" data-reveal>
             <div class="decorator-mark">
                 <OriginMark variant="gold" size={24} animate={false} />
             </div>
@@ -31,7 +31,7 @@ import OriginMark from '../components/OriginMark.astro';
             <p class="prose-block">OurOrigin exists because we believe this legacy is the most vital part of the journey. Making it visible is an act of deep respect.</p>
         </section>
 
-        <section class="dossier-section gsap-reveal">
+        <section class="dossier-section" data-reveal>
             <div class="decorator-mark">
                 <OriginMark variant="primary" size={24} animate={false} />
             </div>
@@ -42,7 +42,7 @@ import OriginMark from '../components/OriginMark.astro';
             <p class="prose-block">When we say "origin," we mean all of it. Not the romantic version. Not the marketing version. The actual version, in all its complexity and specificity and non-repeatability.</p>
         </section>
 
-        <section class="dossier-section gsap-reveal">
+        <section class="dossier-section" data-reveal>
             <div class="decorator-mark">
                 <OriginMark variant="gold" size={24} animate={false} />
             </div>
@@ -59,7 +59,7 @@ import OriginMark from '../components/OriginMark.astro';
             </ul>
         </section>
 
-        <section class="dossier-section gsap-reveal">
+        <section class="dossier-section" data-reveal>
             <div class="decorator-mark">
                 <OriginMark variant="primary" size={24} animate={false} />
             </div>
@@ -70,7 +70,7 @@ import OriginMark from '../components/OriginMark.astro';
             <p class="prose-block">The origin is a closed system only when both decisions hold. The consumer is not downstream from the origin. They are inside it.</p>
         </section>
 
-        <section class="dossier-section gsap-reveal">
+        <section class="dossier-section" data-reveal>
             <div class="decorator-mark">
                 <OriginMark variant="gold" size={24} animate={false} />
             </div>
@@ -80,7 +80,7 @@ import OriginMark from '../components/OriginMark.astro';
             <p class="prose-block"><strong>03. Connection Over Commerce.</strong> We are creating a connection. The market is just the final one inch of this journey. The packaging, the physical item, is a bridge to the origin, not the end of the story.</p>
         </section>
 
-        <section class="dossier-section gsap-reveal">
+        <section class="dossier-section" data-reveal>
             <div class="decorator-mark">
                 <OriginMark variant="primary" size={24} animate={false} />
             </div>
@@ -89,7 +89,7 @@ import OriginMark from '../components/OriginMark.astro';
             <p class="prose-block">If any decision—any partnership, any communication, any element of this experience—does not reflect the dignity of the 12-kilometre walk, or the profound legacy of the communities we work with, it is the wrong decision.</p>
         </section>
 
-        <div class="conclusion gsap-reveal">
+        <div class="conclusion" data-reveal>
             <OriginMark variant="gold" size={64} animate={false} />
             <div class="conclusion-sig">You Are Inside the Origin</div>
         </div>
@@ -252,37 +252,13 @@ import OriginMark from '../components/OriginMark.astro';
         opacity: 0.6;
     }
 
-    /* GSAP fallback */
+    /* Fallback for no JS */
     @media (scripting: none) {
-        .gsap-reveal {
+        [data-reveal] {
             opacity: 1 !important;
             transform: none !important;
         }
     }
 </style>
 
-<script>
-    import gsap from 'gsap';
-    import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-    document.addEventListener('DOMContentLoaded', () => {
-        gsap.registerPlugin(ScrollTrigger);
-
-        const reveals = document.querySelectorAll('.gsap-reveal');
-        gsap.set(reveals, { opacity: 0, y: 30 });
-
-        reveals.forEach((element) => {
-            gsap.to(element, {
-                scrollTrigger: {
-                    trigger: element,
-                    start: "top 85%",
-                    toggleActions: "play none none reverse"
-                },
-                opacity: 1,
-                y: 0,
-                duration: 1.2,
-                ease: "power2.out"
-            });
-        });
-    });
-</script>
