@@ -148,19 +148,25 @@ const sortedOrigins = [...origins].sort((a, b) => {
 
   .core-bg-layer {
     position: absolute;
-    inset: 0;
+    inset: -5%; /* slightly larger to allow scale breathing without edge cutoff */
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
     opacity: 0;
-    transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1), transform 1.2s ease-out;
-    filter: saturate(0.2) contrast(1.1) brightness(0.35);
-    transform: scale(1.04);
+    transition: opacity 1.8s var(--ease-fluid);
+    filter: saturate(0.3) contrast(1.1) brightness(0.4);
+    transform: scale(1);
+    transform-origin: center center;
   }
 
   .core-bg-layer.is-active {
     opacity: 1;
-    transform: scale(1);
+    animation: slow-breathe 45s linear infinite alternate;
+  }
+
+  @keyframes slow-breathe {
+    0% { transform: scale(1) translate(0, 0); }
+    100% { transform: scale(1.08) translate(-1%, -1%); }
   }
 
   .core-content-wrapper {
@@ -260,34 +266,35 @@ const sortedOrigins = [...origins].sort((a, b) => {
     position: relative;
     width: 100%;
     aspect-ratio: 1;
-    background: rgba(3, 5, 3, 0.65);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(247, 242, 230, 0.08);
+    background: rgba(3, 5, 3, 0.45);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(247, 242, 230, 0.04);
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
     margin-bottom: 1.5rem;
-    border-radius: 4px;
-    transition: border-color 0.4s ease, box-shadow 0.4s ease;
+    border-radius: var(--stratum-border-radius);
+    transition: all 0.5s var(--ease-fluid);
+    box-shadow: 0 12px 30px -10px rgba(0,0,0,0.3);
   }
 
   .gallery-card:hover .card-image-wrap {
-    border-color: rgba(198, 156, 82, 0.35);
-    box-shadow: 0 10px 40px -10px rgba(198, 156, 82, 0.15);
+    border-color: rgba(198, 156, 82, 0.25);
+    box-shadow: 0 20px 50px -10px rgba(198, 156, 82, 0.18);
   }
 
   .card-img {
     max-width: 75%;
     max-height: 75%;
     object-fit: contain;
-    filter: brightness(0.92) contrast(1.05);
-    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+    filter: brightness(0.95) contrast(1.05) drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+    transition: transform 0.6s var(--ease-fluid);
   }
 
   .gallery-card:hover .card-img {
-    transform: scale(1.06);
+    transform: scale(1.08) translateY(-4px);
   }
 
   .card-img-pending {
@@ -304,14 +311,23 @@ const sortedOrigins = [...origins].sort((a, b) => {
     position: absolute;
     bottom: 12px;
     left: 12px;
-    font-family: var(--font-mono);
-    font-size: 9px;
-    letter-spacing: 0.15em;
-    color: var(--color-gold);
-    background: rgba(12, 21, 9, 0.85);
-    backdrop-filter: blur(8px);
-    padding: 4px 10px;
+    font-family: var(--font-sans);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--color-warm-cream);
+    background: rgba(12, 21, 9, 0.65);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(247, 242, 230, 0.1);
+    padding: 6px 14px;
+    border-radius: 40px; /* Fluid pill shape */
     text-transform: uppercase;
+    transition: all 0.3s ease;
+  }
+  
+  .gallery-card:hover .card-origin-pill {
+    background: rgba(198, 156, 82, 0.15);
+    border-color: rgba(198, 156, 82, 0.3);
+    color: var(--color-gold);
   }
 
   .card-content {
