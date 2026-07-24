@@ -49,14 +49,14 @@ const sortedOrigins = [...origins].sort((a, b) => {
   <div class="core-content-wrapper">
     <!-- Hero Banner -->
     <div class="core-hero" data-reveal>
-      <span class="hero-tag">[ THE WESTERN GHATS ]</span>
+      <span class="hero-tag">SOIL &middot; COMMUNITY &middot; HARVEST</span>
       <h1 class="hero-title">OurOrigin</h1>
-      <p class="hero-subtitle">Single-estate harvests, directly traceable to the soil and the person who picked them.</p>
+      <p class="hero-subtitle">Pure natural ingredients, community-harvested directly from their soil of origin.</p>
     </div>
 
     <!-- Origin Filter Pills -->
     <div class="origin-filter-bar" data-reveal data-delay="100">
-      <button class="filter-btn active" data-filter="all">All Harvests</button>
+      <button class="filter-btn active" data-filter="all">All Provenances</button>
       {sortedOrigins.map(o => (
         <button class="filter-btn" data-filter={o.data.slug}>
           {o.data.name} ({o.data.elevation})
@@ -101,7 +101,7 @@ const sortedOrigins = [...origins].sort((a, b) => {
                   </svg>
                 </div>
               )}
-              <span class="card-origin-pill">{originObj ? `${originObj.data.name} · ${originObj.data.elevation}` : oSlug}</span>
+              <span class="card-origin-pill">{originObj ? `Community Harvest · ${originObj.data.name}` : oSlug}</span>
             </div>
 
             <div class="card-content">
