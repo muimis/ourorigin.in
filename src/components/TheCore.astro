@@ -28,137 +28,168 @@ sortedOrigins.forEach(origin => {
 ---
 
 <section id="the-core" class="the-core-section">
-  <!-- Core Title -->
-  <div class="core-header-banner">
-    <span class="core-tag">[ ACT II · THE CORE ]</span>
-    <h2 class="core-banner-title">Provenances</h2>
-    <p class="core-banner-subtitle">THE EQUALLY WEIGHTED MATRIX OF THE WESTERN GHATS</p>
+  <!-- Cinematic Backgrounds -->
+  <div class="core-cinematic-bg">
+    {sortedOrigins.map(origin => (
+      <div 
+        class="core-bg-layer" 
+        id={`bg-${origin.data.slug}`} 
+        style={`background-image: url('${origin.data.images?.canopy || ''}');`}
+        aria-hidden="true"
+      ></div>
+    ))}
   </div>
 
-  <!-- Origins Accordion Container -->
-  <div class="origins-accordion">
-    {sortedOrigins.map((origin) => {
-      const originProducts = productsByOrigin[origin.data.slug] || [];
-      const elevationVal = origin.data.elevation;
-      const coordsVal = origin.data.coordinates;
-      // Use canopy image for card background
-      const cardBg = origin.data.images?.canopy || '';
+  <div class="core-content-wrapper">
+    <!-- Core Title -->
+    <div class="core-header-banner">
+      <span class="core-tag">[ ACT II · THE CORE ]</span>
+      <h2 class="core-banner-title">Provenances</h2>
+      <p class="core-banner-subtitle">THE EQUALLY WEIGHTED MATRIX OF THE WESTERN GHATS</p>
+    </div>
 
-      return (
-        <div class="origin-node" data-origin-slug={origin.data.slug}>
-          <!-- Origin Header / Toggle Card -->
-          <button class="origin-toggle-card" aria-expanded="false" aria-controls={`products-${origin.data.slug}`}>
-            <div class="card-bg-image" style={`background-image: url('${cardBg}');`}></div>
-            <div class="card-wash"></div>
-            
-            <div class="card-header-info">
-              <span class="origin-elevation-tag">{elevationVal.toUpperCase()}</span>
-              <span class="origin-coords-tag">{coordsVal}</span>
-            </div>
+    <!-- Origins Accordion Container (Borderless List) -->
+    <div class="origins-list">
+      {sortedOrigins.map((origin) => {
+        const originProducts = productsByOrigin[origin.data.slug] || [];
+        const elevationVal = origin.data.elevation;
+        const coordsVal = origin.data.coordinates;
 
-            <div class="card-footer-info">
-              <h3 class="origin-card-title">{origin.data.name}</h3>
-              <div class="origin-card-weather">
-                <span class="weather-label">TELEMETRY:</span>
-                <LiveWeather coordinates={coordsVal} originName={origin.data.name} />
+        return (
+          <div class="origin-node" data-origin-slug={origin.data.slug}>
+            <!-- Origin Header / Toggle Card -->
+            <button class="origin-toggle" aria-expanded="false" aria-controls={`products-${origin.data.slug}`}>
+              
+              <div class="card-header-info">
+                <span class="origin-elevation-tag">{elevationVal.toUpperCase()}</span>
+                <span class="origin-coords-tag">{coordsVal}</span>
               </div>
-            </div>
-            
-            <div class="card-expand-indicator">
-              <span class="indicator-plus">+</span>
-              <span class="indicator-minus">&minus;</span>
-            </div>
-          </button>
 
-          <!-- Accordion Panel (Products) — kept deliberately minimal: this is the
-               browsing layer, not the deep-dive. Bio-character, soil/method, and
-               sensory detail now live only inside the Depth Experience per product. -->
-          <div id={`products-${origin.data.slug}`} class="origin-products-panel" aria-hidden="true">
-            <div class="panel-inner-container">
-              <div class="products-carousel-wrapper">
-                <span class="panel-section-label">[ ACTIVE SPECIMEN YIELDS ]</span>
-                {originProducts.length === 0 ? (
-                  <p class="panel-no-yields">This origin is still being documented. No yields are listed yet.</p>
-                ) : (
-                <div class="products-horizontal-stream">
-                  {originProducts.map((p) => {
-                    const priceRange = p.data.sizes.length > 1
-                      ? `₹${Math.min(...p.data.sizes.map(s => s.priceINR))} - ₹${Math.max(...p.data.sizes.map(s => s.priceINR))}`
-                      : `₹${p.data.sizes[0].priceINR}`;
-                    
-                    const firstSize = p.data.sizes[0];
-                    const productDataString = JSON.stringify({
-                      id: p.id + '-' + firstSize.label,
-                      productId: p.id,
-                      name: p.data.name,
-                      origin: origin.data.name,
-                      originId: origin.id,
-                      price: firstSize.priceINR,
-                      size: firstSize.label,
-                      weight: firstSize.label,
-                      quantity: 1
-                    });
-
-                    // Show the real packaging photo only if this product actually has one —
-                    // never fall back to a different product's real photo again.
-                    const hasRealPackaging = !!(p.data.images?.packaging && p.data.images.packaging.trim() !== '');
-
-                    return (
-                      <div class="product-stream-card">
-                        <div class="product-card-visual">
-                          {hasRealPackaging ? (
-                            <img src={p.data.images.packaging} alt={`Packaging of ${p.data.name}`} class="product-packaging-img" loading="lazy" />
-                          ) : (
-                            <div class="product-card-visual-pending" role="img" aria-label={`Photography pending for ${p.data.name}`}>
-                              <svg viewBox="0 0 100 100" width="36" height="36" aria-hidden="true">
-                                <circle cx="50" cy="50" r="49" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                                <circle cx="50" cy="50" r="3" fill="currentColor"/>
-                              </svg>
-                            </div>
-                          )}
-                        </div>
-                        <div class="product-card-body">
-                          <h4 class="product-card-title">{p.data.name}</h4>
-                          <span class="product-card-botanical">{p.data.botanicalName}</span>
-                          <span class="product-card-price">{priceRange}</span>
-                        </div>
-                        <div class="product-card-actions">
-                          <button class="core-product-add-btn" data-product={productDataString}>
-                            [ ADD ]
-                          </button>
-                          <a href={`/origins/${origin.data.slug}/${p.id}`} class="core-product-explore-btn">
-                            [ DESCEND &rarr; ]
-                          </a>
-                        </div>
-                      </div>
-                    );
-                  })}
+              <div class="card-footer-info">
+                <h3 class="origin-card-title">{origin.data.name}</h3>
+                <div class="origin-card-weather">
+                  <span class="weather-label">TELEMETRY:</span>
+                  <LiveWeather coordinates={coordsVal} originName={origin.data.name} />
                 </div>
-                )}
+              </div>
+              
+            </button>
+
+            <!-- Accordion Panel (Products) -->
+            <div id={`products-${origin.data.slug}`} class="origin-products-panel" aria-hidden="true">
+              <div class="panel-inner-container">
+                <div class="products-carousel-wrapper">
+                  <span class="panel-section-label">[ ACTIVE SPECIMEN YIELDS ]</span>
+                  {originProducts.length === 0 ? (
+                    <p class="panel-no-yields">This origin is still being documented. No yields are listed yet.</p>
+                  ) : (
+                  <div class="products-horizontal-stream">
+                    {originProducts.map((p) => {
+                      const priceRange = p.data.sizes.length > 1
+                        ? `₹${Math.min(...p.data.sizes.map(s => s.priceINR))} - ₹${Math.max(...p.data.sizes.map(s => s.priceINR))}`
+                        : `₹${p.data.sizes[0].priceINR}`;
+                      
+                      const firstSize = p.data.sizes[0];
+                      const productDataString = JSON.stringify({
+                        id: p.id + '-' + firstSize.label,
+                        productId: p.id,
+                        name: p.data.name,
+                        origin: origin.data.name,
+                        originId: origin.id,
+                        price: firstSize.priceINR,
+                        size: firstSize.label,
+                        weight: firstSize.label,
+                        quantity: 1
+                      });
+
+                      const hasRealPackaging = !!(p.data.images?.packaging && p.data.images.packaging.trim() !== '');
+
+                      return (
+                        <div class="product-stream-card">
+                          <div class="product-card-visual">
+                            {hasRealPackaging ? (
+                              <img src={p.data.images.packaging} alt={`Packaging of ${p.data.name}`} class="product-packaging-img" loading="lazy" />
+                            ) : (
+                              <div class="product-card-visual-pending" role="img" aria-label={`Photography pending for ${p.data.name}`}>
+                                <svg viewBox="0 0 100 100" width="36" height="36" aria-hidden="true">
+                                  <circle cx="50" cy="50" r="49" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                  <circle cx="50" cy="50" r="3" fill="currentColor"/>
+                                </svg>
+                              </div>
+                            )}
+                          </div>
+                          <div class="product-card-body">
+                            <h4 class="product-card-title">{p.data.name}</h4>
+                            <span class="product-card-botanical">{p.data.botanicalName}</span>
+                            <span class="product-card-price">{priceRange}</span>
+                          </div>
+                          <div class="product-card-actions">
+                            <button class="core-product-add-btn" data-product={productDataString}>
+                              [ ADD ]
+                            </button>
+                            <a href={`/origins/${origin.data.slug}/${p.id}`} class="core-product-explore-btn">
+                              [ DESCEND &rarr; ]
+                            </a>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      );
-    })}
+        );
+      })}
+    </div>
   </div>
 </section>
 
 <style>
   .the-core-section {
+    position: relative;
     background-color: var(--color-forest-deep);
     color: var(--color-warm-cream);
-    padding: 10vh clamp(1.5rem, 5vw, 4rem);
-    border-top: 1px solid rgba(245, 237, 216, 0.1);
-    border-bottom: 1px solid rgba(245, 237, 216, 0.1);
+    min-height: 100vh;
+  }
+
+  .core-cinematic-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .core-bg-layer {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    opacity: 0;
+    transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1), transform 1.2s ease-out;
+    filter: saturate(0.2) contrast(1.1) brightness(0.4);
+    transform: scale(1.05);
+  }
+
+  .core-bg-layer.is-active {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .core-content-wrapper {
+    position: relative;
+    z-index: 2;
+    padding: 15vh clamp(1.5rem, 5vw, 6rem);
+    max-width: 1400px;
+    margin: 0 auto;
   }
 
   .core-header-banner {
-    max-width: 1200px;
-    margin: 0 auto 3rem auto;
+    margin-bottom: 6rem;
     text-align: left;
-    border-bottom: 1px solid rgba(245, 237, 216, 0.1);
-    padding-bottom: 1.5rem;
   }
 
   .core-tag {
@@ -170,62 +201,64 @@ sortedOrigins.forEach(origin => {
 
   .core-banner-title {
     font-family: var(--font-institutional);
-    font-size: clamp(2.5rem, 5vw, 6rem);
+    font-size: clamp(3rem, 8vw, 8rem);
     font-weight: 300;
-    margin: 0.5rem 0 0 0;
+    margin: 1rem 0 0 0;
     line-height: 1;
     text-transform: uppercase;
   }
 
   .core-banner-subtitle {
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 0.15em;
     color: rgba(245, 237, 216, 0.45);
-    margin: 0.5rem 0 0 0;
+    margin: 1rem 0 0 0;
   }
 
-  .origins-accordion {
-    max-width: 1200px;
-    margin: 0 auto;
+  .origins-list {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
   }
 
   .origin-node {
-    border: 1px solid rgba(245, 237, 216, 0.1);
-    background: rgba(12, 21, 9, 0.4);
+    border-bottom: 1px solid rgba(245, 237, 216, 0.1);
     box-sizing: border-box;
     width: 100%;
     transition: border-color 0.4s ease;
   }
 
-  .origin-node:hover {
-    border-color: rgba(245, 237, 216, 0.3);
+  .origin-node:first-child {
+    border-top: 1px solid rgba(245, 237, 216, 0.1);
   }
 
-  .origin-toggle-card {
+  .origin-node:hover {
+    border-color: rgba(245, 237, 216, 0.4);
+  }
+
+  .origin-toggle {
     position: relative;
     width: 100%;
-    min-height: 120px;
+    padding: 3rem 0;
     background: none;
     border: none;
-    padding: 2rem;
     cursor: pointer;
     text-align: left;
     display: flex;
     flex-direction: column;
     justify-content: center;
     color: var(--color-warm-cream);
+    opacity: 0.6;
+    transition: opacity 0.4s ease, padding-left 0.4s cubic-bezier(0.25, 1, 0.5, 1);
   }
 
-  .card-bg-image {
-    display: none; /* Removed for clarity */
+  .origin-toggle:hover,
+  .origin-node.active .origin-toggle {
+    opacity: 1;
   }
 
-  .card-wash {
-    display: none; /* Removed for clarity */
+  .origin-node.active .origin-toggle {
+    padding-left: 2rem;
   }
 
   .card-header-info, .card-footer-info {
@@ -251,10 +284,11 @@ sortedOrigins.forEach(origin => {
 
   .origin-card-title {
     font-family: var(--font-institutional);
-    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-size: clamp(3rem, 6vw, 5rem);
     font-weight: 300;
-    margin: 0;
+    margin: 0.5rem 0;
     letter-spacing: 0.02em;
+    line-height: 1;
   }
 
   .origin-card-weather {
@@ -271,31 +305,7 @@ sortedOrigins.forEach(origin => {
     color: var(--color-gold);
   }
 
-  .card-expand-indicator {
-    position: absolute;
-    top: 2rem;
-    right: 2rem;
-    z-index: 3;
-    font-family: var(--font-mono);
-    font-size: 24px;
-    color: rgba(245, 237, 216, 0.5);
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .indicator-minus {
-    display: none;
-  }
-
-  .origin-toggle-card[aria-expanded="true"] .indicator-plus {
-    display: none;
-  }
-
-  .origin-toggle-card[aria-expanded="true"] .indicator-minus {
-    display: block;
-  }
+  /* Removed indicator plus/minus completely */
 
   /* Products Panel */
   .origin-products-panel {
@@ -308,7 +318,6 @@ sortedOrigins.forEach(origin => {
 
   .origin-node.active .origin-products-panel {
     grid-template-rows: 1fr;
-    border-top-color: rgba(245, 237, 216, 0.08);
   }
 
   .panel-inner-container {
@@ -586,8 +595,31 @@ sortedOrigins.forEach(origin => {
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const toggleCards = document.querySelectorAll('.origin-toggle-card');
+    const toggleCards = document.querySelectorAll('.origin-toggle');
     const nodes = document.querySelectorAll('.origin-node');
+    const bgLayers = document.querySelectorAll('.core-bg-layer');
+
+    // Hover background effect
+    nodes.forEach((node, idx) => {
+      node.addEventListener('mouseenter', () => {
+        const slug = node.getAttribute('data-origin-slug');
+        bgLayers.forEach(layer => {
+          if (layer.id === `bg-${slug}`) {
+            layer.classList.add('is-active');
+          } else {
+            layer.classList.remove('is-active');
+          }
+        });
+      });
+    });
+
+    // Leave container restores darkness
+    const list = document.querySelector('.origins-list');
+    if (list) {
+      list.addEventListener('mouseleave', () => {
+        bgLayers.forEach(layer => layer.classList.remove('is-active'));
+      });
+    }
 
     // Click handler for accordion toggling
     toggleCards.forEach((card, idx) => {
@@ -602,7 +634,7 @@ sortedOrigins.forEach(origin => {
         nodes.forEach((n, nIdx) => {
           if (nIdx !== idx) {
             n.classList.remove('active');
-            const otherCard = n.querySelector('.origin-toggle-card');
+            const otherCard = n.querySelector('.origin-toggle');
             if (otherCard) {
               otherCard.setAttribute('aria-expanded', 'false');
               otherCard.nextElementSibling?.setAttribute('aria-hidden', 'true');
