@@ -1,0 +1,84 @@
+---
+// src/components/OpeningSequence.astro
+// A lightning-fast, emotional "blink to breath" experience.
+---
+
+<div id="blink-sequence" class="blink-sequence-container">
+  <div class="blink-content">
+    <h1 class="blink-title">OurOrigin</h1>
+    <p class="blink-subtitle">The Absolute Truth of the Soil</p>
+  </div>
+</div>
+
+<style>
+  .blink-sequence-container {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background-color: var(--color-forest-deep, #0C1509);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+  }
+
+  .blink-sequence-container.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .blink-content {
+    text-align: center;
+    color: var(--color-warm-cream, #F5EDD8);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  .blink-content.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .blink-title {
+    font-family: var(--font-institutional, 'Times New Roman', serif);
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    margin: 0 0 0.5rem 0;
+    text-transform: uppercase;
+  }
+
+  .blink-subtitle {
+    font-family: var(--font-mono, monospace);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--color-gold, #A67C3C);
+    margin: 0;
+    text-transform: uppercase;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('blink-sequence');
+    const content = container?.querySelector('.blink-content');
+
+    if (container && content) {
+      // 1. Instantly show content on load (blink)
+      requestAnimationFrame(() => {
+        content.classList.add('is-visible');
+      });
+
+      // 2. Breath out (fade out container)
+      setTimeout(() => {
+        container.classList.add('is-hidden');
+        // Prevent layout blocking
+        setTimeout(() => {
+          container.remove();
+        }, 1000);
+      }, 1500); // 1.5 seconds total reading time
+    }
+  });
+</script>

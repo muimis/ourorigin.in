@@ -3,6 +3,7 @@ import BaseLayout from '../components/BaseLayout.astro';
 import TheCore from '../components/TheCore.astro';
 import TheIndexLedger from '../components/TheIndexLedger.astro';
 import TheObservationsList from '../components/TheObservationsList.astro';
+import OpeningSequence from '../components/OpeningSequence.astro';
 ---
 
 <BaseLayout
@@ -16,6 +17,9 @@ import TheObservationsList from '../components/TheObservationsList.astro';
   bodyClass="homepage-body"
 >
     <main>
+        <!-- Act I: Blink to Breath -->
+        <OpeningSequence />
+
         <!-- Act II: The Core (Origins Accordion) -->
         <TheCore />
 

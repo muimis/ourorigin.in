@@ -61,50 +61,13 @@ const maskUrl = origin?.data.slug === 'wayanad' ? encodeURI('/maps/wayanad_map_c
 // Determine sizes for the offering stratum
 const sizes = product ? product.data.sizes : [];
 
-// The 7 inline SVG glyphs representing the 7 dimensions
+// The dimensions mapping for the rail
 const dimensions = [
-  { 
-    id: 'geo',
-    name: 'Geo', 
-    description: 'The exact coordinates and elevation',
-    d: 'M 50,20 L 50,40 M 50,60 L 50,80 M 20,50 L 40,50 M 60,50 L 80,50 M 40,50 A 10,10 0 1,0 60,50 A 10,10 0 1,0 40,50' 
-  },
-  { 
-    id: 'bio',
-    name: 'Bio', 
-    description: 'The soil and ecological system',
-    d: 'M 30,50 A 20,20 0 0,1 70,50 M 20,50 A 30,30 0 0,1 80,50 M 40,50 A 10,10 0 0,1 60,50' 
-  },
-  { 
-    id: 'community',
-    name: 'Community', 
-    description: 'The generational harvesters',
-    d: 'M 42,50 A 18,18 0 1,0 78,50 A 18,18 0 1,0 42,50 M 58,50 A 18,18 0 1,0 94,50 A 18,18 0 1,0 58,50' 
-  },
-  { 
-    id: 'method',
-    name: 'Method', 
-    description: 'The polyculture harvesting practice',
-    d: 'M 25,35 L 75,35 M 18,50 L 82,50 M 25,65 L 75,65' 
-  },
-  { 
-    id: 'observation',
-    name: 'Observation', 
-    description: 'The live atmospheric evidence',
-    d: 'M 20,50 C 35,25 40,75 50,50 C 60,25 65,75 80,50' 
-  },
-  { 
-    id: 'time',
-    name: 'Time', 
-    description: 'The seasonal harvest cycle',
-    d: 'M 50,20 L 50,80 M 20,50 L 80,50 M 50,50 L 70,30' 
-  },
-  { 
-    id: 'product',
-    name: 'Product', 
-    description: 'The finalized packaging and yield',
-    d: 'M 50,38 A 12,12 0 1,0 62,50 A 12,12 0 1,0 50,38 M 50,32 L 50,15 M 50,68 L 50,85 M 32,50 L 15,50 M 68,50 L 85,50' 
-  }
+  { id: 'canopy', name: 'Geo', description: 'Elevation and Coordinates' },
+  { id: 'land', name: 'Bio', description: 'Soil and Ecology' },
+  { id: 'hand', name: 'Method', description: 'Harvest Practice' },
+  { id: 'specimen', name: 'Specimen', description: 'Botanical and Sensory' },
+  { id: 'offering', name: 'Harvest', description: 'Yield and Offering' }
 ];
 ---
 
@@ -126,22 +89,19 @@ const dimensions = [
   </button>
 </div>
 
-<!-- The Cipher glyph progress & navigation rail -->
+<!-- The Cipher rail progress indicator -->
 <div class="cipher-rail-wrapper" role="navigation" aria-label="Origin dimensions">
   <div class="cipher-rail">
     {dimensions.map((dim, idx) => (
-      <button 
-        class="cipher-glyph" 
+      <a 
+        href={`#stratum-${dim.id}`}
+        class="cipher-node" 
         data-dim={dim.id}
         aria-label={`${dim.name} — ${dim.description}`}
       >
         <span class="cipher-label">{dim.name}</span>
-        <svg class="cipher-icon" viewBox="0 0 100 100" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-          <circle cx="50" cy="50" r="48" stroke-dasharray="2" opacity="0.3" />
-          <path d={dim.d} />
-          {idx === 6 && <circle cx="50" cy="50" r="3" fill="currentColor" />}
-        </svg>
-      </button>
+        <div class="cipher-dot"></div>
+      </a>
     ))}
   </div>
 </div>
@@ -153,13 +113,12 @@ const dimensions = [
     <OriginMark variant="gold" size={48} id="depth-gauge-mark" />
   </div>
 
-  <div class="pin-container" data-origin-slug={origin?.data.slug} data-product-slug={product?.id} data-origin-name={origin?.data.name} data-product-name={product?.data.name}>
-    <div class="depth-topographic-bg"></div>
+  <div class="documentary-scroll-container" data-origin-slug={origin?.data.slug} data-product-slug={product?.id} data-origin-name={origin?.data.name} data-product-name={product?.data.name}>
     
     {strata.map((s, i) => (
       <section 
-        class={`stratum stratum-${s.id} ${maskUrl && i === 0 ? 'has-terrain-mask' : ''}`} 
-        style={`z-index: ${i + 1}; height: 100dvh; width: 100%; transform: translateY(${i === 0 ? '0' : '100dvh'}); ${maskUrl && i === 0 ? `--mask-url: url('${maskUrl}');` : ''}`}
+        id={`stratum-${s.id}`}
+        class={`stratum stratum-${s.id}`} 
       >
         <div class="stratum-content">
            {s.image && !origin?.data.images.isPlaceholderImagery && (
@@ -233,7 +192,7 @@ const dimensions = [
     ))}
 
     <!-- Offering Stratum (Custom Layout) -->
-    <section class={`stratum stratum-offering ${maskUrl ? 'has-terrain-mask' : ''}`} style={`z-index: 10000; height: 100dvh; width: 100%; transform: translateY(100dvh); ${maskUrl ? `--mask-url: url('${maskUrl}');` : ''}`}>
+    <section id="stratum-offering" class="stratum stratum-offering">
       {product.data.images?.packaging && product.data.images.packaging.trim() !== '' && (
         <img 
           src={product.data.images.packaging} 
@@ -294,49 +253,26 @@ const dimensions = [
     color: var(--color-warm-cream);
   }
 
-  .depth-topographic-bg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('/topographic_pattern.svg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 0.4;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .pin-container {
+  .documentary-scroll-container {
     width: 100%;
     height: 100dvh;
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
     position: relative;
   }
 
-  .depth-gauge-wrapper {
-    position: fixed;
-    right: 24px;
-    top: 0; 
-    z-index: 9999;
-    pointer-events: none;
-  }
-
   .stratum {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 110vw;
-    will-change: transform;
-    content-visibility: auto;
-    contain-intrinsic-size: 100dvh;
-    backface-visibility: hidden;
-    transform-style: preserve-3d;
-  }
-
-  .stratum.active-in-view {
-    content-visibility: visible;
+    position: relative;
+    width: 100%;
+    height: 100dvh;
+    scroll-snap-align: start;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-forest-deep);
+    overflow: hidden;
   }
 
   .stratum-content {
@@ -345,13 +281,7 @@ const dimensions = [
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--color-forest-deep);
-    transform-origin: top center;
-    will-change: transform;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.4);
     position: relative;
-    overflow: hidden;
   }
 
   .stratum-shadow {
@@ -369,22 +299,10 @@ const dimensions = [
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0.8;
+    opacity: 0.6;
     z-index: 1;
     pointer-events: none;
     filter: saturate(0.8) contrast(1.1);
-  }
-
-  /* Terrain Cuts / Map Borders */
-  .has-terrain-mask {
-    -webkit-mask-image: var(--mask-url), linear-gradient(black, black);
-    mask-image: var(--mask-url), linear-gradient(black, black);
-    -webkit-mask-repeat: no-repeat, no-repeat;
-    mask-repeat: no-repeat, no-repeat;
-    -webkit-mask-size: auto 100%, calc(100% - 60vh) 100%;
-    mask-size: auto 100%, calc(100% - 60vh) 100%;
-    -webkit-mask-position: top right, top left;
-    mask-position: top right, top left;
   }
   
   .stratum-content {
@@ -738,7 +656,7 @@ const dimensions = [
     color: var(--color-gold);
   }
 
-  /* === Cipher Rail Styling === */
+  /* === Cipher Rail Styling (Refined) === */
   .cipher-rail-wrapper {
     position: fixed;
     right: 24px;
@@ -757,7 +675,7 @@ const dimensions = [
     align-items: flex-end;
   }
 
-  .cipher-glyph {
+  .cipher-node {
     background: none;
     border: none;
     padding: 0;
@@ -769,43 +687,40 @@ const dimensions = [
     color: var(--color-warm-cream);
     opacity: 0.35;
     transition: opacity 0.3s ease, color 0.3s ease;
+    text-decoration: none;
+    gap: 1rem;
   }
 
-  .cipher-glyph:hover,
-  .cipher-glyph.active {
+  .cipher-node:hover,
+  .cipher-node.active {
     opacity: 1;
     color: var(--color-gold);
   }
 
-  .cipher-icon {
-    width: 24px;
-    height: 24px;
-    stroke-width: 1.5px;
+  .cipher-dot {
+    width: 6px;
+    height: 6px;
+    background-color: currentColor;
+    border-radius: 50%;
     transition: transform 0.3s ease;
   }
 
-  .cipher-glyph.active .cipher-icon {
-    transform: scale(1.15);
+  .cipher-node.active .cipher-dot {
+    transform: scale(1.5);
   }
 
   .cipher-label {
-    position: absolute;
-    right: 36px;
     font-family: var(--font-mono);
-    font-size: 9px;
+    font-size: 10px;
     letter-spacing: 0.15em;
-    color: var(--color-gold);
+    color: currentColor;
     opacity: 0;
-    pointer-events: none;
-    transform: translateX(10px);
     transition: opacity 0.3s ease, transform 0.3s ease;
-    white-space: nowrap;
-    text-transform: uppercase;
+    transform: translateX(10px);
   }
-
-  .cipher-glyph:hover .cipher-label,
-  .cipher-glyph.show-label .cipher-label,
-  .cipher-glyph.show-label-temp .cipher-label {
+  
+  .cipher-node:hover .cipher-label,
+  .cipher-node.active .cipher-label {
     opacity: 1;
     transform: translateX(0);
   }
@@ -939,189 +854,36 @@ const dimensions = [
 
     initStrata() {
       const strata = document.querySelectorAll('.stratum');
-      const pinContainer = document.querySelector('.pin-container');
-      const originSlug = pinContainer?.getAttribute('data-origin-slug');
-      const productSlug = pinContainer?.getAttribute('data-product-slug');
+      const container = document.querySelector('.documentary-scroll-container');
       
-      const exploreKey = `ourorigin_explored_${originSlug}_${productSlug}`;
-      const isFirstVisit = localStorage.getItem(exploreKey) !== 'true';
-
-      // Start all strata below viewport except the first one
-      gsap.set(strata, { 
-        y: (i) => i === 0 ? "0dvh" : "100dvh",
-        x: "0vw"
-      });
-
-      // Create master pinned timeline
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: ".depth-experience-container",
-          start: "top top",
-          end: "+=350%", // Matches pin duration
-          scrub: true,
-          pin: ".pin-container",
-          anticipatePin: 1,
-          snap: {
-            snapTo: "labels",
-            duration: { min: 0.2, max: 0.6 },
-            delay: 0.1,
-            ease: "power1.inOut"
-          }
-        }
-      });
+      if (!container) return;
       
-      tl.addLabel("step0");
-
-      strata.forEach((stratum, index) => {
-        if (index === 0) return;
-
-        const prevStratum = strata[index - 1];
-        const prevShadow = prevStratum.querySelector('.stratum-shadow');
-
-        let topOffset = index * 2; // Halved distance
-        
-        // Offering page sits full screen
-        if (stratum.classList.contains('stratum-offering')) {
-          topOffset = 0;
-        }
-
-        const label = `step${index}`;
-
-        tl.to(stratum, {
-          y: `${topOffset}dvh`,
-          ease: "none",
-          duration: 1
-        }, label)
-        
-        .to(prevShadow, {
-          opacity: 0.5,
-          ease: "none",
-          duration: 1
-        }, label)
-        
-        .to(prevStratum.querySelector('.stratum-text-container'), {
-          y: "-30dvh",
-          scale: 1.8,
-          opacity: 0.08,
-          ease: "none",
-          duration: 1
-        }, label);
-      });
-      
-      tl.addLabel("step" + strata.length);
-
-      // 7 dimensions step mapping configuration
-      const STEP_DIMS = [
-        ['geo', 'observation'],   // step0 — canopy
-        ['bio'],                  // step1 — land
-        ['community', 'method'],  // step2 — hand
-        ['product', 'time'],      // step3 — specimen
-        []                        // step4 — offering
-      ];
-
-      function updateCipher(timeline) {
-        const t = timeline.time();
-        let activeStep = 0;
-        for (let i = 0; i <= strata.length; i++) {
-          const label = timeline.labels['step' + i];
-          if (label !== undefined && t >= label) activeStep = i;
-        }
-        const activeDims = STEP_DIMS[activeStep] || [];
-        document.querySelectorAll('.cipher-glyph').forEach((btn, idx) => {
-          const dimKey = btn.getAttribute('data-dim');
-          const isActive = activeDims.includes(dimKey);
-          btn.classList.toggle('active', isActive);
-          
-          let isPrecedingFilled = false;
-          if (activeStep === 0 && idx <= 1) isPrecedingFilled = true;
-          else if (activeStep === 1 && idx <= 2) isPrecedingFilled = true;
-          else if (activeStep === 2 && idx <= 4) isPrecedingFilled = true;
-          else if (activeStep === 3 && idx <= 5) isPrecedingFilled = true;
-          else if (activeStep === 4 && idx <= 6) isPrecedingFilled = true;
-          
-          btn.classList.toggle('filled-preceding', isPrecedingFilled);
-
-          if (isActive && isFirstVisit) {
-            btn.classList.add('show-label');
-          } else {
-            btn.classList.remove('show-label');
-          }
-        });
-      }
-
-      // Track active stratum and update Cipher rail & explore state
-      tl.eventCallback('onUpdate', function() {
-        const progress = this.progress();
-        
-        // Calculate the current active step index
-        const t = this.time();
-        let activeStep = 0;
-        for (let i = 0; i <= strata.length; i++) {
-          const label = this.labels['step' + i];
-          if (label !== undefined && t >= label) activeStep = i;
-        }
-
-        // Toggle active-in-view class to optimize rendering with content-visibility
+      const updateCipher = () => {
+        let activeIdx = 0;
         strata.forEach((stratum, idx) => {
-          stratum.classList.toggle('active-in-view', idx === activeStep || idx === activeStep + 1);
-        });
-        
-        // Mark as explored when reaching offering stratum (last slide)
-        if (progress > 0.8 && originSlug && productSlug) {
-          localStorage.setItem(exploreKey, 'true');
-        }
-        
-        updateCipher(this);
-      });
-
-      // Wire up Cipher rail click events to scroll directly to the target stratum
-      document.querySelectorAll('.cipher-glyph').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const clickedDim = btn.getAttribute('data-dim');
-          const stepIdx = STEP_DIMS.findIndex(dims => dims.includes(clickedDim));
-          
-          const scrollTriggerInstance = tl.scrollTrigger;
-          if (scrollTriggerInstance && stepIdx !== -1) {
-            const start = scrollTriggerInstance.start;
-            const end = scrollTriggerInstance.end;
-            const totalScroll = end - start;
-            // Snaps directly to the target step in the pinned scroller
-            const targetScroll = start + (stepIdx / (strata.length - 1)) * totalScroll;
-            
-            window.scrollTo({
-              top: targetScroll,
-              behavior: 'smooth'
-            });
-
-            // Briefly show label when clicked
-            btn.classList.add('show-label-temp');
-            setTimeout(() => {
-              btn.classList.remove('show-label-temp');
-            }, 1800);
+          const rect = stratum.getBoundingClientRect();
+          if (rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2) {
+            activeIdx = idx;
           }
         });
+        
+        const activeDim = strata[activeIdx]?.id.replace('stratum-', '');
+        
+        document.querySelectorAll('.cipher-node').forEach(node => {
+          const dimKey = node.getAttribute('data-dim');
+          node.classList.toggle('active', dimKey === activeDim);
+        });
+      };
+      
+      container.addEventListener('scroll', () => {
+        requestAnimationFrame(updateCipher);
       });
+      
+      updateCipher();
     }
 
     initDepthGauge() {
-      const gauge = document.querySelector('.depth-gauge-wrapper');
-      const container = document.querySelector('.depth-experience-container');
-
-      if (gauge && container) {
-        gsap.fromTo(gauge, 
-          { y: "10dvh" }, 
-          { 
-            y: "80dvh",
-            ease: "none",
-            scrollTrigger: {
-              trigger: container,
-              start: "top top",
-              end: "+=350%", // Matches the actual pin duration (Patch 1)
-              scrub: true
-            }
-          }
-        );
-      }
+      // Depth gauge removed for simpler documentary experience
     }
   }
 
