@@ -50,13 +50,14 @@ const { variant = 'dark' } = Astro.props;
     top: 0;
     left: 0;
     width: 100%;
-    padding: 24px clamp(1.5rem, 5vw, 3.5rem);
+    padding: 16px clamp(1.5rem, 5vw, 3.5rem);
     display: flex;
     justify-content: space-between;
     align-items: center;
     z-index: 8000;
     box-sizing: border-box;
     pointer-events: none;
+    background: linear-gradient(to bottom, rgba(3, 5, 3, 0.9) 0%, rgba(3, 5, 3, 0) 100%);
   }
 
   .header-logo {
@@ -70,9 +71,15 @@ const { variant = 'dark' } = Astro.props;
 
   .header-actions {
     display: flex;
-    gap: 2rem;
+    gap: 1.6rem;
     align-items: center;
     pointer-events: auto;
+    background: rgba(8, 16, 6, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 8px 20px;
+    border-radius: 30px;
+    border: 1px solid rgba(247, 242, 230, 0.12);
   }
 
   .hud-btn {

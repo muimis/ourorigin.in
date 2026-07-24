@@ -1,7 +1,9 @@
 :root {
-  --color-forest-deep: #0c1509;
-  --color-warm-cream: #F5EDD8;
-  --color-gold: #A67C3C;
+  --color-void: #030503;
+  --color-forest-deep: #081006;
+  --color-warm-cream: #F7F2E6;
+  --color-gold: #C69C52;
+  --color-gold-muted: rgba(198, 156, 82, 0.4);
   --color-ruby: #8a2a2b;
   --color-copper: #b87333;
   --color-silver: #c0c0c0;
