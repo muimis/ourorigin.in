@@ -24,7 +24,7 @@ const botanicalState = origin ? botanicalStates[origin.data.slug] : '';
 const storySections = [
   { 
     id: 'canopy',
-    title: 'CANOPY & ELEVATION',
+    title: '01 / CANOPY & ELEVATION',
     evidence: origin ? `${origin.data.elevation} · ${origin.data.bioregion}` : '',
     narrative: origin ? origin.data.narrative.canopy : '',
     image: origin ? origin.data.images.canopy : null, 
@@ -32,7 +32,7 @@ const storySections = [
   },
   { 
     id: 'land',
-    title: 'SOIL & BIOSPHERE',
+    title: '02 / SOIL & ECOSYSTEM',
     evidence: origin ? origin.data.soil : '',
     narrative: origin ? origin.data.narrative.land : '',
     image: origin ? origin.data.images.land : null, 
@@ -40,7 +40,7 @@ const storySections = [
   },
   { 
     id: 'hand',
-    title: 'HARVEST PRACTICE',
+    title: '03 / HARVEST PRACTICE',
     evidence: origin ? origin.data.method : '',
     narrative: origin ? origin.data.narrative.hand : '',
     image: origin ? origin.data.images.hand : null, 
