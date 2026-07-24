@@ -190,7 +190,6 @@ html {
 
 /* Respect reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
-  *,
   [data-reveal],
   [data-reveal="stagger"] > * {
     animation-duration: 0.01ms !important;

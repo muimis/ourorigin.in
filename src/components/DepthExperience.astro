@@ -629,92 +629,92 @@ const navDimensions = [
 </style>
 
 <script>
-  class DepthExperience {
-    constructor() {
-      this.initPurchaseAction();
-    }
+  function initDepthExperience() {
+    // Size selection
+    const sizeBtns = document.querySelectorAll('.size-ledger-row');
 
-    initPurchaseAction() {
-      // Size selection
-      const sizeBtns = document.querySelectorAll('.size-ledger-row');
-      let activeSize = sizeBtns[0]?.getAttribute('data-size');
-      let activePrice = sizeBtns[0]?.getAttribute('data-price');
-
-      sizeBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          sizeBtns.forEach(b => b.classList.remove('selected'));
-          const target = e.currentTarget as HTMLButtonElement;
-          target.classList.add('selected');
-          activeSize = target.getAttribute('data-size');
-          activePrice = target.getAttribute('data-price');
-        });
+    sizeBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        sizeBtns.forEach(b => b.classList.remove('selected'));
+        const target = e.currentTarget as HTMLButtonElement;
+        target.classList.add('selected');
       });
+    });
 
-      // Add to Basket
-      const addBtn = document.getElementById('add-to-ledger-btn');
-      if (addBtn) {
-        addBtn.addEventListener('click', () => {
-          const container = document.querySelector('.depth-experience-container');
-          if (!container || !activeSize || !activePrice) return;
+    // Add to Basket
+    const addBtn = document.getElementById('add-to-ledger-btn');
+    if (addBtn) {
+      addBtn.addEventListener('click', () => {
+        const container = document.querySelector('.depth-experience-container');
+        const selectedBtn = document.querySelector('.size-ledger-row.selected') || sizeBtns[0];
+        
+        const activeSize = selectedBtn?.getAttribute('data-size');
+        const activePrice = selectedBtn?.getAttribute('data-price');
 
-          const pId = container.getAttribute('data-product-slug');
-          const pName = container.getAttribute('data-product-name');
-          const oName = container.getAttribute('data-origin-name');
-          const oId = container.getAttribute('data-origin-slug');
+        if (!container || !activeSize || !activePrice) return;
 
-          window.dispatchEvent(new CustomEvent('add-to-ledger', {
-            detail: {
-              id: `${pId}-${activeSize}`,
-              productId: pId,
-              name: pName,
-              origin: oName,
-              originId: oId,
-              size: activeSize,
-              weight: activeSize,
-              price: parseInt(activePrice, 10),
-              quantity: 1
-            }
-          }));
+        const pId = container.getAttribute('data-product-slug');
+        const pName = container.getAttribute('data-product-name');
+        const oName = container.getAttribute('data-origin-name');
+        const oId = container.getAttribute('data-origin-slug');
 
-          const originalText = addBtn.textContent;
-          addBtn.textContent = 'ADDED TO BASKET ✓';
-          setTimeout(() => {
-            addBtn.textContent = originalText;
-          }, 1500);
-        });
-      }
+        window.dispatchEvent(new CustomEvent('add-to-ledger', {
+          detail: {
+            id: `${pId}-${activeSize}`,
+            productId: pId,
+            name: pName,
+            origin: oName,
+            originId: oId,
+            size: activeSize,
+            weight: activeSize,
+            price: parseInt(activePrice, 10),
+            quantity: 1
+          }
+        }));
 
-      // Basket trigger
-      const basketBtn = document.getElementById('depth-basket-trigger');
-      if (basketBtn) {
-        basketBtn.addEventListener('click', () => {
-          window.dispatchEvent(new Event('trigger-dossier'));
-        });
-      }
+        const originalText = addBtn.textContent;
+        addBtn.textContent = 'ADDED TO BASKET ✓';
+        setTimeout(() => {
+          addBtn.textContent = originalText;
+        }, 1500);
+      });
+    }
+
+    // Basket trigger
+    const basketBtn = document.getElementById('depth-basket-trigger');
+    if (basketBtn) {
+      basketBtn.addEventListener('click', () => {
+        window.dispatchEvent(new Event('open-cart'));
+      });
+    }
+
+    // Share action
+    const shareBtn = document.getElementById('depth-share-trigger');
+    if (shareBtn) {
+      shareBtn.addEventListener('click', () => {
+        if (navigator.share) {
+          navigator.share({
+            title: document.title,
+            text: 'Explore this harvest from OurOrigin.',
+            url: window.location.href
+          }).catch(err => console.log('Share failed', err));
+        } else {
+          navigator.clipboard.writeText(window.location.href).then(() => {
+            const originalText = shareBtn.textContent;
+            shareBtn.textContent = 'COPIED ✓';
+            setTimeout(() => {
+              shareBtn.textContent = originalText;
+            }, 2000);
+          });
+        }
+      });
     }
   }
 
-  new DepthExperience();
-
-  // Share action
-  const shareBtn = document.getElementById('depth-share-trigger');
-  if (shareBtn) {
-    shareBtn.addEventListener('click', () => {
-      if (navigator.share) {
-        navigator.share({
-          title: document.title,
-          text: 'Explore this harvest from OurOrigin.',
-          url: window.location.href
-        }).catch(err => console.log('Share failed', err));
-      } else {
-        navigator.clipboard.writeText(window.location.href).then(() => {
-          const originalText = shareBtn.textContent;
-          shareBtn.textContent = '[ COPIED ]';
-          setTimeout(() => {
-            shareBtn.textContent = originalText;
-          }, 2000);
-        });
-      }
-    });
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDepthExperience);
+  } else {
+    initDepthExperience();
   }
+  document.addEventListener('astro:page-load', initDepthExperience);
 </script>

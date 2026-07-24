@@ -399,7 +399,7 @@ const sortedOrigins = [...origins].sort((a, b) => {
 </style>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
+  function initTheCore() {
     const filterBtns = document.querySelectorAll('.filter-btn');
     const cards = document.querySelectorAll('.gallery-card');
     const bgLayers = document.querySelectorAll('.core-bg-layer');
@@ -477,5 +477,12 @@ const sortedOrigins = [...origins].sort((a, b) => {
         }, 1200);
       });
     });
-  });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTheCore);
+  } else {
+    initTheCore();
+  }
+  document.addEventListener('astro:page-load', initTheCore);
 </script>

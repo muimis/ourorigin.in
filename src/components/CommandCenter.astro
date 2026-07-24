@@ -258,12 +258,7 @@ const { variant = 'dark' } = Astro.props;
       }
     });
 
-    const triggerYields = document.getElementById('trigger-yields');
-    if (triggerYields) {
-      triggerYields.addEventListener('click', () => {
-        window.dispatchEvent(new Event('open-all-yields-panel'));
-      });
-    }
+
 
     // Escape key to close
     document.addEventListener('keydown', (e) => {
