@@ -38,9 +38,9 @@ const strokeColor = colorMap[variant];
   <!-- The Woven Leaf (Vesica Piscis — two intersecting arcs) -->
   <g class="ok-weave" stroke={strokeColor} stroke-width="0.6" opacity="0.85" stroke-linecap="round">
     <!-- Vertical Leaf: arc right then arc left -->
-    <path d="M 50 15 A 30 30 0 0 1 50 85 A 30 30 0 0 0 50 15" />
+    <path d="M 50 15 A 40 40 0 0 1 50 85 A 40 40 0 0 0 50 15" />
     <!-- Horizontal Leaf: arc down then arc up -->
-    <path d="M 15 50 A 30 30 0 0 1 85 50 A 30 30 0 0 0 15 50" />
+    <path d="M 15 50 A 40 40 0 0 1 85 50 A 40 40 0 0 0 15 50" />
   </g>
 
   <!-- Diagonal Threads (The Weave connecting the leaves) -->
@@ -58,8 +58,8 @@ const strokeColor = colorMap[variant];
     overflow: visible;
   }
 
-  /* The Living Breath — only on non-tiny sizes */
-  .origin-knot:not([width="28"]):not([width="32"]) {
+  /* The Living Breath */
+  .origin-knot {
     animation: knot-breathe 8s ease-in-out infinite;
   }
 

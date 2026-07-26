@@ -14,29 +14,22 @@ function parseElevation(elevStr: string) {
 
 const originsBySlug = Object.fromEntries(origins.map(o => [o.data.slug, o]));
 
-// Map each product with its origin data
-const productList = products.map(p => {
-  const oSlug = typeof p.data.originSlug === 'object' ? p.data.originSlug?.id : p.data.originSlug;
-  const originObj = originsBySlug[oSlug];
-  return {
-    ...p,
-    originData: originObj ? originObj.data : null
-  };
-}).sort((a, b) => {
-  const elevA = a.originData ? parseElevation(a.originData.elevation) : 0;
-  const elevB = b.originData ? parseElevation(b.originData.elevation) : 0;
-  if (elevB !== elevA) return elevB - elevA;
-  return (a.data.name || '').localeCompare(b.data.name || '');
-});
-
+// Sort origins by elevation descending
 const sortedOrigins = [...origins].sort((a, b) => {
   return parseElevation(b.data.elevation) - parseElevation(a.data.elevation);
+});
+
+// Group products by origin
+const productsByOrigin = {};
+sortedOrigins.forEach(o => {
+  productsByOrigin[o.data.slug] = products.filter(p => {
+    const oSlug = typeof p.data.originSlug === 'object' ? p.data.originSlug?.id : p.data.originSlug;
+    return oSlug === o.data.slug;
+  }).sort((a, b) => (a.data.name || '').localeCompare(b.data.name || ''));
 });
 ---
 
 <section id="the-core" class="the-core-section">
-  <!-- Ambient Backgrounds -->
-
   <!-- Cinematic Ambient Backgrounds -->
   <div class="core-cinematic-bg">
     {sortedOrigins.map(origin => (
@@ -57,92 +50,101 @@ const sortedOrigins = [...origins].sort((a, b) => {
       <p class="core-subtitle">Pure, community-harvested botanical yields from their native soil.</p>
     </div>
 
-    <!-- Origin Filter Pills -->
-    <div class="origin-filter-bar" data-reveal="fade">
-      <button class="filter-btn active" data-filter="all">All Yields</button>
-      {sortedOrigins.map(o => (
-        <button class="filter-btn" data-filter={o.data.slug}>
-          {o.data.name}
-        </button>
-      ))}
-    </div>
-
-    <!-- Direct Product Gallery Grid (Zero Mazes) -->
-    <div class="product-gallery-grid" data-reveal="stagger">
-      {productList.map((p) => {
-        const oSlug = typeof p.data.originSlug === 'object' ? p.data.originSlug?.id : p.data.originSlug;
-        const originObj = originsBySlug[oSlug];
-        const priceRange = p.data.sizes.length > 1
-          ? `₹${Math.min(...p.data.sizes.map(s => s.priceINR))} - ₹${Math.max(...p.data.sizes.map(s => s.priceINR))}`
-          : `₹${p.data.sizes[0].priceINR}`;
-        
-        const firstSize = p.data.sizes[0];
-        const productDataString = JSON.stringify({
-          id: p.id + '-' + firstSize.label,
-          productId: p.id,
-          name: p.data.name,
-          origin: originObj ? originObj.data.name : oSlug,
-          originId: oSlug,
-          price: firstSize.priceINR,
-          size: firstSize.label,
-          weight: firstSize.label,
-          quantity: 1
-        });
-
-        const hasRealPackaging = !!(p.data.images?.packaging && p.data.images.packaging.trim() !== '');
+    <!-- The Descent -->
+    <div class="descent-container">
+      {sortedOrigins.map(o => {
+        const originProducts = productsByOrigin[o.data.slug];
+        if (!originProducts || originProducts.length === 0) return null;
 
         return (
-          <article class="gallery-card" data-origin={oSlug}>
-            <div class="card-image-wrap">
-              {hasRealPackaging ? (
-                <img 
-                  src={p.data.images.packaging} 
-                  alt={`Packaging of ${p.data.name}`} 
-                  class="card-img" 
-                  loading="lazy" 
-                  transition:name={`product-img-${p.id}`}
-                />
-              ) : (
-                <div class="card-img-pending" role="img" aria-label={`Photography pending for ${p.data.name}`}>
-                  <svg viewBox="0 0 100 100" width="48" height="48" aria-hidden="true">
-                    <circle cx="50" cy="50" r="49" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                    <circle cx="50" cy="50" r="4" fill="currentColor"/>
-                  </svg>
-                </div>
-              )}
-              <div class="card-origin-seal" title={`Verified Origin: ${originObj ? originObj.data.name : oSlug}`}>
-                <OriginMark variant="gold" size={32} />
-              </div>
-              <span class="card-origin-pill">{originObj ? originObj.data.name : oSlug}</span>
+          <div class="origin-descent-block" data-origin={o.data.slug}>
+            
+            <div class="descent-elevation-marker" data-reveal>
+              <div class="elevation-line"></div>
+              <span class="elevation-text">{o.data.elevation} &middot; {o.data.name}</span>
             </div>
 
-            <div class="card-content">
-              <div class="card-meta">
-                <h3 class="card-title">{p.data.name}</h3>
-                <span class="card-botanical">{p.data.botanicalName}</span>
-              </div>
-
-              <!-- Supportive Dimensions (The Cipher) -->
-              <div class="card-dimensions">
-                <div class="dim-item"><span class="dim-label">Geo</span><span class="dim-value">{originObj ? originObj.data.elevation : 'Unknown'}</span></div>
-                <div class="dim-item"><span class="dim-label">Method</span><span class="dim-value">Hand-Harvested</span></div>
-                <div class="dim-item"><span class="dim-label">Time</span><span class="dim-value">Seasonal Yield</span></div>
-              </div>
-
-              <div class="card-price-row">
-                <span class="card-price">{priceRange}</span>
-              </div>
-
-              <div class="card-actions">
-                <button class="add-basket-btn" data-product={productDataString}>
-                  Honor the Decision
-                </button>
-                <a href={`/origins/${oSlug}/${p.id}`} class="explore-story-link">
-                  Enter the Origin &rarr;
-                </a>
-              </div>
+            <div class="descent-gesture-moment" data-reveal>
+              <img src="/assets/images/gesture_hands.png" alt="The Gesture" class="gesture-img" loading="lazy" />
+              <div class="gesture-void-overlay"></div>
             </div>
-          </article>
+
+            <div class="product-gallery-grid" data-reveal="stagger">
+              {originProducts.map(p => {
+                const priceRange = p.data.sizes.length > 1
+                  ? `₹${Math.min(...p.data.sizes.map(s => s.priceINR))} - ₹${Math.max(...p.data.sizes.map(s => s.priceINR))}`
+                  : `₹${p.data.sizes[0].priceINR}`;
+                
+                const firstSize = p.data.sizes[0];
+                const productDataString = JSON.stringify({
+                  id: p.id + '-' + firstSize.label,
+                  productId: p.id,
+                  name: p.data.name,
+                  origin: o.data.name,
+                  originId: o.data.slug,
+                  price: firstSize.priceINR,
+                  size: firstSize.label,
+                  weight: firstSize.label,
+                  quantity: 1
+                });
+
+                const hasRealPackaging = !!(p.data.images?.packaging && p.data.images.packaging.trim() !== '');
+
+                return (
+                  <article class="gallery-card">
+                    <div class="card-image-wrap">
+                      {hasRealPackaging ? (
+                        <img 
+                          src={p.data.images.packaging} 
+                          alt={`Packaging of ${p.data.name}`} 
+                          class="card-img" 
+                          loading="lazy" 
+                          transition:name={`product-img-${p.id}`}
+                        />
+                      ) : (
+                        <div class="card-img-pending" role="img" aria-label={`Photography pending for ${p.data.name}`}>
+                          <svg viewBox="0 0 100 100" width="48" height="48" aria-hidden="true">
+                            <circle cx="50" cy="50" r="49" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                            <circle cx="50" cy="50" r="4" fill="currentColor"/>
+                          </svg>
+                        </div>
+                      )}
+                      <div class="card-origin-seal" title={`Verified Origin: ${o.data.name}`}>
+                        <OriginMark variant="gold" size={32} />
+                      </div>
+                      <span class="card-origin-pill">{o.data.name}</span>
+                    </div>
+
+                    <div class="card-content">
+                      <div class="card-meta">
+                        <h3 class="card-title">{p.data.name}</h3>
+                        <span class="card-botanical">{p.data.botanicalName}</span>
+                      </div>
+
+                      <div class="card-dimensions">
+                        <div class="dim-item"><span class="dim-label">Geo</span><span class="dim-value">{o.data.elevation}</span></div>
+                        <div class="dim-item"><span class="dim-label">Method</span><span class="dim-value">Hand-Harvested</span></div>
+                        <div class="dim-item"><span class="dim-label">Time</span><span class="dim-value">Seasonal Yield</span></div>
+                      </div>
+
+                      <div class="card-price-row">
+                        <span class="card-price">{priceRange}</span>
+                      </div>
+
+                      <div class="card-actions">
+                        <button class="add-basket-btn" data-product={productDataString}>
+                          Honor the Decision
+                        </button>
+                        <a href={`/origins/${o.data.slug}/${p.id}`} class="explore-story-link">
+                          Enter the Origin &rarr;
+                        </a>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
         );
       })}
     </div>
@@ -157,10 +159,8 @@ const sortedOrigins = [...origins].sort((a, b) => {
     min-height: 100vh;
   }
 
-
-
   .core-cinematic-bg {
-    position: absolute;
+    position: fixed; /* Keep it fixed during scroll */
     inset: 0;
     pointer-events: none;
     z-index: 1;
@@ -169,13 +169,13 @@ const sortedOrigins = [...origins].sort((a, b) => {
 
   .core-bg-layer {
     position: absolute;
-    inset: -5%; /* slightly larger to allow scale breathing without edge cutoff */
+    inset: -5%;
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
     opacity: 0;
-    transition: opacity 1.8s var(--ease-fluid);
-    filter: saturate(0.3) contrast(1.1) brightness(0.4);
+    transition: opacity 1.2s ease-in-out;
+    filter: saturate(0.3) contrast(1.1) brightness(0.2);
     transform: scale(1);
     transform-origin: center center;
   }
@@ -200,7 +200,7 @@ const sortedOrigins = [...origins].sort((a, b) => {
 
   /* Section Header */
   .core-header {
-    margin-bottom: 2.5rem;
+    margin-bottom: 6rem;
     text-align: left;
   }
 
@@ -233,61 +233,61 @@ const sortedOrigins = [...origins].sort((a, b) => {
     line-height: 1.4;
   }
 
-  .hero-tag {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.25em;
-    color: var(--color-gold);
-    text-transform: uppercase;
-  }
-
-  .hero-title {
-    font-family: var(--font-institutional);
-    font-size: clamp(3.5rem, 9vw, 8.5rem);
-    font-weight: 300;
-    margin: 1rem 0 1.5rem 0;
-    line-height: 0.95;
-    letter-spacing: -0.01em;
-  }
-
-  .hero-subtitle {
-    font-family: var(--font-narrative);
-    font-size: clamp(1.2rem, 2vw, 1.6rem);
-    font-weight: 300;
-    color: rgba(245, 237, 216, 0.75);
-    max-width: 680px;
-    margin: 0;
-    line-height: 1.4;
-  }
-
-  /* Filter Bar */
-  .origin-filter-bar {
+  /* Descent Architecture */
+  .descent-container {
     display: flex;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-    align-items: center;
-    margin-bottom: 4rem;
-    border-bottom: 1px solid rgba(245, 237, 216, 0.1);
-    padding-bottom: 1.5rem;
+    flex-direction: column;
+    gap: 12rem;
   }
 
-  .filter-btn {
-    background: transparent;
-    border: none;
+  .origin-descent-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+  }
+
+  .descent-elevation-marker {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding-bottom: 2rem;
+    opacity: 0.6;
+  }
+
+  .elevation-line {
+    flex: 1;
+    height: 1px;
+    background: var(--color-gold);
+  }
+
+  .elevation-text {
     font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    color: rgba(245, 237, 216, 0.45);
-    cursor: pointer;
-    padding: 6px 12px;
-    transition: all 0.3s ease;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    color: var(--color-gold);
     text-transform: uppercase;
   }
 
-  .filter-btn:hover,
-  .filter-btn.active {
-    color: var(--color-gold);
-    background: rgba(166, 124, 60, 0.08);
+  .descent-gesture-moment {
+    width: 100%;
+    aspect-ratio: 16/9;
+    position: relative;
+    overflow: hidden;
+    background: #000;
+    margin-bottom: 2rem;
+  }
+
+  .gesture-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.8) contrast(1.2) grayscale(0.2);
+  }
+
+  .gesture-void-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, transparent 30%, rgba(3,5,3,1) 90%);
   }
 
   /* Direct Product Gallery Grid */
@@ -302,10 +302,6 @@ const sortedOrigins = [...origins].sort((a, b) => {
     flex-direction: column;
     justify-content: space-between;
     transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-  }
-
-  .gallery-card.is-filtered-out {
-    display: none;
   }
 
   .gallery-card:hover {
@@ -514,71 +510,37 @@ const sortedOrigins = [...origins].sort((a, b) => {
       grid-template-columns: 1fr;
       gap: 3rem;
     }
+    
+    .descent-gesture-moment {
+      aspect-ratio: 1; /* taller on mobile */
+    }
   }
 </style>
 
 <script>
   function initTheCore() {
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    const cards = document.querySelectorAll('.gallery-card');
+    const blocks = document.querySelectorAll('.origin-descent-block');
     const bgLayers = document.querySelectorAll('.core-bg-layer');
 
-    // Origin Filter Logic
-    filterBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        filterBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        const filter = btn.getAttribute('data-filter');
-
-        // Background highlight
-        bgLayers.forEach(layer => {
-          if (filter !== 'all' && layer.id === `bg-${filter}`) {
-            layer.classList.add('is-active');
-          } else {
-            layer.classList.remove('is-active');
-          }
-        });
-
-        // Filter cards
-        cards.forEach(card => {
-          const origin = card.getAttribute('data-origin');
-          if (filter === 'all' || origin === filter) {
-            card.classList.remove('is-filtered-out');
-          } else {
-            card.classList.add('is-filtered-out');
-          }
-        });
+    // Scroll Observer to change ambient background based on active origin block
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const origin = entry.target.getAttribute('data-origin');
+          bgLayers.forEach(layer => {
+            if (layer.id === `bg-${origin}`) {
+              layer.classList.add('is-active');
+            } else {
+              layer.classList.remove('is-active');
+            }
+          });
+        }
       });
+    }, {
+      rootMargin: '-30% 0px -40% 0px' // Trigger when block is near middle of viewport
     });
 
-    // Card Hover Ambient Effect
-    cards.forEach(card => {
-      card.addEventListener('mouseenter', () => {
-        const origin = card.getAttribute('data-origin');
-        bgLayers.forEach(layer => {
-          if (layer.id === `bg-${origin}`) {
-            layer.classList.add('is-active');
-          } else {
-            layer.classList.remove('is-active');
-          }
-        });
-      });
-    });
-
-    const grid = document.querySelector('.product-gallery-grid');
-    if (grid) {
-      grid.addEventListener('mouseleave', () => {
-        const activeFilter = document.querySelector('.filter-btn.active')?.getAttribute('data-filter');
-        bgLayers.forEach(layer => {
-          if (activeFilter !== 'all' && layer.id === `bg-${activeFilter}`) {
-            layer.classList.add('is-active');
-          } else {
-            layer.classList.remove('is-active');
-          }
-        });
-      });
-    }
+    blocks.forEach(block => observer.observe(block));
 
     // Add to Basket Event Trigger
     document.querySelectorAll('.add-basket-btn').forEach(btn => {
