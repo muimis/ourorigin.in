@@ -120,7 +120,7 @@ const companionsJson = JSON.stringify(companionProductsMap);
           <p class="upi-note human-note-small">Paid via UPI? Include your payment reference in the message and we'll confirm immediately.</p>
         </div>
 
-        <button id="ledger-connect-btn" class="ledger-connect" aria-label="Complete the transfer via WhatsApp">COMPLETE THE TRANSFER</button>
+        <button id="ledger-connect-btn" class="ledger-connect" aria-label="Complete the transfer via WhatsApp">FINALIZE TRANSFER</button>
         
         <div class="ledger-fssai">FSSAI Reg. No. {FSSAI_NUMBER}</div>
       </div>
@@ -857,20 +857,23 @@ const companionsJson = JSON.stringify(companionProductsMap);
     background: var(--color-warm-cream);
     color: var(--color-forest-deep);
     font-family: 'DM Mono', monospace;
-    font-size: 0.9rem;
-    padding: 1.2rem;
+    font-size: 1rem;
+    padding: 1.4rem;
     border: none;
     cursor: pointer;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-weight: bold;
-    border-radius: 4px;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    border-radius: 0;
     width: 100%;
     margin-top: 2rem;
-    transition: background 0.3s ease;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px -5px rgba(247, 242, 230, 0.2);
   }
   .ledger-connect:hover {
     background: var(--color-gold);
+    box-shadow: 0 8px 30px -5px rgba(198, 156, 82, 0.4);
+    transform: translateY(-2px);
   }
   
   .ledger-fssai {

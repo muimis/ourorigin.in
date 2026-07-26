@@ -124,15 +124,40 @@ const navDimensions = [
 
         <!-- Right: Purchase Details & Add to Cart -->
         <div class="hero-details-col">
-          <div class="origin-tag-row">
-            <span class="origin-badge">Community Harvest &middot; {origin?.data.name} ({origin?.data.elevation})</span>
-            {origin && <LiveWeather coordinates={origin.data.coordinates} originName={origin.data.name} />}
+          <!-- The Origin Anchor -->
+          <div class="origin-verification-anchor">
+            <div class="anchor-knot">
+              <OriginMark variant="gold" size={48} />
+            </div>
+            <div class="anchor-details">
+              <span class="anchor-label">Verified First Hands</span>
+              <span class="anchor-value">{origin?.data.name}</span>
+            </div>
           </div>
 
           <h1 class="product-main-title">{product.data.name}</h1>
           <p class="product-botanical-subtitle">{product.data.botanicalName}</p>
-
           <p class="specimen-intro-copy">{product.data.specimenCopy}</p>
+
+          <!-- Brutalist Data Table -->
+          <div class="origin-data-table">
+            <div class="data-row">
+              <span class="data-label">Elevation</span>
+              <span class="data-value">{origin?.data.elevation || 'Unknown'}</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Method</span>
+              <span class="data-value">{origin?.data.method || 'Hand-Harvested'}</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Coordinates</span>
+              <span class="data-value">{origin?.data.coordinates ? `${origin.data.coordinates.lat}, ${origin.data.coordinates.lng}` : 'Undisclosed'}</span>
+            </div>
+          </div>
+          
+          <div class="weather-row">
+            {origin && <LiveWeather coordinates={origin.data.coordinates} originName={origin.data.name} />}
+          </div>>
 
           <!-- Size & Price Selection -->
           <div class="size-ledger">
@@ -308,15 +333,80 @@ const navDimensions = [
     gap: 1.2rem;
   }
 
-  .origin-tag-row {
+  .origin-verification-anchor {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.2rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid rgba(198, 156, 82, 0.2);
+    margin-bottom: 0.5rem;
+  }
+
+  .anchor-knot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .anchor-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .anchor-label {
     font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.15em;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--color-gold-muted);
+    text-transform: uppercase;
+  }
+
+  .anchor-value {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    letter-spacing: 0.05em;
     color: var(--color-gold);
     text-transform: uppercase;
+  }
+
+  .origin-data-table {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid rgba(245, 237, 216, 0.1);
+    border-bottom: 1px solid rgba(245, 237, 216, 0.1);
+    margin: 1rem 0;
+  }
+
+  .data-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid rgba(245, 237, 216, 0.05);
+  }
+
+  .data-row:last-child {
+    border-bottom: none;
+  }
+
+  .data-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: rgba(245, 237, 216, 0.4);
+    text-transform: uppercase;
+  }
+
+  .data-value {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: var(--color-warm-cream);
+    text-transform: uppercase;
+  }
+
+  .weather-row {
+    margin-bottom: 1rem;
   }
 
   .product-main-title {

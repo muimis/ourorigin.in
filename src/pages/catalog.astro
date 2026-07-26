@@ -38,8 +38,6 @@ const sortedYields = [...products].sort((a, b) => {
   showFooter={true}
 >
   <main id="main-content" class="catalog-page-container">
-    <!-- The 12km Thread -->
-    <div class="catalog-thread"></div>
 
     <div class="catalog-header" data-reveal>
       <h1 class="catalog-title">The Yield</h1>
@@ -95,18 +93,7 @@ const sortedYields = [...products].sort((a, b) => {
     box-sizing: border-box;
   }
 
-  .catalog-thread {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 1px;
-    height: 100%;
-    background-color: var(--color-gold);
-    opacity: 0.06;
-    z-index: 0;
-    pointer-events: none;
-  }
+
 
   .catalog-header {
     max-width: 1200px;
