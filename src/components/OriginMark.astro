@@ -3,14 +3,12 @@ export interface Props {
   size?: number;
   variant?: 'primary' | 'reversed' | 'gold';
   id?: string;
-  animate?: boolean;
 }
 
 const { 
   size = 100, 
   variant = 'primary', 
-  id = Math.random().toString(36).substring(7),
-  animate = false 
+  id = Math.random().toString(36).substring(7)
 } = Astro.props;
 
 const colorMap = {
@@ -23,116 +21,80 @@ const strokeColor = colorMap[variant];
 
 <svg 
   id={`origin-mark-${id}`}
-  class={`origin-mark variant-${variant} ${animate ? 'om-animated' : ''}`} 
+  class={`origin-knot variant-${variant}`} 
   width={size} 
   height={size} 
   viewBox="0 0 100 100" 
   xmlns="http://www.w3.org/2000/svg" 
   fill="none" 
-  aria-label="OurOrigin — Origin Mark" 
+  aria-label="OurOrigin — The Origin Knot" 
   role="img"
 >
-  <!-- Outer ring: 100% width -->
-  <circle class="om-outer" cx="50" cy="50" r="49" stroke={strokeColor} stroke-width="1.5" opacity="0.9"/>
+  <!-- The Pulse Effect (Subtle Glow/Breath behind the knot) -->
+  <circle class="ok-pulse-ring" cx="50" cy="50" r="30" fill={strokeColor} opacity="0" />
+
+  <!-- Outer Boundary -->
+  <circle class="ok-outer" cx="50" cy="50" r="49" stroke={strokeColor} stroke-width="0.5" opacity="0.6"/>
   
-  <!-- Crosshairs -->
-  <g class="om-crosshairs" stroke={strokeColor} stroke-width="1.5" opacity="1" stroke-linecap="round">
-    <!-- Main Lines: extend from r=14 to r=37 -->
-    <line class="main-line" x1="50" y1="36" x2="50" y2="13"/>
-    <line class="main-line" x1="50" y1="64" x2="50" y2="87"/>
-    <line class="main-line" x1="36" y1="50" x2="13" y2="50"/>
-    <line class="main-line" x1="64" y1="50" x2="87" y2="50"/>
+  <!-- The Woven Leaf/Seed (Vesica Piscis intersection) -->
+  <g class="ok-weave" stroke={strokeColor} stroke-width="0.75" opacity="0.9" stroke-linecap="round">
+    <!-- Vertical Leaf -->
+    <path d="M 50 15 A 35 35 0 0 1 50 85 A 35 35 0 0 1 50 15 Z" />
+    <!-- Horizontal Leaf -->
+    <path d="M 15 50 A 35 35 0 0 1 85 50 A 35 35 0 0 1 15 50 Z" />
     
-    <!-- Optional Corner Ticks: from r=20 to r=25 at 45° -->
-    <line class="diag-line" x1="35.86" y1="35.86" x2="32.32" y2="32.32"/>
-    <line class="diag-line" x1="64.14" y1="35.86" x2="67.68" y2="32.32"/>
-    <line class="diag-line" x1="35.86" y1="64.14" x2="32.32" y2="67.68"/>
-    <line class="diag-line" x1="64.14" y1="64.14" x2="67.68" y2="67.68"/>
+    <!-- The Connecting Threads (The Weave) -->
+    <line x1="25" y1="25" x2="75" y2="75" stroke-width="0.5" opacity="0.5" />
+    <line x1="75" y1="25" x2="25" y2="75" stroke-width="0.5" opacity="0.5" />
   </g>
 
-  <!-- Inner ring: 20% of mark width -->
-  <circle class="om-inner" cx="50" cy="50" r="10" stroke={strokeColor} stroke-width="1.5" opacity="1" fill="none"/>
-  
-  <!-- Center dot: 4.3% of mark width -->
-  <circle class="om-dot" cx="50" cy="50" r="3" fill={strokeColor} opacity="1"/>
+  <!-- The Origin (The Core) -->
+  <circle class="ok-core" cx="50" cy="50" r="2.5" fill={strokeColor} opacity="1"/>
 </svg>
 
-<script>
-  import gsap from 'gsap';
-
-  class OriginMarkAnimation {
-    constructor() {
-      this.init();
-      document.addEventListener('play-origin-mark-entrance', () => this.play());
-    }
-
-    init() {
-      document.querySelectorAll('.om-animated').forEach(svg => {
-        const outer = svg.querySelector('.om-outer');
-        const mainLines = svg.querySelectorAll('.om-crosshairs .main-line');
-        const diagLines = svg.querySelectorAll('.om-crosshairs .diag-line');
-        const inner = svg.querySelector('.om-inner');
-        const dot = svg.querySelector('.om-dot');
-
-        const outerLen = 2 * Math.PI * 49; 
-        const innerLen = 2 * Math.PI * 10;  
-        const mainLen = 23; // 37 - 14
-        const diagLen = 5;  // 25 - 20
-
-        gsap.set(outer, { strokeDasharray: outerLen, strokeDashoffset: outerLen, opacity: 0 });
-        gsap.set(inner, { strokeDasharray: innerLen, strokeDashoffset: innerLen, opacity: 0 });
-        gsap.set(mainLines, { strokeDasharray: mainLen, strokeDashoffset: mainLen, opacity: 0 });
-        gsap.set(diagLines, { strokeDasharray: diagLen, strokeDashoffset: diagLen, opacity: 0 });
-        gsap.set(dot, { scale: 0, transformOrigin: "50% 50%", opacity: 0 });
-        
-        // Remove native hidden state now that GSAP has taken over
-        svg.classList.add('gsap-ready');
-      });
-    }
-
-    play() {
-      document.querySelectorAll('.om-animated').forEach(svg => {
-        const outer = svg.querySelector('.om-outer');
-        const mainLines = svg.querySelectorAll('.om-crosshairs .main-line');
-        const diagLines = svg.querySelectorAll('.om-crosshairs .diag-line');
-        const inner = svg.querySelector('.om-inner');
-        const dot = svg.querySelector('.om-dot');
-
-        const outerLen = 2 * Math.PI * 49;
-        const innerLen = 2 * Math.PI * 10;
-        const mainLen = 23;
-        const diagLen = 5;
-
-        gsap.set(outer, { strokeDashoffset: outerLen, opacity: 0 });
-        gsap.set(inner, { strokeDashoffset: innerLen, opacity: 0 });
-        gsap.set(mainLines, { strokeDashoffset: mainLen, opacity: 0 });
-        gsap.set(diagLines, { strokeDashoffset: diagLen, opacity: 0 });
-        gsap.set(dot, { scale: 0, opacity: 0 });
-
-        const tl = gsap.timeline();
-        const dur = 0.8; 
-        const easeSettle = "power2.out";
-
-        tl.to(outer, { strokeDashoffset: 0, opacity: 1, duration: dur, ease: easeSettle })
-          .to([mainLines, diagLines], { strokeDashoffset: 0, opacity: 1, duration: dur, ease: easeSettle, stagger: 0 }, "-=0.4")
-          .to(inner, { strokeDashoffset: 0, opacity: 1, duration: dur, ease: easeSettle }, "-=0.4")
-          .to(dot, { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(1.5)" }, "-=0.2");
-      });
-    }
-  }
-
-  if (!(window as any).originMarkAnimationInitialized) {
-    new OriginMarkAnimation();
-    (window as any).originMarkAnimationInitialized = true;
-  }
-</script>
-
 <style>
-  /* Prevent FOUC by natively hiding the SVG until GSAP applies initial states */
-  .om-animated {
-    opacity: 0;
+  /* The Living Breath Animation */
+  .origin-knot {
+    overflow: visible;
+    animation: knot-breathe 6s ease-in-out infinite;
   }
-  .om-animated.gsap-ready {
-    opacity: 1;
+
+  .ok-pulse-ring {
+    animation: knot-pulse 6s ease-in-out infinite;
+  }
+
+  .ok-weave path, .ok-weave line {
+    stroke-dasharray: 200;
+    stroke-dashoffset: 200;
+    animation: knot-draw 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  .ok-core {
+    transform-origin: center;
+    transform: scale(0);
+    animation: core-pop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 1.5s;
+  }
+
+  /* Delay the draw for vertical and horizontal leaves slightly */
+  .ok-weave path:nth-child(2) {
+    animation-delay: 0.3s;
+  }
+
+  @keyframes knot-breathe {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+  }
+
+  @keyframes knot-pulse {
+    0%, 100% { opacity: 0; transform: scale(0.8); transform-origin: center; filter: blur(4px); }
+    50% { opacity: 0.15; transform: scale(1.2); transform-origin: center; filter: blur(8px); }
+  }
+
+  @keyframes knot-draw {
+    to { stroke-dashoffset: 0; }
+  }
+
+  @keyframes core-pop {
+    to { transform: scale(1); }
   }
 </style>

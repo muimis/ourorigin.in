@@ -1,121 +1,139 @@
 ---
 // src/components/TheManifesto.astro
 ---
-<section id="the-manifesto" class="manifesto-section">
-  <div class="manifesto-container">
-    
-    <div class="manifesto-intro" data-reveal>
-      <h2 class="manifesto-title">An Uncompromised Truth</h2>
-      <p class="manifesto-lead">
-        You are standing at the final inch of a very long journey. This is not about coordinates on a map; it is about life, togetherness, and humanity. You are inside the origin.
+<section id="the-manifesto" class="cinematic-manifesto">
+  
+  <!-- The 12km Thread connecting all scenes -->
+  <div class="manifesto-thread"></div>
+
+  <div class="manifesto-scene">
+    <div class="scene-atmosphere"></div>
+    <div class="scene-content" data-reveal>
+      <h2 class="scene-title">The Final Inch</h2>
+      <p class="scene-text lead-text">
+        You are standing at the final inch of a very long journey.<br/>
+        You are no longer just a spectator; you are inside the origin.
       </p>
     </div>
-
-    <div class="manifesto-grid">
-      <article class="manifesto-block" data-reveal="stagger">
-        <span class="block-number">01</span>
-        <h3 class="block-title">The Living Legacy</h3>
-        <p class="block-text">
-          Before there was a brand, there was a profound legacy of dignity and ecological ethics. Across all origins, there exists a deep mastery of the environment held by indigenous communities. Making their uncompromised effort visible is an act of deep respect.
-        </p>
-      </article>
-
-      <article class="manifesto-block" data-reveal="stagger">
-        <span class="block-number">02</span>
-        <h3 class="block-title">Purity & Togetherness</h3>
-        <p class="block-text">
-          An origin is the living reality beneath the surface. It is the emotion of the harvest, the togetherness of the community, and the accumulated knowledge of what belongs to the soil. The land is not extracted from; it is stewarded with absolute purity.
-        </p>
-      </article>
-
-      <article class="manifesto-block" data-reveal="stagger">
-        <span class="block-number">03</span>
-        <h3 class="block-title">Inside the Origin</h3>
-        <p class="block-text">
-          A farmer makes a decision: to pick only what is ready, to leave what isn't. That ethical decision has no value without a market that honors it. The buyer who understands what they are paying for completes this system of togetherness. The consumer is not downstream. They are inside it.
-        </p>
-      </article>
-    </div>
-
   </div>
+
+  <div class="manifesto-scene">
+    <div class="scene-content" data-reveal>
+      <span class="scene-chapter">01 &mdash; The First Hands</span>
+      <p class="scene-text">
+        Consider the First Hands that walk 12 kilometres into a forest. They pick what is ripe. They leave what the animals took, because it was theirs. They leave what the season hasn't finished. They carry back only what the forest agreed to give.
+      </p>
+      <p class="scene-text muted">
+        This is just one truth among many. Across all origins, there exists a deep mastery of the environment. These are not people waiting to be uplifted; they possess a legacy and dignity that conventional systems fail to recognize.
+      </p>
+    </div>
+  </div>
+
+  <div class="manifesto-scene">
+    <div class="scene-content" data-reveal>
+      <span class="scene-chapter">02 &mdash; Inside the Origin</span>
+      <p class="scene-text">
+        The First Hands that walked 12 kilometres made a decision: to pick only what was ready, to leave what wasn't. That profound decision has no value without a market that understands and honors it.
+      </p>
+      <p class="scene-text highlighted">
+        The buyer who understands what they are paying for completes this decision. 
+        The consumer is not downstream from the origin. They are inside it.
+      </p>
+    </div>
+  </div>
+
 </section>
 
 <style>
-  .manifesto-section {
+  .cinematic-manifesto {
     position: relative;
     background-color: var(--color-forest-deep);
-    color: var(--color-warm-cream);
-    padding: clamp(6rem, 15vh, 12rem) clamp(1.5rem, 5vw, 6rem);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .manifesto-thread {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 100%;
+    background-color: var(--color-gold);
+    opacity: 0.15;
+    z-index: 1;
+  }
+
+  .manifesto-scene {
+    position: relative;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    border-bottom: 1px solid rgba(247, 242, 230, 0.02);
+  }
+
+  .scene-atmosphere {
+    position: absolute;
+    inset: 0;
+    /* Pure void, removed the glowing radial gradients. Replaced with absolute silence. */
+    background: transparent;
+    pointer-events: none;
+  }
+
+  .scene-content {
+    position: relative;
     z-index: 2;
-    border-top: 1px solid rgba(247, 242, 230, 0.05);
-  }
-
-  .manifesto-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: clamp(4rem, 10vh, 8rem);
-  }
-
-  .manifesto-intro {
     max-width: 800px;
-  }
-
-  .manifesto-title {
-    font-family: var(--font-institutional);
-    font-size: clamp(3rem, 7vw, 5.5rem);
-    font-weight: 300;
-    line-height: 1;
-    margin: 0 0 2rem 0;
-    color: var(--color-warm-cream);
-    letter-spacing: -0.02em;
-  }
-
-  .manifesto-lead {
-    font-family: var(--font-narrative);
-    font-size: clamp(1.5rem, 3vw, 2.2rem);
-    line-height: 1.4;
-    color: var(--color-gold);
-    margin: 0;
-    font-style: italic;
-  }
-
-  .manifesto-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: clamp(3rem, 6vw, 5rem);
-  }
-
-  .manifesto-block {
+    text-align: center;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 2rem;
   }
 
-  .block-number {
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-    color: var(--color-gold);
-    letter-spacing: 0.2em;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(198, 156, 82, 0.3);
-    width: 2rem;
-  }
-
-  .block-title {
+  .scene-title {
     font-family: var(--font-institutional);
-    font-size: 1.8rem;
-    font-weight: 400;
-    margin: 0;
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 300;
     color: var(--color-warm-cream);
+    margin: 0;
+    line-height: 1;
   }
 
-  .block-text {
+  .scene-chapter {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--color-gold);
+    text-transform: uppercase;
+  }
+
+  .scene-text {
     font-family: var(--font-narrative);
-    font-size: 1.15rem;
-    line-height: 1.6;
-    color: rgba(247, 242, 230, 0.7);
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    line-height: 1.5;
+    color: var(--color-warm-cream);
     margin: 0;
+    font-weight: 300;
+  }
+
+  .scene-text.lead-text {
+    font-style: italic;
+    color: var(--color-gold);
+  }
+
+  .scene-text.muted {
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    color: rgba(247, 242, 230, 0.5);
+  }
+
+  .scene-text.highlighted {
+    font-style: italic;
+    color: var(--color-gold);
+    border-top: 1px solid rgba(198, 156, 82, 0.2);
+    border-bottom: 1px solid rgba(198, 156, 82, 0.2);
+    padding: 2rem 0;
+    margin-top: 2rem;
   }
 </style>

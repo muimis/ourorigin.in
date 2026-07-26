@@ -2,16 +2,16 @@
 // src/components/ThePortal.astro
 ---
 <section class="portal-section">
-  <!-- Ambient Life Background -->
-  <div class="ambient-life">
-    <div class="warmth glow-1"></div>
-    <div class="warmth glow-2"></div>
+  <!-- The Void (Absolute Truth) -->
+  <div class="the-void">
+    <div class="chiaroscuro-spotlight"></div>
+    <div class="the-12km-thread"></div>
   </div>
 
   <div class="portal-content">
-    <span class="community-tag">Life &middot; Togetherness &middot; Humanity</span>
+    <span class="community-tag">The Invaluable Transfer</span>
     <h1 class="portal-title">The Final Inch of a Very Long Journey.</h1>
-    <a href="#the-manifesto" class="portal-cta">Enter the Story</a>
+    <a href="#the-manifesto" class="portal-cta">Honor the First Hands</a>
   </div>
 </section>
 
@@ -37,42 +37,49 @@
     opacity: 0.9;
   }
 
-  .ambient-life {
+  .the-void {
     position: absolute;
     inset: 0;
     z-index: 1;
     pointer-events: none;
     overflow: hidden;
+    background-color: var(--color-forest-deep);
   }
 
-  .warmth {
+  .chiaroscuro-spotlight {
     position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.15;
-    animation: breathe-life 20s infinite alternate ease-in-out;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80vw;
+    height: 80vh;
+    background: radial-gradient(circle at center, rgba(245, 237, 216, 0.08) 0%, transparent 60%);
+    opacity: 0;
+    animation: spotlight-fade-in 4s ease-out forwards 1s;
   }
 
-  .glow-1 {
-    width: 60vw;
-    height: 60vw;
-    background: radial-gradient(circle, var(--color-gold) 0%, transparent 70%);
-    top: -20%;
-    left: -10%;
+  @keyframes spotlight-fade-in {
+    0% { opacity: 0; transform: translate(-50%, -45%) scale(0.95); }
+    100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
   }
 
-  .glow-2 {
-    width: 50vw;
-    height: 50vw;
-    background: radial-gradient(circle, #D4A373 0%, transparent 70%);
-    bottom: -10%;
-    right: -10%;
-    animation-delay: -5s;
+  /* The 12km Thread */
+  .the-12km-thread {
+    position: absolute;
+    top: 50%; /* Starts near the center */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 100vh; /* Continues down offscreen */
+    background: linear-gradient(to bottom, transparent, var(--color-gold) 20%, var(--color-gold) 100%);
+    opacity: 0.3;
+    animation: thread-drop 3s cubic-bezier(0.2, 1, 0.3, 1) forwards 1.5s;
+    transform-origin: top;
+    scale: 1 0;
   }
 
-  @keyframes breathe-life {
-    0% { transform: scale(1) translate(0, 0); opacity: 0.1; }
-    100% { transform: scale(1.1) translate(3%, 3%); opacity: 0.25; }
+  @keyframes thread-drop {
+    to { scale: 1 1; }
   }
 
   .portal-content {
