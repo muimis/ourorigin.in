@@ -14,10 +14,9 @@ function parseElevation(elevStr: string) {
 
 const originsBySlug = Object.fromEntries(origins.map(o => [o.data.slug, o]));
 
-// Sort origins by elevation descending
-const sortedOrigins = [...origins].sort((a, b) => {
-  return parseElevation(b.data.elevation) - parseElevation(a.data.elevation);
-});
+// Fixed order of origins
+const orderedSlugs = ['nilgiris', 'idukki', 'wayanad', 'thiruvananthapuram'];
+const sortedOrigins = orderedSlugs.map(slug => originsBySlug[slug]).filter(Boolean);
 
 // Group products by origin
 const productsByOrigin = {};
@@ -50,6 +49,13 @@ sortedOrigins.forEach(o => {
       <p class="core-subtitle">Pure, community-harvested botanical yields from their native soil.</p>
     </div>
 
+    <!-- Jump Links -->
+    <div class="core-jump-links">
+      {sortedOrigins.map(o => (
+        <a href={`#zone-${o.data.slug}`} class="jump-pill">{o.data.name}</a>
+      ))}
+    </div>
+
     <!-- The Descent -->
     <div class="descent-container">
       {sortedOrigins.map(o => {
@@ -57,20 +63,15 @@ sortedOrigins.forEach(o => {
         if (!originProducts || originProducts.length === 0) return null;
 
         return (
-          <div class="origin-descent-block" data-origin={o.data.slug}>
+          <div id={`zone-${o.data.slug}`} class="origin-zone-block" data-origin={o.data.slug}>
             
-            <div class="descent-elevation-marker" data-reveal>
-              <div class="elevation-line"></div>
-              <span class="elevation-text">{o.data.elevation} &middot; {o.data.name}</span>
+            <div class="zone-header">
+              <h3 class="zone-title">THE {o.data.name.toUpperCase()} &middot; {o.data.elevation.toUpperCase()}</h3>
             </div>
 
-            <div class="descent-gesture-moment" data-reveal>
-              <img src="/assets/images/gesture_hands.png" alt="The Gesture" class="gesture-img" loading="lazy" />
-              <div class="gesture-void-overlay"></div>
-            </div>
-
-            <div class="product-gallery-grid" data-reveal="stagger">
-              {originProducts.map(p => {
+            <div class="product-gallery-grid">
+              {originProducts.map((p, index) => {
+                const isHero = index === 0;
                 const priceRange = p.data.sizes.length > 1
                   ? `₹${Math.min(...p.data.sizes.map(s => s.priceINR))} - ₹${Math.max(...p.data.sizes.map(s => s.priceINR))}`
                   : `₹${p.data.sizes[0].priceINR}`;
@@ -91,7 +92,7 @@ sortedOrigins.forEach(o => {
                 const hasRealPackaging = !!(p.data.images?.packaging && p.data.images.packaging.trim() !== '');
 
                 return (
-                  <article class="gallery-card">
+                  <article class={`gallery-card ${isHero ? 'hero-card' : ''}`}>
                     <div class="card-image-wrap">
                       {hasRealPackaging ? (
                         <img 
@@ -233,62 +234,62 @@ sortedOrigins.forEach(o => {
     line-height: 1.4;
   }
 
+  .core-jump-links {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 6rem;
+    flex-wrap: wrap;
+  }
+
+  .jump-pill {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--color-warm-cream);
+    background: rgba(12, 21, 9, 0.65);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(247, 242, 230, 0.1);
+    padding: 8px 16px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-radius: 20px;
+  }
+  
+  .jump-pill:hover {
+    background: rgba(198, 156, 82, 0.15);
+    border-color: rgba(198, 156, 82, 0.3);
+    color: var(--color-gold);
+  }
+
   /* Descent Architecture */
   .descent-container {
     display: flex;
     flex-direction: column;
-    gap: 12rem;
+    gap: 10rem;
   }
 
-  .origin-descent-block {
+  .origin-zone-block {
     display: flex;
     flex-direction: column;
     gap: 4rem;
   }
 
-  .descent-elevation-marker {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    padding-bottom: 2rem;
-    opacity: 0.6;
+  .zone-header {
+    border-bottom: 1px solid rgba(247, 242, 230, 0.1);
+    padding-bottom: 1rem;
   }
 
-  .elevation-line {
-    flex: 1;
-    height: 1px;
-    background: var(--color-gold);
+  .zone-title {
+    font-family: var(--font-institutional);
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    font-weight: 300;
+    color: var(--color-warm-cream);
+    margin: 0;
+    letter-spacing: 0.05em;
   }
 
-  .elevation-text {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    letter-spacing: 0.2em;
-    color: var(--color-gold);
-    text-transform: uppercase;
-  }
-
-  .descent-gesture-moment {
-    width: 100%;
-    aspect-ratio: 16/9;
-    position: relative;
-    overflow: hidden;
-    background: #000;
-    margin-bottom: 2rem;
-  }
-
-  .gesture-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: brightness(0.8) contrast(1.2) grayscale(0.2);
-  }
-
-  .gesture-void-overlay {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at center, transparent 30%, rgba(3,5,3,1) 90%);
-  }
+  /* Removed old gesture and elevation styles */
 
   /* Direct Product Gallery Grid */
   .product-gallery-grid {
@@ -337,6 +338,19 @@ sortedOrigins.forEach(o => {
     object-fit: contain;
     filter: brightness(0.95) contrast(1.05) drop-shadow(0 10px 20px rgba(0,0,0,0.5));
     transition: transform 0.6s var(--ease-fluid);
+  }
+
+  .hero-card {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .hero-card .card-image-wrap {
+    margin-bottom: 0;
+    aspect-ratio: 16/9;
   }
 
   .gallery-card:hover .card-img {
@@ -511,15 +525,15 @@ sortedOrigins.forEach(o => {
       gap: 3rem;
     }
     
-    .descent-gesture-moment {
-      aspect-ratio: 1; /* taller on mobile */
+    .hero-card {
+      grid-template-columns: 1fr;
     }
   }
 </style>
 
 <script>
   function initTheCore() {
-    const blocks = document.querySelectorAll('.origin-descent-block');
+    const blocks = document.querySelectorAll('.origin-zone-block');
     const bgLayers = document.querySelectorAll('.core-bg-layer');
 
     // Scroll Observer to change ambient background based on active origin block

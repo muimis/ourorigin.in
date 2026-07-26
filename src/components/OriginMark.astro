@@ -7,8 +7,8 @@ export interface Props {
 }
 
 const { 
-  size = 100, 
-  variant = 'primary', 
+  size = 32, 
+  variant = 'gold', 
   id = Math.random().toString(36).substring(7),
   animate = false
 } = Astro.props;
@@ -16,7 +16,7 @@ const {
 const colorMap = {
   primary: 'var(--color-warm-cream)',
   reversed: 'var(--color-forest-deep)',
-  gold: 'var(--color-gold)'
+  gold: 'var(--color-gold, #c8a04d)'
 };
 const strokeColor = colorMap[variant];
 ---
@@ -26,76 +26,30 @@ const strokeColor = colorMap[variant];
   class={`origin-knot variant-${variant} ${animate ? 'ok-animate' : ''}`} 
   width={size} 
   height={size} 
-  viewBox="0 0 100 100" 
-  xmlns="http://www.w3.org/2000/svg" 
-  fill="none" 
-  aria-label="OurOrigin — The Origin Knot" 
-  role="img"
+  viewBox="0 0 120 120" 
+  aria-hidden="true"
 >
-  <!-- Outer Boundary -->
-  <circle class="ok-outer" cx="50" cy="50" r="48" stroke={strokeColor} stroke-width="0.5" opacity="0.4"/>
-  
-  <!-- The Woven Leaf (Vesica Piscis — two intersecting arcs) -->
-  <g class="ok-weave" stroke={strokeColor} stroke-width="0.6" opacity="0.85" stroke-linecap="round">
-    <!-- Vertical Leaf: arc right then arc left -->
-    <path d="M 50 15 A 40 40 0 0 1 50 85 A 40 40 0 0 0 50 15" />
-    <!-- Horizontal Leaf: arc down then arc up -->
-    <path d="M 15 50 A 40 40 0 0 1 85 50 A 40 40 0 0 0 15 50" />
-  </g>
-
-  <!-- Diagonal Threads (The Weave connecting the leaves) -->
-  <g class="ok-threads" stroke={strokeColor} stroke-width="0.4" opacity="0.3">
-    <line x1="26" y1="26" x2="74" y2="74" />
-    <line x1="74" y1="26" x2="26" y2="74" />
-  </g>
-
-  <!-- The Origin (The Core Dot) -->
-  <circle class="ok-core" cx="50" cy="50" r="2" fill={strokeColor} opacity="0.9"/>
+  <defs>
+    <clipPath id={`knotClipLeft-${id}`}>
+      <circle cx="30" cy="60" r="60" />
+    </clipPath>
+    <clipPath id={`knotClipRight-${id}`}>
+      <circle cx="90" cy="60" r="60" />
+    </clipPath>
+  </defs>
+  <circle cx="90" cy="60" r="60" fill="none" stroke={strokeColor}
+          stroke-width="1.5" clip-path={`url(#knotClipLeft-${id})`} />
+  <circle cx="30" cy="60" r="60" fill="none" stroke={strokeColor}
+          stroke-width="1.5" clip-path={`url(#knotClipRight-${id})`} />
 </svg>
 
 <style>
   .origin-knot {
-    overflow: visible;
-  }
-
-  /* The Living Breath */
-  .origin-knot {
-    animation: knot-breathe 8s ease-in-out infinite;
-  }
-
-  @keyframes knot-breathe {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.02); }
-  }
-
-  /* Draw-on entrance only when explicitly animated */
-  .ok-animate .ok-weave path {
-    stroke-dasharray: 200;
-    stroke-dashoffset: 200;
-    animation: knot-draw 2.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  }
-
-  .ok-animate .ok-weave path:nth-child(2) {
-    animation-delay: 0.4s;
-  }
-
-  .ok-animate .ok-threads line {
-    stroke-dasharray: 100;
-    stroke-dashoffset: 100;
-    animation: knot-draw 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards 0.8s;
-  }
-
-  .ok-animate .ok-core {
+    animation: knot-breathe 6s ease-in-out infinite;
     transform-origin: center;
-    transform: scale(0);
-    animation: core-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 1.8s;
   }
-
-  @keyframes knot-draw {
-    to { stroke-dashoffset: 0; }
-  }
-
-  @keyframes core-pop {
-    to { transform: scale(1); }
+  @keyframes knot-breathe {
+    0%, 100% { opacity: 0.75; transform: scale(1); }
+    50%      { opacity: 1;    transform: scale(1.04); }
   }
 </style>
