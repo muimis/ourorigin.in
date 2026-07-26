@@ -77,6 +77,12 @@ const companionsJson = JSON.stringify(companionProductsMap);
           </div>
           <p class="dispatch-timeline">DISPATCH WITHIN 2–3 WORKING DAYS · THIRUVANANTHAPURAM</p>
         </div>
+        <!-- Community Impact Summary -->
+        <div id="ledger-community-summary" class="ledger-community-summary">
+          <span class="community-summary-tag">SUPPORTED ORIGINS</span>
+          <span id="community-origins-list" class="community-origins-list">First Hands · Western Ghats Community</span>
+        </div>
+
         <div class="ledger-observation-guide">
           <p class="observation-title">THE FINAL INCH</p>
           <p class="observation-text">
@@ -780,6 +786,30 @@ const companionsJson = JSON.stringify(companionProductsMap);
     margin: 1rem 0 0 0;
     text-transform: uppercase;
   }
+  .ledger-community-summary {
+    background: rgba(166, 124, 60, 0.08);
+    border: 1px solid rgba(166, 124, 60, 0.2);
+    padding: 12px 16px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .community-summary-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--color-gold);
+    text-transform: uppercase;
+  }
+
+  .community-origins-list {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    color: var(--color-warm-cream);
+  }
+
   .human-note {
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;

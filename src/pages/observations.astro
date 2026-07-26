@@ -17,6 +17,14 @@ import BaseLayout from '../components/BaseLayout.astro';
             <p class="subtitle">Things we noticed in the growing, harvesting, and drying.</p>
         </div>
 
+        <!-- Filter Bar -->
+        <div class="obs-filter-bar">
+          <button class="obs-filter-btn active" data-ref="all">All Notes</button>
+          <button class="obs-filter-btn" data-ref="wayanad">Wayanad</button>
+          <button class="obs-filter-btn" data-ref="idukki">Idukki</button>
+          <button class="obs-filter-btn" data-ref="nilgiris">Nilgiris</button>
+        </div>
+
         <div class="observations-bento-grid">
             <!-- Obs 01 -->
             <div class="obs-tile tile-small">
@@ -105,6 +113,34 @@ import BaseLayout from '../components/BaseLayout.astro';
 
         <a href="/" class="nav-link">&larr; Return to Home</a>
     </main>
+
+    <script>
+      function initObsFilter() {
+        const btns = document.querySelectorAll('.obs-filter-btn');
+        const tiles = document.querySelectorAll('.obs-tile');
+
+        btns.forEach(btn => {
+          btn.addEventListener('click', () => {
+            btns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const filter = btn.getAttribute('data-ref')?.toLowerCase() || 'all';
+
+            tiles.forEach(tile => {
+              const metaText = tile.querySelector('.obs-meta')?.textContent?.toLowerCase() || '';
+              if (filter === 'all' || metaText.includes(filter)) {
+                (tile as HTMLElement).style.display = 'flex';
+              } else {
+                (tile as HTMLElement).style.display = 'none';
+              }
+            });
+          });
+        });
+      }
+
+      document.addEventListener('DOMContentLoaded', initObsFilter);
+      document.addEventListener('astro:page-load', initObsFilter);
+    </script>
 </BaseLayout>
 
 <style>
@@ -151,6 +187,32 @@ import BaseLayout from '../components/BaseLayout.astro';
         letter-spacing: 0.15em;
         color: rgba(245, 237, 216, 0.4);
         margin: 0.5rem 0 0 0;
+    }
+
+    /* Filter Bar */
+    .obs-filter-bar {
+        display: flex;
+        gap: 1.2rem;
+        flex-wrap: wrap;
+    }
+
+    .obs-filter-btn {
+        background: transparent;
+        border: none;
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        color: rgba(245, 237, 216, 0.45);
+        cursor: pointer;
+        padding: 6px 12px;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+    }
+
+    .obs-filter-btn:hover,
+    .obs-filter-btn.active {
+        color: var(--color-gold);
+        background: rgba(166, 124, 60, 0.08);
     }
 
     /* Bento Grid */

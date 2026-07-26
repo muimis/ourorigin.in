@@ -231,6 +231,17 @@ const navDimensions = [
     )}
 
   </div>
+
+  <!-- Sticky Mobile Purchase Bar -->
+  <div class="mobile-sticky-bar" id="mobile-sticky-bar">
+    <div class="bar-info">
+      <span class="bar-product">{product?.data.name}</span>
+      <span class="bar-price">₹{sizes[0]?.priceINR}</span>
+    </div>
+    <button class="mobile-honor-btn" id="mobile-honor-btn">
+      Honor Decision
+    </button>
+  </div>
 </div>
 
 <style>
@@ -612,10 +623,65 @@ const navDimensions = [
     opacity: 0;
     transition: opacity 0.3s ease;
   }
-  
+
   .cipher-node:hover .cipher-label,
   .cipher-node.active .cipher-label {
     opacity: 1;
+  }
+
+  /* Mobile Sticky Bar */
+  .mobile-sticky-bar {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    .mobile-sticky-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      z-index: 800;
+      background: rgba(12, 21, 9, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(245, 237, 216, 0.15);
+      padding: 12px 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-sizing: border-box;
+    }
+
+    .bar-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .bar-product {
+      font-family: var(--font-institutional);
+      font-size: 13px;
+      color: var(--color-warm-cream);
+    }
+
+    .bar-price {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-gold);
+    }
+
+    .mobile-honor-btn {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: var(--color-gold);
+      color: var(--color-forest-deep);
+      border: none;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-weight: 500;
+    }
   }
 
   /* Mobile responsiveness */
@@ -712,6 +778,13 @@ const navDimensions = [
             }, 2000);
           });
         }
+      });
+    }
+    // Mobile Sticky Honor Btn Listener
+    const mobileHonorBtn = document.getElementById('mobile-honor-btn');
+    if (mobileHonorBtn && addBtn) {
+      mobileHonorBtn.addEventListener('click', () => {
+        addBtn.click();
       });
     }
   }
