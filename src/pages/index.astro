@@ -1,8 +1,9 @@
 ---
 import BaseLayout from '../components/BaseLayout.astro';
+import ThePortal from '../components/ThePortal.astro';
+import TheManifesto from '../components/TheManifesto.astro';
 import TheCore from '../components/TheCore.astro';
 import TheObservationsList from '../components/TheObservationsList.astro';
-import OpeningSequence from '../components/OpeningSequence.astro';
 ---
 
 <BaseLayout
@@ -16,13 +17,16 @@ import OpeningSequence from '../components/OpeningSequence.astro';
   bodyClass="homepage-body"
 >
     <main>
-        <!-- Act I: Blink to Breath -->
-        <OpeningSequence />
+        <!-- Act I: The Arrival -->
+        <ThePortal />
+        
+        <!-- Act II: The Story -->
+        <TheManifesto />
 
-        <!-- Act II: Harvest Showcase & Provenances -->
+        <!-- Act III: The Yield -->
         <TheCore />
 
-        <!-- Act III: Field Notes from the Forest -->
+        <!-- Act IV: Field Notes from the Forest -->
         <TheObservationsList />
     </main>
 </BaseLayout>

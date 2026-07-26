@@ -1,0 +1,114 @@
+---
+// src/components/ThePortal.astro
+---
+<section class="portal-section">
+  <!-- Ambient Life Background -->
+  <div class="ambient-life">
+    <div class="warmth glow-1"></div>
+    <div class="warmth glow-2"></div>
+  </div>
+
+  <div class="portal-content">
+    <span class="community-tag">Life &middot; Togetherness &middot; Humanity</span>
+    <h1 class="portal-title">The Final Inch of a Very Long Journey.</h1>
+    <a href="#the-manifesto" class="portal-cta">Enter the Story</a>
+  </div>
+</section>
+
+<style>
+  .portal-section {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-forest-deep);
+    overflow: hidden;
+  }
+
+  .community-tag {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--color-gold);
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+  }
+
+  .ambient-life {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .warmth {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.15;
+    animation: breathe-life 20s infinite alternate ease-in-out;
+  }
+
+  .glow-1 {
+    width: 60vw;
+    height: 60vw;
+    background: radial-gradient(circle, var(--color-gold) 0%, transparent 70%);
+    top: -20%;
+    left: -10%;
+  }
+
+  .glow-2 {
+    width: 50vw;
+    height: 50vw;
+    background: radial-gradient(circle, #D4A373 0%, transparent 70%);
+    bottom: -10%;
+    right: -10%;
+    animation-delay: -5s;
+  }
+
+  @keyframes breathe-life {
+    0% { transform: scale(1) translate(0, 0); opacity: 0.1; }
+    100% { transform: scale(1.1) translate(3%, 3%); opacity: 0.25; }
+  }
+
+  .portal-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 900px;
+    padding: 0 2rem;
+  }
+
+  .portal-title {
+    font-family: var(--font-institutional);
+    font-size: clamp(3rem, 7vw, 6rem);
+    font-weight: 300;
+    color: var(--color-warm-cream);
+    line-height: 1.1;
+    margin-bottom: 3rem;
+  }
+
+  .portal-cta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--color-gold);
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid rgba(198, 156, 82, 0.4);
+    padding: 14px 28px;
+    border-radius: 40px;
+    transition: all 0.4s var(--ease-fluid);
+    backdrop-filter: blur(4px);
+  }
+
+  .portal-cta:hover {
+    background-color: rgba(198, 156, 82, 0.15);
+    color: var(--color-warm-cream);
+    border-color: var(--color-warm-cream);
+  }
+</style>

@@ -1,0 +1,121 @@
+---
+// src/components/TheManifesto.astro
+---
+<section id="the-manifesto" class="manifesto-section">
+  <div class="manifesto-container">
+    
+    <div class="manifesto-intro" data-reveal>
+      <h2 class="manifesto-title">An Uncompromised Truth</h2>
+      <p class="manifesto-lead">
+        You are standing at the final inch of a very long journey. This is not about coordinates on a map; it is about life, togetherness, and humanity. You are inside the origin.
+      </p>
+    </div>
+
+    <div class="manifesto-grid">
+      <article class="manifesto-block" data-reveal="stagger">
+        <span class="block-number">01</span>
+        <h3 class="block-title">The Living Legacy</h3>
+        <p class="block-text">
+          Before there was a brand, there was a profound legacy of dignity and ecological ethics. Across all origins, there exists a deep mastery of the environment held by indigenous communities. Making their uncompromised effort visible is an act of deep respect.
+        </p>
+      </article>
+
+      <article class="manifesto-block" data-reveal="stagger">
+        <span class="block-number">02</span>
+        <h3 class="block-title">Purity & Togetherness</h3>
+        <p class="block-text">
+          An origin is the living reality beneath the surface. It is the emotion of the harvest, the togetherness of the community, and the accumulated knowledge of what belongs to the soil. The land is not extracted from; it is stewarded with absolute purity.
+        </p>
+      </article>
+
+      <article class="manifesto-block" data-reveal="stagger">
+        <span class="block-number">03</span>
+        <h3 class="block-title">Inside the Origin</h3>
+        <p class="block-text">
+          A farmer makes a decision: to pick only what is ready, to leave what isn't. That ethical decision has no value without a market that honors it. The buyer who understands what they are paying for completes this system of togetherness. The consumer is not downstream. They are inside it.
+        </p>
+      </article>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .manifesto-section {
+    position: relative;
+    background-color: var(--color-forest-deep);
+    color: var(--color-warm-cream);
+    padding: clamp(6rem, 15vh, 12rem) clamp(1.5rem, 5vw, 6rem);
+    z-index: 2;
+    border-top: 1px solid rgba(247, 242, 230, 0.05);
+  }
+
+  .manifesto-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(4rem, 10vh, 8rem);
+  }
+
+  .manifesto-intro {
+    max-width: 800px;
+  }
+
+  .manifesto-title {
+    font-family: var(--font-institutional);
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    font-weight: 300;
+    line-height: 1;
+    margin: 0 0 2rem 0;
+    color: var(--color-warm-cream);
+    letter-spacing: -0.02em;
+  }
+
+  .manifesto-lead {
+    font-family: var(--font-narrative);
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    line-height: 1.4;
+    color: var(--color-gold);
+    margin: 0;
+    font-style: italic;
+  }
+
+  .manifesto-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: clamp(3rem, 6vw, 5rem);
+  }
+
+  .manifesto-block {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .block-number {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--color-gold);
+    letter-spacing: 0.2em;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(198, 156, 82, 0.3);
+    width: 2rem;
+  }
+
+  .block-title {
+    font-family: var(--font-institutional);
+    font-size: 1.8rem;
+    font-weight: 400;
+    margin: 0;
+    color: var(--color-warm-cream);
+  }
+
+  .block-text {
+    font-family: var(--font-narrative);
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: rgba(247, 242, 230, 0.7);
+    margin: 0;
+  }
+</style>

@@ -47,19 +47,12 @@ const sortedOrigins = [...origins].sort((a, b) => {
   </div>
 
   <div class="core-content-wrapper">
-    <!-- Hero Banner -->
-    <div class="core-hero" data-reveal>
-      <span class="hero-tag">SOIL &middot; COMMUNITY &middot; HARVEST</span>
-      <h1 class="hero-title">OurOrigin</h1>
-      <p class="hero-subtitle">Pure natural ingredients, community-harvested directly from their soil of origin.</p>
-    </div>
-
     <!-- Origin Filter Pills -->
-    <div class="origin-filter-bar" data-reveal data-delay="100">
-      <button class="filter-btn active" data-filter="all">All Provenances</button>
+    <div class="origin-filter-bar" data-reveal="fade">
+      <button class="filter-btn active" data-filter="all">All Yields</button>
       {sortedOrigins.map(o => (
         <button class="filter-btn" data-filter={o.data.slug}>
-          {o.data.name} ({o.data.elevation})
+          {o.data.name}
         </button>
       ))}
     </div>
@@ -116,6 +109,13 @@ const sortedOrigins = [...origins].sort((a, b) => {
                 <span class="card-botanical">{p.data.botanicalName}</span>
               </div>
 
+              <!-- Supportive Dimensions (The Cipher) -->
+              <div class="card-dimensions">
+                <div class="dim-item"><span class="dim-label">Geo</span><span class="dim-value">{originObj ? originObj.data.elevation : 'Unknown'}</span></div>
+                <div class="dim-item"><span class="dim-label">Method</span><span class="dim-value">Hand-Harvested</span></div>
+                <div class="dim-item"><span class="dim-label">Time</span><span class="dim-value">Seasonal Yield</span></div>
+              </div>
+
               <div class="card-price-row">
                 <span class="card-price">{priceRange}</span>
               </div>
@@ -125,7 +125,7 @@ const sortedOrigins = [...origins].sort((a, b) => {
                   Add to basket
                 </button>
                 <a href={`/origins/${oSlug}/${p.id}`} class="explore-story-link">
-                  Story &rarr;
+                  The Journey &rarr;
                 </a>
               </div>
             </div>
@@ -359,10 +359,40 @@ const sortedOrigins = [...origins].sort((a, b) => {
     color: rgba(245, 237, 216, 0.5);
   }
 
+  .card-dimensions {
+    display: flex;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-top: 1px solid rgba(198, 156, 82, 0.1);
+    border-bottom: 1px solid rgba(198, 156, 82, 0.1);
+    margin: 0.5rem 0;
+  }
+
+  .dim-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .dim-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--color-gold-muted);
+    text-transform: uppercase;
+  }
+
+  .dim-value {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-warm-cream);
+  }
+
   .card-price-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin-top: 0.5rem;
   }
 
   .card-price {
@@ -387,7 +417,7 @@ const sortedOrigins = [...origins].sort((a, b) => {
     color: var(--color-gold);
     background: transparent;
     border: 1px solid rgba(166, 124, 60, 0.4);
-    padding: 10px 14px;
+    padding: 12px 14px;
     cursor: pointer;
     transition: all 0.3s ease;
     text-align: center;
