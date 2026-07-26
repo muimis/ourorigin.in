@@ -50,6 +50,13 @@ const sortedOrigins = [...origins].sort((a, b) => {
   </div>
 
   <div class="core-content-wrapper">
+    <!-- Section Header -->
+    <div class="core-header" data-reveal>
+      <span class="core-tag">Act III &middot; The Harvest</span>
+      <h2 class="core-title">The Yield</h2>
+      <p class="core-subtitle">Pure, community-harvested botanical yields from their native soil.</p>
+    </div>
+
     <!-- Origin Filter Pills -->
     <div class="origin-filter-bar" data-reveal="fade">
       <button class="filter-btn active" data-filter="all">All Yields</button>
@@ -194,15 +201,44 @@ const sortedOrigins = [...origins].sort((a, b) => {
   .core-content-wrapper {
     position: relative;
     z-index: 2;
-    padding: 18vh clamp(1.5rem, 5vw, 6rem) 12vh;
+    padding: clamp(4rem, 10vh, 8rem) clamp(1.5rem, 5vw, 6rem) clamp(4rem, 8vh, 6rem);
     max-width: 1400px;
     margin: 0 auto;
   }
 
-  /* Hero Banner */
-  .core-hero {
-    margin-bottom: 4rem;
+  /* Section Header */
+  .core-header {
+    margin-bottom: 2.5rem;
     text-align: left;
+  }
+
+  .core-tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--color-gold);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.8rem;
+    opacity: 0.85;
+  }
+
+  .core-title {
+    font-family: var(--font-institutional);
+    font-size: clamp(2.4rem, 5vw, 4.5rem);
+    font-weight: 300;
+    margin: 0 0 0.8rem 0;
+    line-height: 1;
+    color: var(--color-warm-cream);
+  }
+
+  .core-subtitle {
+    font-family: var(--font-narrative);
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    font-weight: 300;
+    color: rgba(245, 237, 216, 0.7);
+    margin: 0;
+    line-height: 1.4;
   }
 
   .hero-tag {

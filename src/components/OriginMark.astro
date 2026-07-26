@@ -3,12 +3,14 @@ export interface Props {
   size?: number;
   variant?: 'primary' | 'reversed' | 'gold';
   id?: string;
+  animate?: boolean;
 }
 
 const { 
   size = 100, 
   variant = 'primary', 
-  id = Math.random().toString(36).substring(7)
+  id = Math.random().toString(36).substring(7),
+  animate = false
 } = Astro.props;
 
 const colorMap = {
@@ -21,7 +23,7 @@ const strokeColor = colorMap[variant];
 
 <svg 
   id={`origin-mark-${id}`}
-  class={`origin-knot variant-${variant}`} 
+  class={`origin-knot variant-${variant} ${animate ? 'ok-animate' : ''}`} 
   width={size} 
   height={size} 
   viewBox="0 0 100 100" 
@@ -30,64 +32,63 @@ const strokeColor = colorMap[variant];
   aria-label="OurOrigin — The Origin Knot" 
   role="img"
 >
-  <!-- The Pulse Effect (Subtle Glow/Breath behind the knot) -->
-  <circle class="ok-pulse-ring" cx="50" cy="50" r="30" fill={strokeColor} opacity="0" />
-
   <!-- Outer Boundary -->
-  <circle class="ok-outer" cx="50" cy="50" r="49" stroke={strokeColor} stroke-width="0.5" opacity="0.6"/>
+  <circle class="ok-outer" cx="50" cy="50" r="48" stroke={strokeColor} stroke-width="0.5" opacity="0.4"/>
   
-  <!-- The Woven Leaf/Seed (Vesica Piscis intersection) -->
-  <g class="ok-weave" stroke={strokeColor} stroke-width="0.75" opacity="0.9" stroke-linecap="round">
-    <!-- Vertical Leaf -->
-    <path d="M 50 15 A 35 35 0 0 1 50 85 A 35 35 0 0 1 50 15 Z" />
-    <!-- Horizontal Leaf -->
-    <path d="M 15 50 A 35 35 0 0 1 85 50 A 35 35 0 0 1 15 50 Z" />
-    
-    <!-- The Connecting Threads (The Weave) -->
-    <line x1="25" y1="25" x2="75" y2="75" stroke-width="0.5" opacity="0.5" />
-    <line x1="75" y1="25" x2="25" y2="75" stroke-width="0.5" opacity="0.5" />
+  <!-- The Woven Leaf (Vesica Piscis — two intersecting arcs) -->
+  <g class="ok-weave" stroke={strokeColor} stroke-width="0.6" opacity="0.85" stroke-linecap="round">
+    <!-- Vertical Leaf: arc right then arc left -->
+    <path d="M 50 15 A 30 30 0 0 1 50 85 A 30 30 0 0 0 50 15" />
+    <!-- Horizontal Leaf: arc down then arc up -->
+    <path d="M 15 50 A 30 30 0 0 1 85 50 A 30 30 0 0 0 15 50" />
   </g>
 
-  <!-- The Origin (The Core) -->
-  <circle class="ok-core" cx="50" cy="50" r="2.5" fill={strokeColor} opacity="1"/>
+  <!-- Diagonal Threads (The Weave connecting the leaves) -->
+  <g class="ok-threads" stroke={strokeColor} stroke-width="0.4" opacity="0.3">
+    <line x1="26" y1="26" x2="74" y2="74" />
+    <line x1="74" y1="26" x2="26" y2="74" />
+  </g>
+
+  <!-- The Origin (The Core Dot) -->
+  <circle class="ok-core" cx="50" cy="50" r="2" fill={strokeColor} opacity="0.9"/>
 </svg>
 
 <style>
-  /* The Living Breath Animation */
   .origin-knot {
     overflow: visible;
-    animation: knot-breathe 6s ease-in-out infinite;
   }
 
-  .ok-pulse-ring {
-    animation: knot-pulse 6s ease-in-out infinite;
-  }
-
-  .ok-weave path, .ok-weave line {
-    stroke-dasharray: 200;
-    stroke-dashoffset: 200;
-    animation: knot-draw 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  }
-
-  .ok-core {
-    transform-origin: center;
-    transform: scale(0);
-    animation: core-pop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 1.5s;
-  }
-
-  /* Delay the draw for vertical and horizontal leaves slightly */
-  .ok-weave path:nth-child(2) {
-    animation-delay: 0.3s;
+  /* The Living Breath — only on non-tiny sizes */
+  .origin-knot:not([width="28"]):not([width="32"]) {
+    animation: knot-breathe 8s ease-in-out infinite;
   }
 
   @keyframes knot-breathe {
     0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.03); }
+    50% { transform: scale(1.02); }
   }
 
-  @keyframes knot-pulse {
-    0%, 100% { opacity: 0; transform: scale(0.8); transform-origin: center; filter: blur(4px); }
-    50% { opacity: 0.15; transform: scale(1.2); transform-origin: center; filter: blur(8px); }
+  /* Draw-on entrance only when explicitly animated */
+  .ok-animate .ok-weave path {
+    stroke-dasharray: 200;
+    stroke-dashoffset: 200;
+    animation: knot-draw 2.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  .ok-animate .ok-weave path:nth-child(2) {
+    animation-delay: 0.4s;
+  }
+
+  .ok-animate .ok-threads line {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: knot-draw 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards 0.8s;
+  }
+
+  .ok-animate .ok-core {
+    transform-origin: center;
+    transform: scale(0);
+    animation: core-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 1.8s;
   }
 
   @keyframes knot-draw {

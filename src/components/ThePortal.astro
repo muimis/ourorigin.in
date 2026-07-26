@@ -2,118 +2,122 @@
 // src/components/ThePortal.astro
 ---
 <section class="portal-section">
-  <!-- The Void (Absolute Truth) -->
-  <div class="the-void">
-    <div class="chiaroscuro-spotlight"></div>
-    <div class="the-12km-thread"></div>
-  </div>
-
-  <div class="portal-content">
-    <span class="community-tag">The Invaluable Transfer</span>
-    <h1 class="portal-title">The Final Inch of a Very Long Journey.</h1>
-    <a href="#the-manifesto" class="portal-cta">Honor the First Hands</a>
+  <div class="portal-content" data-reveal>
+    <span class="portal-tag">A Shared Universal Origin</span>
+    <h1 class="portal-title">The Soil Knows<br/>Its Origins.</h1>
+    <p class="portal-subtitle">
+      Pure natural ingredients, community-harvested with uncompromised dignity directly from their native soil.
+    </p>
+    <div class="portal-actions">
+      <a href="#the-manifesto" class="portal-cta primary-cta">The Story</a>
+      <a href="#the-core" class="portal-cta secondary-cta">Explore The Yield &rarr;</a>
+    </div>
   </div>
 </section>
 
 <style>
   .portal-section {
     position: relative;
-    height: 100vh;
+    min-height: 90vh;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: var(--color-forest-deep);
-    overflow: hidden;
+    padding: clamp(6rem, 15vh, 10rem) clamp(1.5rem, 5vw, 4rem);
+    text-align: center;
   }
 
-  .community-tag {
-    display: block;
+  .portal-content {
+    max-width: 850px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .portal-tag {
     font-family: var(--font-mono);
     font-size: 11px;
     letter-spacing: 0.25em;
     color: var(--color-gold);
     text-transform: uppercase;
-    margin-bottom: 2rem;
-    opacity: 0.9;
-  }
-
-  .the-void {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    overflow: hidden;
-    background-color: var(--color-forest-deep);
-  }
-
-  .chiaroscuro-spotlight {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80vw;
-    height: 80vh;
-    background: radial-gradient(circle at center, rgba(245, 237, 216, 0.08) 0%, transparent 60%);
-    opacity: 0;
-    animation: spotlight-fade-in 4s ease-out forwards 1s;
-  }
-
-  @keyframes spotlight-fade-in {
-    0% { opacity: 0; transform: translate(-50%, -45%) scale(0.95); }
-    100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-  }
-
-  /* The 12km Thread */
-  .the-12km-thread {
-    position: absolute;
-    top: 50%; /* Starts near the center */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 1px;
-    height: 100vh; /* Continues down offscreen */
-    background: linear-gradient(to bottom, transparent, var(--color-gold) 20%, var(--color-gold) 100%);
-    opacity: 0.3;
-    animation: thread-drop 3s cubic-bezier(0.2, 1, 0.3, 1) forwards 1.5s;
-    transform-origin: top;
-    scale: 1 0;
-  }
-
-  @keyframes thread-drop {
-    to { scale: 1 1; }
-  }
-
-  .portal-content {
-    position: relative;
-    z-index: 2;
-    text-align: center;
-    max-width: 900px;
-    padding: 0 2rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.85;
   }
 
   .portal-title {
     font-family: var(--font-institutional);
-    font-size: clamp(3rem, 7vw, 6rem);
+    font-size: clamp(2.8rem, 6.5vw, 5.5rem);
     font-weight: 300;
     color: var(--color-warm-cream);
-    line-height: 1.1;
-    margin-bottom: 3rem;
+    line-height: 1.08;
+    margin: 0 0 1.8rem 0;
+    letter-spacing: -0.01em;
+  }
+
+  .portal-subtitle {
+    font-family: var(--font-narrative);
+    font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+    font-weight: 300;
+    color: rgba(245, 237, 216, 0.75);
+    line-height: 1.5;
+    max-width: 640px;
+    margin: 0 0 2.5rem 0;
+  }
+
+  .portal-actions {
+    display: flex;
+    gap: 1.2rem;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
   .portal-cta {
     font-family: var(--font-mono);
     font-size: 11px;
-    letter-spacing: 0.2em;
-    color: var(--color-gold);
+    letter-spacing: 0.15em;
     text-transform: uppercase;
     text-decoration: none;
-    border: 1px solid rgba(198, 156, 82, 0.4);
     padding: 14px 28px;
-    transition: all 0.4s var(--ease-fluid);
+    transition: all 0.3s ease;
   }
 
-  .portal-cta:hover {
-    background-color: rgba(198, 156, 82, 0.15);
+  .primary-cta {
+    color: var(--color-forest-deep);
+    background-color: var(--color-warm-cream);
+    border: 1px solid var(--color-warm-cream);
+  }
+
+  .primary-cta:hover {
+    background-color: var(--color-gold);
+    border-color: var(--color-gold);
+    color: var(--color-forest-deep);
+  }
+
+  .secondary-cta {
     color: var(--color-warm-cream);
-    border-color: var(--color-warm-cream);
+    background: transparent;
+    border: 1px solid rgba(245, 237, 216, 0.3);
+  }
+
+  .secondary-cta:hover {
+    border-color: var(--color-gold);
+    color: var(--color-gold);
+  }
+
+  @media (max-width: 640px) {
+    .portal-section {
+      min-height: 80vh;
+      padding: 7rem 1.5rem 4rem 1.5rem;
+    }
+    .portal-actions {
+      flex-direction: column;
+      width: 100%;
+    }
+    .portal-cta {
+      width: 100%;
+      box-sizing: border-box;
+      text-align: center;
+    }
   }
 </style>

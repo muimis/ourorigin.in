@@ -45,7 +45,7 @@
   --stratum-text-max-width: 85vw;
   
   /* Stratum Architectural Tokens */
-  --stratum-border-radius: 16px;
+  --stratum-border-radius: 0;
   --stratum-scroll-distance-multiplier: 200%;
   
   /* Origin Mark Design Lock */
