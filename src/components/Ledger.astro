@@ -24,12 +24,12 @@ const companionsJson = JSON.stringify(companionProductsMap);
 
 <!-- Global Toast -->
 <div id="ledger-toast" class="ledger-toast hidden" role="status" aria-live="polite" aria-atomic="true">
-  Added to your basket.
+  Honored.
 </div>
 
 <!-- Persistent Trigger -->
 <div id="ledger-trigger" class="ledger-trigger hidden" aria-live="polite" role="button" tabindex="0">
-  <span id="ledger-count"></span> in basket
+  <span id="ledger-count"></span> in ledger
 </div>
 
 <!-- Slide-up Panel -->
@@ -37,8 +37,8 @@ const companionsJson = JSON.stringify(companionProductsMap);
   <div class="ledger-backdrop" id="ledger-close-backdrop"></div>
   <div class="ledger-panel" role="complementary" aria-label="Your Basket">
     <div class="ledger-header">
-      <h2 class="ledger-title">Your Basket</h2>
-      <button id="ledger-close-btn" class="ledger-close" aria-label="Close Basket">Close</button>
+      <h2 class="ledger-title">The Transfer Ledger</h2>
+      <button id="ledger-close-btn" class="ledger-close" aria-label="Close Ledger">Close</button>
     </div>
     
     <div class="ledger-content">
@@ -47,7 +47,7 @@ const companionsJson = JSON.stringify(companionProductsMap);
       </div>
       
       <div id="ledger-empty-state" class="ledger-empty hidden">
-        Your basket is empty.<br>Explore our harvests.
+        Your ledger is empty.<br>Explore our origins.
       </div>
       
       <div id="ledger-footer" class="ledger-footer hidden">
@@ -78,9 +78,9 @@ const companionsJson = JSON.stringify(companionProductsMap);
           <p class="dispatch-timeline">DISPATCH WITHIN 2–3 WORKING DAYS · THIRUVANANTHAPURAM</p>
         </div>
         <div class="ledger-observation-guide">
-          <p class="observation-title">OBSERVATION LOG: THE REALITY</p>
+          <p class="observation-title">THE FINAL INCH</p>
           <p class="observation-text">
-            This ledger reflects a journey deep into the forest. It reflects a community leaving the unripened—and whatever the wild animals claim—to nature with joy, not compromise. Their dignity is inherent. By proceeding, you are not a consumer. You are taking your place as the final link in this origin system.
+            This ledger reflects a journey deep into the forest. It reflects the First Hands leaving the unripened—and whatever the wild animals claim—to nature with joy, not compromise. Their dignity is inherent. By completing this transfer, you take your place as the final link in this origin system.
           </p>
         </div>
 
@@ -114,7 +114,7 @@ const companionsJson = JSON.stringify(companionProductsMap);
           <p class="upi-note human-note-small">Paid via UPI? Include your payment reference in the message and we'll confirm immediately.</p>
         </div>
 
-        <button id="ledger-connect-btn" class="ledger-connect" aria-label="Initialize transfer via WhatsApp">INITIALIZE TRANSFER (WHATSAPP)</button>
+        <button id="ledger-connect-btn" class="ledger-connect" aria-label="Complete the transfer via WhatsApp">COMPLETE THE TRANSFER</button>
         
         <div class="ledger-fssai">FSSAI Reg. No. {FSSAI_NUMBER}</div>
       </div>
@@ -523,7 +523,6 @@ const companionsJson = JSON.stringify(companionProductsMap);
     transition: opacity 0.3s ease, transform 0.3s ease;
     pointer-events: none;
     border: 1px solid rgba(245, 237, 216, 0.4);
-    border-radius: 40px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.5);
     text-align: center;
     text-transform: uppercase;
@@ -599,7 +598,6 @@ const companionsJson = JSON.stringify(companionProductsMap);
     height: 75dvh;
     background: var(--color-forest-deep);
     border-top: 1px solid rgba(244, 241, 235, 0.2);
-    border-radius: 20px 20px 0 0;
     z-index: 1;
     display: flex;
     flex-direction: column;

@@ -16,10 +16,13 @@ const formattedPhone = '+91 96455 55668';
   showFooter={true}
 >
     <main id="main-content" class="page-container">
-        <h1>Inquiry Dispatch</h1>
+        <!-- The 12km Thread -->
+        <div class="contact-thread"></div>
+
+        <h1>Reach the Origin</h1>
 
         <div class="contact-details">
-            <p>Our operations are based in Thiruvananthapuram, Kerala. If you seek to trace a specific coordinates matrix, or understand the curing chemistry of a yield, we will disclose every record in our archive.</p>
+            <p>Our operations are based in Thiruvananthapuram, Kerala. If you want to trace an origin, understand the journey of a yield, or simply connect — we are here.</p>
             <a href={whatsappLink} class="contact-link" target="_blank" rel="noopener noreferrer">{formattedPhone}</a>
             <a href={`mailto:${EMAIL_ADDRESS}`} class="contact-link">{EMAIL_ADDRESS}</a>
         </div>
@@ -32,6 +35,7 @@ const formattedPhone = '+91 96455 55668';
 
 <style>
     .page-container {
+        position: relative;
         max-width: 600px;
         margin: 0 auto;
         padding-top: max(140px, 20vh);
@@ -40,6 +44,18 @@ const formattedPhone = '+91 96455 55668';
         padding-bottom: 10vh;
         display: flex;
         flex-direction: column;
+    }
+
+    .contact-thread {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 1px;
+        height: 100%;
+        background-color: var(--color-gold);
+        opacity: 0.06;
+        pointer-events: none;
     }
 
     h1 {

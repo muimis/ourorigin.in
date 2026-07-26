@@ -10,20 +10,20 @@ const { variant = 'dark' } = Astro.props;
 
 <header class={`global-header header-${variant}`}>
   <a href="/" class="header-logo" aria-label="OurOrigin Home">
-    <OriginMark variant={variant === 'light' ? 'reversed' : 'gold'} size={32} animate={false} />
+    <OriginMark variant={variant === 'light' ? 'reversed' : 'gold'} size={32} />
   </a>
 
   <div class="header-actions">
-    <a href="/catalog" class="hud-btn" aria-label="Shop All">
-      Shop
+    <a href="/catalog" class="hud-btn" aria-label="The Yield">
+      The Yield
     </a>
 
     <button id="command-center-trigger" class="hud-btn" aria-label="Open Navigation">
-      Menu
+      Navigate
     </button>
 
-    <button id="trigger-dossier" class="hud-btn" aria-label="Open Basket" onclick="window.dispatchEvent(new Event('open-cart'))">
-      Basket (<span class="dossier-count" id="header-basket-count">0</span>)
+    <button id="trigger-dossier" class="hud-btn" aria-label="Open Ledger" onclick="window.dispatchEvent(new Event('open-cart'))">
+      Ledger (<span class="dossier-count" id="header-basket-count">0</span>)
     </button>
   </div>
 </header>
@@ -31,15 +31,13 @@ const { variant = 'dark' } = Astro.props;
 <div id="command-center-overlay" aria-hidden="true">
   <nav class="cc-nav">
     <a href="/">Home</a>
-    <a href="/horizon">Horizon</a>
-    <a href="/catalog">Index</a>
-    <a href="/why">Why This Exists</a>
-    <a href="/observations">Observations</a>
+    <a href="/catalog">The Yield</a>
+    <a href="/observations">Field Notes</a>
     <a href="/contact">Contact</a>
   </nav>
 
   <button class="cc-close" aria-label="Close Navigation">
-    <OriginMark variant="gold" size={28} animate={false} />
+    <OriginMark variant="gold" size={28} />
     <span class="cc-close-label">Close</span>
   </button>
 </div>
@@ -78,7 +76,6 @@ const { variant = 'dark' } = Astro.props;
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     padding: 8px 20px;
-    border-radius: 30px;
     border: 1px solid rgba(247, 242, 230, 0.12);
   }
 

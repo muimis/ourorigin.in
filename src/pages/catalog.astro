@@ -38,9 +38,12 @@ const sortedYields = [...products].sort((a, b) => {
   showFooter={true}
 >
   <main id="main-content" class="catalog-page-container">
+    <!-- The 12km Thread -->
+    <div class="catalog-thread"></div>
+
     <div class="catalog-header" data-reveal>
-      <h1 class="catalog-title">Catalog</h1>
-      <p class="catalog-subtitle">Pure natural ingredients, community-harvested directly from their soil of origin.</p>
+      <h1 class="catalog-title">The Yield</h1>
+      <p class="catalog-subtitle">Every item here is the physical evidence of the First Hands' decision.</p>
     </div>
 
     <div class="catalog-table-wrapper" data-reveal data-delay="100">
@@ -84,11 +87,25 @@ const sortedYields = [...products].sort((a, b) => {
 
 <style>
   .catalog-page-container {
+    position: relative;
     padding-top: max(140px, 20vh);
     padding-bottom: 10vh;
     background-color: var(--color-forest-deep);
     color: var(--color-warm-cream);
     box-sizing: border-box;
+  }
+
+  .catalog-thread {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 100%;
+    background-color: var(--color-gold);
+    opacity: 0.06;
+    z-index: 0;
+    pointer-events: none;
   }
 
   .catalog-header {

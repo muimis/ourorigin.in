@@ -34,6 +34,9 @@ const sortedOrigins = [...origins].sort((a, b) => {
 ---
 
 <section id="the-core" class="the-core-section">
+  <!-- The 12km Thread continues -->
+  <div class="core-thread"></div>
+
   <!-- Cinematic Ambient Backgrounds -->
   <div class="core-cinematic-bg">
     {sortedOrigins.map(origin => (
@@ -100,7 +103,7 @@ const sortedOrigins = [...origins].sort((a, b) => {
                   </svg>
                 </div>
               )}
-              <span class="card-origin-pill">{originObj ? `Community Harvest · ${originObj.data.name}` : oSlug}</span>
+              <span class="card-origin-pill">{originObj ? `First Hands · ${originObj.data.name}` : oSlug}</span>
             </div>
 
             <div class="card-content">
@@ -122,10 +125,10 @@ const sortedOrigins = [...origins].sort((a, b) => {
 
               <div class="card-actions">
                 <button class="add-basket-btn" data-product={productDataString}>
-                  Add to basket
+                  Honor the Decision
                 </button>
                 <a href={`/origins/${oSlug}/${p.id}`} class="explore-story-link">
-                  The Journey &rarr;
+                  Enter the Origin &rarr;
                 </a>
               </div>
             </div>
@@ -142,6 +145,19 @@ const sortedOrigins = [...origins].sort((a, b) => {
     background-color: var(--color-forest-deep);
     color: var(--color-warm-cream);
     min-height: 100vh;
+  }
+
+  .core-thread {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 100%;
+    background-color: var(--color-gold);
+    opacity: 0.08;
+    z-index: 1;
+    pointer-events: none;
   }
 
   .core-cinematic-bg {
@@ -325,7 +341,6 @@ const sortedOrigins = [...origins].sort((a, b) => {
     backdrop-filter: blur(12px);
     border: 1px solid rgba(247, 242, 230, 0.1);
     padding: 6px 14px;
-    border-radius: 40px; /* Fluid pill shape */
     text-transform: uppercase;
     transition: all 0.3s ease;
   }
@@ -531,7 +546,7 @@ const sortedOrigins = [...origins].sort((a, b) => {
         window.dispatchEvent(new CustomEvent('add-to-ledger', { detail: data }));
 
         const original = btn.textContent;
-        btn.textContent = 'Added ✓';
+        btn.textContent = 'Honored \u2713';
         btn.classList.add('is-added');
         setTimeout(() => {
           btn.textContent = original;

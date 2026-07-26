@@ -3,6 +3,9 @@
 ---
 
 <section id="observations-archive" class="observations-archive-section">
+  <!-- The 12km Thread terminates -->
+  <div class="obs-thread"></div>
+
   <div class="obs-container">
     <div class="obs-section-header" data-reveal>
       <h2 class="obs-section-title">Field Notes</h2>
@@ -55,10 +58,24 @@
 
 <style>
   .observations-archive-section {
+    position: relative;
     background-color: var(--color-forest-deep);
     color: var(--color-warm-cream);
     padding: 12vh 8vw;
     border-bottom: 1px solid rgba(245, 237, 216, 0.1);
+  }
+
+  .obs-thread {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 100%;
+    background-color: var(--color-gold);
+    opacity: 0.06;
+    z-index: 0;
+    pointer-events: none;
   }
 
   .obs-container {
