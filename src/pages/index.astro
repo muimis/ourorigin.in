@@ -2,7 +2,6 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../components/BaseLayout.astro';
 import OriginMark from '../components/OriginMark.astro';
-import Wordmark from '../components/Wordmark.astro';
 
 const products = await getCollection('products');
 const origins = await getCollection('origins');
@@ -32,7 +31,6 @@ function getOriginForProduct(product: any) {
             <div class="hero-content">
                 <div id="hero-mark">
                     <OriginMark size={120} variant="gold" animate={true} />
-                    <Wordmark className="hero-wordmark" />
                 </div>
                 <h1 class="absolute-truth" id="hero-text-1">
                     The product is not the soul.
@@ -353,10 +351,6 @@ function getOriginForProduct(product: any) {
         flex-direction: column;
         align-items: center;
         gap: 2.5rem;
-    }
-
-    :global(.hero-wordmark .wordmark-text) {
-        font-size: clamp(2rem, 5vw, 4.5rem);
     }
 
     .absolute-truth {

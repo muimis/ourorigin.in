@@ -2,7 +2,6 @@
 // src/components/Footer.astro
 import { WHATSAPP_NUMBER, EMAIL_ADDRESS, FSSAI_NUMBER } from '../utils/constants';
 import OriginMark from './OriginMark.astro';
-import Wordmark from './Wordmark.astro';
 
 const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}`;
 const formattedPhone = '+91 96455 55668';
@@ -12,7 +11,7 @@ const formattedPhone = '+91 96455 55668';
   <div class="footer-inner">
     <div class="footer-brand">
       <OriginMark size={40} variant="gold" />
-      <Wordmark className="footer-wordmark" />
+      <span class="footer-wordmark-text">OurOrigin</span>
     </div>
 
     <div class="footer-nav">
@@ -59,8 +58,12 @@ const formattedPhone = '+91 96455 55668';
     gap: 1.5rem;
   }
   
-  :global(.footer-wordmark .wordmark-text) {
+  .footer-wordmark-text {
+    font-family: var(--font-institutional);
     font-size: 1.5rem;
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    color: var(--color-warm-cream);
     opacity: 0.8;
   }
 

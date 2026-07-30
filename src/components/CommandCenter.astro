@@ -1,6 +1,5 @@
 ---
 import OriginMark from './OriginMark.astro';
-import Wordmark from './Wordmark.astro';
 
 export interface Props {
   variant?: 'dark' | 'light';
@@ -11,8 +10,8 @@ const { variant = 'dark' } = Astro.props;
 
 <header class={`global-header header-${variant}`}>
   <a href="/" class="header-logo" aria-label="OurOrigin Home">
-    <OriginMark variant={variant === 'light' ? 'reversed' : 'gold'} size={24} />
-    <Wordmark className="header-wordmark" />
+    <OriginMark variant={variant === 'light' ? 'reversed' : 'gold'} size={32} />
+    <span class="header-wordmark-text">OurOrigin</span>
   </a>
 
   <div class="header-actions">
@@ -70,8 +69,12 @@ const { variant = 'dark' } = Astro.props;
   }
   
   /* Global Wordmark scaling for header */
-  :global(.header-wordmark .wordmark-text) {
+  .header-wordmark-text {
+    font-family: var(--font-institutional);
     font-size: 1.25rem;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    color: var(--color-warm-cream);
   }
 
   .header-logo:hover {
