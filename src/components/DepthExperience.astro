@@ -1,8 +1,6 @@
 ---
 // src/components/DepthExperience.astro
 import OriginMark from './OriginMark.astro';
-import LiveWeather from './LiveWeather.astro';
-import { FSSAI_NUMBER } from '../utils/constants';
 
 export interface Props {
   origin?: any;
@@ -11,877 +9,393 @@ export interface Props {
 
 const { origin, product } = Astro.props;
 
-const botanicalStates = {
-  'nilgiris': 'LEAF FLUSH',
-  'idukki': 'POD DEVELOPMENT',
-  'wayanad': 'VINE MATURATION',
-  'thiruvananthapuram': 'RHIZOME EXPANSION',
-  'malabar-coast': 'DORMANT'
-};
-const botanicalState = origin ? botanicalStates[origin.data.slug] : '';
-
-// Build story sections
-const storySections = [
-  { 
-    id: 'canopy',
-    title: '01 / CANOPY & ELEVATION',
-    evidence: origin ? `${origin.data.elevation} · ${origin.data.bioregion}` : '',
-    narrative: origin ? origin.data.narrative.canopy : '',
-    image: origin ? origin.data.images.canopy : null, 
-    hasWeather: true 
-  },
-  { 
-    id: 'land',
-    title: '02 / SOIL & ECOSYSTEM',
-    evidence: origin ? origin.data.soil : '',
-    narrative: origin ? origin.data.narrative.land : '',
-    image: origin ? origin.data.images.land : null, 
-    hasWeather: false 
-  },
-  { 
-    id: 'hand',
-    title: '03 / HARVEST PRACTICE',
-    evidence: origin ? origin.data.method : '',
-    narrative: origin ? origin.data.narrative.hand : '',
-    image: origin ? origin.data.images.hand : null, 
-    hasWeather: false 
-  }
-];
-
 const sizes = product ? product.data.sizes : [];
 const hasRealPackaging = !!(product?.data.images?.packaging && product.data.images.packaging.trim() !== '');
-
-const navDimensions = [
-  { id: 'purchase', name: 'Purchase' },
-  { id: 'canopy', name: 'Canopy' },
-  { id: 'land', name: 'Soil' },
-  { id: 'hand', name: 'Harvest' },
-  { id: 'sensory', name: 'Sensory' }
-];
+const displayImage = hasRealPackaging ? product.data.images.packaging : product.data.image;
 ---
 
-<!-- Top HUD Navigation -->
-<div class="depth-top-hud">
-  <div class="hud-left-group">
-    <a href="/" class="depth-escape-hatch" aria-label="Return to Home">
-      &larr; Home
-    </a>
-    <button id="depth-share-trigger" class="depth-hud-btn" aria-label="Share harvest">
-      Share
-    </button>
+<div class="story-scroll-container">
+  <!-- The Traveling Element (Golden Thread) -->
+  <div id="golden-thread">
+      <svg viewBox="0 0 120 120" width="120" height="120">
+          <path d="M 90 22 C 93 18, 98 22, 97 26 C 96 30, 90 32, 87 27 C 84 22, 87 19, 90 22 Z" fill="var(--color-gold)" />
+      </svg>
   </div>
-  <button class="depth-basket-trigger" id="depth-basket-trigger" aria-label="Open Ledger">
-    Ledger &middot; <span class="dossier-count">0</span>
-  </button>
-</div>
 
-<!-- Side Rail Navigation -->
-<div class="cipher-rail-wrapper" role="navigation" aria-label="Product dimensions">
-  <div class="cipher-rail">
-    {navDimensions.map((dim) => (
-      <a 
-        href={`#section-${dim.id}`}
-        class="cipher-node" 
-        data-dim={dim.id}
-        aria-label={dim.name}
-      >
-        <span class="cipher-label">{dim.name}</span>
-        <div class="cipher-dot"></div>
-      </a>
-    ))}
-  </div>
-</div>
-
-<div class="depth-experience-container" data-origin-slug={origin?.data.slug} data-product-slug={product?.id} data-origin-name={origin?.data.name} data-product-name={product?.data.name}>
-  
-  <div class="documentary-scroll-container">
-    
-    <!-- SECTION 1: HERO & IMMEDIATE PURCHASE (ABOVE THE FOLD) -->
-    <section id="section-purchase" class="product-hero-section">
-      <div class="hero-split-layout">
-        
-        <!-- Left: Product Image -->
-        <div class="hero-visual-col">
-          {hasRealPackaging ? (
-            <img 
-              src={product.data.images.packaging} 
-              alt={`Packaging of ${product.data.name}`} 
-              class="hero-product-img" 
-              loading="eager" 
-              width="800"
-              height="800"
-              transition:name={`product-img-${product.id}`}
-            />
-          ) : (
-            <div class="hero-img-fallback">
-              <svg viewBox="0 0 100 100" width="80" height="80">
-                <circle cx="50" cy="50" r="49" stroke="currentColor" stroke-width="1" fill="none"/>
-                <circle cx="50" cy="50" r="4" fill="currentColor"/>
-              </svg>
-            </div>
-          )}
-        </div>
-
-        <!-- Right: Purchase Details & Add to Cart -->
-        <div class="hero-details-col">
-          <!-- The Origin Anchor -->
-          <div class="origin-verification-anchor">
-            <div class="anchor-knot">
-              <OriginMark variant="gold" size={48} />
-            </div>
-            <div class="anchor-details">
-              <span class="anchor-label">Verified First Hands</span>
-              <span class="anchor-value">{origin?.data.name}</span>
-            </div>
+  <!-- SCENE 1: THE ORIGIN -->
+  <section class="story-scene" id="scene-hero">
+      <div class="scene-content">
+          <div id="hero-mark-container">
+              <OriginMark size={120} variant="gold" hideDot={true} />
           </div>
-
-          <h1 class="product-main-title">{product.data.name}</h1>
-          <p class="product-botanical-subtitle">{product.data.botanicalName}</p>
-          <p class="specimen-intro-copy">{product.data.specimenCopy}</p>
-
-          <!-- Brutalist Data Table -->
-          <div class="origin-data-table">
-            <div class="data-row">
-              <span class="data-label">Elevation</span>
-              <span class="data-value">{origin?.data.elevation || 'Unknown'}</span>
-            </div>
-            <div class="data-row">
-              <span class="data-label">Method</span>
-              <span class="data-value">{origin?.data.method || 'Hand-Harvested'}</span>
-            </div>
-            <div class="data-row">
-              <span class="data-label">Coordinates</span>
-              <span class="data-value">{origin?.data.coordinates ? `${origin.data.coordinates.lat}, ${origin.data.coordinates.lng}` : 'Undisclosed'}</span>
-            </div>
-          </div>
-          
-          <div class="weather-row">
-            {origin && <LiveWeather coordinates={origin.data.coordinates} originName={origin.data.name} />}
-          </div>>
-
-          <!-- Size & Price Selection -->
-          <div class="size-ledger">
-            <div class="size-ledger-header">
-              <span>Select Size</span>
-              <span>Price</span>
-            </div>
-            {sizes.map((size, index) => (
-              <button 
-                class={`size-ledger-row ${index === 0 ? 'selected' : ''}`} 
-                data-size={size.label} 
-                data-price={size.priceINR}
-                aria-label={`Select size ${size.label} for ₹${size.priceINR}`}
-              >
-                <span class="spec-size">{size.label}</span>
-                <span class="spec-val">₹{size.priceINR}</span>
-              </button>
-            ))}
-          </div>
-
-          <div class="purchase-actions">
-            <button class="add-to-ledger-btn" id="add-to-ledger-btn" aria-label="Honor the Decision">
-              Honor the Decision
-            </button>
-          </div>
-
-          <div class="product-fssai">FSSAI Reg. No. {FSSAI_NUMBER}</div>
-        </div>
-
+          <h1 class="indigenous-truth hero-headline">
+              {product.data.name}
+          </h1>
+          <p class="origin-tag">from {origin?.data.name}</p>
       </div>
-    </section>
+  </section>
 
-    <!-- STORY SECTIONS: CANOPY, SOIL, HARVEST -->
-    {storySections.map((s) => (
-      <section id={`section-${s.id}`} class="story-section">
-        {s.image && !origin?.data.images.isPlaceholderImagery && (
-          <img 
-            src={s.image} 
-            alt={`${origin.data.name} — ${s.title}`} 
-            class="story-bg-img" 
-            loading="lazy" 
-            width="1920"
-            height="1080"
-          />
-        )}
-        <div class="story-overlay"></div>
-        <div class="story-content-wrap">
-          <span class="story-section-tag">{s.title}</span>
-          <h2 class="story-evidence-title">{s.evidence}</h2>
-          <p class="story-narrative-copy">{s.narrative}</p>
-        </div>
-      </section>
-    ))}
-
-    <!-- SECTION 5: SENSORY PROFILE MATRIX -->
-    {(product.data.sensoryProfile || product.data.chemistry) && (
-      <section id="section-sensory" class="sensory-section">
-        <div class="sensory-content-wrap">
-          <h2 class="sensory-main-title">Sensory & Chemical Profile</h2>
-
-          <div class="sensory-grid">
-            {product.data.sensoryProfile?.aroma && (
-              <div class="sensory-cell">
-                <span class="cell-label">Aroma</span>
-                <span class="cell-value">{product.data.sensoryProfile.aroma}</span>
-              </div>
-            )}
-            {product.data.sensoryProfile?.flavor && (
-              <div class="sensory-cell">
-                <span class="cell-label">Flavour</span>
-                <span class="cell-value">{product.data.sensoryProfile.flavor}</span>
-              </div>
-            )}
-            {product.data.sensoryProfile?.appearance && (
-              <div class="sensory-cell">
-                <span class="cell-label">Appearance</span>
-                <span class="cell-value">{product.data.sensoryProfile.appearance}</span>
-              </div>
-            )}
-            {product.data.chemistry?.activeCompound && (
-              <div class="sensory-cell">
-                <span class="cell-label">Active Compound</span>
-                <span class="cell-value">{product.data.chemistry.activeCompound}</span>
-              </div>
-            )}
-            {product.data.chemistry?.moistureContent && (
-              <div class="sensory-cell">
-                <span class="cell-label">Moisture</span>
-                <span class="cell-value">{product.data.chemistry.moistureContent}</span>
-              </div>
-            )}
+  <!-- SCENE 2: THE SOIL / CANOPY -->
+  <section class="story-scene" id="scene-soil">
+      {origin?.data.images.canopy && !origin?.data.images.isPlaceholderImagery && (
+        <div class="scene-bg" id="soil-bg" style={`background-image: url('${origin.data.images.canopy}')`}></div>
+      )}
+      <div class="scene-content">
+          <h2 class="indigenous-truth">
+              {origin?.data.narrative?.canopy || origin?.data.narrative?.land}
+          </h2>
+          <div class="brutalist-data-row">
+            <span>{origin?.data.elevation}</span>
+            <span class="dot-separator">&middot;</span>
+            <span>{origin?.data.method}</span>
           </div>
-        </div>
-      </section>
-    )}
+      </div>
+  </section>
 
-  </div>
+  <!-- SCENE 3: THE HANDS -->
+  <section class="story-scene" id="scene-hands">
+      {origin?.data.images.hand && !origin?.data.images.isPlaceholderImagery && (
+        <div class="scene-bg" id="hands-bg" style={`background-image: url('${origin.data.images.hand}')`}></div>
+      )}
+      <div class="scene-content">
+          <h2 class="indigenous-truth">
+              {origin?.data.narrative?.hand}
+          </h2>
+          <p class="specimen-intro-copy">{product?.data.specimenCopy}</p>
+      </div>
+  </section>
 
-  <!-- Sticky Mobile Purchase Bar -->
-  <div class="mobile-sticky-bar" id="mobile-sticky-bar">
-    <div class="bar-info">
-      <span class="bar-product">{product?.data.name}</span>
-      <span class="bar-price">₹{sizes[0]?.priceINR}</span>
-    </div>
-    <button class="mobile-honor-btn" id="mobile-honor-btn">
-      Honor the Decision
-    </button>
-  </div>
+  <!-- SCENE 4: THE YIELD (PURCHASE) -->
+  <section class="story-scene product-arrival" id="scene-yield">
+      <div class="scene-content yield-content">
+          <div class="massive-artifact-wrapper">
+              <img src={displayImage} alt={product.data.name} class="massive-artifact" />
+          </div>
+
+          <h2 class="indigenous-truth section-title">Honor the harvest.</h2>
+          
+          <div class="purchase-ledger">
+              <div class="size-ledger">
+                {sizes.map((size: any, index: number) => (
+                  <button 
+                    class={`size-ledger-row ${index === 0 ? 'selected' : ''}`} 
+                    data-size={size.label} 
+                    data-price={size.priceINR}
+                    aria-label={`Select size ${size.label} for ₹${size.priceINR}`}
+                  >
+                    <span class="spec-size">{size.label}</span>
+                    <span class="spec-val">₹{size.priceINR}</span>
+                  </button>
+                ))}
+              </div>
+
+              <div class="purchase-actions">
+                <button class="honor-decision-btn" id="add-to-ledger-btn" aria-label="Honor the Decision">
+                  [ Honor the Decision ]
+                </button>
+              </div>
+          </div>
+      </div>
+  </section>
 </div>
-
-<style>
-  .depth-experience-container {
-    position: relative;
-    width: 100%;
-    background-color: var(--color-forest-deep);
-    color: var(--color-warm-cream);
-  }
-
-  .documentary-scroll-container {
-    width: 100%;
-    min-height: 100vh;
-    position: relative;
-  }
-
-  /* --- SECTION 1: HERO PURCHASE LAYOUT --- */
-  .product-hero-section {
-    min-height: 100vh;
-    padding: 16vh clamp(1.5rem, 5vw, 6rem) 8vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-  }
-
-  .hero-split-layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 5rem;
-    max-width: 1300px;
-    width: 100%;
-    align-items: center;
-  }
-
-  .hero-visual-col {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: radial-gradient(circle at center, rgba(3, 5, 3, 0) 0%, rgba(3, 5, 3, 0.5) 100%);
-    aspect-ratio: 1;
-    overflow: hidden;
-    border-radius: var(--stratum-border-radius);
-  }
-
-  .hero-product-img {
-    max-width: 80%;
-    max-height: 80%;
-    object-fit: contain;
-    filter: brightness(0.95) contrast(1.05);
-  }
-
-  .hero-img-fallback {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.3;
-  }
-
-  .hero-details-col {
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-    gap: 1.2rem;
-  }
-
-  .origin-verification-anchor {
-    display: flex;
-    align-items: center;
-    gap: 1.2rem;
-    padding-bottom: 1.2rem;
-    border-bottom: 1px solid rgba(198, 156, 82, 0.2);
-    margin-bottom: 0.5rem;
-  }
-
-  .anchor-knot {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .anchor-details {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-  }
-
-  .anchor-label {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    color: var(--color-gold-muted);
-    text-transform: uppercase;
-  }
-
-  .anchor-value {
-    font-family: var(--font-sans);
-    font-size: 14px;
-    letter-spacing: 0.05em;
-    color: var(--color-gold);
-    text-transform: uppercase;
-  }
-
-  .origin-data-table {
-    display: flex;
-    flex-direction: column;
-    border-top: 1px solid rgba(245, 237, 216, 0.1);
-    border-bottom: 1px solid rgba(245, 237, 216, 0.1);
-    margin: 1rem 0;
-  }
-
-  .data-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.8rem 0;
-    border-bottom: 1px solid rgba(245, 237, 216, 0.05);
-  }
-
-  .data-row:last-child {
-    border-bottom: none;
-  }
-
-  .data-label {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    color: rgba(245, 237, 216, 0.4);
-    text-transform: uppercase;
-  }
-
-  .data-value {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.05em;
-    color: var(--color-warm-cream);
-    text-transform: uppercase;
-  }
-
-  .weather-row {
-    margin-bottom: 1rem;
-  }
-
-  .product-main-title {
-    font-family: var(--font-institutional);
-    font-size: clamp(2.8rem, 5vw, 5rem);
-    font-weight: 300;
-    margin: 0;
-    line-height: 1;
-  }
-
-  .product-botanical-subtitle {
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: 1.2rem;
-    color: rgba(245, 237, 216, 0.55);
-    margin: -0.5rem 0 0.5rem 0;
-  }
-
-  .specimen-intro-copy {
-    font-family: var(--font-narrative);
-    font-size: 1.1rem;
-    line-height: 1.5;
-    color: rgba(245, 237, 216, 0.85);
-    margin: 0;
-  }
-
-  /* Size Selector (Fluid Organic) */
-  .size-ledger {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-    margin-top: 1rem;
-    padding-top: 1rem;
-  }
-
-  .size-ledger-header {
-    display: flex;
-    justify-content: space-between;
-    font-family: var(--font-sans);
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    color: rgba(245, 237, 216, 0.4);
-    text-transform: uppercase;
-    margin-bottom: 0.5rem;
-  }
-
-  .size-ledger-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: rgba(3, 5, 3, 0.4);
-    border: 1px solid rgba(247, 242, 230, 0.05);
-    padding: 14px 20px;
-    color: var(--color-warm-cream);
-    cursor: pointer;
-    font-family: var(--font-sans);
-    font-size: 13px;
-    transition: all 0.4s var(--ease-fluid);
-  }
-
-  .size-ledger-row:hover,
-  .size-ledger-row.selected {
-    border-color: rgba(198, 156, 82, 0.3);
-    color: var(--color-gold);
-    background: rgba(198, 156, 82, 0.1);
-    box-shadow: 0 4px 15px rgba(198, 156, 82, 0.1);
-  }
-
-  .purchase-actions {
-    margin-top: 2rem;
-  }
-
-  .add-to-ledger-btn {
-    width: 100%;
-    background: var(--color-gold);
-    color: var(--color-forest-deep);
-    border: none;
-    font-family: var(--font-sans);
-    font-size: 12px;
-    letter-spacing: 0.15em;
-    padding: 18px;
-    cursor: pointer;
-    text-transform: uppercase;
-    font-weight: 500;
-    transition: all 0.4s var(--ease-fluid);
-    box-shadow: 0 10px 30px -10px rgba(198, 156, 82, 0.5);
-  }
-
-  .add-to-ledger-btn:hover {
-    background: var(--color-warm-cream);
-    box-shadow: 0 15px 40px -10px rgba(247, 242, 230, 0.6);
-    transform: translateY(-2px);
-  }
-
-  .product-fssai {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    color: rgba(245, 237, 216, 0.3);
-    margin-top: 0.5rem;
-  }
-
-  /* --- STORY SECTIONS --- */
-  .story-section {
-    position: relative;
-    min-height: 80vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10vh clamp(1.5rem, 5vw, 6rem);
-    box-sizing: border-box;
-    overflow: hidden;
-    background-color: #080f06;
-  }
-
-  .story-bg-img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0.35;
-    filter: saturate(0.3) contrast(1.1);
-  }
-
-  .story-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to bottom, rgba(12, 21, 9, 0.6), rgba(12, 21, 9, 0.95));
-  }
-
-  .story-content-wrap {
-    position: relative;
-    z-index: 2;
-    max-width: 800px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    align-items: center;
-  }
-
-  .story-section-tag {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.25em;
-    color: var(--color-gold);
-  }
-
-  .story-evidence-title {
-    font-family: var(--font-institutional);
-    font-size: clamp(2rem, 4vw, 3.5rem);
-    font-weight: 300;
-    margin: 0;
-    line-height: 1.1;
-  }
-
-  .story-narrative-copy {
-    font-family: var(--font-narrative);
-    font-size: clamp(1.1rem, 2vw, 1.4rem);
-    line-height: 1.6;
-    color: rgba(245, 237, 216, 0.9);
-    margin: 0;
-  }
-
-  /* --- SENSORY SECTION --- */
-  .sensory-section {
-    padding: 12vh clamp(1.5rem, 5vw, 6rem);
-    background: var(--color-forest-deep);
-  }
-
-  .sensory-content-wrap {
-    max-width: 1000px;
-    margin: 0 auto;
-    text-align: left;
-  }
-
-  .sensory-main-title {
-    font-family: var(--font-institutional);
-    font-size: clamp(2rem, 4vw, 3rem);
-    font-weight: 300;
-    margin: 0 0 3rem 0;
-  }
-
-  .sensory-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2.5rem;
-  }
-
-  .sensory-cell {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-    border-bottom: 1px solid rgba(245, 237, 216, 0.1);
-    padding-bottom: 1.5rem;
-  }
-
-  .cell-label {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    color: var(--color-gold);
-    text-transform: uppercase;
-  }
-
-  .cell-value {
-    font-family: var(--font-narrative);
-    font-size: 1.1rem;
-    color: var(--color-warm-cream);
-  }
-
-  /* Fixed Top HUD & Rail */
-  .depth-top-hud {
-    position: fixed;
-    top: 24px;
-    left: 24px;
-    right: 24px;
-    display: flex;
-    justify-content: space-between;
-    z-index: 9999;
-    pointer-events: none;
-  }
-  
-  .hud-left-group {
-    display: flex;
-    gap: 1.5rem;
-    pointer-events: auto;
-  }
-
-  .depth-escape-hatch,
-  .depth-basket-trigger,
-  .depth-hud-btn {
-    color: var(--color-warm-cream);
-    text-decoration: none;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    opacity: 0.8;
-    transition: opacity 0.3s ease;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    pointer-events: auto;
-  }
-
-  .depth-escape-hatch:hover, .depth-basket-trigger:hover, .depth-hud-btn:hover {
-    opacity: 1;
-    color: var(--color-gold);
-  }
-
-  .cipher-rail-wrapper {
-    position: fixed;
-    right: 24px;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 9990;
-    display: flex;
-    align-items: center;
-    pointer-events: auto;
-  }
-
-  .cipher-rail {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    align-items: flex-end;
-  }
-
-  .cipher-node {
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    color: var(--color-warm-cream);
-    opacity: 0.35;
-    transition: opacity 0.3s ease, color 0.3s ease;
-    text-decoration: none;
-    gap: 1rem;
-  }
-
-  .cipher-node:hover,
-  .cipher-node.active {
-    opacity: 1;
-    color: var(--color-gold);
-  }
-
-  .cipher-dot {
-    width: 6px;
-    height: 6px;
-    background-color: currentColor;
-    border-radius: 50%;
-  }
-
-  .cipher-label {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    color: currentColor;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  .cipher-node:hover .cipher-label,
-  .cipher-node.active .cipher-label {
-    opacity: 1;
-  }
-
-  /* Mobile Sticky Bar */
-  .mobile-sticky-bar {
-    display: none;
-  }
-
-  @media (max-width: 768px) {
-    .mobile-sticky-bar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      z-index: 800;
-      background: rgba(12, 21, 9, 0.95);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-top: 1px solid rgba(245, 237, 216, 0.15);
-      padding: 12px 1.5rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-sizing: border-box;
-    }
-
-    .bar-info {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .bar-product {
-      font-family: var(--font-institutional);
-      font-size: 13px;
-      color: var(--color-warm-cream);
-    }
-
-    .bar-price {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--color-gold);
-    }
-
-    .mobile-honor-btn {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      background: var(--color-gold);
-      color: var(--color-forest-deep);
-      border: none;
-      padding: 10px 16px;
-      cursor: pointer;
-      font-weight: 500;
-    }
-  }
-
-  /* Mobile responsiveness */
-  @media (max-width: 900px) {
-    .hero-split-layout {
-      grid-template-columns: 1fr;
-      gap: 3rem;
-    }
-    .sensory-grid {
-      grid-template-columns: 1fr;
-    }
-    .cipher-rail-wrapper {
-      display: none;
-    }
-  }
-</style>
 
 <script>
-  function initDepthExperience() {
-    // Size selection
-    const sizeBtns = document.querySelectorAll('.size-ledger-row');
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-    sizeBtns.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        sizeBtns.forEach(b => b.classList.remove('selected'));
-        const target = e.currentTarget as HTMLButtonElement;
-        target.classList.add('selected');
-      });
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Set initial states
+  gsap.set("#scene-soil .scene-content", { autoAlpha: 0, y: 50 });
+  gsap.set("#soil-bg", { autoAlpha: 0, scale: 1.1 });
+  
+  gsap.set("#scene-hands .scene-content", { autoAlpha: 0, y: 50 });
+  gsap.set("#hands-bg", { autoAlpha: 0, scale: 1.1 });
+  
+  gsap.set("#scene-yield .scene-content", { autoAlpha: 0, y: 100 });
+
+  // The Golden Thread Animation
+  const tl = gsap.timeline({
+      scrollTrigger: {
+          trigger: ".story-scroll-container",
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 1,
+      }
+  });
+
+  // Scene 1 to Scene 2
+  tl.to("#golden-thread", {
+      y: "30vh", 
+      scale: 1.5,
+      ease: "power1.inOut"
+  }, 0)
+  .to(".hero-headline, .origin-tag", { autoAlpha: 0, y: -50 }, 0)
+  .to("#soil-bg", { autoAlpha: 0.3, scale: 1, ease: "power2.out" }, 0.1)
+  .to("#scene-soil .scene-content", { autoAlpha: 1, y: 0, ease: "power2.out" }, 0.1);
+
+  // Scene 2 to Scene 3
+  tl.to("#golden-thread", {
+      y: "60vh",
+      scale: 2,
+      ease: "power1.inOut"
+  }, 0.3)
+  .to("#scene-soil .scene-content", { autoAlpha: 0, y: -50 }, 0.3)
+  .to("#soil-bg", { autoAlpha: 0 }, 0.3)
+  .to("#hands-bg", { autoAlpha: 0.3, scale: 1, ease: "power2.out" }, 0.4)
+  .to("#scene-hands .scene-content", { autoAlpha: 1, y: 0, ease: "power2.out" }, 0.4);
+
+  // Scene 3 to Scene 4 (Yield)
+  tl.to("#golden-thread", {
+      y: "85vh",
+      scale: 1,
+      ease: "power1.inOut"
+  }, 0.6)
+  .to("#scene-hands .scene-content", { autoAlpha: 0, y: -50 }, 0.6)
+  .to("#hands-bg", { autoAlpha: 0 }, 0.6)
+  .to("#scene-yield .scene-content", { autoAlpha: 1, y: 0, ease: "power2.out", pointerEvents: "auto" }, 0.7);
+
+  // Purchase Logic
+  let selectedPrice = 0;
+  let selectedSize = '';
+  
+  const sizeBtns = document.querySelectorAll('.size-ledger-row');
+  const addBtn = document.getElementById('add-to-ledger-btn');
+
+  if (sizeBtns.length > 0) {
+    const firstBtn = sizeBtns[0] as HTMLElement;
+    selectedPrice = parseInt(firstBtn.dataset.price || '0', 10);
+    selectedSize = firstBtn.dataset.size || '';
+  }
+
+  sizeBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      sizeBtns.forEach(b => b.classList.remove('selected'));
+      const target = e.currentTarget as HTMLElement;
+      target.classList.add('selected');
+      selectedPrice = parseInt(target.dataset.price || '0', 10);
+      selectedSize = target.dataset.size || '';
     });
+  });
 
-    // Add to Basket
-    const addBtn = document.getElementById('add-to-ledger-btn');
-    if (addBtn) {
-      addBtn.addEventListener('click', () => {
-        const container = document.querySelector('.depth-experience-container');
-        const selectedBtn = document.querySelector('.size-ledger-row.selected') || sizeBtns[0];
-        
-        const activeSize = selectedBtn?.getAttribute('data-size');
-        const activePrice = selectedBtn?.getAttribute('data-price');
+  if (addBtn) {
+    addBtn.addEventListener('click', () => {
+      const originalText = addBtn.innerText;
+      addBtn.innerText = '[ Honored ✓ ]';
+      addBtn.style.color = 'var(--color-gold)';
+      addBtn.style.borderColor = 'var(--color-gold)';
+      
+      setTimeout(() => {
+        addBtn.innerText = originalText;
+        addBtn.style.color = '';
+        addBtn.style.borderColor = '';
+      }, 2000);
 
-        if (!container || !activeSize || !activePrice) return;
+      const productId = document.querySelector('.depth-experience-container')?.getAttribute('data-product-slug') || 'unknown';
+      const productName = document.querySelector('.depth-experience-container')?.getAttribute('data-product-name') || 'Product';
 
-        const pId = container.getAttribute('data-product-slug');
-        const pName = container.getAttribute('data-product-name');
-        const oName = container.getAttribute('data-origin-name');
-        const oId = container.getAttribute('data-origin-slug');
-
-        window.dispatchEvent(new CustomEvent('add-to-ledger', {
-          detail: {
-            id: `${pId}-${activeSize}`,
-            productId: pId,
-            name: pName,
-            origin: oName,
-            originId: oId,
-            size: activeSize,
-            weight: activeSize,
-            price: parseInt(activePrice, 10),
-            quantity: 1
-          }
-        }));
-
-        const originalText = addBtn.textContent;
-        addBtn.textContent = 'Honored \u2713';
-        setTimeout(() => {
-          addBtn.textContent = originalText;
-        }, 1500);
-      });
-    }
-
-    // Basket trigger
-    const basketBtn = document.getElementById('depth-basket-trigger');
-    if (basketBtn) {
-      basketBtn.addEventListener('click', () => {
-        window.dispatchEvent(new Event('open-cart'));
-      });
-    }
-
-    // Share action
-    const shareBtn = document.getElementById('depth-share-trigger');
-    if (shareBtn) {
-      shareBtn.addEventListener('click', () => {
-        if (navigator.share) {
-          navigator.share({
-            title: document.title,
-            text: 'Explore this harvest from OurOrigin.',
-            url: window.location.href
-          }).catch(err => console.log('Share failed', err));
-        } else {
-          navigator.clipboard.writeText(window.location.href).then(() => {
-            const originalText = shareBtn.textContent;
-            shareBtn.textContent = 'COPIED ✓';
-            setTimeout(() => {
-              shareBtn.textContent = originalText;
-            }, 2000);
-          });
+      const event = new CustomEvent('cart-add', {
+        detail: {
+          id: `${productId}-${selectedSize.replace(/\s+/g, '-').toLowerCase()}`,
+          name: `${productName} (${selectedSize})`,
+          price: selectedPrice,
+          image: document.querySelector('.massive-artifact')?.getAttribute('src'),
+          quantity: 1
         }
       });
-    }
-    // Mobile Sticky Honor Btn Listener
-    const mobileHonorBtn = document.getElementById('mobile-honor-btn');
-    if (mobileHonorBtn && addBtn) {
-      mobileHonorBtn.addEventListener('click', () => {
-        addBtn.click();
-      });
-    }
+      window.dispatchEvent(event);
+    });
   }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initDepthExperience);
-  } else {
-    initDepthExperience();
-  }
-  document.addEventListener('astro:page-load', initDepthExperience);
 </script>
+
+<style>
+    .story-scroll-container {
+        position: relative;
+        background-color: var(--color-void);
+        color: var(--color-warm-cream);
+        min-height: 400vh;
+    }
+
+    #golden-thread {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 120px;
+        height: 120px;
+        z-index: 100;
+        pointer-events: none;
+    }
+
+    .story-scene {
+        position: relative;
+        height: 100vh;
+        width: 100vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .scene-content {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        max-width: 1000px;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        z-index: 10;
+        pointer-events: none;
+    }
+
+    #scene-yield .scene-content {
+        pointer-events: auto;
+        position: relative;
+        transform: none;
+        top: auto;
+        left: auto;
+        margin-top: 50vh;
+    }
+
+    .scene-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-size: cover;
+        background-position: center;
+        z-index: 1;
+        opacity: 0;
+        filter: grayscale(80%) contrast(1.2);
+    }
+
+    #hero-mark-container {
+        margin-bottom: 3rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .indigenous-truth {
+        font-family: var(--font-institutional);
+        font-size: clamp(1.8rem, 4vw, 3.5rem);
+        font-weight: 300;
+        line-height: 1.3;
+        letter-spacing: 0.02em;
+        color: var(--color-warm-cream);
+        margin: 0;
+    }
+    
+    .origin-tag {
+        font-family: var(--font-mono);
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--color-gold);
+        margin-top: 1rem;
+    }
+
+    .brutalist-data-row {
+        margin-top: 2rem;
+        font-family: var(--font-mono);
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: rgba(245, 237, 216, 0.6);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .dot-separator {
+        color: var(--color-gold);
+    }
+
+    .specimen-intro-copy {
+        margin-top: 2rem;
+        font-family: var(--font-evidence);
+        font-size: 1.1rem;
+        max-width: 600px;
+        line-height: 1.6;
+        color: rgba(245, 237, 216, 0.8);
+    }
+
+    .section-title {
+        margin-top: 2rem;
+        margin-bottom: 3rem;
+        color: var(--color-gold);
+    }
+
+    /* YIELD WRAPPER */
+    .massive-artifact-wrapper {
+        width: 100%;
+        max-width: 600px;
+        aspect-ratio: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .massive-artifact {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        filter: drop-shadow(0 30px 40px rgba(0,0,0,0.8));
+    }
+
+    .purchase-ledger {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .size-ledger {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .size-ledger-row {
+        background: transparent;
+        border: 1px solid rgba(198, 156, 82, 0.2);
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: var(--color-warm-cream);
+        font-family: var(--font-mono);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .size-ledger-row:hover, .size-ledger-row.selected {
+        border-color: var(--color-gold);
+    }
+
+    .honor-decision-btn {
+        background: transparent;
+        border: none;
+        color: var(--color-warm-cream);
+        font-family: var(--font-mono);
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        cursor: pointer;
+        padding: 1rem 2rem;
+        transition: color 0.3s ease;
+    }
+
+    .honor-decision-btn:hover {
+        color: var(--color-gold);
+    }
+</style>
