@@ -6,19 +6,23 @@
     
     <div class="manifesto-header" data-reveal>
       <span class="manifesto-tag">The Philosophy</span>
-      <h2 class="manifesto-title">An Uncompromised Truth</h2>
-      <div class="manifesto-continuous-text">
-        <p class="manifesto-lead">
-          You are standing at the final inch of a very long journey.
+      <h2 class="manifesto-title">Before the Machine. <br>Beyond the Algorithm.</h2>
+      
+      <div class="manifesto-tribute">
+        <p class="manifesto-stanza">
+          From the first human hands that touched the soil, to the hands doing it today in the era of AI, an unbroken lineage exists.
         </p>
-        <p class="manifesto-body">
-          Before there was a brand, before there was a packet on a shelf, someone walked into a forest and made a decision no market asked them to make. They picked what was ripe. They left what the animals had already claimed, because it was theirs. They left what the season hadn't finished, because it wasn't ready — not because it wasn't profitable to take. They carried back only what the forest agreed to give.
+        <p class="manifesto-stanza">
+          In every corner of the earth, indigenous communities have held a quiet ethos until their last breath: You do not take everything. You take only what the forest agrees to give.
         </p>
-        <p class="manifesto-body">
-          This is not a story about hardship. It is a story about mastery — an intimacy with a specific place, its altitude, its rainfall, its soil, built across generations of watching the same vines, the same trees, the same weather, until knowing what's ready doesn't need to be checked. It only needs to be seen.
+        <p class="manifesto-stanza">
+          This is not a corporate supply chain. This is not a process document. This is an ancient intimacy with altitude, rainfall, and soil. 
         </p>
-        <p class="manifesto-body">
-          That decision — to take less than you could — has no value in a market that pays the same price regardless of how it was made. So the market has to change too. When you choose a yield here, you are not buying a product that happens to come from somewhere. You are completing a decision someone else already made, days before you ever saw a packet. You are not downstream from the origin. You are inside it.
+        <p class="manifesto-stanza">
+          When you hold this yield, you are not holding a product. You are holding a decision made by a human being—days before a market ever asked for it. 
+        </p>
+        <p class="manifesto-stanza highlight">
+          We do not own this ethos. We are simply trying to be worthy of it.
         </p>
       </div>
     </div>
@@ -29,7 +33,7 @@
 <style>
   .manifesto-section {
     position: relative;
-    /* Removed background and borders to blend with OriginZone */
+    /* Blend seamlessly with OriginZone */
   }
 
   .manifesto-container {
@@ -37,7 +41,6 @@
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: clamp(3rem, 7vh, 5rem);
   }
 
   .manifesto-header {
@@ -46,52 +49,57 @@
 
   .manifesto-tag {
     font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.25em;
+    font-size: 10px;
+    letter-spacing: 0.3em;
     color: var(--color-gold);
     text-transform: uppercase;
     display: block;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
     opacity: 0.85;
   }
 
   .manifesto-title {
     font-family: var(--font-institutional);
-    font-size: clamp(2.4rem, 5vw, 4.2rem);
+    font-size: clamp(2.2rem, 4vw, 4rem);
     font-weight: 300;
     line-height: 1.1;
-    margin: 0 0 1.5rem 0;
+    margin: 0 0 4rem 0;
     color: var(--color-warm-cream);
     letter-spacing: -0.01em;
   }
 
-  .manifesto-lead {
-    font-family: var(--font-narrative);
-    font-size: clamp(1.25rem, 2.2vw, 1.7rem);
-    line-height: 1.5;
-    color: var(--color-gold);
-    margin: 0;
-    font-style: italic;
-  }
-
-  .manifesto-continuous-text {
+  .manifesto-tribute {
     display: flex;
     flex-direction: column;
-    gap: 2.5rem;
-    max-width: 750px;
+    gap: 3rem;
+    max-width: 600px;
   }
 
-  .manifesto-body {
+  .manifesto-stanza {
     font-family: var(--font-narrative);
-    font-size: clamp(1.2rem, 1.8vw, 1.5rem);
-    line-height: 1.6;
-    color: rgba(245, 237, 216, 0.85);
+    font-size: clamp(1.2rem, 1.8vw, 1.6rem);
+    line-height: 1.8;
+    color: rgba(245, 237, 216, 0.7);
     margin: 0;
+    transition: color 0.4s ease;
+  }
+
+  .manifesto-stanza:hover {
+    color: rgba(245, 237, 216, 1);
+  }
+
+  .manifesto-stanza.highlight {
+    font-family: var(--font-institutional);
+    color: var(--color-gold);
+    font-size: clamp(1.4rem, 2vw, 1.8rem);
+    line-height: 1.5;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(212, 175, 55, 0.2);
   }
 
   /* Mobile responsiveness */
   @media (max-width: 768px) {
-    .manifesto-continuous-text {
+    .manifesto-tribute {
       gap: 2rem;
     }
   }

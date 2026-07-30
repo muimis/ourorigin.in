@@ -10,11 +10,11 @@ import OriginMark from './OriginMark.astro';
   <div class="origin-content">
     <div class="origin-header">
       <OriginMark size="80px" class="origin-mark-left" />
-      <h1 class="origin-title">The Absolute Truth<br>of the Soil</h1>
-      <p class="origin-subtitle">The Truth Leaves A Trace &middot; Western Ghats</p>
+      <h1 class="origin-title">The First Hands</h1>
+      <p class="origin-subtitle">An Unbroken Lineage</p>
     </div>
     
-    <div class="origin-body editorial-layout">
+    <div class="origin-body">
       <TheManifesto />
     </div>
   </div>
@@ -37,26 +37,21 @@ import OriginMark from './OriginMark.astro';
     display: none;
   }
 
-  /* Cinematic Parallax Background */
+  /* Monumental Tribute Background */
   .origin-cinematic-bg {
     position: fixed;
     top: 0;
     left: 0;
     width: 50vw;
     height: 100vh;
-    background-image: url('/assets/origins/wayanad-canopy.webp');
+    background-image: url('/assets/origins/wayanad-hand.webp');
     background-size: cover;
     background-position: center;
-    opacity: 0.15;
+    opacity: 0.35;
     z-index: 0;
     pointer-events: none;
-    /* Very slow pulse to make it feel alive */
-    animation: slowBreathe 20s infinite alternate ease-in-out;
-  }
-
-  @keyframes slowBreathe {
-    0% { transform: scale(1); }
-    100% { transform: scale(1.05); }
+    filter: grayscale(100%) contrast(1.2);
+    mix-blend-mode: multiply;
   }
 
   .origin-content {
@@ -68,7 +63,7 @@ import OriginMark from './OriginMark.astro';
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 15vh;
+    gap: 10vh;
   }
 
   .origin-header {
@@ -96,33 +91,6 @@ import OriginMark from './OriginMark.astro';
     text-transform: uppercase;
     border-left: 1px solid var(--color-gold);
     padding-left: 1rem;
-  }
-
-  /* Editorial Layout overrides for TheManifesto */
-  .editorial-layout :global(.manifesto-container) {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: 100% !important;
-  }
-
-  .editorial-layout :global(p) {
-    font-family: 'Cormorant Garamond', serif !important;
-    font-size: clamp(1.2rem, 2vw, 1.8rem) !important;
-    line-height: 1.6 !important;
-    color: rgba(245, 237, 216, 0.9) !important;
-    margin-bottom: 3rem !important;
-    text-indent: 4rem;
-  }
-
-  /* Drop Cap for the first paragraph */
-  .editorial-layout :global(p:first-of-type::first-letter) {
-    font-size: 6rem;
-    line-height: 0.8;
-    float: left;
-    margin-right: 1rem;
-    margin-top: 0.2rem;
-    color: var(--color-gold);
-    font-family: var(--font-institutional);
   }
 
   .axis-line {
