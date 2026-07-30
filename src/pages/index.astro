@@ -144,14 +144,25 @@ function getOriginForProduct(product: any) {
 
   gsap.registerPlugin(ScrollTrigger);
 
-  // Spotlight Effect
-  document.addEventListener('mousemove', (e) => {
+  // Spotlight Effect (Mouse and Touch)
+  function updateSpotlight(e: MouseEvent | TouchEvent) {
     const bg = document.getElementById('global-spotlight-bg');
     if (bg) {
-      bg.style.setProperty('--cursor-x', `${e.clientX}px`);
-      bg.style.setProperty('--cursor-y', `${e.clientY}px`);
+      let clientX, clientY;
+      if (window.TouchEvent && e instanceof TouchEvent) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      } else {
+        clientX = (e as MouseEvent).clientX;
+        clientY = (e as MouseEvent).clientY;
+      }
+      bg.style.setProperty('--cursor-x', `${clientX}px`);
+      bg.style.setProperty('--cursor-y', `${clientY}px`);
     }
-  });
+  }
+
+  document.addEventListener('mousemove', updateSpotlight);
+  document.addEventListener('touchmove', updateSpotlight, { passive: true });
 
   // GSAP SCROLL ANIMATIONS
   
@@ -296,6 +307,7 @@ function getOriginForProduct(product: any) {
         position: relative;
         width: 100vw;
         height: 100vh;
+        height: 100dvh;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -308,6 +320,7 @@ function getOriginForProduct(product: any) {
         left: 0;
         width: 100vw;
         height: 100vh;
+        height: 100dvh;
         background-image: url('/assets/origins/idukki-hand.webp');
         background-size: cover;
         background-position: center;
@@ -335,14 +348,14 @@ function getOriginForProduct(product: any) {
 
     .absolute-truth {
         font-family: var(--font-institutional);
-        font-size: clamp(2rem, 5vw, 4.5rem);
+        font-size: clamp(1.8rem, 5vw, 4.5rem);
         font-weight: 300;
         line-height: 1.2;
         color: var(--color-warm-cream);
         margin: 0;
         letter-spacing: -0.02em;
         max-width: 1000px;
-        padding: 0 2rem;
+        padding: 0 1.5rem;
     }
 
     .scroll-indicator {
@@ -390,6 +403,7 @@ function getOriginForProduct(product: any) {
         left: 0;
         width: 100vw;
         height: 100vh;
+        height: 100dvh;
         background-image: url('/assets/origins/attappady-landscape.webp');
         background-size: cover;
         background-position: center;
@@ -408,16 +422,18 @@ function getOriginForProduct(product: any) {
         display: flex;
         width: max-content;
         height: 100vh;
+        height: 100dvh;
     }
 
     .exhibition-panel {
         position: relative;
         width: 100vw;
         height: 100vh;
+        height: 100dvh;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 4rem;
+        padding: 2rem;
         overflow: hidden;
     }
 
@@ -427,7 +443,7 @@ function getOriginForProduct(product: any) {
         left: 50%;
         transform: translate(-50%, -50%);
         font-family: var(--font-institutional);
-        font-size: 25vw;
+        font-size: clamp(10rem, 25vw, 30rem);
         font-weight: 700;
         color: rgba(245, 237, 216, 0.03);
         white-space: nowrap;
@@ -619,18 +635,42 @@ function getOriginForProduct(product: any) {
     @media (max-width: 1024px) {
         .exhibition-content {
             flex-direction: column;
-            gap: 3rem;
+            gap: 2rem;
             text-align: center;
         }
         
         .exhibition-image-wrapper {
-            height: 40vh;
+            height: 35vh;
+        }
+
+        .exhibition-title {
+            font-size: clamp(2.5rem, 8vw, 4rem);
+        }
+
+        .exhibition-data {
+            padding: 1rem 0;
+            gap: 1rem;
         }
 
         .data-row {
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.25rem;
             align-items: center;
+        }
+
+        .ledger-header h2 {
+            font-size: 2rem;
+        }
+
+        .ledger-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1.5rem;
+        }
+        
+        .ledger-item-action {
+            width: 100%;
+            justify-content: space-between;
         }
     }
 </style>
