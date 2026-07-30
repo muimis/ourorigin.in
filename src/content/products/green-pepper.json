@@ -18,11 +18,6 @@
   "images": {
     "packaging": "/assets/products/green-pepper-packaging.png"
   },
-  "sensoryProfile": {
-    "aroma": "Fresh-cut grass, crushed pine needles, green citrus zest",
-    "flavor": "Bright, herbal heat, mild resinous warmth, crisp snap",
-    "appearance": "Dehydrated olive-green berries, light and brittle"
-  },
   "chemistry": {
     "activeCompound": "Piperine: 3.8%",
     "moistureContent": "Moisture: 8.5%"

@@ -18,11 +18,6 @@
   "images": {
     "packaging": "/assets/products/clove-packaging.png"
   },
-  "sensoryProfile": {
-    "aroma": "Sharp camphor, warm wood, spicy eugenol core",
-    "flavor": "Intense pungent warmth, tongue-numbing spice, sweet background",
-    "appearance": "Plump, reddish-brown dried buds with uniform crowns"
-  },
   "chemistry": {
     "activeCompound": "Eugenol: 15.4%",
     "moistureContent": "Moisture: 8.2%"

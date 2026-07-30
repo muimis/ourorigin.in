@@ -19,11 +19,6 @@
     "packaging": "/assets/products/cinnamon-packaging.png",
     "product": "/assets/products/cinnamon-product.png"
   },
-  "sensoryProfile": {
-    "aroma": "Sweet bark, delicate clove bud, warm oil",
-    "flavor": "Mild, woody sweetness with complex aromatic overtones",
-    "appearance": "Delicate, multi-layered quill rolls, fragile texture"
-  },
   "chemistry": {
     "activeCompound": "Cinnamaldehyde: 1.8%",
     "moistureContent": "Moisture: 11.5%"
