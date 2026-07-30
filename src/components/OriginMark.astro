@@ -10,6 +10,7 @@ const {
   size = 32, 
   variant = 'gold', 
   id = Math.random().toString(36).substring(7),
+  animate = false,
 } = Astro.props;
 
 const colorMap = {
@@ -22,7 +23,7 @@ const strokeColor = colorMap[variant];
 
 <svg 
   id={`origin-mark-${id}`}
-  class={`origin-mark variant-${variant}`} 
+  class={`origin-mark variant-${variant} ${animate ? 'is-breathing' : ''}`} 
   width={size} 
   height={size} 
   viewBox="0 0 120 120" 
@@ -54,5 +55,28 @@ const strokeColor = colorMap[variant];
   .origin-mark {
     overflow: visible;
     transform-origin: center;
+  }
+  
+  .origin-mark.is-breathing path {
+    stroke-dasharray: 400;
+    stroke-dashoffset: 400;
+    animation: drawCircuit 4s cubic-bezier(0.645, 0.045, 0.355, 1) infinite alternate;
+  }
+
+  .origin-mark.is-breathing rect {
+    animation: pulseKnot 4s ease-in-out infinite alternate;
+  }
+
+  @keyframes drawCircuit {
+    0% { stroke-dashoffset: 400; }
+    40% { stroke-dashoffset: 0; }
+    100% { stroke-dashoffset: 0; }
+  }
+
+  @keyframes pulseKnot {
+    0% { opacity: 0; transform: scale(0.5); }
+    30% { opacity: 0; transform: scale(0.5); }
+    50% { opacity: 1; transform: scale(1); }
+    100% { opacity: 1; transform: scale(1); }
   }
 </style>
