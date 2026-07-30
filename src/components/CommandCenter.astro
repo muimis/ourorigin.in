@@ -8,268 +8,65 @@ export interface Props {
 const { variant = 'dark' } = Astro.props;
 ---
 
-<header class={`global-header header-${variant}`}>
-  <a href="/" class="header-logo" aria-label="OurOrigin Home">
-    <OriginMark variant={variant === 'light' ? 'reversed' : 'gold'} size={32} />
-    <span class="header-wordmark-text">OurOrigin</span>
-  </a>
-
-  <div class="header-actions">
-    <a href="/catalog" class="hud-btn" aria-label="The Yield">
-      The Yield
+<header class="brutalist-hud">
+  <div class="hud-left">
+    <a href="/" aria-label="OurOrigin Home">
+      <OriginMark variant={variant === 'light' ? 'reversed' : 'gold'} size={32} />
     </a>
+  </div>
 
-    <button id="command-center-trigger" class="hud-btn" aria-label="Open Navigation">
-      Navigate
-    </button>
+  <nav class="hud-center">
+    <a href="/" class="hud-link">[ THE WALK ]</a>
+    <a href="/#scene-yield" class="hud-link">[ THE YIELD ]</a>
+    <a href="/observations" class="hud-link">[ THE TRUTH ]</a>
+  </nav>
 
-    <button id="trigger-dossier" class="hud-btn" aria-label="Open Ledger" onclick="window.dispatchEvent(new Event('open-cart'))">
-      Ledger (<span class="dossier-count" id="header-basket-count">0</span>)
+  <div class="hud-right">
+    <button id="trigger-dossier" class="hud-link" aria-label="Open Ledger" onclick="window.dispatchEvent(new Event('open-cart'))">
+      [ LEDGER <span id="header-basket-count">0</span> ]
     </button>
   </div>
 </header>
 
-<div id="command-center-overlay" aria-hidden="true">
-  <nav class="cc-nav">
-    <a href="/">Home</a>
-    <a href="/catalog">The Yield</a>
-    <a href="/observations">Field Notes</a>
-    <a href="/contact">Contact</a>
-  </nav>
-
-  <button class="cc-close" aria-label="Close Navigation">
-    <OriginMark variant="gold" size={28} />
-    <span class="cc-close-label">Close</span>
-  </button>
-</div>
-
 <style>
-  .global-header {
+  .brutalist-hud {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    padding: 24px clamp(2rem, 6vw, 4rem);
+    width: 100vw;
+    padding: 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    z-index: 8000;
-    box-sizing: border-box;
-    pointer-events: none;
-    mix-blend-mode: difference; /* Perfect for split screen */
-    color: #fff;
-  }
-
-  .header-logo {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    pointer-events: auto;
-    text-decoration: none;
-  }
-  
-  /* Global Wordmark scaling for header */
-  .header-wordmark-text {
-    font-family: var(--font-institutional);
-    font-size: 1.25rem;
-    font-weight: 400;
-    letter-spacing: 0.05em;
-    color: var(--color-warm-cream);
-  }
-
-  .header-logo:hover {
-    opacity: 0.7;
-  }
-
-  .header-actions {
-    display: flex;
-    gap: 2rem;
-    align-items: center;
-    pointer-events: auto;
-  }
-
-  .hud-btn {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    transition: color 0.3s ease, opacity 0.3s ease;
-    white-space: nowrap;
-    color: #fff;
-  }
-
-  .hud-btn:hover {
-    opacity: 0.7;
-  }
-
-  @media (max-width: 768px) {
-    .global-header {
-      padding: 16px 1.5rem;
-    }
-    .header-actions {
-      gap: 1rem;
-    }
-    .hud-btn {
-      font-size: 10px;
-    }
-  }
-
-  /* Force the inner SVG elements to full opacity */
-  #command-center-trigger :global(.origin-mark *) {
-    opacity: 1 !important;
-  }
-
-  /* === Overlay === */
-  #command-center-overlay {
-    position: fixed;
-    inset: 0;
     z-index: 9000;
-    background: var(--color-forest-deep);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
     pointer-events: none;
-    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    box-sizing: border-box;
   }
 
-  #command-center-overlay.is-active {
-    opacity: 1;
+  .hud-left, .hud-center, .hud-right {
     pointer-events: auto;
   }
 
-  .cc-close {
-    position: absolute;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    cursor: pointer;
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+  .hud-center {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    background: none;
-    border: none;
-    padding: 0;
+    gap: 3rem;
   }
-  .cc-close:hover {
-    transform: translateX(-50%) scale(0.9);
-  }
-  .cc-close-label {
+
+  .hud-link {
     font-family: var(--font-mono);
-    font-size: 0.6rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: rgba(245, 237, 216, 0.3);
-  }
-
-  .cc-nav {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2.5rem;
-    transform: translateY(15px);
-    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  #command-center-overlay.is-active .cc-nav {
-    transform: translateY(0);
-  }
-
-  .cc-nav a, .cc-button {
-    font-family: var(--font-institutional);
-    font-size: clamp(3rem, 6vw, 4.5rem);
-    font-weight: 300;
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
     color: var(--color-warm-cream);
     text-decoration: none;
-    letter-spacing: -0.01em;
-    transition: color 0.4s ease, transform 0.4s ease;
-    opacity: 0.7;
     background: none;
     border: none;
-    padding: 0;
     cursor: pointer;
-    line-height: 1.1;
+    text-transform: uppercase;
+    transition: color 0.3s ease;
+    mix-blend-mode: difference;
   }
 
-  .cc-nav a:hover, .cc-button:hover {
+  .hud-link:hover {
     color: var(--color-gold);
-    opacity: 1;
-    transform: scale(1.02);
-  }
-
-  @media (max-width: 768px) {
-    .cc-nav a, .cc-button {
-      font-size: 2rem;
-    }
-    .cc-nav {
-      gap: 2rem;
-    }
   }
 </style>
-
-<script>
-  import { cartState } from '../scripts/cart.js';
-
-  const trigger = document.getElementById('command-center-trigger');
-  const close = document.querySelector('.cc-close');
-  const overlay = document.getElementById('command-center-overlay');
-
-  if (trigger && close && overlay) {
-    trigger.addEventListener('click', () => {
-      overlay.classList.add('is-active');
-      trigger.style.opacity = '0';
-      trigger.style.pointerEvents = 'none';
-      document.body.style.overflow = 'hidden';
-    });
-
-    close.addEventListener('click', () => {
-      overlay.classList.remove('is-active');
-      trigger.style.opacity = '1';
-      trigger.style.pointerEvents = 'auto';
-      document.body.style.overflow = '';
-    });
-
-    const ccYieldsBtn = document.getElementById('cc-all-yields-btn');
-    if (ccYieldsBtn) {
-      ccYieldsBtn.addEventListener('click', () => {
-        overlay.classList.remove('is-active');
-        trigger.style.opacity = '1';
-        trigger.style.pointerEvents = 'auto';
-        document.body.style.overflow = '';
-        window.dispatchEvent(new Event('open-all-yields-panel'));
-      });
-    }
-
-    // Basket count
-    const basketCountEl = document.getElementById('header-basket-count');
-    if (basketCountEl) {
-      basketCountEl.textContent = cartState.getTotalItems();
-    }
-
-    window.addEventListener('cart-updated', (e) => {
-      const { totalItems } = e.detail;
-      if (basketCountEl) {
-        basketCountEl.textContent = totalItems;
-      }
-    });
-
-
-
-    // Escape key to close
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && overlay.classList.contains('is-active')) {
-        overlay.classList.remove('is-active');
-        trigger.style.opacity = '1';
-        trigger.style.pointerEvents = 'auto';
-        document.body.style.overflow = '';
-      }
-    });
-  }
-</script>
