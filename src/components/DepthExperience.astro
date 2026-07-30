@@ -15,25 +15,26 @@ const displayImage = hasRealPackaging ? product.data.images.packaging : product.
 ---
 
 <div class="story-scroll-container">
-  <!-- The Traveling Element (Golden Thread) -->
-  <div id="golden-thread">
-      <svg viewBox="0 0 120 120" width="120" height="120">
-          <path d="M 90 22 C 93 18, 98 22, 97 26 C 96 30, 90 32, 87 27 C 84 22, 87 19, 90 22 Z" fill="var(--color-gold)" />
-      </svg>
-  </div>
-
+  
   <!-- SCENE 1: THE ORIGIN -->
   <section class="story-scene" id="scene-hero">
       <div class="scene-content">
-          <div id="hero-mark-container">
-              <OriginMark size={120} variant="gold" hideDot={true} />
+          <div id="hero-mark-wrapper">
+              <OriginMark size={150} variant="gold" id="hero-mark-svg" />
           </div>
           <h1 class="indigenous-truth hero-headline">
-              {product.data.name}
+              {product?.data.name}
           </h1>
           <p class="origin-tag">from {origin?.data.name}</p>
       </div>
   </section>
+
+  <!-- Graphic Transition Element 1 (The Long Distance Stripe) -->
+  <div class="graphic-element" id="transition-stripe">
+       <svg viewBox="0 0 100 100" width="100%" height="100%" preserveAspectRatio="none">
+           <path d="M 50 0 Q 55 50 45 100" fill="none" stroke="var(--color-gold)" stroke-width="2" />
+       </svg>
+  </div>
 
   <!-- SCENE 2: THE SOIL / CANOPY -->
   <section class="story-scene" id="scene-soil">
@@ -52,6 +53,13 @@ const displayImage = hasRealPackaging ? product.data.images.packaging : product.
       </div>
   </section>
 
+  <!-- Graphic Transition Element 2 (The Enlarged Yield Dot) -->
+  <div class="graphic-element" id="transition-dot">
+      <svg viewBox="0 0 120 120" width="100%" height="100%">
+          <path d="M 90 22 C 93 18, 98 22, 97 26 C 96 30, 90 32, 87 27 C 84 22, 87 19, 90 22 Z" fill="var(--color-gold)" opacity="0.15" />
+      </svg>
+  </div>
+
   <!-- SCENE 3: THE HANDS -->
   <section class="story-scene" id="scene-hands">
       {origin?.data.images.hand && !origin?.data.images.isPlaceholderImagery && (
@@ -65,11 +73,18 @@ const displayImage = hasRealPackaging ? product.data.images.packaging : product.
       </div>
   </section>
 
+  <!-- Graphic Transition Element 3 (Horizontal Stripes) -->
+  <div class="graphic-element" id="transition-horizontal-stripe">
+       <svg viewBox="0 0 100 10" width="100%" height="100%" preserveAspectRatio="none">
+           <path d="M 0 5 Q 50 0 100 8" fill="none" stroke="var(--color-gold)" stroke-width="2" />
+       </svg>
+  </div>
+
   <!-- SCENE 4: THE YIELD (PURCHASE) -->
   <section class="story-scene product-arrival" id="scene-yield">
       <div class="scene-content yield-content">
           <div class="massive-artifact-wrapper">
-              <img src={displayImage} alt={product.data.name} class="massive-artifact" />
+              <img src={displayImage} alt={product?.data.name} class="massive-artifact" />
           </div>
 
           <h2 class="indigenous-truth section-title">Honor the harvest.</h2>
@@ -114,7 +129,11 @@ const displayImage = hasRealPackaging ? product.data.images.packaging : product.
   
   gsap.set("#scene-yield .scene-content", { autoAlpha: 0, y: 100 });
 
-  // The Golden Thread Animation
+  gsap.set("#transition-stripe", { scaleY: 0, transformOrigin: "top center", autoAlpha: 0 });
+  gsap.set("#transition-dot", { scale: 0, autoAlpha: 0 });
+  gsap.set("#transition-horizontal-stripe", { scaleX: 0, transformOrigin: "left center", autoAlpha: 0 });
+
+  // Master Narrative Timeline
   const tl = gsap.timeline({
       scrollTrigger: {
           trigger: ".story-scroll-container",
@@ -124,35 +143,26 @@ const displayImage = hasRealPackaging ? product.data.images.packaging : product.
       }
   });
 
-  // Scene 1 to Scene 2
-  tl.to("#golden-thread", {
-      y: "30vh", 
-      scale: 1.5,
-      ease: "power1.inOut"
-  }, 0)
+  // Scene 1 -> 2
+  tl.to("#hero-mark-wrapper", { scale: 0.5, y: -50, autoAlpha: 0, ease: "power1.inOut" }, 0)
   .to(".hero-headline, .origin-tag", { autoAlpha: 0, y: -50 }, 0)
-  .to("#soil-bg", { autoAlpha: 0.3, scale: 1, ease: "power2.out" }, 0.1)
-  .to("#scene-soil .scene-content", { autoAlpha: 1, y: 0, ease: "power2.out" }, 0.1);
+  .to("#transition-stripe", { scaleY: 1, autoAlpha: 1, ease: "power2.inOut" }, 0.1)
+  .to("#soil-bg", { autoAlpha: 0.3, scale: 1, ease: "power2.out" }, 0.2)
+  .to("#scene-soil .scene-content", { autoAlpha: 1, y: 0, ease: "power2.out" }, 0.2);
 
-  // Scene 2 to Scene 3
-  tl.to("#golden-thread", {
-      y: "60vh",
-      scale: 2,
-      ease: "power1.inOut"
-  }, 0.3)
-  .to("#scene-soil .scene-content", { autoAlpha: 0, y: -50 }, 0.3)
+  // Scene 2 -> 3
+  tl.to("#scene-soil .scene-content", { autoAlpha: 0, y: -50 }, 0.3)
   .to("#soil-bg", { autoAlpha: 0 }, 0.3)
+  .to("#transition-stripe", { scaleY: 0, autoAlpha: 0, transformOrigin: "bottom center", ease: "power2.inOut" }, 0.3)
+  .to("#transition-dot", { scale: 20, autoAlpha: 1, ease: "power2.inOut" }, 0.35)
   .to("#hands-bg", { autoAlpha: 0.3, scale: 1, ease: "power2.out" }, 0.4)
   .to("#scene-hands .scene-content", { autoAlpha: 1, y: 0, ease: "power2.out" }, 0.4);
 
-  // Scene 3 to Scene 4 (Yield)
-  tl.to("#golden-thread", {
-      y: "85vh",
-      scale: 1,
-      ease: "power1.inOut"
-  }, 0.6)
-  .to("#scene-hands .scene-content", { autoAlpha: 0, y: -50 }, 0.6)
+  // Scene 3 -> 4 (Yield)
+  tl.to("#scene-hands .scene-content", { autoAlpha: 0, y: -50 }, 0.6)
   .to("#hands-bg", { autoAlpha: 0 }, 0.6)
+  .to("#transition-dot", { autoAlpha: 0, scale: 0, ease: "power2.inOut" }, 0.6)
+  .to("#transition-horizontal-stripe", { scaleX: 1, autoAlpha: 1, ease: "power2.inOut" }, 0.65)
   .to("#scene-yield .scene-content", { autoAlpha: 1, y: 0, ease: "power2.out", pointerEvents: "auto" }, 0.7);
 
   // Purchase Logic
@@ -216,15 +226,34 @@ const displayImage = hasRealPackaging ? product.data.images.packaging : product.
         min-height: 400vh;
     }
 
-    #golden-thread {
+    .graphic-element {
         position: fixed;
+        pointer-events: none;
+        z-index: 5;
+    }
+
+    #transition-stripe {
+        top: 0;
+        left: 50%;
+        width: 2px;
+        height: 100vh;
+        transform: translateX(-50%);
+    }
+
+    #transition-dot {
         top: 50%;
         left: 50%;
-        transform: translate(-50%, -50%);
         width: 120px;
         height: 120px;
-        z-index: 100;
-        pointer-events: none;
+        transform: translate(-50%, -50%);
+    }
+
+    #transition-horizontal-stripe {
+        top: 50%;
+        left: 0;
+        width: 100vw;
+        height: 2px;
+        transform: translateY(-50%);
     }
 
     .story-scene {
@@ -275,7 +304,7 @@ const displayImage = hasRealPackaging ? product.data.images.packaging : product.
         filter: grayscale(80%) contrast(1.2);
     }
 
-    #hero-mark-container {
+    #hero-mark-wrapper {
         margin-bottom: 3rem;
         display: flex;
         justify-content: center;
