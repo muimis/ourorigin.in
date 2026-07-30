@@ -1,0 +1,32 @@
+{
+  "slug": "foxtail-millet",
+  "name": "Foxtail Millet (Thina)",
+  "botanicalName": "Setaria italica",
+  "originSlug": "attappady",
+  "isAnchorProduct": false,
+  "batchRef": "ATP-FXM-001",
+  "harvestMonth": "JAN 2026",
+  "sizes": [
+    {
+      "label": "500g",
+      "priceINR": 290,
+      "isPriceVerified": true
+    }
+  ],
+  "methodDescription": "Whole stalk harvest, bundle drying, and hand-winnowing.",
+  "specimenCopy": "Grown in mixed cropping systems by the Muduga farmers. The golden thina is prized for its rapid growth cycle and profound connection to the indigenous folklore of the region.",
+  "offeringCopy": "Golden energy, cultivated by tradition.",
+  "images": {
+    "packaging": "/assets/products/foxtail-millet.png",
+    "product": "/assets/products/foxtail-millet.png"
+  },
+  "sensoryProfile": {
+    "aroma": "Warm, mildly sweet corn-like aroma",
+    "flavor": "Nutty, slightly sweet, robust texture",
+    "appearance": "Small, convex, golden-yellow grains"
+  },
+  "chemistry": {
+    "activeCompound": "Protein: 12.3g/100g",
+    "moistureContent": "Moisture: 10%"
+  }
+}

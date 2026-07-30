@@ -1,55 +1,384 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../components/BaseLayout.astro';
-import OriginZone from '../components/OriginZone.astro';
-import YieldZone from '../components/YieldZone.astro';
+import OriginMark from '../components/OriginMark.astro';
+
+const products = await getCollection('products');
+const origins = await getCollection('origins');
+
+// Helper to get origin data for a product
+function getOriginForProduct(product: any) {
+  const originId = typeof product.data.originSlug === 'object' ? product.data.originSlug?.id : product.data.originSlug;
+  return origins.find(o => o.id === originId);
+}
 ---
 
 <BaseLayout
-  title="OurOrigin — The Absolute Truth of the Soil"
-  description="OurOrigin connects you to pure natural ingredients, community-harvested directly from their soil of origin. Traceable to the community who harvested them."
+  title="OurOrigin"
+  description="The product is not the soul. The soul is the profound, invisible exchange of dignity and effort from one human being to another."
   canonicalPath="/"
-  ogTitle="OurOrigin — The Absolute Truth of the Soil"
+  ogTitle="OurOrigin"
   ogDescription="Pure natural ingredients, community-harvested directly from their soil of origin."
   navVariant="light"
   showFooter={false}
-  bodyClass="homepage-body split-reality-body"
+  bodyClass="void-canvas-body"
 >
-    <main class="split-reality-container">
-        <!-- The Left Hemisphere (Philosophy / The Forest) -->
-        <OriginZone />
+    <main class="void-canvas">
+        <!-- ACT I: The Soul -->
+        <section class="void-hero">
+            <div class="gesture-bg"></div>
+            
+            <div class="hero-content">
+                <OriginMark size="64" variant="gold" />
+                <h1 class="absolute-truth">
+                    The product is not the soul.<br>
+                    The soul is the profound, invisible exchange of dignity and effort from one human being to another.
+                </h1>
+            </div>
+            
+            <div class="scroll-indicator">
+                <div class="scroll-line"></div>
+            </div>
+        </section>
         
-        <!-- The Right Hemisphere (Commerce / The Yield) -->
-        <YieldZone />
+        <!-- ACT II: The Yield (Compact Grid) -->
+        <section class="void-yield" id="the-yield">
+            <div class="yield-header">
+                <h2>The Artifacts</h2>
+            </div>
+            
+            <div class="artifact-grid">
+                {products.map(product => {
+                    const origin = getOriginForProduct(product);
+                    const originName = origin ? origin.data.name : 'Unknown Origin';
+                    
+                    return (
+                        <article class="artifact-card">
+                            <div class="artifact-image-container">
+                                <img src={product.data.image} alt={product.data.name} class="artifact-image" loading="lazy" />
+                            </div>
+                            
+                            <div class="artifact-meta">
+                                <h3 class="artifact-name">{product.data.name}</h3>
+                                <div class="artifact-data-points">
+                                    <span class="data-point">Origin: {originName}</span>
+                                    <span class="data-point">Harvest: {product.data.harvest_method || 'Selective'}</span>
+                                    <span class="data-point">Price: ₹{product.data.price}/{product.data.unit}</span>
+                                </div>
+                            </div>
+                            
+                            <button 
+                              class="honor-decision-btn"
+                              data-product-id={product.id}
+                              data-product-name={product.data.name}
+                              data-product-price={product.data.price}
+                              data-product-image={product.data.image}
+                            >
+                              [ Honor the Decision ]
+                            </button>
+                        </article>
+                    );
+                })}
+            </div>
+        </section>
     </main>
 </BaseLayout>
 
+<script>
+  // Dispatch cart event for The Ledger
+  document.querySelectorAll('.honor-decision-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const target = e.currentTarget as HTMLButtonElement;
+      
+      const originalText = target.innerText;
+      target.innerText = '[ Honored ✓ ]';
+      target.style.color = 'var(--color-gold)';
+      target.style.borderColor = 'var(--color-gold)';
+      
+      setTimeout(() => {
+        target.innerText = originalText;
+        target.style.color = '';
+        target.style.borderColor = '';
+      }, 2000);
+
+      const event = new CustomEvent('cart-add', {
+        detail: {
+          id: target.dataset.productId,
+          name: target.dataset.productName,
+          price: parseInt(target.dataset.productPrice || '0', 10),
+          image: target.dataset.productImage,
+          quantity: 1
+        }
+      });
+      window.dispatchEvent(event);
+    });
+  });
+
+  // --- CINEMATIC PHYSICS ---
+
+  // 1. Scroll Reveal (Intersection Observer)
+  const revealElements = document.querySelectorAll('.artifact-card');
+  const revealOptions = {
+    threshold: 0.1,
+    rootMargin: "0px 0px -50px 0px"
+  };
+
+  const revealObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('revealed');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, revealOptions);
+
+  revealElements.forEach(el => revealObserver.observe(el));
+
+  // 2. Parallax Depth on Images
+  document.addEventListener('mousemove', (e) => {
+    const cards = document.querySelectorAll('.artifact-card');
+    const mouseX = e.clientX / window.innerWidth - 0.5;
+    const mouseY = e.clientY / window.innerHeight - 0.5;
+
+    cards.forEach(card => {
+      const img = card.querySelector('.artifact-image') as HTMLElement;
+      if (img) {
+        // Subtle opposite movement to create depth
+        const moveX = mouseX * -20; 
+        const moveY = mouseY * -20;
+        img.style.transform = `translate3d(${moveX}px, ${moveY}px, 0)`;
+      }
+    });
+  });
+
+  // 3. Magnetic Buttons
+  const magneticButtons = document.querySelectorAll('.honor-decision-btn');
+  
+  magneticButtons.forEach(btn => {
+    const htmlBtn = btn as HTMLElement;
+    htmlBtn.addEventListener('mousemove', (e) => {
+      const rect = htmlBtn.getBoundingClientRect();
+      const h = rect.width / 2;
+      const x = e.clientX - rect.left - h;
+      const y = e.clientY - rect.top - (rect.height / 2);
+      
+      htmlBtn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+    });
+
+    htmlBtn.addEventListener('mouseleave', () => {
+      htmlBtn.style.transform = `translate(0px, 0px)`;
+    });
+  });
+</script>
+
 <style is:global>
-    body.split-reality-body {
+    body.void-canvas-body {
         margin: 0;
         padding: 0;
-        overflow: hidden; /* Prevent body scrolling, allow zones to scroll independently */
         background-color: var(--color-forest-deep);
+        color: var(--color-warm-cream);
+        -ms-overflow-style: none;
+        scrollbar-width: none;
     }
-    
-    @media (max-width: 900px) {
-        body.split-reality-body {
-            overflow: auto; /* Allow normal scrolling on mobile */
-        }
+    body.void-canvas-body::-webkit-scrollbar {
+        display: none;
     }
 </style>
 
 <style>
-    .split-reality-container {
-        display: flex;
-        flex-direction: row;
+    .void-canvas {
         width: 100vw;
-        height: 100vh;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
     }
 
-    @media (max-width: 900px) {
-        .split-reality-container {
-            flex-direction: column;
-            height: auto;
-        }
+    /* --- HERO --- */
+    .void-hero {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+
+    .gesture-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('/assets/origins/idukki-hand.webp');
+        background-size: cover;
+        background-position: center;
+        opacity: 0.25; /* Brutally dark */
+        filter: grayscale(100%) contrast(1.2);
+        z-index: 0;
+        pointer-events: none;
+        mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%);
+        -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%);
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 900px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3rem;
+        text-align: center;
+    }
+
+    .absolute-truth {
+        font-family: var(--font-institutional);
+        font-size: clamp(1.8rem, 3.5vw, 3.5rem);
+        font-weight: 300;
+        line-height: 1.3;
+        color: var(--color-warm-cream);
+        margin: 0;
+        letter-spacing: -0.01em;
+    }
+
+    .scroll-indicator {
+        position: absolute;
+        bottom: 3rem;
+        left: 50%;
+        transform: translateX(-50%);
+        height: 60px;
+        display: flex;
+        align-items: flex-end;
+        z-index: 2;
+    }
+
+    .scroll-line {
+        width: 1px;
+        height: 100%;
+        background: linear-gradient(to bottom, rgba(245, 237, 216, 0.5) 0%, rgba(245, 237, 216, 0) 100%);
+    }
+
+    /* --- THE YIELD (COMPACT GRID) --- */
+    .void-yield {
+        position: relative;
+        z-index: 5;
+        width: 100vw;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 5rem 2rem 10rem 2rem;
+    }
+
+    .yield-header {
+        margin-bottom: 4rem;
+        text-align: center;
+    }
+
+    .yield-header h2 {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        letter-spacing: 0.3em;
+        color: var(--color-gold);
+        text-transform: uppercase;
+        margin: 0;
+    }
+
+    .artifact-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 3rem;
+    }
+
+    .artifact-card {
+        display: flex;
+        flex-direction: column;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 2rem;
+        transition: border-color 0.3s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease;
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    .artifact-card.revealed {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .artifact-card:hover {
+        border-color: rgba(212, 175, 55, 0.3);
+    }
+
+    .artifact-image-container {
+        width: 100%;
+        aspect-ratio: 1;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .artifact-image {
+        max-width: 80%;
+        max-height: 80%;
+        object-fit: contain;
+        filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5));
+        transition: transform 0.5s ease;
+    }
+
+    .artifact-card:hover .artifact-image {
+        transform: scale(1.05) translateY(-5px);
+    }
+
+    .artifact-meta {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .artifact-name {
+        font-family: var(--font-institutional);
+        font-size: 1.5rem;
+        font-weight: 300;
+        margin: 0;
+        color: var(--color-warm-cream);
+        border-bottom: 1px solid rgba(245, 237, 216, 0.1);
+        padding-bottom: 1rem;
+    }
+
+    .artifact-data-points {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .data-point {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        color: rgba(245, 237, 216, 0.6);
+        text-transform: uppercase;
+    }
+
+    .honor-decision-btn {
+        background: transparent;
+        border: 1px solid rgba(245, 237, 216, 0.2);
+        color: var(--color-warm-cream);
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 1rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-align: center;
+        width: 100%;
+    }
+
+    .honor-decision-btn:hover {
+        border-color: var(--color-warm-cream);
+        background: rgba(255, 255, 255, 0.05);
     }
 </style>

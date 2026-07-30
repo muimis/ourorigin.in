@@ -22,25 +22,37 @@ const strokeColor = colorMap[variant];
 
 <svg 
   id={`origin-mark-${id}`}
-  class={`open-axis variant-${variant}`} 
+  class={`origin-mark variant-${variant}`} 
   width={size} 
   height={size} 
   viewBox="0 0 120 120" 
   aria-hidden="true"
+  fill="none"
 >
+  <!-- The Unbroken Circuit (Copyrightable Monolithic Mark) -->
   <g transform="translate(60, 60)">
-    <!-- Right Form (The Yield) -->
-    <path fill={strokeColor} d="M 2, -22 A 22 22 0 0 1 18, 18 A 28 28 0 0 0 2, -22 Z" />
-             
-    <!-- Left Form (The Origin) -->
-    <path fill={strokeColor} d="M -2, 22 A 22 22 0 0 1 -18, -18 A 28 28 0 0 0 -2, 22 Z" />
+    <path 
+      stroke={strokeColor} 
+      stroke-width="8" 
+      stroke-linecap="square"
+      stroke-linejoin="miter"
+      d="M -30, -30 
+         L 30, -30 
+         L 30, 30 
+         L -15, 30 
+         L -15, 0 
+         L 10, 0 
+         L 10, 15 
+         L -30, 15 
+         Z" 
+    />
+    <rect x="-6" y="-6" width="12" height="12" fill={strokeColor} />
   </g>
 </svg>
 
 <style>
-  .open-axis {
+  .origin-mark {
     overflow: visible;
     transform-origin: center;
-    /* The tension of stillness */
   }
 </style>
