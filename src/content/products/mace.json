@@ -3,12 +3,10 @@
   "name": "Mace",
   "botanicalName": "Myristica fragrans",
   "originSlug": "idukki",
-  "isAnchorProduct": false,
   "batchRef": "IDK-MAC-001",
-  "harvestMonth": "Seasonal",
   "sizes": [
     {
-      "label": "30g",
+      "label": "25g",
       "priceINR": 249,
       "isPriceVerified": true
     }

@@ -3,13 +3,11 @@
   "name": "Green Tea",
   "botanicalName": "Camellia sinensis",
   "originSlug": "nilgiris",
-  "isAnchorProduct": false,
   "batchRef": "NIL-GTE-001",
-  "harvestMonth": "Ongoing",
   "sizes": [
     {
-      "label": "50g",
-      "priceINR": 179,
+      "label": "100g",
+      "priceINR": 299,
       "isPriceVerified": true
     }
   ],

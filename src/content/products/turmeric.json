@@ -3,13 +3,11 @@
   "name": "Turmeric",
   "botanicalName": "Curcuma longa",
   "originSlug": "wayanad",
-  "isAnchorProduct": false,
   "batchRef": "WYD-TUR-001",
-  "harvestMonth": "Seasonal",
   "sizes": [
     {
       "label": "100g",
-      "priceINR": 129,
+      "priceINR": 149,
       "isPriceVerified": true
     }
   ],

@@ -52,9 +52,7 @@ const products = defineCollection({
     name: z.string(),
     botanicalName: z.string(),
     originSlug: reference('origins'),
-    isAnchorProduct: z.boolean(),
     batchRef: z.string(),
-    harvestMonth: z.string(),
     sizes: z.array(
       z.object({
         label: z.string(),
@@ -68,7 +66,6 @@ const products = defineCollection({
       packaging: z.string().optional()
     }).optional(),
     specimenCopy: z.string(),
-    offeringCopy: z.string().optional(),
     sensoryProfile: z.object({
       aroma: z.string(),
       flavor: z.string(),

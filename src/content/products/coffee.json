@@ -3,13 +3,11 @@
   "name": "Coffee",
   "botanicalName": "Coffea arabica",
   "originSlug": "nilgiris",
-  "isAnchorProduct": false,
   "batchRef": "NIL-COF-001",
-  "harvestMonth": "Seasonal",
   "sizes": [
     {
-      "label": "100g",
-      "priceINR": 299,
+      "label": "250g",
+      "priceINR": 449,
       "isPriceVerified": true
     }
   ],

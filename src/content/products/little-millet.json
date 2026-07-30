@@ -3,19 +3,16 @@
   "name": "Little Millet (Chama)",
   "botanicalName": "Panicum sumatrense",
   "originSlug": "attappady",
-  "isAnchorProduct": false,
   "batchRef": "ATP-LM-001",
-  "harvestMonth": "JAN 2026",
   "sizes": [
     {
       "label": "500g",
-      "priceINR": 320,
+      "priceINR": 159,
       "isPriceVerified": true
     }
   ],
   "methodDescription": "Selective hand harvest, natural sun drying, and traditional pounding.",
   "specimenCopy": "A remarkably resilient grain that survives where others fail. The Kurumba tribe has preserved these specific landrace seeds for centuries.",
-  "offeringCopy": "Grown entirely rainfed without any external intervention.",
   "images": {
     "packaging": "/assets/products/little-millet.png",
     "product": "/assets/products/little-millet.png"

@@ -10,6 +10,12 @@ function getOriginForProduct(product: any) {
   const originId = typeof product.data.originSlug === 'object' ? product.data.originSlug?.id : product.data.originSlug;
   return origins.find(o => o.id === originId);
 }
+
+// Ensure products have valid images and origin data
+const validProducts = products.filter(p => getOriginForProduct(p) && p.data.images?.product);
+
+// Sort yields for the cinematic carousel
+const yields = validProducts.sort((a, b) => a.data.name.localeCompare(b.data.name));
 ---
 
 <BaseLayout
@@ -19,100 +25,107 @@ function getOriginForProduct(product: any) {
   ogTitle="OurOrigin"
   ogDescription="Pure natural ingredients, community-harvested directly from their soil of origin."
   navVariant="light"
-  showFooter={true}
-  bodyClass="void-canvas-body"
+  showFooter={false}
+  bodyClass="cinematic-canvas-body"
 >
-    <main class="story-scroll-container">
+    <!-- The Master Scroll Container -->
+    <!-- This provides the vertical scroll height to drive the timeline. -->
+    <div class="scroll-rig"></div>
+
+    <!-- The Pinned Viewport -->
+    <!-- This stays fixed on screen, acting like a WebGL canvas -->
+    <main class="cinematic-viewport">
         
-        <!-- SCENE 1: THE ORIGIN -->
-        <section class="story-scene" id="scene-hero">
-            <div class="scene-content">
-                <div id="hero-mark-wrapper">
-                    <OriginMark size={150} variant="gold" id="hero-mark-svg" />
-                </div>
-                <h1 class="indigenous-truth hero-headline">
-                    We do not make. We walk.
-                </h1>
-            </div>
-        </section>
+        <!-- LAYER 0: The Base Void -->
+        <div class="layer void-base"></div>
 
-        <!-- Graphic Transition Element 1 (The Long Distance Stripe) -->
-        <div class="graphic-element" id="transition-stripe">
-             <svg viewBox="0 0 100 100" width="100%" height="100%" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-                 <path d="M 50 0 Q 55 50 45 100" fill="none" stroke="var(--color-gold)" stroke-width="2" />
-             </svg>
+        <!-- LAYER 1: The Morphing Background Mask -->
+        <!-- Starts as a small dot, morphs to reveal backgrounds -->
+        <div class="layer bg-mask-layer" id="dynamic-mask">
+            
+            <!-- The specific cinematic backgrounds that crossfade inside the mask -->
+            <div class="bg-image active" id="bg-canopy" style="background-image: url('/assets/origins/wayanad-canopy.webp')"></div>
+            <div class="bg-image" id="bg-hand" style="background-image: url('/assets/origins/wayanad-hand.webp')"></div>
+            <div class="bg-image" id="bg-specimen" style="background-image: url('/assets/origins/wayanad-specimen.webp')"></div>
+            
+            <!-- Golden overlay for when it's just the "tally dot" -->
+            <div class="gold-fill" id="mask-gold-fill"></div>
         </div>
 
-        <!-- SCENE 2: THE SOIL -->
-        <section class="story-scene" id="scene-soil">
-            <div class="scene-content">
-                <h2 class="indigenous-truth">
-                    Deep in the Western Ghats. Laterite and forest loam built from centuries of undisturbed decay.<br/><br/>
-                    The harvest is not taken; it is yielded. We take only what the forest gives, and leave what belongs to the earth.
-                </h2>
-            </div>
-        </section>
-
-        <!-- Graphic Transition Element 2 (The Enlarged Yield Dot) -->
-        <div class="graphic-element" id="transition-dot">
-            <svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true" focusable="false">
-                <path d="M 90 22 C 93 18, 98 22, 97 26 C 96 30, 90 32, 87 27 C 84 22, 87 19, 90 22 Z" fill="var(--color-gold)" opacity="0.15" />
-            </svg>
-        </div>
-
-        <!-- SCENE 3: THE HANDS -->
-        <section class="story-scene" id="scene-hands">
-            <div class="scene-bg" id="hands-bg" style="background-image: url('/assets/origins/idukki-hand.webp')"></div>
-            <div class="scene-content">
-                <h2 class="indigenous-truth">
-                    The true cost is the distance walked.<br/>
-                    The true value is the dignity of the hands that gathered it.
-                </h2>
-            </div>
-        </section>
-
-        <!-- Graphic Transition Element 3 (Horizontal Stripes) -->
-        <div class="graphic-element" id="transition-horizontal-stripe">
-             <svg viewBox="0 0 100 10" width="100%" height="100%" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-                 <path d="M 0 5 Q 50 0 100 8" fill="none" stroke="var(--color-gold)" stroke-width="2" />
-             </svg>
-        </div>
-
-        <!-- SCENE 4: THE YIELD (PRODUCTS) -->
-        <section class="story-scene product-arrival" id="scene-yield">
-            <div class="scene-content yield-content">
-                <h2 class="indigenous-truth section-title">Honor the harvest.</h2>
-                
-                <div class="yield-grid">
-                    {products.map(product => {
-                        const origin = getOriginForProduct(product);
-                        const originName = origin ? origin.data.name : 'Unknown Origin';
-                        return (
-                            <article class="yield-card">
-                                <div class="yield-image-wrapper">
-                                    <img src={product.data.image} alt={product.data.name} loading="lazy" decoding="async" width="400" height="400" />
-                                </div>
-                                <div class="yield-meta">
-                                    <h3>{product.data.name}</h3>
-                                    <span class="origin-tag">{originName}</span>
-                                    <div class="yield-action">
-                                        <span class="price">₹{product.data.price}</span>
-                                        <button class="honor-decision-btn"
-                                            data-product-id={product.id}
-                                            data-product-name={product.data.name}
-                                            data-product-price={product.data.price}
-                                            data-product-image={product.data.image}
-                                        >
-                                            [ Honor ]
-                                        </button>
-                                    </div>
-                                </div>
-                            </article>
-                        )
-                    })}
+        <!-- LAYER 2: The Typography & Interface -->
+        <!-- Absolute positioned text blocks that fade in and out -->
+        <div class="layer ui-layer">
+            
+            <!-- SCENE 1: HERO -->
+            <div class="scene-ui" id="ui-hero">
+                <div class="hero-center">
+                    <OriginMark size={120} variant="gold" id="hero-origin-mark" hideDot={true} />
+                    <h1 class="hero-wordmark">OurOrigin</h1>
                 </div>
             </div>
-        </section>
+
+            <!-- SCENE 2: ORIGIN (WHY) -->
+            <div class="scene-ui" id="ui-origin">
+                <div class="placard placard-left">
+                    <div class="placard-label">Bioregion</div>
+                    <div class="placard-value">Western Ghats</div>
+                    <div class="placard-line"></div>
+                </div>
+                <div class="placard placard-right">
+                    <div class="placard-label">Ecosystem</div>
+                    <div class="placard-value">Forest Loam<br/>2,500mm Rainfall</div>
+                </div>
+            </div>
+
+            <!-- SCENE 3: METHOD (HOW) -->
+            <div class="scene-ui" id="ui-method">
+                <div class="placard placard-center">
+                    <div class="placard-label">The Method</div>
+                    <div class="placard-value massive">Traditional Agrarian</div>
+                    <div class="placard-desc">The vines climb living trees. The picker carries back only what the forest gave that morning.</div>
+                </div>
+            </div>
+
+            <!-- SCENE 4: SEASON (WHEN) -->
+            <div class="scene-ui" id="ui-season">
+                <div class="placard placard-bottom">
+                    <div class="placard-label">The Constraint</div>
+                    <div class="placard-value">Harvest January</div>
+                    <div class="placard-desc">We wait for the forest. We do not force it.</div>
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- LAYER 3: The Artifact Carousel (WHAT) -->
+        <!-- Starts off-screen, slides in when the mask flattens into a pedestal -->
+        <div class="layer carousel-layer" id="artifact-carousel">
+            <h2 class="carousel-title" id="carousel-title">The Artifacts</h2>
+            <div class="carousel-track" id="carousel-track">
+                {yields.map((product) => {
+                    const origin = getOriginForProduct(product);
+                    const originName = origin ? origin.data.name : 'Unknown Origin';
+                    return (
+                        <div class="artifact-card">
+                            <div class="artifact-image-container">
+                                <img src={product.data.images.product} alt={product.data.name} loading="lazy" decoding="async" />
+                            </div>
+                            <div class="artifact-data">
+                                <div class="artifact-meta">
+                                    <span class="artifact-origin">{originName}</span>
+                                    <span class="artifact-botanical">{product.data.botanicalName}</span>
+                                </div>
+                                <h3 class="artifact-name">{product.data.name}</h3>
+                                <div class="artifact-actions">
+                                    <a href={`/products/${product.slug}`} class="btn-honor">View Evidence</a>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
+
     </main>
 </BaseLayout>
 
@@ -122,277 +135,305 @@ function getOriginForProduct(product: any) {
 
   gsap.registerPlugin(ScrollTrigger);
 
-  // Initial States
-  gsap.set("#scene-soil .scene-content", { autoAlpha: 0, y: 50 });
-  gsap.set("#scene-hands .scene-content", { autoAlpha: 0, y: 50 });
-  gsap.set("#scene-yield .scene-content", { autoAlpha: 0, y: 100 });
-  gsap.set("#hands-bg", { autoAlpha: 0, scale: 1.1 });
+  // Setup Initial States
+  // The dynamic mask starts exactly where the OriginMark dot would be
+  // Assuming OriginMark is center screen, the dot is bottom right of the mark.
+  gsap.set("#dynamic-mask", {
+      clipPath: "circle(6px at 53% 53%)",
+      autoAlpha: 1
+  });
   
-  gsap.set("#transition-stripe", { scaleY: 0, transformOrigin: "top center", autoAlpha: 0 });
-  gsap.set("#transition-dot", { scale: 0, autoAlpha: 0 });
-  gsap.set("#transition-horizontal-stripe", { scaleX: 0, transformOrigin: "left center", autoAlpha: 0 });
+  gsap.set(".scene-ui", { autoAlpha: 0 });
+  gsap.set("#ui-hero", { autoAlpha: 1 });
+  
+  gsap.set("#artifact-carousel", { autoAlpha: 0, pointerEvents: "none" });
+  gsap.set("#carousel-track", { x: "20vw" }); // Start slightly offset
 
-  // Master Narrative Timeline
+  // The Master Timeline
   const tl = gsap.timeline({
       scrollTrigger: {
-          trigger: ".story-scroll-container",
+          trigger: ".scroll-rig",
           start: "top top",
           end: "bottom bottom",
-          scrub: 1,
+          scrub: 1, // Smooth cinematic scrubbing
       }
   });
 
-  // Scene 1 -> 2: Mark scales down, Stripe grows
-  tl.to("#hero-mark-wrapper", { scale: 0.5, y: -50, autoAlpha: 0, ease: "power1.inOut" }, 0)
-  .to(".hero-headline", { autoAlpha: 0, y: -50 }, 0)
-  .to("#transition-stripe", { scaleY: 1, autoAlpha: 1, ease: "power2.inOut" }, 0.1)
-  .to("#scene-soil .scene-content", { autoAlpha: 1, y: 0, ease: "power2.out" }, 0.2);
+  // SCENE 1: Hero to Origin (The Dot expands into a Window)
+  tl.to("#ui-hero", { autoAlpha: 0, y: -50, duration: 1 }, 0)
+    .to("#mask-gold-fill", { autoAlpha: 0, duration: 0.5 }, 0.5) // Reveal the canopy image inside
+    .to("#dynamic-mask", { clipPath: "circle(25vmax at 50% 50%)", duration: 2, ease: "power2.inOut" }, 0.5)
+    .to("#ui-origin", { autoAlpha: 1, duration: 1 }, 2);
 
-  // Scene 2 -> 3: Stripe shrinks, Dot expands massively
-  tl.to("#scene-soil .scene-content", { autoAlpha: 0, y: -50 }, 0.3)
-  .to("#transition-stripe", { scaleY: 0, autoAlpha: 0, transformOrigin: "bottom center", ease: "power2.inOut" }, 0.3)
-  .to("#transition-dot", { scale: 20, autoAlpha: 1, ease: "power2.inOut" }, 0.35) // Enormous dot acting as a texture
-  .to("#hands-bg", { autoAlpha: 0.3, scale: 1, ease: "power2.out" }, 0.4)
-  .to("#scene-hands .scene-content", { autoAlpha: 1, y: 0, ease: "power2.out" }, 0.4);
+  // SCENE 2: Origin to Method (The Window morphs to a tall portrait crop for the Hand)
+  tl.to("#ui-origin", { autoAlpha: 0, y: -50, duration: 1 }, 4)
+    .to("#bg-canopy", { autoAlpha: 0, duration: 1 }, 4.5)
+    .to("#bg-hand", { autoAlpha: 1, duration: 1 }, 4.5)
+    .to("#dynamic-mask", { clipPath: "inset(10% 30% 10% 30% round 20px)", duration: 2, ease: "power2.inOut" }, 4.5)
+    .to("#ui-method", { autoAlpha: 1, duration: 1 }, 6);
 
-  // Scene 3 -> 4: Dot fades, Horizontal stripe wipes across
-  tl.to("#scene-hands .scene-content", { autoAlpha: 0, y: -50 }, 0.6)
-  .to("#hands-bg", { autoAlpha: 0 }, 0.6)
-  .to("#transition-dot", { autoAlpha: 0, scale: 0, ease: "power2.inOut" }, 0.6)
-  .to("#transition-horizontal-stripe", { scaleX: 1, autoAlpha: 1, ease: "power2.inOut" }, 0.65)
-  .to("#scene-yield .scene-content", { autoAlpha: 1, y: 0, ease: "power2.out", pointerEvents: "auto" }, 0.7);
+  // SCENE 3: Method to Season (The crop widens into a cinematic letterbox for the Specimen)
+  tl.to("#ui-method", { autoAlpha: 0, y: -50, duration: 1 }, 8)
+    .to("#bg-hand", { autoAlpha: 0, duration: 1 }, 8.5)
+    .to("#bg-specimen", { autoAlpha: 1, duration: 1 }, 8.5)
+    .to("#dynamic-mask", { clipPath: "inset(30% 10% 30% 10% round 10px)", duration: 2, ease: "power2.inOut" }, 8.5)
+    .to("#ui-season", { autoAlpha: 1, duration: 1 }, 10);
 
-  // Cart Logic
-  function initCartButtons() {
-    document.querySelectorAll('.honor-decision-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const target = e.currentTarget as HTMLButtonElement;
-        
-        const originalText = target.innerText;
-        target.innerText = '[ Honored ✓ ]';
-        target.style.color = 'var(--color-gold)';
-        target.style.borderColor = 'var(--color-gold)';
-        
-        setTimeout(() => {
-          target.innerText = originalText;
-          target.style.color = '';
-          target.style.borderColor = '';
-        }, 2000);
+  // SCENE 4: Season to Artifact Carousel (The mask drops to the bottom and becomes the pedestal)
+  tl.to("#ui-season", { autoAlpha: 0, y: -50, duration: 1 }, 12)
+    .to("#dynamic-mask", { clipPath: "inset(85% 0% 0% 0% round 0px)", duration: 2, ease: "power3.inOut" }, 12.5)
+    .to("#bg-specimen", { filter: "grayscale(100%) brightness(0.2)", duration: 2 }, 12.5)
+    
+    // Bring in the Carousel
+    .to("#artifact-carousel", { autoAlpha: 1, pointerEvents: "auto", duration: 1 }, 14)
+    // Horizontal scroll logic tied to the main vertical scroll
+    // We calculate how far the track needs to move based on its width vs screen width
+    .to("#carousel-track", { 
+        x: () => {
+            const track = document.getElementById("carousel-track");
+            return track ? -(track.scrollWidth - window.innerWidth + 100) : 0;
+        }, 
+        ease: "none", 
+        duration: 8 
+    }, 14);
 
-        const priceRaw = target.dataset.productPrice || '0';
-        const priceParsed = parseInt(priceRaw, 10);
-        const safePrice = isNaN(priceParsed) ? 0 : priceParsed;
-
-        const event = new CustomEvent('cart-add', {
-          detail: {
-            id: target.dataset.productId,
-            name: target.dataset.productName,
-            price: safePrice,
-            image: target.dataset.productImage,
-            quantity: 1
-          }
-        });
-        window.dispatchEvent(event);
-      });
-    });
-  }
-  
-  initCartButtons();
 </script>
 
 <style>
-    .story-scroll-container {
-        position: relative;
-        background-color: var(--color-void);
-        color: var(--color-warm-cream);
-        min-height: 400vh;
+    /* GLOBAL BODY OVERRIDE */
+    :global(body.cinematic-canvas-body) {
+        background-color: #000 !important; /* Absolute void */
+        margin: 0;
+        overflow-x: hidden;
     }
 
-    .graphic-element {
-        position: fixed;
-        pointer-events: none;
-        z-index: 5;
-        will-change: transform;
-    }
-
-    #transition-stripe {
+    /* THE RIG */
+    .scroll-rig {
+        height: 800vh; /* Massive scroll height for pacing */
+        width: 100%;
+        position: absolute;
         top: 0;
-        left: 50%;
-        width: 2px;
-        height: 100vh;
-        transform: translateX(-50%);
+        left: 0;
+        z-index: 1;
     }
 
-    #transition-dot {
-        top: 50%;
-        left: 50%;
-        width: 120px;
-        height: 120px;
-        transform: translate(-50%, -50%);
-    }
-
-    #transition-horizontal-stripe {
-        top: 50%;
+    .cinematic-viewport {
+        position: fixed;
+        top: 0;
         left: 0;
         width: 100vw;
-        height: 2px;
-        transform: translateY(-50%);
-    }
-
-    .story-scene {
-        position: relative;
         height: 100vh;
-        width: 100vw;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        z-index: 2;
         overflow: hidden;
+        pointer-events: none; /* Let clicks pass to scroll-rig if needed, though we will enable pointer events on specific layers */
     }
 
-    .scene-content {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+    .layer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        pointer-events: none;
+    }
+
+    /* THE VOID */
+    .void-base {
+        background-color: var(--color-void, #0a0a0a);
+        z-index: 1;
+    }
+
+    /* THE DYNAMIC MASK (The traveling element) */
+    .bg-mask-layer {
+        z-index: 5;
+        will-change: clip-path;
+        /* clip-path set by GSAP */
+    }
+
+    .bg-image {
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
-        max-width: 1000px;
-        padding: 2rem;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        opacity: 0; /* Managed by GSAP */
+        will-change: opacity, filter;
+    }
+
+    .bg-image.active {
+        opacity: 1;
+    }
+
+    .gold-fill {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: var(--color-gold, #c8a04d);
+        z-index: 10;
+        will-change: opacity;
+    }
+
+    /* TYPOGRAPHY / UI LAYER */
+    .ui-layer {
+        z-index: 10;
+    }
+
+    .scene-ui {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        will-change: opacity, transform;
+    }
+
+    .hero-center {
+        margin: auto;
         display: flex;
         flex-direction: column;
         align-items: center;
-        text-align: center;
-        z-index: 10;
-        pointer-events: none;
+        gap: 2rem;
     }
 
-    #scene-yield .scene-content {
-        pointer-events: auto;
-        position: relative;
-        transform: none;
-        top: auto;
-        left: auto;
-        margin-top: 50vh;
-    }
-
-    .scene-bg {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-size: cover;
-        background-position: center;
-        z-index: 1;
-        opacity: 0;
-        filter: grayscale(80%) contrast(1.2);
-        will-change: transform, opacity;
-    }
-
-    #hero-mark-wrapper {
-        margin-bottom: 3rem;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .indigenous-truth {
+    .hero-wordmark {
         font-family: var(--font-institutional);
-        font-size: clamp(1.8rem, 4vw, 3.5rem);
-        font-weight: 300;
-        line-height: 1.3;
-        letter-spacing: 0.02em;
+        font-size: clamp(2rem, 4vw, 3rem);
+        letter-spacing: 0.1em;
         color: var(--color-warm-cream);
+        text-transform: uppercase;
         margin: 0;
     }
 
-    .section-title {
-        margin-bottom: 4rem;
+    /* Museum Placards */
+    .placard {
+        position: absolute;
+        color: var(--color-warm-cream);
+        font-family: var(--font-evidence);
+        max-width: 300px;
+    }
+
+    .placard-label {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
         color: var(--color-gold);
+        margin-bottom: 0.5rem;
     }
 
-    /* YIELD GRID */
-    .yield-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 3rem;
-        width: 100%;
-        max-width: 1200px;
+    .placard-value {
+        font-size: 1.5rem;
+        line-height: 1.2;
+        margin-bottom: 1rem;
     }
 
-    .yield-card {
-        background: transparent;
-        border: 1px solid rgba(198, 156, 82, 0.2);
-        padding: 2rem;
+    .placard-value.massive {
+        font-family: var(--font-institutional);
+        font-size: clamp(2rem, 5vw, 4rem);
+        white-space: nowrap;
+    }
+
+    .placard-desc {
+        font-size: 0.9rem;
+        line-height: 1.5;
+        opacity: 0.7;
+    }
+
+    .placard-left { top: 40%; left: 10%; }
+    .placard-right { top: 60%; right: 10%; text-align: right; }
+    .placard-center { top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+    .placard-bottom { bottom: 15%; left: 50%; transform: translateX(-50%); text-align: center; }
+
+    /* CAROUSEL LAYER */
+    .carousel-layer {
+        z-index: 20;
         display: flex;
         flex-direction: column;
-        align-items: center;
-        text-align: center;
-        transition: border-color 0.3s ease;
-    }
-    
-    .yield-card:hover {
-        border-color: rgba(198, 156, 82, 0.6);
+        justify-content: center;
     }
 
-    .yield-image-wrapper {
+    .carousel-title {
+        position: absolute;
+        top: 10%;
+        left: 5%;
+        font-family: var(--font-institutional);
+        font-size: 1.5rem;
+        color: var(--color-warm-cream);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+
+    .carousel-track {
+        display: flex;
+        gap: 8vw;
+        padding: 0 10vw;
+        align-items: center;
+        height: 60vh;
+        will-change: transform;
+    }
+
+    .artifact-card {
+        flex: 0 0 auto;
+        width: 300px;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        pointer-events: auto; /* Enable clicks */
+    }
+
+    .artifact-image-container {
         width: 100%;
-        aspect-ratio: 1;
-        margin-bottom: 2rem;
+        aspect-ratio: 1/1;
+        position: relative;
         display: flex;
         justify-content: center;
         align-items: center;
     }
 
-    .yield-image-wrapper img {
+    .artifact-image-container img {
         max-width: 100%;
         max-height: 100%;
         object-fit: contain;
         filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5));
     }
 
-    .yield-meta h3 {
-        font-family: var(--font-institutional);
-        font-size: 1.5rem;
-        margin: 0 0 0.5rem 0;
-        font-weight: 400;
+    .artifact-meta {
+        display: flex;
+        justify-content: space-between;
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        color: var(--color-gold);
+        margin-bottom: 0.5rem;
     }
 
-    .origin-tag {
+    .artifact-name {
+        font-family: var(--font-evidence);
+        font-size: 2rem;
+        color: var(--color-warm-cream);
+        margin: 0 0 1.5rem 0;
+        line-height: 1.1;
+    }
+
+    .btn-honor {
+        display: inline-block;
         font-family: var(--font-mono);
         font-size: 0.8rem;
         text-transform: uppercase;
         letter-spacing: 0.1em;
-        color: rgba(245, 237, 216, 0.6);
-        display: block;
-        margin-bottom: 1.5rem;
+        color: var(--color-void);
+        background-color: var(--color-warm-cream);
+        padding: 0.75rem 1.5rem;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
     }
 
-    .yield-action {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        align-items: center;
-    }
-
-    .price {
-        font-family: var(--font-mono);
-        font-size: 1.2rem;
-    }
-
-    .honor-decision-btn {
-        background: transparent;
-        border: none;
-        color: var(--color-warm-cream);
-        font-family: var(--font-mono);
-        font-size: 0.9rem;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        cursor: pointer;
-        padding: 0.5rem 1rem;
-        transition: color 0.3s ease;
-    }
-
-    .honor-decision-btn:hover {
-        color: var(--color-gold);
+    .btn-honor:hover {
+        background-color: var(--color-gold);
     }
 </style>

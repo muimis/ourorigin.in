@@ -3,13 +3,11 @@
   "name": "Cinnamon",
   "botanicalName": "Cinnamomum verum",
   "originSlug": "wayanad",
-  "isAnchorProduct": false,
   "batchRef": "WYD-CIN-001",
-  "harvestMonth": "Seasonal",
   "sizes": [
     {
-      "label": "50g",
-      "priceINR": 149,
+      "label": "100g",
+      "priceINR": 249,
       "isPriceVerified": true
     }
   ],

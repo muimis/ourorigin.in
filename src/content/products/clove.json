@@ -3,13 +3,11 @@
   "name": "Single Origin Clove",
   "botanicalName": "Syzygium aromaticum",
   "originSlug": "wayanad",
-  "isAnchorProduct": false,
   "batchRef": "WYD-CLV-001",
-  "harvestMonth": "Seasonal",
   "sizes": [
     {
-      "label": "100g",
-      "priceINR": 269,
+      "label": "50g",
+      "priceINR": 199,
       "isPriceVerified": true
     }
   ],

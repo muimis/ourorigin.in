@@ -3,9 +3,7 @@
   "name": "Cardamom",
   "botanicalName": "Elettaria cardamomum",
   "originSlug": "idukki",
-  "isAnchorProduct": true,
   "batchRef": "IDK-CAR-001",
-  "harvestMonth": "Ongoing",
   "sizes": [
     {
       "label": "50g",
@@ -15,7 +13,6 @@
   ],
   "methodDescription": "Wild-harvested, low-temperature drying.",
   "specimenCopy": "Picked before the pods split, dried at low temperature so the seeds keep the oils that define the flavour. Most cardamom loses a measurable amount of those oils in aggressive drying. This one doesn't.",
-  "offeringCopy": "From the hills named for it. Nowhere else grows this quite the same way.",
   "images": {
     "packaging": "/assets/products/cardamom-packaging.png",
     "product": "/assets/products/cardamom-product.png"

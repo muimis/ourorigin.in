@@ -3,19 +3,16 @@
   "name": "Dry Ginger",
   "botanicalName": "Zingiber officinale",
   "originSlug": "thiruvananthapuram",
-  "isAnchorProduct": true,
   "batchRef": "TVM-DGI-001",
-  "harvestMonth": "Seasonal",
   "sizes": [
     {
       "label": "100g",
-      "priceINR": 149,
+      "priceINR": 199,
       "isPriceVerified": true
     }
   ],
   "methodDescription": "Dug up, boiled briefly, and sun-dried.",
   "specimenCopy": "Dried until it's roughly a fifth of its fresh weight. A deeper, warmer, more resinous character than fresh — the kind of difference that matters in a spice the kitchen uses without thinking much about where it came from.",
-  "offeringCopy": "From the flatlands at the edge of the Western Ghats.",
   "images": {
     "packaging": "/assets/products/dry-ginger-packaging.png"
   },

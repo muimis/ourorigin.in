@@ -3,13 +3,11 @@
   "name": "White Pepper",
   "botanicalName": "Piper nigrum",
   "originSlug": "nilgiris",
-  "isAnchorProduct": false,
   "batchRef": "NIL-WPP-001",
-  "harvestMonth": "January - March",
   "sizes": [
     {
       "label": "50g",
-      "priceINR": 179,
+      "priceINR": 199,
       "isPriceVerified": true
     }
   ],

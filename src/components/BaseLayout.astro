@@ -1,7 +1,7 @@
 ---
 import { ClientRouter } from 'astro:transitions';
 import '../styles/tokens.css';
-import CommandCenter from './CommandCenter.astro';
+import '../styles/tokens.css';
 import AllYieldsPanel from './AllYieldsPanel.astro';
 import Ledger from './Ledger.astro';
 import Footer from './Footer.astro';
@@ -80,7 +80,7 @@ const resolvedOgDescription = ogDescription || description;
 </head>
 <body class={bodyClass}>
     <!-- Unified global UI navigation and checkout system -->
-    <CommandCenter variant={navVariant} />
+    <!-- Unified global UI navigation and checkout system -->
     <AllYieldsPanel />
     <Ledger />
     <CustomCursor />
