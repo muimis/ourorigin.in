@@ -31,7 +31,7 @@ const displayImage = hasRealPackaging ? product.data.images.packaging : product.
 
   <!-- Graphic Transition Element 1 (The Long Distance Stripe) -->
   <div class="graphic-element" id="transition-stripe">
-       <svg viewBox="0 0 100 100" width="100%" height="100%" preserveAspectRatio="none">
+       <svg viewBox="0 0 100 100" width="100%" height="100%" preserveAspectRatio="none" aria-hidden="true" focusable="false">
            <path d="M 50 0 Q 55 50 45 100" fill="none" stroke="var(--color-gold)" stroke-width="2" />
        </svg>
   </div>
@@ -55,7 +55,7 @@ const displayImage = hasRealPackaging ? product.data.images.packaging : product.
 
   <!-- Graphic Transition Element 2 (The Enlarged Yield Dot) -->
   <div class="graphic-element" id="transition-dot">
-      <svg viewBox="0 0 120 120" width="100%" height="100%">
+      <svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true" focusable="false">
           <path d="M 90 22 C 93 18, 98 22, 97 26 C 96 30, 90 32, 87 27 C 84 22, 87 19, 90 22 Z" fill="var(--color-gold)" opacity="0.15" />
       </svg>
   </div>
@@ -75,7 +75,7 @@ const displayImage = hasRealPackaging ? product.data.images.packaging : product.
 
   <!-- Graphic Transition Element 3 (Horizontal Stripes) -->
   <div class="graphic-element" id="transition-horizontal-stripe">
-       <svg viewBox="0 0 100 10" width="100%" height="100%" preserveAspectRatio="none">
+       <svg viewBox="0 0 100 10" width="100%" height="100%" preserveAspectRatio="none" aria-hidden="true" focusable="false">
            <path d="M 0 5 Q 50 0 100 8" fill="none" stroke="var(--color-gold)" stroke-width="2" />
        </svg>
   </div>
@@ -84,7 +84,7 @@ const displayImage = hasRealPackaging ? product.data.images.packaging : product.
   <section class="story-scene product-arrival" id="scene-yield">
       <div class="scene-content yield-content">
           <div class="massive-artifact-wrapper">
-              <img src={displayImage} alt={product?.data.name} class="massive-artifact" />
+              <img src={displayImage} alt={product?.data.name} class="massive-artifact" loading="lazy" decoding="async" width="600" height="600" />
           </div>
 
           <h2 class="indigenous-truth section-title">Honor the harvest.</h2>
@@ -166,56 +166,61 @@ const displayImage = hasRealPackaging ? product.data.images.packaging : product.
   .to("#scene-yield .scene-content", { autoAlpha: 1, y: 0, ease: "power2.out", pointerEvents: "auto" }, 0.7);
 
   // Purchase Logic
-  let selectedPrice = 0;
-  let selectedSize = '';
-  
-  const sizeBtns = document.querySelectorAll('.size-ledger-row');
-  const addBtn = document.getElementById('add-to-ledger-btn');
+  function initCartLogic() {
+    let selectedPrice = 0;
+    let selectedSize = '';
+    
+    const sizeBtns = document.querySelectorAll('.size-ledger-row');
+    const addBtn = document.getElementById('add-to-ledger-btn');
 
-  if (sizeBtns.length > 0) {
-    const firstBtn = sizeBtns[0] as HTMLElement;
-    selectedPrice = parseInt(firstBtn.dataset.price || '0', 10);
-    selectedSize = firstBtn.dataset.size || '';
-  }
+    if (sizeBtns.length > 0) {
+      const firstBtn = sizeBtns[0] as HTMLElement;
+      selectedPrice = parseInt(firstBtn.dataset.price || '0', 10);
+      selectedSize = firstBtn.dataset.size || '';
+    }
 
-  sizeBtns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      sizeBtns.forEach(b => b.classList.remove('selected'));
-      const target = e.currentTarget as HTMLElement;
-      target.classList.add('selected');
-      selectedPrice = parseInt(target.dataset.price || '0', 10);
-      selectedSize = target.dataset.size || '';
-    });
-  });
-
-  if (addBtn) {
-    addBtn.addEventListener('click', () => {
-      const originalText = addBtn.innerText;
-      addBtn.innerText = '[ Honored ✓ ]';
-      addBtn.style.color = 'var(--color-gold)';
-      addBtn.style.borderColor = 'var(--color-gold)';
-      
-      setTimeout(() => {
-        addBtn.innerText = originalText;
-        addBtn.style.color = '';
-        addBtn.style.borderColor = '';
-      }, 2000);
-
-      const productId = document.querySelector('.depth-experience-container')?.getAttribute('data-product-slug') || 'unknown';
-      const productName = document.querySelector('.depth-experience-container')?.getAttribute('data-product-name') || 'Product';
-
-      const event = new CustomEvent('cart-add', {
-        detail: {
-          id: `${productId}-${selectedSize.replace(/\s+/g, '-').toLowerCase()}`,
-          name: `${productName} (${selectedSize})`,
-          price: selectedPrice,
-          image: document.querySelector('.massive-artifact')?.getAttribute('src'),
-          quantity: 1
-        }
+    sizeBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        sizeBtns.forEach(b => b.classList.remove('selected'));
+        const target = e.currentTarget as HTMLElement;
+        target.classList.add('selected');
+        selectedPrice = parseInt(target.dataset.price || '0', 10);
+        selectedSize = target.dataset.size || '';
       });
-      window.dispatchEvent(event);
     });
+
+    if (addBtn) {
+      addBtn.addEventListener('click', () => {
+        const originalText = addBtn.innerText;
+        addBtn.innerText = '[ Honored ✓ ]';
+        addBtn.style.color = 'var(--color-gold)';
+        addBtn.style.borderColor = 'var(--color-gold)';
+        
+        setTimeout(() => {
+          addBtn.innerText = originalText;
+          addBtn.style.color = '';
+          addBtn.style.borderColor = '';
+        }, 2000);
+
+        const safePrice = isNaN(selectedPrice) ? 0 : selectedPrice;
+        const productId = document.querySelector('.depth-experience-container')?.getAttribute('data-product-slug') || 'unknown';
+        const productName = document.querySelector('.depth-experience-container')?.getAttribute('data-product-name') || 'Product';
+
+        const event = new CustomEvent('cart-add', {
+          detail: {
+            id: `${productId}-${selectedSize.replace(/\s+/g, '-').toLowerCase()}`,
+            name: `${productName} (${selectedSize})`,
+            price: safePrice,
+            image: document.querySelector('.massive-artifact')?.getAttribute('src'),
+            quantity: 1
+          }
+        });
+        window.dispatchEvent(event);
+      });
+    }
   }
+
+  initCartLogic();
 </script>
 
 <style>
@@ -230,6 +235,7 @@ const displayImage = hasRealPackaging ? product.data.images.packaging : product.
         position: fixed;
         pointer-events: none;
         z-index: 5;
+        will-change: transform;
     }
 
     #transition-stripe {
@@ -302,6 +308,7 @@ const displayImage = hasRealPackaging ? product.data.images.packaging : product.
         z-index: 1;
         opacity: 0;
         filter: grayscale(80%) contrast(1.2);
+        will-change: transform, opacity;
     }
 
     #hero-mark-wrapper {

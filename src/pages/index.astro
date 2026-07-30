@@ -38,7 +38,7 @@ function getOriginForProduct(product: any) {
 
         <!-- Graphic Transition Element 1 (The Long Distance Stripe) -->
         <div class="graphic-element" id="transition-stripe">
-             <svg viewBox="0 0 100 100" width="100%" height="100%" preserveAspectRatio="none">
+             <svg viewBox="0 0 100 100" width="100%" height="100%" preserveAspectRatio="none" aria-hidden="true" focusable="false">
                  <path d="M 50 0 Q 55 50 45 100" fill="none" stroke="var(--color-gold)" stroke-width="2" />
              </svg>
         </div>
@@ -55,7 +55,7 @@ function getOriginForProduct(product: any) {
 
         <!-- Graphic Transition Element 2 (The Enlarged Yield Dot) -->
         <div class="graphic-element" id="transition-dot">
-            <svg viewBox="0 0 120 120" width="100%" height="100%">
+            <svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true" focusable="false">
                 <path d="M 90 22 C 93 18, 98 22, 97 26 C 96 30, 90 32, 87 27 C 84 22, 87 19, 90 22 Z" fill="var(--color-gold)" opacity="0.15" />
             </svg>
         </div>
@@ -73,7 +73,7 @@ function getOriginForProduct(product: any) {
 
         <!-- Graphic Transition Element 3 (Horizontal Stripes) -->
         <div class="graphic-element" id="transition-horizontal-stripe">
-             <svg viewBox="0 0 100 10" width="100%" height="100%" preserveAspectRatio="none">
+             <svg viewBox="0 0 100 10" width="100%" height="100%" preserveAspectRatio="none" aria-hidden="true" focusable="false">
                  <path d="M 0 5 Q 50 0 100 8" fill="none" stroke="var(--color-gold)" stroke-width="2" />
              </svg>
         </div>
@@ -90,7 +90,7 @@ function getOriginForProduct(product: any) {
                         return (
                             <article class="yield-card">
                                 <div class="yield-image-wrapper">
-                                    <img src={product.data.image} alt={product.data.name} loading="lazy" />
+                                    <img src={product.data.image} alt={product.data.name} loading="lazy" decoding="async" width="400" height="400" />
                                 </div>
                                 <div class="yield-meta">
                                     <h3>{product.data.name}</h3>
@@ -163,33 +163,41 @@ function getOriginForProduct(product: any) {
   .to("#scene-yield .scene-content", { autoAlpha: 1, y: 0, ease: "power2.out", pointerEvents: "auto" }, 0.7);
 
   // Cart Logic
-  document.querySelectorAll('.honor-decision-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const target = e.currentTarget as HTMLButtonElement;
-      
-      const originalText = target.innerText;
-      target.innerText = '[ Honored ✓ ]';
-      target.style.color = 'var(--color-gold)';
-      target.style.borderColor = 'var(--color-gold)';
-      
-      setTimeout(() => {
-        target.innerText = originalText;
-        target.style.color = '';
-        target.style.borderColor = '';
-      }, 2000);
+  function initCartButtons() {
+    document.querySelectorAll('.honor-decision-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const target = e.currentTarget as HTMLButtonElement;
+        
+        const originalText = target.innerText;
+        target.innerText = '[ Honored ✓ ]';
+        target.style.color = 'var(--color-gold)';
+        target.style.borderColor = 'var(--color-gold)';
+        
+        setTimeout(() => {
+          target.innerText = originalText;
+          target.style.color = '';
+          target.style.borderColor = '';
+        }, 2000);
 
-      const event = new CustomEvent('cart-add', {
-        detail: {
-          id: target.dataset.productId,
-          name: target.dataset.productName,
-          price: parseInt(target.dataset.productPrice || '0', 10),
-          image: target.dataset.productImage,
-          quantity: 1
-        }
+        const priceRaw = target.dataset.productPrice || '0';
+        const priceParsed = parseInt(priceRaw, 10);
+        const safePrice = isNaN(priceParsed) ? 0 : priceParsed;
+
+        const event = new CustomEvent('cart-add', {
+          detail: {
+            id: target.dataset.productId,
+            name: target.dataset.productName,
+            price: safePrice,
+            image: target.dataset.productImage,
+            quantity: 1
+          }
+        });
+        window.dispatchEvent(event);
       });
-      window.dispatchEvent(event);
     });
-  });
+  }
+  
+  initCartButtons();
 </script>
 
 <style>
@@ -204,6 +212,7 @@ function getOriginForProduct(product: any) {
         position: fixed;
         pointer-events: none;
         z-index: 5;
+        will-change: transform;
     }
 
     #transition-stripe {
@@ -276,6 +285,7 @@ function getOriginForProduct(product: any) {
         z-index: 1;
         opacity: 0;
         filter: grayscale(80%) contrast(1.2);
+        will-change: transform, opacity;
     }
 
     #hero-mark-wrapper {
