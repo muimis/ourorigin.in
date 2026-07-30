@@ -11,429 +11,600 @@ function getOriginForProduct(product: any) {
   return origins.find(o => o.id === originId);
 }
 
-// Ensure products have valid images and origin data
-const validProducts = products.filter(p => getOriginForProduct(p) && p.data.images?.product);
-
-// Sort yields for the cinematic carousel
+// Ensure products have valid data
+const validProducts = products.filter(p => getOriginForProduct(p));
 const yields = validProducts.sort((a, b) => a.data.name.localeCompare(b.data.name));
 ---
 
 <BaseLayout
   title="OurOrigin | The Truth is in the Soil"
-  description="We do not make. We walk. Deep into the Western Ghats."
+  description="Single-origin yields harvested directly from the Western Ghats. Reimagined for absolute authenticity."
   canonicalPath="/"
   ogTitle="OurOrigin"
-  ogDescription="Pure natural ingredients, community-harvested directly from their soil of origin."
+  ogDescription="Pure single-origin yields, harvested by the First Hands in the Western Ghats."
   navVariant="light"
-  showFooter={false}
+  showFooter={true}
   bodyClass="cinematic-canvas-body"
 >
-    <!-- The Master Scroll Container -->
-    <!-- This provides the vertical scroll height to drive the timeline. -->
-    <div class="scroll-rig"></div>
+  <!-- Background WebGL / Dynamic Interactive Canvas (Replicating Oryzo's Canvas) -->
+  <canvas id="canvas"></canvas>
 
-    <!-- The Pinned Viewport -->
-    <!-- This stays fixed on screen, acting like a WebGL canvas -->
-    <main class="cinematic-viewport">
-        
-        <!-- LAYER 0: The Base Void -->
-        <div class="layer void-base"></div>
+  <!-- SVG Symbols matching Oryzo's Symbol Templates -->
+  <svg style="display: none;">
+    <symbol id="hand-tmpl" viewBox="0 0 32 40">
+      <path fill="currentColor" d="M6.718 22.615V17.36c-.325.341-.659.696-.986 1.058-1.276 1.407-2.352 2.76-2.775 3.622-.293.602-.263 1.344.017 2.186.271.816.721 1.549 1.03 2.016l5.182 6.817a5.1 5.1 0 0 1 1.04 3.085v2.231a1.375 1.375 0 0 1-2.75 0v-2.231c0-.515-.169-1.012-.48-1.421v-.001l-5.214-6.859-.028-.036-.025-.038c-.34-.513-.97-1.506-1.365-2.696-.393-1.182-.616-2.748.124-4.262v-.002c.616-1.254 1.946-2.867 3.207-4.258a64 64 0 0 1 3.023-3.103V6.902a4.156 4.156 0 0 1 5.711-3.851 4.155 4.155 0 0 1 8.153.86c.466-.175.966-.27 1.483-.27A4.167 4.167 0 0 1 26.23 7.68a4.133 4.133 0 0 1 5.52 3.893v15.933c0 2.3-.866 4.735-3.162 7.469h.001c-.444.53-.681 1.14-.681 1.727v1.673a1.375 1.375 0 1 1-2.75 0v-1.673c0-1.332.533-2.55 1.324-3.493v-.001C28.46 30.854 29 29.024 29 27.506V11.572a1.383 1.383 0 1 0-2.767.008v8.293a1.375 1.375 0 1 1-2.75 0V7.808c0-.782-.635-1.417-1.418-1.417-.82 0-1.474.67-1.474 1.415v10.23a1.375 1.375 0 0 1-2.75 0V4.153a1.406 1.406 0 0 0-2.81 0v11.974a1.375 1.375 0 0 1-2.75 0V6.902l-.007-.142a1.406 1.406 0 0 0-2.806.142v15.713a1.375 1.375 0 0 1-2.75 0"></path>
+    </symbol>
+    <symbol id="star">
+      <path d="M6.9604.9533c.1811-.464.8376-.464,1.0187,0l1.5153,3.8817c.0777.1991.2643.3347.4776.347l4.1599.2415c.4972.0289.7001.6533.3148.9689l-3.2234,2.6405c-.1654.1355-.2366.3548-.1825.5616l1.0558,4.0309c.1262.4818-.405.8677-.8242.5988l-3.5074-2.2497c-.1799-.1154-.4105-.1154-.5904,0l-3.5074,2.2497c-.4192.2689-.9504-.117-.8242-.5988l1.0558-4.0309c.0542-.2068-.0171-.4261-.1825-.5616L.4928,6.3925c-.3853-.3156-.1824-.94.3148-.9689l4.1599-.2415c.2134-.0124.4-.1479.4777-.347l1.5152-3.8817Z" fill="#C69C52"></path>
+    </symbol>
+    <symbol id="star-half">
+      <path d="M6.9907.9943c.1811-.464.8376-.464,1.0187,0l1.5153,3.8817c.0777.1991.2643.3347.4776.347l4.1599.2415c.4972.0289.7001.6533.3148.9689l-3.2234,2.6405c-.1654.1355-.2366.3548-.1825.5616l1.0558,4.0309c.1262.4818-.405.8677-.8242.5988l-3.5074-2.2497c-.1799-.1154-.4105-.1154-.5904,0l-3.5074,2.2497c-.4192.2689-.9504-.117-.8242-.5988l1.0558-4.0309c.0542-.2068-.0171-.4261-.1825-.5616L.523,6.4334c-.3853-.3156-.1824-.94.3148-.9689l4.1599-.2415c.2134-.0124.4-.1479.4777-.347l1.5152-3.8817Z" fill="#C69C52" opacity="0.5"></path>
+    </symbol>
+  </svg>
 
-        <!-- LAYER 1: The Morphing Background Mask -->
-        <!-- Starts as a small dot, morphs to reveal backgrounds -->
-        <div class="layer bg-mask-layer" id="dynamic-mask">
-            
-            <!-- The specific cinematic backgrounds that crossfade inside the mask -->
-            <div class="bg-image active" id="bg-canopy" style="background-image: url('/assets/origins/wayanad-canopy.webp')"></div>
-            <div class="bg-image" id="bg-hand" style="background-image: url('/assets/origins/wayanad-hand.webp')"></div>
-            <div class="bg-image" id="bg-specimen" style="background-image: url('/assets/origins/wayanad-specimen.webp')"></div>
-            
-            <!-- Golden overlay for when it's just the "tally dot" -->
-            <div class="gold-fill" id="mask-gold-fill"></div>
-        </div>
+  <!-- Top Floating Header Bar -->
+  <header class="oryzo-nav">
+    <a href="/" class="oryzo-nav-brand">
+      <OriginMark size={28} variant="gold" />
+      <span class="oryzo-nav-title">OurOrigin</span>
+    </a>
+    <nav class="oryzo-nav-links">
+      <a href="#hero" class="oryzo-nav-link">Origin</a>
+      <a href="#ai" class="oryzo-nav-link">Truth</a>
+      <a href="#wearable" class="oryzo-nav-link">Gallery</a>
+      <a href="#features" class="oryzo-nav-link">Science</a>
+      <a href="#encryption" class="oryzo-nav-link">Cipher</a>
+      <a href="#testimonies" class="oryzo-nav-link">Evidence</a>
+    </nav>
+    <a href="#buy" class="oryzo-nav-cta">Transfer Ledger</a>
+  </header>
 
-        <!-- LAYER 2: The Typography & Interface -->
-        <!-- Absolute positioned text blocks that fade in and out -->
-        <div class="layer ui-layer">
-            
-            <!-- SCENE 1: HERO -->
-            <div class="scene-ui" id="ui-hero">
-                <div class="hero-center">
-                    <OriginMark size={120} variant="gold" id="hero-origin-mark" hideDot={true} />
-                    <h1 class="hero-wordmark">OurOrigin</h1>
+  <!-- MAIN PAGE CONTENT CONTAINER (Matching Oryzo Structure) -->
+  <div id="ui">
+    <div id="site-content">
+      <div id="pages-container">
+        <div id="home" class="page">
+
+          <!-- SECTION 1: HERO SECTION -->
+          <section id="hero" class="section">
+            <div class="section__inner o-container">
+              <div id="hero-top" class="sub1">
+                <div id="hero-top-tagline">HARVESTED BY HAND. SOURCED TO HONOR THE SOIL.</div>
+                <div id="hero-logo-ref">
+                  <OriginMark size={40} variant="gold" animate={true} />
                 </div>
+              </div>
+
+              <div id="hero-copy">
+                Harvested by the First Hands in the Western Ghats. OurOrigin makes the purest yield feel extraordinary.
+              </div>
+
+              <div id="hero-card">
+                <div id="hero-card-inner">
+                  <h4 id="hero-card-header">
+                    Wild-harvested &<br/>
+                    shade-grown from<br/>
+                    the forest canopy.
+                  </h4>
+                  <div class="o-dashline"></div>
+                  <div id="hero-card-desc">
+                    <span>The world's most</span><br/>
+                    <span>uncompromising</span><br/>
+                    <span>single-origin yields.</span>
+                  </div>
+                </div>
+              </div>
+
+              <div id="hero-video-wrapper">
+                <img id="hero-video-thumbnail" width="720" height="380" src="/assets/origins/wayanad-canopy.webp" alt="Western Ghats Forest Canopy" />
+                <div id="hero-video-play">EXPLORE</div>
+              </div>
             </div>
+          </section>
 
-            <!-- SCENE 2: ORIGIN (WHY) -->
-            <div class="scene-ui" id="ui-origin">
-                <div class="placard placard-left">
-                    <div class="placard-label">Bioregion</div>
-                    <div class="placard-value">Western Ghats</div>
-                    <div class="placard-line"></div>
+          <!-- SECTION 2: POWERED BY SOIL / THE TRUTH ("#AI") -->
+          <section id="ai" class="section">
+            <div class="section__inner o-container">
+              <div id="ai-pre">
+                <div class="sub1">THE PROOF SYSTEM</div>
+                <div class="body1"><span>OurOrigin isn't just a </span><span>spice label. It's the result </span><span>of centuries of </span><span>living ecology.</span></div>
+              </div>
+              <div id="ai-header">
+                <h1 id="ai-title">Powered by Soil<sup>*</sup></h1>
+                <h4 id="ai-tagline">Seven-States Model (Geo · Bio · Community · Method · Observation · Time · Product)</h4>
+              </div>
+              <div id="ai-instruction" class="sub2">
+                <svg id="ai-instruction-icon"><use href="#hand-tmpl"></use></svg>
+                <div class="o-dashline"></div>
+                <div id="ai-instruction-text">Hover or drag to feel the walk</div>
+              </div>
+              <div id="ai-desc" class="sub1">
+                <span>Nature fills in the gaps.</span><span> We said wild harvest.</span><span> The forest heard zero compromises.</span>
+              </div>
+              <div id="ai-disclaimer-wrapper">
+                <div class="o-dashline"></div>
+                <div id="ai-disclaimer" class="sub2">
+                  <span>* Western Ghats, Kerala — Nilgiris, Idukki, Wayanad, Attappady & Thiruvananthapuram</span>
                 </div>
-                <div class="placard placard-right">
-                    <div class="placard-label">Ecosystem</div>
-                    <div class="placard-value">Forest Loam<br/>2,500mm Rainfall</div>
-                </div>
+              </div>
             </div>
+          </section>
 
-            <!-- SCENE 3: METHOD (HOW) -->
-            <div class="scene-ui" id="ui-method">
-                <div class="placard placard-center">
-                    <div class="placard-label">The Method</div>
-                    <div class="placard-value massive">Traditional Agrarian</div>
-                    <div class="placard-desc">The vines climb living trees. The picker carries back only what the forest gave that morning.</div>
+          <!-- SECTION 3: ORIGIN GALLERY & MAGAZINE ("#WEARABLE") -->
+          <section id="wearable" class="section">
+            <div class="section__inner o-container">
+              <div id="wearable-copy">
+                <div class="sub1">UNREPEATABLE PROVENANCE</div>
+                <h2 id="ai-title" style="font-size: clamp(2rem, 4vw, 3.5rem);">So rooted,<br/>it's unrepeatable</h2>
+              </div>
+              
+              <div class="o-dashline"></div>
+
+              <div class="wearable-gallery">
+                <div id="wearable-magazine">
+                  <div id="wearable-magazine-issue">ISSUE NO. 002026 — WESTERN GHATS EDITION</div>
+                  <div id="wearable-magazine-main-title-1">We Are So</div>
+                  <div id="wearable-magazine-main-title-2">Rooted!</div>
+                  <div class="body2" style="max-width: 500px; margin-bottom: 2rem;">
+                    Single-origin yields sourced directly from named communities. No blending, no synthetic inputs, no shortcuts.
+                  </div>
+                  <div class="sub2" style="color: var(--oryzo-gold); font-weight: bold;">
+                    BARCODE // BATCH REF: WYD-BP-001-2026
+                  </div>
                 </div>
+              </div>
             </div>
+          </section>
 
-            <!-- SCENE 4: SEASON (WHEN) -->
-            <div class="scene-ui" id="ui-season">
-                <div class="placard placard-bottom">
-                    <div class="placard-label">The Constraint</div>
-                    <div class="placard-value">Harvest January</div>
-                    <div class="placard-desc">We wait for the forest. We do not force it.</div>
+          <!-- SECTION 4: FEATURES & SCIENCE GRID ("#FEATURES") -->
+          <section id="features" class="section">
+            <div class="section__inner o-container">
+              <div id="features-items">
+                
+                <div class="features-item">
+                  <div>
+                    <div class="sub1">01 / ELEVATION LIFT</div>
+                    <h3 class="features-item-title">High Altitude Density</h3>
+                    <div class="features-item-desc body2" style="margin-top: 1rem;">
+                      Harvested at 900–1,800m elevations. Lower temperatures slow fruit development, packing each pod with concentrated essential oils.
+                    </div>
+                  </div>
+                  <div>
+                    <div class="o-dashline"></div>
+                    <div class="sub2">WESTERN GHATS HIGH-ALTITUDE COEFFICIENT</div>
+                  </div>
                 </div>
-            </div>
-            
-        </div>
 
-        <!-- LAYER 3: The Artifact Carousel (WHAT) -->
-        <!-- Starts off-screen, slides in when the mask flattens into a pedestal -->
-        <div class="layer carousel-layer" id="artifact-carousel">
-            <h2 class="carousel-title" id="carousel-title">The Artifacts</h2>
-            <div class="carousel-track" id="carousel-track">
+                <div class="features-item">
+                  <div>
+                    <div class="sub1">02 / THERMODYNAMIC STABILITY</div>
+                    <h3 class="features-item-title">Low-Temperature Curing</h3>
+                    <div class="features-item-desc body2" style="margin-top: 1rem;">
+                      Sun-dried on traditional mats. Locks in volatile piperine (5.8%) and cineole (6.2%) without heat degradation.
+                    </div>
+                  </div>
+                  <div>
+                    <div class="o-dashline"></div>
+                    <div class="sub2">ZERO ARTIFICIAL HEAT DEGRADATION</div>
+                  </div>
+                </div>
+
+                <div class="features-item">
+                  <div>
+                    <div class="sub1">03 / CIRCULAR PURITY</div>
+                    <h3 class="features-item-title">100% Single-Origin</h3>
+                    <div class="features-item-desc body2" style="margin-top: 1rem;">
+                      Now 37.9% more aromatic than commercial blends. Sourced from individual forest plots with zero cross-region mixing.
+                    </div>
+                  </div>
+                  <div>
+                    <div class="o-dashline"></div>
+                    <div class="sub2">UNADULTERATED PURE SPECIES</div>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- INTERACTIVE TEMPERATURE / SOURCING PARAMETER SLIDER -->
+              <div id="features-temperature-slider">
+                <div class="sub1" style="margin-bottom: 1rem; text-align: center;">INTERACTIVE SOURCING PARAMETER CONTROL</div>
+                <div id="features-temperature-slider__text-container">
+                  <div class="features-temperature-slider__text is-active" data-val="10">Wild Harvest<br/>T = 10 (Max Potency)</div>
+                  <div class="features-temperature-slider__text" data-val="1">Shade Grown<br/>T = 1 (Balanced)</div>
+                  <div class="features-temperature-slider__text" data-val="0.1">Traditional Agrarian<br/>T = 0.1 (Pure Cured)</div>
+                </div>
+                <div id="features-temperature-slider__bar-wrapper" id="slider-track">
+                  <div id="features-temperature-slider__bar"></div>
+                </div>
+                <div class="sub2" style="text-align: center; margin-top: 1rem;" id="slider-readout">
+                  Active Method: Wild Harvest (Wayanad Canopy) · Active Compound: 5.8% Piperine
+                </div>
+              </div>
+
+              <!-- EMPIRICAL MATHEMATICAL EQUATIONS -->
+              <div id="features-extra-wrapper">
+                <div class="features-extra-item">
+                  <div class="features-extra-item__footnote">Constant yield via ecology</div>
+                  <div class="body1" style="font-family: var(--font-mono); color: var(--oryzo-gold); font-size: 1.2rem;">
+                    E = ∫ (rain · 2500mm) · elevation(1200m) dt
+                  </div>
+                </div>
+                <div class="features-extra-item">
+                  <div class="features-extra-item__footnote">THERMAL DIFFUSION MODEL (TDM)</div>
+                  <div class="body1" style="font-family: var(--font-mono); color: var(--oryzo-gold); font-size: 1.2rem;">
+                    ΔT_curing = SunMat_temp - Ambient (Zero Forced Air)
+                  </div>
+                </div>
+                <div class="features-extra-item">
+                  <div class="features-extra-item__footnote">RoPE: Roundness & Sourcing Engineering</div>
+                  <div class="body1" style="font-family: var(--font-mono); color: var(--oryzo-gold); font-size: 1.2rem;">
+                    Curcumin = 5.1% | Cineole = 6.2% | Moisture = 9.5%
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+          <!-- SECTION 5: SMART FLIP BATCH CIPHER ENCRYPTION TOOL ("#ENCRYPTION") -->
+          <section id="encryption" class="section">
+            <div class="section__inner o-container">
+              <div id="encryption-main">
+                <div id="encryption-header">
+                  <div id="encryption-tagline" class="sub1">BATCH TRACEABILITY SIMPLIFIED</div>
+                  <h2 id="encryption-title">Smart flip <br/>verification cipher</h2>
+                  <div id="encryption-desc" class="body2">
+                    Enter any batch reference or keyword to flip and verify origin authenticity.
+                  </div>
+                </div>
+
+                <div id="encryption-field">
+                  <input type="text" id="encryption-field-input" value="WYD-BP-001" maxlength="15" />
+                </div>
+
+                <button id="encryption-field-flip-btn" class="btn is-active">
+                  <span id="encryption-btn-text">Encode Batch Code</span>
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <!-- SECTION 6: PRECISION PROVENANCE INSPECTION ("#GRIP") -->
+          <section id="grip" class="section">
+            <div class="section__inner o-container">
+              <div id="grip-header">
+                <div id="grip-tagline" class="sub1">PRECISION QUALITY · ZERO ADULTERATION</div>
+                <h2 id="ai-title" style="font-size: clamp(2rem, 4vw, 3.5rem);">Grip-locked single-origin<br/>density</h2>
+                <div id="grip-desc" class="body2" style="margin-top: 1rem;">
+                  Bold-grade 8mm berries so dense they file a restraining order against commodity spices. Moisture content: 9.5%.
+                </div>
+              </div>
+
+              <div id="grip-zoom-box">
+                <div>
+                  <div class="sub1">ESTIMATED DENSITY & ESSENTIAL OIL CONTENT</div>
+                  <div class="body2">Machine-cleaned, hand-sorted bold berries</div>
+                </div>
+                <div id="grip-zoom-box__coeff">0.80</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- SECTION 7: SUSTAINABILITY & SOIL ETHICS ("#SUSTAINABILITY") -->
+          <section id="sustainability" class="section">
+            <div class="section__inner o-container">
+              <div class="sub1" style="margin-bottom: 2rem;">100% PLANT-BASED SUSTAINABILITY</div>
+              
+              <div class="buy-grid">
+                <div class="sustainability-item">
+                  <h3 class="features-item-title" style="margin-top:0;">Average canopy harvest age</h3>
+                  <div class="sustainability-item-desc body2" style="margin-top: 1rem;">
+                    Forest trees are matured for decades to support climbing pepper vines naturally.
+                  </div>
+                  <div class="sustainability-item-num">25</div>
+                </div>
+
+                <div class="sustainability-item">
+                  <h3 class="features-item-title" style="margin-top:0;">Natural Regrowth Cycle</h3>
+                  <div class="sustainability-item-desc body2" style="margin-top: 1rem;">
+                    Harvest follows natural growth seasons, taking only what is ripe each pass.
+                  </div>
+                  <div class="sustainability-item-num">9</div>
+                </div>
+
+                <div class="sustainability-item">
+                  <h3 class="features-item-title" style="margin-top:0;">Power draw in use</h3>
+                  <div class="sustainability-item-desc body2" style="margin-top: 1rem;">
+                    0 compute. 0 synthetic chemicals. 100% natural sun drying.
+                  </div>
+                  <div class="sustainability-item-num">0</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- SECTION 8: EVIDENCE & TESTIMONIES ("#TESTIMONIES") -->
+          <section id="testimonies" class="section">
+            <div class="section__inner o-container">
+              <div id="testimonies-hero">
+                <h2 id="ai-title" style="font-size: clamp(2rem, 4vw, 3.5rem);">People all around the world honor OurOrigin</h2>
+                <div class="body1" style="margin-top: 1rem;">
+                  Do not take our word for it, see what people say after experiencing OurOrigin.
+                </div>
+              </div>
+
+              <div id="testimonies-table">
+                <div id="testimonies-table-header">
+                  <div class="sub1">Rating & Verified Evidence</div>
+                  <div style="display:flex; align-items:center; gap:1rem;">
+                    <div class="sub2">[ 364 Verified Transfers ]</div>
+                    <div style="display:flex; align-items:center; gap:0.25rem;">
+                      <svg width="80" height="15"><use href="#star"></use><use href="#star" x="16"></use><use href="#star" x="32"></use><use href="#star" x="48"></use><use href="#star" x="64"></use></svg>
+                      <span class="sub1" style="color:var(--oryzo-gold);">[ 4.9 / 5 ]</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="o-dashline"></div>
+
+                <div id="testimonies-table-list">
+                  <div class="testimonies-table-item">
+                    <div class="testimonies-table-item-content">
+                      <div class="sub2" style="color:var(--oryzo-gold);">[ 5/5 Stars ]</div>
+                      <div class="testimonies-table-item-content-title quote">
+                        "This is the <span>best black pepper</span> I've ever used. The aroma of woodsmoke and pine is unmatched."
+                      </div>
+                      <div class="testimonies-table-item-content-author">
+                        <div class="testimonies-table-item-content-author-name">Chef Edan K.</div>
+                        <div class="testimonies-table-item-content-author-desc">Executive Chef & Gastronome</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="o-dashline"></div>
+
+                  <div class="testimonies-table-item">
+                    <div class="testimonies-table-item-content">
+                      <div class="sub2" style="color:var(--oryzo-gold);">[ 5/5 Stars ]</div>
+                      <div class="testimonies-table-item-content-title quote">
+                        "My spice shelf? If you want it, I've gathered everything together in <span>one place</span> with OurOrigin!"
+                      </div>
+                      <div class="testimonies-table-item-content-author">
+                        <div class="testimonies-table-item-content-author-name">Roger D.</div>
+                        <div class="testimonies-table-item-content-author-desc">Single-Origin Culinary Explorer</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="o-dashline"></div>
+
+                  <div class="testimonies-table-item">
+                    <div class="testimonies-table-item-content">
+                      <div class="sub2" style="color:var(--oryzo-gold);">[ 5/5 Stars ]</div>
+                      <div class="testimonies-table-item-content-title quote">
+                        "<span>We are so rooted</span>. Commercial brands are not ready for a yield this authentic."
+                      </div>
+                      <div class="testimonies-table-item-content-author">
+                        <div class="testimonies-table-item-content-author-name">Jamie R.</div>
+                        <div class="testimonies-table-item-content-author-desc">Food Critic & Culinary Historian</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- SECTION 9: THE TRANSFER LEDGER / PRODUCT BUY SHOWCASE ("#BUY") -->
+          <section id="buy" class="section">
+            <div class="section__inner o-container">
+              <div class="sub1">THE YIELD CATALOG</div>
+              <h2 id="ai-title" style="font-size: clamp(2.5rem, 5vw, 4rem);">Complete the Transfer</h2>
+              <div class="body1" style="max-width: 600px; margin-top: 1rem;">
+                Explore our unadulterated single-origin yields. Sourced directly from the Western Ghats.
+              </div>
+
+              <div class="buy-grid">
                 {yields.map((product) => {
-                    const origin = getOriginForProduct(product);
-                    const originName = origin ? origin.data.name : 'Unknown Origin';
-                    return (
-                        <div class="artifact-card">
-                            <div class="artifact-image-container">
-                                <img src={product.data.images.product} alt={product.data.name} loading="lazy" decoding="async" />
-                            </div>
-                            <div class="artifact-data">
-                                <div class="artifact-meta">
-                                    <span class="artifact-origin">{originName}</span>
-                                    <span class="artifact-botanical">{product.data.botanicalName}</span>
-                                </div>
-                                <h3 class="artifact-name">{product.data.name}</h3>
-                                <div class="artifact-actions">
-                                    <a href={`/products/${product.slug}`} class="btn-honor">View Evidence</a>
-                                </div>
-                            </div>
+                  const origin = getOriginForProduct(product);
+                  const originName = origin ? origin.data.name : 'Western Ghats';
+                  const sizeObj = product.data.sizes?.[0] || { label: '100g', priceINR: 199 };
+                  
+                  return (
+                    <article class="buy-card">
+                      <div class="buy-card-img-wrapper">
+                        {product.data.images?.product ? (
+                          <img class="buy-card-img" src={product.data.images.product} alt={product.data.name} loading="lazy" decoding="async" />
+                        ) : (
+                          <OriginMark size={80} variant="gold" />
+                        )}
+                      </div>
+                      
+                      <div>
+                        <div class="buy-card-origin">{originName} · {product.data.botanicalName}</div>
+                        <h3 class="buy-card-title">{product.data.name}</h3>
+                        <p class="body3" style="margin: 0.5rem 0 1rem 0;">{product.data.methodDescription}</p>
+                      </div>
+
+                      <div class="buy-card-price-row">
+                        <div>
+                          <span class="buy-card-price">₹{sizeObj.priceINR}</span>
+                          <span class="sub2" style="margin-left: 0.5rem;">/ {sizeObj.label}</span>
                         </div>
-                    );
+
+                        <button 
+                          class="btn-add-ledger add-to-cart-btn"
+                          data-id={product.id}
+                          data-name={product.data.name}
+                          data-price={sizeObj.priceINR}
+                          data-size={sizeObj.label}
+                          data-origin={originName}
+                        >
+                          Honor Decision
+                        </button>
+                      </div>
+                    </article>
+                  );
                 })}
+              </div>
             </div>
+          </section>
+
         </div>
+      </div>
+    </div>
+  </div>
 
-    </main>
-</BaseLayout>
+  <!-- INTERACTIVE CLIENT SCRIPTS (Canvas Animation + Slider Logic + Flip Cipher) -->
+  <script>
+    import { gsap } from 'gsap';
 
-<script>
-  import { gsap } from 'gsap';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+    // 1. BACKGROUND CANVAS ANIMATION (Floating Organic Particles & Light)
+    const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      let width = (canvas.width = window.innerWidth);
+      let height = (canvas.height = window.innerHeight);
 
-  gsap.registerPlugin(ScrollTrigger);
+      window.addEventListener('resize', () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      });
 
-  // Setup Initial States
-  // The dynamic mask starts exactly where the OriginMark dot would be
-  // Assuming OriginMark is center screen, the dot is bottom right of the mark.
-  gsap.set("#dynamic-mask", {
-      clipPath: "circle(6px at 53% 53%)",
-      autoAlpha: 1
-  });
-  
-  gsap.set(".scene-ui", { autoAlpha: 0 });
-  gsap.set("#ui-hero", { autoAlpha: 1 });
-  
-  gsap.set("#artifact-carousel", { autoAlpha: 0, pointerEvents: "none" });
-  gsap.set("#carousel-track", { x: "20vw" }); // Start slightly offset
-
-  // The Master Timeline
-  const tl = gsap.timeline({
-      scrollTrigger: {
-          trigger: ".scroll-rig",
-          start: "top top",
-          end: "bottom bottom",
-          scrub: 1, // Smooth cinematic scrubbing
+      interface Particle {
+        x: number;
+        y: number;
+        radius: number;
+        vx: number;
+        vy: number;
+        alpha: number;
       }
-  });
 
-  // SCENE 1: Hero to Origin (The Dot expands into a Window)
-  tl.to("#ui-hero", { autoAlpha: 0, y: -50, duration: 1 }, 0)
-    .to("#mask-gold-fill", { autoAlpha: 0, duration: 0.5 }, 0.5) // Reveal the canopy image inside
-    .to("#dynamic-mask", { clipPath: "circle(25vmax at 50% 50%)", duration: 2, ease: "power2.inOut" }, 0.5)
-    .to("#ui-origin", { autoAlpha: 1, duration: 1 }, 2);
+      const particles: Particle[] = Array.from({ length: 45 }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        radius: Math.random() * 2 + 1,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        alpha: Math.random() * 0.5 + 0.2
+      }));
 
-  // SCENE 2: Origin to Method (The Window morphs to a tall portrait crop for the Hand)
-  tl.to("#ui-origin", { autoAlpha: 0, y: -50, duration: 1 }, 4)
-    .to("#bg-canopy", { autoAlpha: 0, duration: 1 }, 4.5)
-    .to("#bg-hand", { autoAlpha: 1, duration: 1 }, 4.5)
-    .to("#dynamic-mask", { clipPath: "inset(10% 30% 10% 30% round 20px)", duration: 2, ease: "power2.inOut" }, 4.5)
-    .to("#ui-method", { autoAlpha: 1, duration: 1 }, 6);
+      function renderCanvas() {
+        if (!ctx) return;
+        ctx.clearRect(0, 0, width, height);
 
-  // SCENE 3: Method to Season (The crop widens into a cinematic letterbox for the Specimen)
-  tl.to("#ui-method", { autoAlpha: 0, y: -50, duration: 1 }, 8)
-    .to("#bg-hand", { autoAlpha: 0, duration: 1 }, 8.5)
-    .to("#bg-specimen", { autoAlpha: 1, duration: 1 }, 8.5)
-    .to("#dynamic-mask", { clipPath: "inset(30% 10% 30% 10% round 10px)", duration: 2, ease: "power2.inOut" }, 8.5)
-    .to("#ui-season", { autoAlpha: 1, duration: 1 }, 10);
+        // Draw glowing ambient gradient
+        const grad = ctx.createRadialGradient(width / 2, height / 2, 50, width / 2, height / 2, width * 0.7);
+        grad.addColorStop(0, 'rgba(20, 32, 16, 0.4)');
+        grad.addColorStop(1, 'rgba(12, 21, 9, 0)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, width, height);
 
-  // SCENE 4: Season to Artifact Carousel (The mask drops to the bottom and becomes the pedestal)
-  tl.to("#ui-season", { autoAlpha: 0, y: -50, duration: 1 }, 12)
-    .to("#dynamic-mask", { clipPath: "inset(85% 0% 0% 0% round 0px)", duration: 2, ease: "power3.inOut" }, 12.5)
-    .to("#bg-specimen", { filter: "grayscale(100%) brightness(0.2)", duration: 2 }, 12.5)
-    
-    // Bring in the Carousel
-    .to("#artifact-carousel", { autoAlpha: 1, pointerEvents: "auto", duration: 1 }, 14)
-    // Horizontal scroll logic tied to the main vertical scroll
-    // We calculate how far the track needs to move based on its width vs screen width
-    .to("#carousel-track", { 
-        x: () => {
-            const track = document.getElementById("carousel-track");
-            return track ? -(track.scrollWidth - window.innerWidth + 100) : 0;
-        }, 
-        ease: "none", 
-        duration: 8 
-    }, 14);
+        // Draw floating particles
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
 
-</script>
+          if (p.x < 0) p.x = width;
+          if (p.x > width) p.x = 0;
+          if (p.y < 0) p.y = height;
+          if (p.y > height) p.y = 0;
 
-<style>
-    /* GLOBAL BODY OVERRIDE */
-    :global(body.cinematic-canvas-body) {
-        background-color: #000 !important; /* Absolute void */
-        margin: 0;
-        overflow-x: hidden;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(198, 156, 82, ${p.alpha})`;
+          ctx.fill();
+        });
+
+        requestAnimationFrame(renderCanvas);
+      }
+      renderCanvas();
     }
 
-    /* THE RIG */
-    .scroll-rig {
-        height: 800vh; /* Massive scroll height for pacing */
-        width: 100%;
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 1;
+    // 2. INTERACTIVE TEMPERATURE / SOURCING SLIDER
+    const sliderOptions = document.querySelectorAll('.features-temperature-slider__text');
+    const sliderBar = document.getElementById('features-temperature-slider__bar');
+    const sliderReadout = document.getElementById('slider-readout');
+
+    const methodData: Record<string, { barWidth: string, text: string }> = {
+      '10': { barWidth: '100%', text: 'Active Method: Wild Harvest (Wayanad Canopy) · Active Compound: 5.8% Piperine' },
+      '1': { barWidth: '50%', text: 'Active Method: Shade Grown (Idukki High Altitude) · Active Compound: 6.2% Cineole' },
+      '0.1': { barWidth: '15%', text: 'Active Method: Traditional Agrarian (Sun Dried) · Moisture: 9.5%' }
+    };
+
+    sliderOptions.forEach(opt => {
+      opt.addEventListener('click', () => {
+        sliderOptions.forEach(o => o.classList.remove('is-active'));
+        opt.classList.add('is-active');
+        const val = opt.getAttribute('data-val') || '10';
+        if (sliderBar && methodData[val]) {
+          sliderBar.style.width = methodData[val].barWidth;
+        }
+        if (sliderReadout && methodData[val]) {
+          sliderReadout.textContent = methodData[val].text;
+        }
+      });
+    });
+
+    // 3. SMART FLIP CIPHER ENCRYPTION TOOL
+    const cipherInput = document.getElementById('encryption-field-input') as HTMLInputElement;
+    const flipBtn = document.getElementById('encryption-field-flip-btn');
+    const btnText = document.getElementById('encryption-btn-text');
+    let isEncoded = false;
+    let originalText = 'WYD-BP-001';
+
+    const glyphMap: Record<string, string> = {
+      'A': 'Δ', 'B': 'β', 'C': '©', 'D': '∂', 'E': 'Ξ', 'F': 'ƒ', 'G': 'γ',
+      'H': 'Ħ', 'I': '∫', 'J': '⌠', 'K': 'κ', 'L': 'λ', 'M': 'μ', 'N': 'π',
+      'O': 'Ω', 'P': 'φ', 'Q': 'θ', 'R': '®', 'S': 'Σ', 'T': 'τ', 'U': 'υ',
+      'V': '√', 'W': 'ω', 'X': 'χ', 'Y': '¥', 'Z': 'ζ', '0': '∅', '1': 'Ⅰ',
+      '2': 'Ⅱ', '3': 'Ⅲ', '4': 'Ⅳ', '5': 'Ⅴ', '6': 'Ⅵ', '7': 'Ⅶ', '8': 'Ⅷ', '9': 'Ⅸ', '-': '·'
+    };
+
+    if (flipBtn && cipherInput && btnText) {
+      flipBtn.addEventListener('click', () => {
+        const val = cipherInput.value.toUpperCase();
+        
+        // Flip GSAP animation
+        gsap.to(cipherInput, {
+          rotateX: 90,
+          duration: 0.25,
+          onComplete: () => {
+            if (!isEncoded) {
+              originalText = cipherInput.value;
+              cipherInput.value = val.split('').map(char => glyphMap[char] || char).join('');
+              btnText.textContent = 'Decode Batch Code';
+              isEncoded = true;
+            } else {
+              cipherInput.value = originalText;
+              btnText.textContent = 'Encode Batch Code';
+              isEncoded = false;
+            }
+            gsap.to(cipherInput, { rotateX: 0, duration: 0.25 });
+          }
+        });
+      });
     }
 
-    .cinematic-viewport {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        z-index: 2;
-        overflow: hidden;
-        pointer-events: none; /* Let clicks pass to scroll-rig if needed, though we will enable pointer events on specific layers */
-    }
+    // 4. ADD TO CART / TRANSFER LEDGER BUTTON LISTENERS
+    document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const target = e.currentTarget as HTMLElement;
+        const id = target.getAttribute('data-id');
+        const name = target.getAttribute('data-name');
+        const price = parseFloat(target.getAttribute('data-price') || '0');
+        const size = target.getAttribute('data-size');
 
-    .layer {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        pointer-events: none;
-    }
-
-    /* THE VOID */
-    .void-base {
-        background-color: var(--color-void, #0a0a0a);
-        z-index: 1;
-    }
-
-    /* THE DYNAMIC MASK (The traveling element) */
-    .bg-mask-layer {
-        z-index: 5;
-        will-change: clip-path;
-        /* clip-path set by GSAP */
-    }
-
-    .bg-image {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-size: cover;
-        background-position: center;
-        opacity: 0; /* Managed by GSAP */
-        will-change: opacity, filter;
-    }
-
-    .bg-image.active {
-        opacity: 1;
-    }
-
-    .gold-fill {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: var(--color-gold, #c8a04d);
-        z-index: 10;
-        will-change: opacity;
-    }
-
-    /* TYPOGRAPHY / UI LAYER */
-    .ui-layer {
-        z-index: 10;
-    }
-
-    .scene-ui {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        will-change: opacity, transform;
-    }
-
-    .hero-center {
-        margin: auto;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 2rem;
-    }
-
-    .hero-wordmark {
-        font-family: var(--font-institutional);
-        font-size: clamp(2rem, 4vw, 3rem);
-        letter-spacing: 0.1em;
-        color: var(--color-warm-cream);
-        text-transform: uppercase;
-        margin: 0;
-    }
-
-    /* Museum Placards */
-    .placard {
-        position: absolute;
-        color: var(--color-warm-cream);
-        font-family: var(--font-evidence);
-        max-width: 300px;
-    }
-
-    .placard-label {
-        font-family: var(--font-mono);
-        font-size: 0.75rem;
-        letter-spacing: 0.15em;
-        text-transform: uppercase;
-        color: var(--color-gold);
-        margin-bottom: 0.5rem;
-    }
-
-    .placard-value {
-        font-size: 1.5rem;
-        line-height: 1.2;
-        margin-bottom: 1rem;
-    }
-
-    .placard-value.massive {
-        font-family: var(--font-institutional);
-        font-size: clamp(2rem, 5vw, 4rem);
-        white-space: nowrap;
-    }
-
-    .placard-desc {
-        font-size: 0.9rem;
-        line-height: 1.5;
-        opacity: 0.7;
-    }
-
-    .placard-left { top: 40%; left: 10%; }
-    .placard-right { top: 60%; right: 10%; text-align: right; }
-    .placard-center { top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
-    .placard-bottom { bottom: 15%; left: 50%; transform: translateX(-50%); text-align: center; }
-
-    /* CAROUSEL LAYER */
-    .carousel-layer {
-        z-index: 20;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-
-    .carousel-title {
-        position: absolute;
-        top: 10%;
-        left: 5%;
-        font-family: var(--font-institutional);
-        font-size: 1.5rem;
-        color: var(--color-warm-cream);
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-    }
-
-    .carousel-track {
-        display: flex;
-        gap: 8vw;
-        padding: 0 10vw;
-        align-items: center;
-        height: 60vh;
-        will-change: transform;
-    }
-
-    .artifact-card {
-        flex: 0 0 auto;
-        width: 300px;
-        display: flex;
-        flex-direction: column;
-        gap: 2rem;
-        pointer-events: auto; /* Enable clicks */
-    }
-
-    .artifact-image-container {
-        width: 100%;
-        aspect-ratio: 1/1;
-        position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .artifact-image-container img {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-        filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5));
-    }
-
-    .artifact-meta {
-        display: flex;
-        justify-content: space-between;
-        font-family: var(--font-mono);
-        font-size: 0.7rem;
-        text-transform: uppercase;
-        color: var(--color-gold);
-        margin-bottom: 0.5rem;
-    }
-
-    .artifact-name {
-        font-family: var(--font-evidence);
-        font-size: 2rem;
-        color: var(--color-warm-cream);
-        margin: 0 0 1.5rem 0;
-        line-height: 1.1;
-    }
-
-    .btn-honor {
-        display: inline-block;
-        font-family: var(--font-mono);
-        font-size: 0.8rem;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        color: var(--color-void);
-        background-color: var(--color-warm-cream);
-        padding: 0.75rem 1.5rem;
-        text-decoration: none;
-        transition: background-color 0.3s ease;
-    }
-
-    .btn-honor:hover {
-        background-color: var(--color-gold);
-    }
-</style>
+        if (window.CartStore) {
+          window.CartStore.addItem({
+            id: id || 'item',
+            name: name || 'Yield Item',
+            priceINR: price,
+            sizeLabel: size || '100g',
+            quantity: 1
+          });
+        }
+      });
+    });
+  </script>
+</BaseLayout>
