@@ -14,70 +14,124 @@ function getOriginForProduct(product: any) {
 ---
 
 <BaseLayout
-  title="OurOrigin"
+  title="OurOrigin | The Truth is in the Soil"
   description="The product is not the soul. The soul is the profound, invisible exchange of dignity and effort from one human being to another."
   canonicalPath="/"
   ogTitle="OurOrigin"
   ogDescription="Pure natural ingredients, community-harvested directly from their soil of origin."
   navVariant="light"
-  showFooter={false}
+  showFooter={true}
   bodyClass="void-canvas-body"
 >
     <main class="void-canvas">
-        <!-- ACT I: The Soul -->
-        <section class="void-hero">
-            <div class="gesture-bg" id="global-spotlight-bg"></div>
-            
+        <div class="gesture-bg" id="global-spotlight-bg"></div>
+
+        <!-- ACT I: THE VOID -->
+        <section class="gsap-section gsap-hero" id="section-void">
             <div class="hero-content">
-                <OriginMark size={64} variant="gold" animate={true} />
-                <h1 class="absolute-truth">
-                    The product is not the soul.<br>
-                    The soul is the profound, invisible exchange of dignity and effort from one human being to another.
+                <div id="hero-mark">
+                    <OriginMark size={120} variant="gold" animate={true} />
+                </div>
+                <h1 class="absolute-truth" id="hero-text-1">
+                    The product is not the soul.
                 </h1>
             </div>
-            
-            <div class="scroll-indicator">
+            <div class="scroll-indicator" id="hero-scroll-indicator">
                 <div class="scroll-line"></div>
+                <span class="scroll-text">DESCEND</span>
             </div>
         </section>
-        
-        <!-- ACT II: The Yield (Compact Grid) -->
-        <section class="void-yield" id="the-yield">
-            <div class="yield-header">
-                <h2>The Artifacts</h2>
+
+        <!-- ACT II: THE TRUTH -->
+        <section class="gsap-section gsap-truth" id="section-truth">
+            <div class="truth-bg" id="truth-bg-image"></div>
+            <div class="truth-content">
+                <h2 class="absolute-truth" id="hero-text-2">
+                    The soul is the profound, invisible exchange of dignity and effort from one human being to another.
+                </h2>
             </div>
-            
-            <div class="artifact-grid">
-                {products.map(product => {
+        </section>
+
+        <!-- ACT III: THE EXHIBITION (HORIZONTAL SCROLL) -->
+        <section class="gsap-section gsap-exhibition" id="section-exhibition">
+            <div class="horizontal-scroll-container" id="horizontal-container">
+                {products.map((product, index) => {
                     const origin = getOriginForProduct(product);
                     const originName = origin ? origin.data.name : 'Unknown Origin';
                     
                     return (
-                        <article class="artifact-card">
-                            <div class="artifact-image-container">
-                                <img src={product.data.image} alt={product.data.name} class="artifact-image" loading="lazy" />
+                        <article class="exhibition-panel">
+                            <div class="exhibition-bg-text" aria-hidden="true">
+                                {product.data.name.split(' ')[0]}
                             </div>
                             
-                            <div class="artifact-meta">
-                                <h3 class="artifact-name">{product.data.name}</h3>
-                                <div class="artifact-data-points">
-                                    <span class="data-point">Origin: {originName}</span>
-                                    <span class="data-point">Harvest: {product.data.harvest_method || 'Selective'}</span>
-                                    <span class="data-point">Price: ₹{product.data.price}/{product.data.unit}</span>
+                            <div class="exhibition-content">
+                                <div class="exhibition-image-wrapper">
+                                    <img src={product.data.image} alt={product.data.name} class="exhibition-image" loading="lazy" />
+                                </div>
+                                
+                                <div class="exhibition-meta">
+                                    <h3 class="exhibition-title">{product.data.name}</h3>
+                                    <div class="exhibition-data">
+                                        <div class="data-row">
+                                            <span class="data-label">Origin</span>
+                                            <span class="data-value">{originName}</span>
+                                        </div>
+                                        <div class="data-row">
+                                            <span class="data-label">Harvest</span>
+                                            <span class="data-value">{product.data.harvest_method || 'Selective'}</span>
+                                        </div>
+                                        <div class="data-row">
+                                            <span class="data-label">Value</span>
+                                            <span class="data-value">₹{product.data.price} <span class="unit">/ {product.data.unit}</span></span>
+                                        </div>
+                                    </div>
+                                    
+                                    <button 
+                                        class="honor-decision-btn"
+                                        data-product-id={product.id}
+                                        data-product-name={product.data.name}
+                                        data-product-price={product.data.price}
+                                        data-product-image={product.data.image}
+                                    >
+                                        [ Honor the Decision ]
+                                    </button>
                                 </div>
                             </div>
-                            
-                            <button 
-                              class="honor-decision-btn"
-                              data-product-id={product.id}
-                              data-product-name={product.data.name}
-                              data-product-price={product.data.price}
-                              data-product-image={product.data.image}
-                            >
-                              [ Honor the Decision ]
-                            </button>
                         </article>
                     );
+                })}
+            </div>
+        </section>
+        
+        <!-- ACT IV: THE LEDGER (MINIMAL LIST) -->
+        <section class="gsap-section gsap-ledger" id="section-ledger">
+            <div class="ledger-header">
+                <h2>The Complete Ledger</h2>
+                <p>Select your artifacts directly from the void.</p>
+            </div>
+            
+            <div class="ledger-list">
+                {products.map(product => {
+                    const origin = getOriginForProduct(product);
+                    const originName = origin ? origin.data.name : 'Unknown Origin';
+                    return (
+                        <div class="ledger-item">
+                            <div class="ledger-item-info">
+                                <h3>{product.data.name}</h3>
+                                <span>{originName}</span>
+                            </div>
+                            <div class="ledger-item-action">
+                                <span class="price">₹{product.data.price}</span>
+                                <button class="honor-decision-btn inline"
+                                    data-product-id={product.id}
+                                    data-product-name={product.data.name}
+                                    data-product-price={product.data.price}
+                                    data-product-image={product.data.image}
+                                >+</button>
+                            </div>
+                        </div>
+                    )
                 })}
             </div>
         </section>
@@ -85,7 +139,114 @@ function getOriginForProduct(product: any) {
 </BaseLayout>
 
 <script>
-  // Dispatch cart event for The Ledger
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Spotlight Effect
+  document.addEventListener('mousemove', (e) => {
+    const bg = document.getElementById('global-spotlight-bg');
+    if (bg) {
+      bg.style.setProperty('--cursor-x', `${e.clientX}px`);
+      bg.style.setProperty('--cursor-y', `${e.clientY}px`);
+    }
+  });
+
+  // GSAP SCROLL ANIMATIONS
+  
+  // 1. Hero Exit
+  gsap.to('#hero-text-1', {
+    opacity: 0,
+    y: -50,
+    scrollTrigger: {
+      trigger: '#section-void',
+      start: 'top top',
+      end: 'bottom top',
+      scrub: true
+    }
+  });
+  
+  gsap.to('#hero-mark', {
+    scale: 0.5,
+    y: -100,
+    opacity: 0,
+    scrollTrigger: {
+      trigger: '#section-void',
+      start: 'top top',
+      end: 'bottom top',
+      scrub: true
+    }
+  });
+
+  gsap.to('#hero-scroll-indicator', {
+    opacity: 0,
+    scrollTrigger: {
+      trigger: '#section-void',
+      start: 'top top',
+      end: '+=300',
+      scrub: true
+    }
+  });
+
+  // 2. The Truth Sequence (Pinned)
+  const truthTl = gsap.timeline({
+    scrollTrigger: {
+      trigger: '#section-truth',
+      start: 'top top',
+      end: '+=200%', // Pin for 2 viewport heights
+      pin: true,
+      scrub: true
+    }
+  });
+
+  truthTl.fromTo('#hero-text-2', { opacity: 0, scale: 0.95, y: 50 }, { opacity: 1, scale: 1, y: 0, duration: 1 })
+         .fromTo('#truth-bg-image', { opacity: 0, scale: 1.1 }, { opacity: 0.4, scale: 1, duration: 2 }, "-=0.5")
+         .to('#hero-text-2', { opacity: 0, y: -50, filter: 'blur(10px)', duration: 1 });
+
+  // 3. The Horizontal Exhibition
+  const container = document.getElementById('horizontal-container');
+  const panels = gsap.utils.toArray('.exhibition-panel') as HTMLElement[];
+
+  if (container && panels.length > 0) {
+      gsap.to(panels, {
+        xPercent: -100 * (panels.length - 1),
+        ease: "none",
+        scrollTrigger: {
+          trigger: '#section-exhibition',
+          pin: true,
+          scrub: 1, // Smooth scrubbing
+          snap: 1 / (panels.length - 1),
+          // End after scrolling the width of all panels
+          end: () => "+=" + container.scrollWidth
+        }
+      });
+      
+      // Add subtle parallax to images within the horizontal scroll
+      panels.forEach((panel) => {
+          const img = panel.querySelector('.exhibition-image');
+          if (img) {
+              gsap.fromTo(img, 
+                { x: 100, rotation: 5 },
+                { 
+                  x: -100, 
+                  rotation: -5,
+                  ease: "none",
+                  scrollTrigger: {
+                      trigger: panel,
+                      containerAnimation: gsap.getById(ScrollTrigger.getAll()[3]?.vars.id) || null, // Need to link to the horizontal tween if possible, or just use standard scrub based on viewport
+                      start: "left right",
+                      end: "right left",
+                      scrub: true,
+                      horizontal: true // Tell ScrollTrigger to track horizontal position
+                  }
+                }
+              );
+          }
+      });
+  }
+
+  // Cart Logic
   document.querySelectorAll('.honor-decision-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const target = e.currentTarget as HTMLButtonElement;
@@ -113,69 +274,6 @@ function getOriginForProduct(product: any) {
       window.dispatchEvent(event);
     });
   });
-
-  // --- CINEMATIC PHYSICS ---
-
-  // 1. Scroll Reveal (Intersection Observer)
-  const revealElements = document.querySelectorAll('.artifact-card');
-  const revealOptions = {
-    threshold: 0.1,
-    rootMargin: "0px 0px -50px 0px"
-  };
-
-  const revealObserver = new IntersectionObserver((entries, observer) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('revealed');
-        observer.unobserve(entry.target);
-      }
-    });
-  }, revealOptions);
-
-  revealElements.forEach(el => revealObserver.observe(el));
-
-  // 2. Parallax Depth on Images & Global Spotlight Mask
-  document.addEventListener('mousemove', (e) => {
-    const cards = document.querySelectorAll('.artifact-card');
-    const mouseX = e.clientX / window.innerWidth - 0.5;
-    const mouseY = e.clientY / window.innerHeight - 0.5;
-
-    cards.forEach(card => {
-      const img = card.querySelector('.artifact-image') as HTMLElement;
-      if (img) {
-        // Subtle opposite movement to create depth
-        const moveX = mouseX * -20; 
-        const moveY = mouseY * -20;
-        img.style.transform = `translate3d(${moveX}px, ${moveY}px, 0)`;
-      }
-    });
-
-    // Update global spotlight coordinates
-    const bg = document.getElementById('global-spotlight-bg');
-    if (bg) {
-      bg.style.setProperty('--cursor-x', `${e.clientX}px`);
-      bg.style.setProperty('--cursor-y', `${e.clientY}px`);
-    }
-  });
-
-  // 3. Magnetic Buttons
-  const magneticButtons = document.querySelectorAll('.honor-decision-btn');
-  
-  magneticButtons.forEach(btn => {
-    const htmlBtn = btn as HTMLElement;
-    htmlBtn.addEventListener('mousemove', (e) => {
-      const rect = htmlBtn.getBoundingClientRect();
-      const h = rect.width / 2;
-      const x = e.clientX - rect.left - h;
-      const y = e.clientY - rect.top - (rect.height / 2);
-      
-      htmlBtn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
-    });
-
-    htmlBtn.addEventListener('mouseleave', () => {
-      htmlBtn.style.transform = `translate(0px, 0px)`;
-    });
-  });
 </script>
 
 <style is:global>
@@ -184,35 +282,28 @@ function getOriginForProduct(product: any) {
         padding: 0;
         background-color: var(--color-forest-deep);
         color: var(--color-warm-cream);
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-    }
-    body.void-canvas-body::-webkit-scrollbar {
-        display: none;
+        overflow-x: hidden;
     }
 </style>
 
 <style>
     .void-canvas {
         width: 100vw;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
+        overflow-x: hidden;
     }
 
-    /* --- HERO --- */
-    .void-hero {
+    .gsap-section {
         position: relative;
         width: 100vw;
         height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 2rem;
+        overflow: hidden;
     }
 
     .gesture-bg {
-        position: fixed; /* Fixed so it persists as you scroll */
+        position: fixed;
         top: 0;
         left: 0;
         width: 100vw;
@@ -220,37 +311,38 @@ function getOriginForProduct(product: any) {
         background-image: url('/assets/origins/idukki-hand.webp');
         background-size: cover;
         background-position: center;
-        opacity: 0.6; /* Visible when illuminated */
+        opacity: 0.2;
         filter: grayscale(80%) contrast(1.2);
         z-index: 0;
         pointer-events: none;
         
-        /* Spotlight Mask */
         --cursor-x: 50vw;
         --cursor-y: 50vh;
-        mask-image: radial-gradient(circle 350px at var(--cursor-x) var(--cursor-y), rgba(0,0,0,1) 0%, rgba(0,0,0,0.05) 100%);
-        -webkit-mask-image: radial-gradient(circle 350px at var(--cursor-x) var(--cursor-y), rgba(0,0,0,1) 0%, rgba(0,0,0,0.05) 100%);
+        mask-image: radial-gradient(circle 400px at var(--cursor-x) var(--cursor-y), rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+        -webkit-mask-image: radial-gradient(circle 400px at var(--cursor-x) var(--cursor-y), rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
     }
 
+    /* --- ACT I: HERO --- */
     .hero-content {
         position: relative;
         z-index: 2;
-        max-width: 900px;
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 3rem;
+        gap: 4rem;
         text-align: center;
     }
 
     .absolute-truth {
         font-family: var(--font-institutional);
-        font-size: clamp(1.8rem, 3.5vw, 3.5rem);
+        font-size: clamp(2rem, 5vw, 4.5rem);
         font-weight: 300;
-        line-height: 1.3;
+        line-height: 1.2;
         color: var(--color-warm-cream);
         margin: 0;
-        letter-spacing: -0.01em;
+        letter-spacing: -0.02em;
+        max-width: 1000px;
+        padding: 0 2rem;
     }
 
     .scroll-indicator {
@@ -258,152 +350,287 @@ function getOriginForProduct(product: any) {
         bottom: 3rem;
         left: 50%;
         transform: translateX(-50%);
-        height: 60px;
         display: flex;
-        align-items: flex-end;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
         z-index: 2;
     }
 
     .scroll-line {
         width: 1px;
-        height: 100%;
-        background: linear-gradient(to bottom, rgba(245, 237, 216, 0.5) 0%, rgba(245, 237, 216, 0) 100%);
+        height: 80px;
+        background: linear-gradient(to bottom, rgba(245, 237, 216, 0.8) 0%, rgba(245, 237, 216, 0) 100%);
+        animation: pulseLine 2s infinite;
     }
 
-    /* --- THE YIELD (COMPACT GRID) --- */
-    .void-yield {
-        position: relative;
-        z-index: 5;
-        width: 100vw;
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 5rem 2rem 10rem 2rem;
-    }
-
-    .yield-header {
-        margin-bottom: 4rem;
-        text-align: center;
-    }
-
-    .yield-header h2 {
+    .scroll-text {
         font-family: var(--font-mono);
         font-size: 10px;
         letter-spacing: 0.3em;
         color: var(--color-gold);
-        text-transform: uppercase;
-        margin: 0;
     }
 
-    .artifact-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 3rem;
+    @keyframes pulseLine {
+        0% { transform: scaleY(1); transform-origin: top; }
+        50% { transform: scaleY(0.5); transform-origin: top; }
+        100% { transform: scaleY(1); transform-origin: top; }
     }
 
-    .artifact-card {
-        display: flex;
-        flex-direction: column;
-        background: transparent;
-        border: none;
-        padding: 2rem;
-        transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease;
+    /* --- ACT II: THE TRUTH --- */
+    .truth-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+    }
+
+    .truth-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-image: url('/assets/origins/attappady-landscape.webp');
+        background-size: cover;
+        background-position: center;
         opacity: 0;
-        transform: translateY(40px);
+        z-index: 1;
+        filter: grayscale(50%) contrast(1.1);
     }
 
-    .artifact-card.revealed {
-        opacity: 1;
-        transform: translateY(0);
+    /* --- ACT III: EXHIBITION --- */
+    .gsap-exhibition {
+        align-items: flex-start;
+        justify-content: flex-start;
     }
 
-    .artifact-image-container {
-        width: 100%;
-        aspect-ratio: 1;
-        margin-bottom: 2rem;
+    .horizontal-scroll-container {
+        display: flex;
+        width: max-content;
+        height: 100vh;
+    }
+
+    .exhibition-panel {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
+        padding: 4rem;
+        overflow: hidden;
     }
 
-    .artifact-image {
-        max-width: 80%;
-        max-height: 80%;
+    .exhibition-bg-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-family: var(--font-institutional);
+        font-size: 25vw;
+        font-weight: 700;
+        color: rgba(245, 237, 216, 0.03);
+        white-space: nowrap;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .exhibition-content {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: 6rem;
+        max-width: 1400px;
+        width: 100%;
+    }
+
+    .exhibition-image-wrapper {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 60vh;
+    }
+
+    .exhibition-image {
+        max-height: 100%;
+        max-width: 100%;
         object-fit: contain;
-        filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5));
-        transition: transform 0.5s ease;
+        filter: drop-shadow(0 30px 50px rgba(0,0,0,0.8));
     }
 
-    .artifact-card:hover .artifact-image {
-        transform: scale(1.05) translateY(-5px);
-    }
-
-    .artifact-meta {
-        flex-grow: 1;
+    .exhibition-meta {
+        flex: 1;
         display: flex;
         flex-direction: column;
-        gap: 1rem;
-        margin-bottom: 2rem;
-        
-        /* Cinematic Blur Typography */
-        opacity: 0.4;
-        filter: blur(4px);
-        transition: opacity 0.8s ease, filter 0.8s ease, transform 0.8s ease;
-        transform: translateY(10px);
+        gap: 3rem;
     }
 
-    .artifact-card:hover .artifact-meta {
-        opacity: 1;
-        filter: blur(0px);
-        transform: translateY(0);
+    .exhibition-title {
+        font-family: var(--font-institutional);
+        font-size: clamp(3rem, 5vw, 5rem);
+        font-weight: 300;
+        color: var(--color-warm-cream);
+        margin: 0;
+        line-height: 1.1;
     }
 
-    .artifact-name {
+    .exhibition-data {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        border-top: 1px solid rgba(245, 237, 216, 0.2);
+        border-bottom: 1px solid rgba(245, 237, 216, 0.2);
+        padding: 2rem 0;
+    }
+
+    .data-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .data-label {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        letter-spacing: 0.2em;
+        color: rgba(245, 237, 216, 0.5);
+        text-transform: uppercase;
+    }
+
+    .data-value {
         font-family: var(--font-institutional);
         font-size: 1.5rem;
-        font-weight: 300;
-        margin: 0;
-        color: var(--color-warm-cream);
-        border-bottom: 1px solid rgba(245, 237, 216, 0.1);
-        padding-bottom: 1rem;
-        transition: color 0.4s ease, border-color 0.4s ease;
-    }
-
-    .artifact-card:hover .artifact-name {
         color: var(--color-gold);
-        border-color: rgba(198, 156, 82, 0.3);
     }
 
-    .artifact-data-points {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    .data-point {
-        font-family: var(--font-mono);
-        font-size: 10px;
-        letter-spacing: 0.1em;
-        color: rgba(245, 237, 216, 0.6);
-        text-transform: uppercase;
+    .data-value .unit {
+        font-size: 1rem;
+        color: var(--color-warm-cream);
     }
 
     .honor-decision-btn {
         background: transparent;
-        border: 1px solid rgba(245, 237, 216, 0.2);
-        color: var(--color-warm-cream);
+        border: 1px solid var(--color-gold);
+        color: var(--color-gold);
         font-family: var(--font-mono);
-        font-size: 11px;
+        font-size: 12px;
         letter-spacing: 0.1em;
         text-transform: uppercase;
-        padding: 1rem;
+        padding: 1.5rem;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: all 0.3s ease;
         text-align: center;
         width: 100%;
     }
 
     .honor-decision-btn:hover {
-        border-color: var(--color-warm-cream);
-        background: rgba(255, 255, 255, 0.05);
+        background: var(--color-gold);
+        color: var(--color-forest-deep);
+    }
+
+    /* --- ACT IV: LEDGER --- */
+    .gsap-ledger {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+        padding: 10rem 2rem;
+        background: #080c06; /* Slightly darker than void to contrast */
+        z-index: 10; /* Above the horizontal scroll */
+    }
+
+    .ledger-header {
+        text-align: center;
+        margin-bottom: 5rem;
+    }
+
+    .ledger-header h2 {
+        font-family: var(--font-institutional);
+        font-size: 3rem;
+        font-weight: 300;
+        margin: 0 0 1rem 0;
+        color: var(--color-warm-cream);
+    }
+
+    .ledger-header p {
+        font-family: var(--font-mono);
+        color: var(--color-gold);
+        letter-spacing: 0.1em;
+        font-size: 12px;
+        text-transform: uppercase;
+    }
+
+    .ledger-list {
+        width: 100%;
+        max-width: 800px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .ledger-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 2rem 0;
+        border-bottom: 1px solid rgba(245, 237, 216, 0.1);
+        transition: background 0.3s ease;
+    }
+
+    .ledger-item:hover {
+        background: rgba(255, 255, 255, 0.02);
+    }
+
+    .ledger-item-info h3 {
+        font-family: var(--font-institutional);
+        font-size: 1.5rem;
+        font-weight: 300;
+        margin: 0 0 0.5rem 0;
+        color: var(--color-warm-cream);
+    }
+
+    .ledger-item-info span {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        color: rgba(245, 237, 216, 0.5);
+        text-transform: uppercase;
+    }
+
+    .ledger-item-action {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+    }
+
+    .ledger-item-action .price {
+        font-family: var(--font-institutional);
+        font-size: 1.5rem;
+        color: var(--color-gold);
+    }
+
+    .honor-decision-btn.inline {
+        padding: 0.5rem 1rem;
+        width: auto;
+        font-size: 1rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .exhibition-content {
+            flex-direction: column;
+            gap: 3rem;
+            text-align: center;
+        }
+        
+        .exhibition-image-wrapper {
+            height: 40vh;
+        }
+
+        .data-row {
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: center;
+        }
     }
 </style>
