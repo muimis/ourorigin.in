@@ -1,9 +1,7 @@
 ---
 import BaseLayout from '../components/BaseLayout.astro';
-import ThePortal from '../components/ThePortal.astro';
-import TheManifesto from '../components/TheManifesto.astro';
-import TheCore from '../components/TheCore.astro';
-import TheObservationsList from '../components/TheObservationsList.astro';
+import OriginZone from '../components/OriginZone.astro';
+import YieldZone from '../components/YieldZone.astro';
 ---
 
 <BaseLayout
@@ -13,36 +11,45 @@ import TheObservationsList from '../components/TheObservationsList.astro';
   ogTitle="OurOrigin — The Absolute Truth of the Soil"
   ogDescription="Pure natural ingredients, community-harvested directly from their soil of origin."
   navVariant="light"
-  showFooter={true}
-  bodyClass="homepage-body"
+  showFooter={false}
+  bodyClass="homepage-body split-reality-body"
 >
-    <main>
-        <!-- Act I: The Arrival -->
-        <ThePortal />
+    <main class="split-reality-container">
+        <!-- The Left Hemisphere (Philosophy / The Forest) -->
+        <OriginZone />
         
-        <!-- Act II: The Story -->
-        <TheManifesto />
-
-        <!-- Act III: The Yield -->
-        <TheCore />
-
-        <!-- Act IV: Field Notes from the Forest -->
-        <TheObservationsList />
+        <!-- The Right Hemisphere (Commerce / The Yield) -->
+        <YieldZone />
     </main>
 </BaseLayout>
 
 <style is:global>
-    body.homepage-body {
-        background-color: #010201 !important;
-        overflow-x: hidden !important;
-        width: 100%;
+    body.split-reality-body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden; /* Prevent body scrolling, allow zones to scroll independently */
+        background-color: var(--color-forest-deep);
+    }
+    
+    @media (max-width: 900px) {
+        body.split-reality-body {
+            overflow: auto; /* Allow normal scrolling on mobile */
+        }
     }
 </style>
 
 <style>
-    main {
-        position: relative;
-        width: 100%;
-        background-color: var(--color-forest-deep);
+    .split-reality-container {
+        display: flex;
+        flex-direction: row;
+        width: 100vw;
+        height: 100vh;
+    }
+
+    @media (max-width: 900px) {
+        .split-reality-container {
+            flex-direction: column;
+            height: auto;
+        }
     }
 </style>

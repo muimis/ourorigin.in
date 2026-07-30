@@ -1,0 +1,98 @@
+---
+// src/components/OriginZone.astro
+import TheManifesto from './TheManifesto.astro';
+import OriginMark from './OriginMark.astro';
+---
+
+<section class="origin-zone">
+  <div class="origin-content">
+    <div class="origin-header">
+      <OriginMark size="120px" class="origin-mark-left" />
+      <h1 class="origin-title">The Absolute Truth of the Soil</h1>
+      <p class="origin-subtitle">The Truth Leaves A Trace.</p>
+    </div>
+    
+    <div class="origin-body">
+      <TheManifesto />
+    </div>
+  </div>
+  <div class="axis-line"></div>
+</section>
+
+<style>
+  .origin-zone {
+    position: relative;
+    width: 50vw;
+    height: 100vh;
+    overflow-y: auto;
+    background-color: var(--color-forest-deep);
+    color: var(--color-warm-cream);
+    /* Hide scrollbar for a cleaner look but keep functionality */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  .origin-zone::-webkit-scrollbar {
+    display: none;
+  }
+
+  .origin-content {
+    padding: clamp(2rem, 5vw, 6rem);
+    padding-bottom: 20vh;
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10vh;
+  }
+
+  .origin-header {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-top: 10vh;
+  }
+
+  .origin-title {
+    font-family: var(--font-institutional);
+    font-size: clamp(2rem, 4vw, 4rem);
+    font-weight: 300;
+    line-height: 1.1;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  .origin-subtitle {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: rgba(245, 237, 216, 0.6);
+    text-transform: uppercase;
+  }
+
+  .axis-line {
+    position: fixed;
+    top: 0;
+    left: 50vw;
+    width: 1px;
+    height: 100vh;
+    background: linear-gradient(to bottom, rgba(245, 237, 216, 0) 0%, rgba(245, 237, 216, 0.2) 50%, rgba(245, 237, 216, 0) 100%);
+    z-index: 50;
+    pointer-events: none;
+  }
+
+  @media (max-width: 900px) {
+    .origin-zone {
+      width: 100vw;
+      height: auto;
+      min-height: 100vh;
+      overflow-y: visible;
+    }
+    .axis-line {
+      display: none;
+    }
+    .origin-content {
+      padding-top: 15vh;
+    }
+  }
+</style>

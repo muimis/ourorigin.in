@@ -1,0 +1,262 @@
+---
+// src/components/YieldZone.astro
+import { getCollection } from 'astro:content';
+
+const products = await getCollection('products');
+const origins = await getCollection('origins');
+
+const originsBySlug = Object.fromEntries(origins.map(o => [o.data.slug, o]));
+
+// Fixed order of origins
+const orderedSlugs = ['nilgiris', 'idukki', 'wayanad', 'thiruvananthapuram'];
+const sortedOrigins = orderedSlugs.map(slug => originsBySlug[slug]).filter(Boolean);
+
+// Group products by origin
+const productsByOrigin = {};
+sortedOrigins.forEach(o => {
+  productsByOrigin[o.data.slug] = products.filter(p => {
+    const oSlug = typeof p.data.originSlug === 'object' ? p.data.originSlug?.id : p.data.originSlug;
+    return oSlug === o.data.slug;
+  }).sort((a, b) => (a.data.name || '').localeCompare(b.data.name || ''));
+});
+---
+
+<section class="yield-zone">
+  <div class="yield-content">
+    <div class="yield-header">
+      <h2 class="yield-title">The Yield</h2>
+      <p class="yield-subtitle">Pure botanical output. Directly from the First Hands.</p>
+    </div>
+
+    <div class="yield-data-stream">
+      {sortedOrigins.map(o => {
+        const originProducts = productsByOrigin[o.data.slug];
+        if (!originProducts || originProducts.length === 0) return null;
+
+        return (
+          <div class="origin-dataset">
+            <h3 class="dataset-title">[{o.data.name.toUpperCase()} &middot; {o.data.elevation.toUpperCase()}]</h3>
+            <div class="dataset-list">
+              {originProducts.map((p) => {
+                const firstSize = p.data.sizes[0];
+                const productDataString = JSON.stringify({
+                  id: p.id + '-' + firstSize.label,
+                  productId: p.id,
+                  name: p.data.name,
+                  origin: o.data.name,
+                  originId: o.data.slug,
+                  price: firstSize.priceINR,
+                  size: firstSize.label,
+                  weight: firstSize.label,
+                  quantity: 1
+                });
+
+                return (
+                  <article class="data-row">
+                    <div class="data-col data-primary">
+                      <span class="data-name">{p.data.name}</span>
+                      <span class="data-botanical">{p.data.botanicalName}</span>
+                    </div>
+                    
+                    <div class="data-col data-specs">
+                      <span class="data-batch">{p.data.batchRef}</span>
+                      <span class="data-chem">{p.data.chemistry?.activeCompound || 'N/A'}</span>
+                    </div>
+
+                    <div class="data-col data-price">
+                      <span>₹{firstSize.priceINR}</span>
+                    </div>
+
+                    <div class="data-col data-action">
+                      <button 
+                        class="data-add-btn" 
+                        data-product={productDataString}
+                        aria-label={`Add ${p.data.name} to transfer`}
+                      >
+                        [ + ]
+                      </button>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+<script>
+  // Add to ledger functionality
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.data-add-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const productDataStr = (e.currentTarget as HTMLElement).getAttribute('data-product');
+        if (productDataStr) {
+          const product = JSON.parse(productDataStr);
+          window.dispatchEvent(new CustomEvent('cart-add', { detail: product }));
+        }
+      });
+    });
+  });
+</script>
+
+<style>
+  .yield-zone {
+    width: 50vw;
+    height: 100vh;
+    overflow-y: auto;
+    background-color: var(--color-warm-cream);
+    color: var(--color-forest-deep);
+    /* Hide scrollbar for a cleaner look but keep functionality */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .yield-zone::-webkit-scrollbar {
+    display: none;
+  }
+
+  .yield-content {
+    padding: clamp(2rem, 5vw, 6rem);
+    padding-bottom: 20vh;
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+  }
+
+  .yield-header {
+    margin-top: 10vh;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .yield-title {
+    font-family: var(--font-institutional);
+    font-size: clamp(2rem, 4vw, 4rem);
+    font-weight: 300;
+    line-height: 1.1;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  .yield-subtitle {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: rgba(12, 21, 9, 0.6);
+    text-transform: uppercase;
+  }
+
+  .yield-data-stream {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+  }
+
+  .dataset-title {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: rgba(12, 21, 9, 0.4);
+    margin: 0 0 1.5rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(12, 21, 9, 0.1);
+  }
+
+  .dataset-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .data-row {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 0.5fr 0.5fr;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(12, 21, 9, 0.05);
+    transition: background-color 0.2s ease;
+  }
+  
+  .data-row:hover {
+    background-color: rgba(12, 21, 9, 0.02);
+  }
+
+  .data-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .data-primary {
+    gap: 0.2rem;
+  }
+
+  .data-name {
+    font-family: var(--font-institutional);
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+
+  .data-botanical {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-style: italic;
+    color: rgba(12, 21, 9, 0.5);
+  }
+
+  .data-specs {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    gap: 0.2rem;
+    color: rgba(12, 21, 9, 0.6);
+  }
+
+  .data-price {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    text-align: right;
+  }
+
+  .data-action {
+    text-align: right;
+  }
+
+  .data-add-btn {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    background: none;
+    border: none;
+    color: var(--color-forest-deep);
+    cursor: pointer;
+    transition: color 0.2s ease;
+    padding: 0.5rem;
+  }
+
+  .data-add-btn:hover {
+    color: rgba(12, 21, 9, 0.4);
+  }
+
+  @media (max-width: 900px) {
+    .yield-zone {
+      width: 100vw;
+      height: auto;
+      min-height: 100vh;
+      overflow-y: visible;
+    }
+    .data-row {
+      grid-template-columns: 1fr auto;
+      gap: 1rem;
+    }
+    .data-specs {
+      display: none;
+    }
+    .data-action {
+      text-align: right;
+    }
+  }
+</style>

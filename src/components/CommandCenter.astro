@@ -55,7 +55,8 @@ const { variant = 'dark' } = Astro.props;
     z-index: 8000;
     box-sizing: border-box;
     pointer-events: none;
-    /* Removed linear gradient background for pure minimalism */
+    mix-blend-mode: difference; /* Perfect for split screen */
+    color: #fff;
   }
 
   .header-logo {
@@ -72,7 +73,6 @@ const { variant = 'dark' } = Astro.props;
     gap: 2rem;
     align-items: center;
     pointer-events: auto;
-    /* Removed frosted glass, borders, background */
   }
 
   .hud-btn {
@@ -86,22 +86,11 @@ const { variant = 'dark' } = Astro.props;
     cursor: pointer;
     transition: color 0.3s ease, opacity 0.3s ease;
     white-space: nowrap;
+    color: #fff;
   }
 
-  /* Dark variant: dark text for light backgrounds */
-  .header-dark .hud-btn {
-    color: var(--color-forest-deep);
-  }
-  .header-dark .hud-btn:hover {
-    color: var(--color-gold);
-  }
-
-  /* Light variant: light text for dark backgrounds */
-  .header-light .hud-btn {
-    color: rgba(245, 237, 216, 0.6);
-  }
-  .header-light .hud-btn:hover {
-    color: var(--color-warm-cream);
+  .hud-btn:hover {
+    opacity: 0.7;
   }
 
   @media (max-width: 768px) {
