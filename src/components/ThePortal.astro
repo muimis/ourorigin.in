@@ -1,9 +1,12 @@
 ---
 // src/components/ThePortal.astro
+import OriginMark from './OriginMark.astro';
 ---
 <section class="portal-section">
   <div class="portal-content" data-reveal>
-    <img src="/logo.svg" alt="OurOrigin" class="portal-logo" />
+    <div class="portal-logo-container">
+      <OriginMark size={140} variant="gold" />
+    </div>
     <span class="portal-tag">The Absolute Truth of the Soil</span>
     <h1 class="portal-title">The Truth Leaves<br/>A Trace.</h1>
     <p class="portal-subtitle">
@@ -35,10 +38,8 @@
     align-items: center;
   }
 
-  .portal-logo {
-    width: 300px;
-    max-width: 100%;
-    margin-bottom: 2rem;
+  .portal-logo-container {
+    margin-bottom: 4rem;
   }
 
   .portal-tag {
