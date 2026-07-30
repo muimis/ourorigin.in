@@ -5,14 +5,16 @@ import OriginMark from './OriginMark.astro';
 ---
 
 <section class="origin-zone">
+  <div class="origin-cinematic-bg"></div>
+  
   <div class="origin-content">
     <div class="origin-header">
-      <OriginMark size="120px" class="origin-mark-left" />
-      <h1 class="origin-title">The Absolute Truth of the Soil</h1>
-      <p class="origin-subtitle">The Truth Leaves A Trace.</p>
+      <OriginMark size="80px" class="origin-mark-left" />
+      <h1 class="origin-title">The Absolute Truth<br>of the Soil</h1>
+      <p class="origin-subtitle">The Truth Leaves A Trace &middot; Western Ghats</p>
     </div>
     
-    <div class="origin-body">
+    <div class="origin-body editorial-layout">
       <TheManifesto />
     </div>
   </div>
@@ -27,47 +29,100 @@ import OriginMark from './OriginMark.astro';
     overflow-y: auto;
     background-color: var(--color-forest-deep);
     color: var(--color-warm-cream);
-    /* Hide scrollbar for a cleaner look but keep functionality */
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
   
   .origin-zone::-webkit-scrollbar {
     display: none;
   }
 
+  /* Cinematic Parallax Background */
+  .origin-cinematic-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 50vw;
+    height: 100vh;
+    background-image: url('/assets/origins/wayanad-canopy.webp');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.15;
+    z-index: 0;
+    pointer-events: none;
+    /* Very slow pulse to make it feel alive */
+    animation: slowBreathe 20s infinite alternate ease-in-out;
+  }
+
+  @keyframes slowBreathe {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.05); }
+  }
+
   .origin-content {
-    padding: clamp(2rem, 5vw, 6rem);
-    padding-bottom: 20vh;
-    max-width: 800px;
+    position: relative;
+    z-index: 2;
+    padding: clamp(3rem, 6vw, 8rem) clamp(2rem, 5vw, 6rem);
+    padding-bottom: 25vh;
+    max-width: 900px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 10vh;
+    gap: 15vh;
   }
 
   .origin-header {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
-    margin-top: 10vh;
+    gap: 2.5rem;
+    margin-top: 5vh;
   }
 
   .origin-title {
     font-family: var(--font-institutional);
-    font-size: clamp(2rem, 4vw, 4rem);
+    font-size: clamp(2.5rem, 5vw, 5rem);
     font-weight: 300;
-    line-height: 1.1;
+    line-height: 1;
     text-transform: uppercase;
     margin: 0;
+    letter-spacing: -0.02em;
   }
 
   .origin-subtitle {
     font-family: var(--font-mono);
     font-size: 10px;
-    letter-spacing: 0.25em;
-    color: rgba(245, 237, 216, 0.6);
+    letter-spacing: 0.3em;
+    color: var(--color-gold);
     text-transform: uppercase;
+    border-left: 1px solid var(--color-gold);
+    padding-left: 1rem;
+  }
+
+  /* Editorial Layout overrides for TheManifesto */
+  .editorial-layout :global(.manifesto-container) {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .editorial-layout :global(p) {
+    font-family: 'Cormorant Garamond', serif !important;
+    font-size: clamp(1.2rem, 2vw, 1.8rem) !important;
+    line-height: 1.6 !important;
+    color: rgba(245, 237, 216, 0.9) !important;
+    margin-bottom: 3rem !important;
+    text-indent: 4rem;
+  }
+
+  /* Drop Cap for the first paragraph */
+  .editorial-layout :global(p:first-of-type::first-letter) {
+    font-size: 6rem;
+    line-height: 0.8;
+    float: left;
+    margin-right: 1rem;
+    margin-top: 0.2rem;
+    color: var(--color-gold);
+    font-family: var(--font-institutional);
   }
 
   .axis-line {
@@ -76,17 +131,22 @@ import OriginMark from './OriginMark.astro';
     left: 50vw;
     width: 1px;
     height: 100vh;
-    background: linear-gradient(to bottom, rgba(245, 237, 216, 0) 0%, rgba(245, 237, 216, 0.2) 50%, rgba(245, 237, 216, 0) 100%);
+    background: linear-gradient(to bottom, rgba(245, 237, 216, 0) 0%, rgba(245, 237, 216, 0.4) 50%, rgba(245, 237, 216, 0) 100%);
     z-index: 50;
     pointer-events: none;
+    box-shadow: 0 0 10px rgba(245, 237, 216, 0.2);
   }
 
   @media (max-width: 900px) {
-    .origin-zone {
+    .origin-zone, .origin-cinematic-bg {
       width: 100vw;
       height: auto;
       min-height: 100vh;
       overflow-y: visible;
+      position: relative;
+    }
+    .origin-cinematic-bg {
+      position: absolute;
     }
     .axis-line {
       display: none;

@@ -22,6 +22,11 @@ sortedOrigins.forEach(o => {
 ---
 
 <section class="yield-zone">
+  <!-- Dynamic Image Reveal Element -->
+  <div class="yield-hover-reveal" id="yield-hover-reveal" aria-hidden="true">
+    <img src="" alt="" id="yield-hover-img" />
+  </div>
+
   <div class="yield-content">
     <div class="yield-header">
       <h2 class="yield-title">The Yield</h2>
@@ -51,8 +56,10 @@ sortedOrigins.forEach(o => {
                   quantity: 1
                 });
 
+                const hoverImage = p.data.images?.packaging || p.data.images?.product || '';
+
                 return (
-                  <article class="data-row">
+                  <article class="data-row" data-hover-img={hoverImage}>
                     <div class="data-col data-primary">
                       <span class="data-name">{p.data.name}</span>
                       <span class="data-botanical">{p.data.botanicalName}</span>
@@ -69,11 +76,14 @@ sortedOrigins.forEach(o => {
 
                     <div class="data-col data-action">
                       <button 
-                        class="data-add-btn" 
+                        class="data-add-btn magnetic-btn" 
                         data-product={productDataString}
                         aria-label={`Add ${p.data.name} to transfer`}
                       >
-                        [ + ]
+                        <span class="btn-text">Transfer</span>
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M6 1V11M1 6H11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
                       </button>
                     </div>
                   </article>
@@ -88,8 +98,8 @@ sortedOrigins.forEach(o => {
 </section>
 
 <script>
-  // Add to ledger functionality
   document.addEventListener('DOMContentLoaded', () => {
+    // Add to ledger functionality
     document.querySelectorAll('.data-add-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const productDataStr = (e.currentTarget as HTMLElement).getAttribute('data-product');
@@ -99,6 +109,27 @@ sortedOrigins.forEach(o => {
         }
       });
     });
+
+    // Hover Image Reveal Logic
+    const revealContainer = document.getElementById('yield-hover-reveal');
+    const revealImg = document.getElementById('yield-hover-img') as HTMLImageElement;
+    const rows = document.querySelectorAll('.data-row');
+
+    if (revealContainer && revealImg) {
+      rows.forEach(row => {
+        row.addEventListener('mouseenter', (e) => {
+          const imgSrc = (e.currentTarget as HTMLElement).getAttribute('data-hover-img');
+          if (imgSrc) {
+            revealImg.src = imgSrc;
+            revealContainer.classList.add('is-active');
+          }
+        });
+        
+        row.addEventListener('mouseleave', () => {
+          revealContainer.classList.remove('is-active');
+        });
+      });
+    }
   });
 </script>
 
@@ -109,7 +140,7 @@ sortedOrigins.forEach(o => {
     overflow-y: auto;
     background-color: var(--color-warm-cream);
     color: var(--color-forest-deep);
-    /* Hide scrollbar for a cleaner look but keep functionality */
+    position: relative;
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
@@ -118,18 +149,46 @@ sortedOrigins.forEach(o => {
     display: none;
   }
 
+  /* Fixed Image Reveal */
+  .yield-hover-reveal {
+    position: fixed;
+    top: 50%;
+    right: 5vw;
+    transform: translateY(-50%);
+    width: 300px;
+    height: 400px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 0;
+    mix-blend-mode: multiply; /* Blends beautifully with cream */
+  }
+
+  .yield-hover-reveal.is-active {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.05);
+  }
+
+  .yield-hover-reveal img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
   .yield-content {
-    padding: clamp(2rem, 5vw, 6rem);
-    padding-bottom: 20vh;
-    max-width: 800px;
+    position: relative;
+    z-index: 2; /* Sits above hover reveal */
+    padding: clamp(3rem, 6vw, 8rem) clamp(2rem, 5vw, 6rem);
+    padding-bottom: 25vh;
+    max-width: 900px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 4rem;
+    gap: 10vh;
   }
 
   .yield-header {
-    margin-top: 10vh;
+    margin-top: 5vh;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -137,11 +196,12 @@ sortedOrigins.forEach(o => {
 
   .yield-title {
     font-family: var(--font-institutional);
-    font-size: clamp(2rem, 4vw, 4rem);
+    font-size: clamp(2.5rem, 5vw, 5rem);
     font-weight: 300;
-    line-height: 1.1;
+    line-height: 1;
     text-transform: uppercase;
     margin: 0;
+    letter-spacing: -0.02em;
   }
 
   .yield-subtitle {
@@ -155,7 +215,7 @@ sortedOrigins.forEach(o => {
   .yield-data-stream {
     display: flex;
     flex-direction: column;
-    gap: 4rem;
+    gap: 6rem;
   }
 
   .dataset-title {
@@ -163,7 +223,7 @@ sortedOrigins.forEach(o => {
     font-size: 11px;
     letter-spacing: 0.25em;
     color: rgba(12, 21, 9, 0.4);
-    margin: 0 0 1.5rem 0;
+    margin: 0 0 2rem 0;
     padding-bottom: 0.5rem;
     border-bottom: 1px solid rgba(12, 21, 9, 0.1);
   }
@@ -175,15 +235,17 @@ sortedOrigins.forEach(o => {
 
   .data-row {
     display: grid;
-    grid-template-columns: 2fr 1.5fr 0.5fr 0.5fr;
+    grid-template-columns: 2.5fr 1.5fr 1fr 1fr;
     align-items: center;
-    padding: 1rem 0;
+    padding: 1.5rem 0;
     border-bottom: 1px solid rgba(12, 21, 9, 0.05);
-    transition: background-color 0.2s ease;
+    transition: all 0.3s ease;
+    cursor: default;
   }
   
   .data-row:hover {
-    background-color: rgba(12, 21, 9, 0.02);
+    border-bottom-color: rgba(12, 21, 9, 0.3);
+    transform: translateX(10px);
   }
 
   .data-col {
@@ -193,13 +255,14 @@ sortedOrigins.forEach(o => {
   }
 
   .data-primary {
-    gap: 0.2rem;
+    gap: 0.3rem;
   }
 
   .data-name {
     font-family: var(--font-institutional);
-    font-size: 1.1rem;
+    font-size: 1.4rem;
     font-weight: 500;
+    letter-spacing: 0.02em;
   }
 
   .data-botanical {
@@ -207,38 +270,60 @@ sortedOrigins.forEach(o => {
     font-size: 10px;
     font-style: italic;
     color: rgba(12, 21, 9, 0.5);
+    letter-spacing: 0.05em;
   }
 
   .data-specs {
     font-family: var(--font-mono);
     font-size: 10px;
-    gap: 0.2rem;
+    gap: 0.3rem;
     color: rgba(12, 21, 9, 0.6);
+    letter-spacing: 0.05em;
   }
 
   .data-price {
     font-family: var(--font-mono);
-    font-size: 0.9rem;
+    font-size: 1rem;
     text-align: right;
   }
 
   .data-action {
     text-align: right;
+    display: flex;
+    justify-content: flex-end;
   }
 
-  .data-add-btn {
+  /* Magnetic Button Style */
+  .magnetic-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     font-family: var(--font-mono);
-    font-size: 0.8rem;
-    background: none;
-    border: none;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    background: transparent;
+    border: 1px solid rgba(12, 21, 9, 0.2);
+    border-radius: 40px;
+    padding: 0.6rem 1.2rem;
     color: var(--color-forest-deep);
     cursor: pointer;
-    transition: color 0.2s ease;
-    padding: 0.5rem;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .data-add-btn:hover {
-    color: rgba(12, 21, 9, 0.4);
+  .magnetic-btn svg {
+    transition: transform 0.3s ease;
+  }
+
+  .magnetic-btn:hover {
+    background: var(--color-forest-deep);
+    color: var(--color-warm-cream);
+    border-color: var(--color-forest-deep);
+    transform: scale(1.05);
+  }
+  
+  .magnetic-btn:hover svg {
+    transform: rotate(90deg);
   }
 
   @media (max-width: 900px) {
@@ -252,11 +337,21 @@ sortedOrigins.forEach(o => {
       grid-template-columns: 1fr auto;
       gap: 1rem;
     }
+    .data-row:hover {
+      transform: translateX(0);
+    }
     .data-specs {
       display: none;
     }
-    .data-action {
-      text-align: right;
+    .yield-hover-reveal {
+      display: none;
+    }
+    .btn-text {
+      display: none;
+    }
+    .magnetic-btn {
+      padding: 0.6rem;
+      border-radius: 50%;
     }
   }
 </style>
