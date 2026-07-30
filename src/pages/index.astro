@@ -42,50 +42,69 @@ function getOriginForProduct(product: any) {
             </div>
         </section>
 
-        <!-- ACT II: THE STORY (HORIZONTAL SCROLL) -->
-        <section class="gsap-section gsap-story" id="section-story">
-            <div class="horizontal-scroll-container" id="horizontal-story-container">
-                
-                <!-- Scene 1: The Origin -->
-                <article class="story-panel">
-                    <div class="story-bg" style="background-image: url('/assets/origins/wayanad-canopy.webp');"></div>
-                    <div class="story-content">
-                        <div class="story-node"></div>
-                        <h2 class="story-text">
-                            It begins at the absolute center.<br>
-                            A single coordinate deep within the Western Ghats.
-                        </h2>
-                    </div>
-                </article>
+        <!-- ACT II: THE TRUTH -->
+        <section class="gsap-section gsap-truth" id="section-truth">
+            <div class="truth-bg" id="truth-bg-image"></div>
+            <div class="truth-content">
+                <h2 class="absolute-truth" id="hero-text-2">
+                    The soul is the profound, invisible exchange of dignity and effort from one human being to another.
+                </h2>
+            </div>
+        </section>
 
-                <!-- Scene 2: The Effort -->
-                <article class="story-panel">
-                    <div class="story-bg" style="background-image: url('/assets/origins/idukki-hand.webp');"></div>
-                    <div class="story-content">
-                        <div class="story-node"></div>
-                        <h2 class="story-text">
-                            A path walked by the First Hands.<br>
-                            Taking only what the forest agrees to give.
-                        </h2>
-                    </div>
-                </article>
-
-                <!-- Scene 3: The Exchange -->
-                <article class="story-panel">
-                    <div class="story-bg" style="background-image: url('/assets/origins/nilgiris-specimen.webp');"></div>
-                    <div class="story-content">
-                        <div class="story-node"></div>
-                        <h2 class="story-text">
-                            The yield is not a commodity.<br>
-                            It is the physical completion of a profound, invisible exchange of respect.
-                        </h2>
-                    </div>
-                </article>
-
+        <!-- ACT III: THE EXHIBITION (HORIZONTAL SCROLL) -->
+        <section class="gsap-section gsap-exhibition" id="section-exhibition">
+            <div class="horizontal-scroll-container" id="horizontal-container">
+                {products.map((product, index) => {
+                    const origin = getOriginForProduct(product);
+                    const originName = origin ? origin.data.name : 'Unknown Origin';
+                    
+                    return (
+                        <article class="exhibition-panel">
+                            <div class="exhibition-bg-text" aria-hidden="true">
+                                {product.data.name.split(' ')[0]}
+                            </div>
+                            
+                            <div class="exhibition-content">
+                                <div class="exhibition-image-wrapper">
+                                    <img src={product.data.image} alt={product.data.name} class="exhibition-image" loading="lazy" />
+                                </div>
+                                
+                                <div class="exhibition-meta">
+                                    <h3 class="exhibition-title">{product.data.name}</h3>
+                                    <div class="exhibition-data">
+                                        <div class="data-row">
+                                            <span class="data-label">Origin</span>
+                                            <span class="data-value">{originName}</span>
+                                        </div>
+                                        <div class="data-row">
+                                            <span class="data-label">Harvest</span>
+                                            <span class="data-value">{product.data.harvest_method || 'Selective'}</span>
+                                        </div>
+                                        <div class="data-row">
+                                            <span class="data-label">Value</span>
+                                            <span class="data-value">₹{product.data.price} <span class="unit">/ {product.data.unit}</span></span>
+                                        </div>
+                                    </div>
+                                    
+                                    <button 
+                                        class="honor-decision-btn"
+                                        data-product-id={product.id}
+                                        data-product-name={product.data.name}
+                                        data-product-price={product.data.price}
+                                        data-product-image={product.data.image}
+                                    >
+                                        [ Honor the Harvest ]
+                                    </button>
+                                </div>
+                            </div>
+                        </article>
+                    );
+                })}
             </div>
         </section>
         
-        <!-- ACT III: THE HARVEST (MINIMAL LIST) -->
+        <!-- ACT IV: THE HARVEST (MINIMAL LIST) -->
         <section class="gsap-section gsap-ledger" id="section-ledger">
             <div class="ledger-header">
                 <h2>The Harvest</h2>
@@ -181,35 +200,61 @@ function getOriginForProduct(product: any) {
     }
   });
 
-  // Fade Origin Mark
-  gsap.to("#hero-mark", {
-    scale: 0.5,
-    opacity: 0,
+  // 2. The Truth Sequence (Pinned)
+  const truthTl = gsap.timeline({
     scrollTrigger: {
-      trigger: "#section-void",
-      start: "top top",
-      end: "bottom top",
+      trigger: '#section-truth',
+      start: 'top top',
+      end: '+=200%', // Pin for 2 viewport heights
+      pin: true,
       scrub: true
     }
   });
 
-  // Act II: Horizontal Story
-  const storyContainer = document.getElementById('horizontal-story-container');
-  if (storyContainer) {
-    const panels = gsap.utils.toArray('.story-panel');
-    
-    // Horizontal scroll
-    let scrollTween = gsap.to(panels, {
-      xPercent: -100 * (panels.length - 1),
-      ease: "none",
-      scrollTrigger: {
-        trigger: "#section-story",
-        pin: true,
-        scrub: 1,
-        snap: 1 / (panels.length - 1),
-        end: () => "+=" + storyContainer.offsetWidth
-      }
-    });
+  truthTl.fromTo('#hero-text-2', { opacity: 0, scale: 0.95, y: 50 }, { opacity: 1, scale: 1, y: 0, duration: 1 })
+         .fromTo('#truth-bg-image', { opacity: 0, scale: 1.1 }, { opacity: 0.4, scale: 1, duration: 2 }, "-=0.5")
+         .to('#hero-text-2', { opacity: 0, y: -50, filter: 'blur(10px)', duration: 1 });
+
+  // 3. The Horizontal Exhibition
+  const container = document.getElementById('horizontal-container');
+  const panels = gsap.utils.toArray('.exhibition-panel') as HTMLElement[];
+
+  if (container && panels.length > 0) {
+      gsap.to(panels, {
+        xPercent: -100 * (panels.length - 1),
+        ease: "none",
+        scrollTrigger: {
+          trigger: '#section-exhibition',
+          pin: true,
+          scrub: 1, // Smooth scrubbing
+          snap: 1 / (panels.length - 1),
+          // End after scrolling the width of all panels
+          end: () => "+=" + container.scrollWidth
+        }
+      });
+      
+      // Add subtle parallax to images within the horizontal scroll
+      panels.forEach((panel) => {
+          const img = panel.querySelector('.exhibition-image');
+          if (img) {
+              gsap.fromTo(img, 
+                { x: 100, rotation: 5 },
+                { 
+                  x: -100, 
+                  rotation: -5,
+                  ease: "none",
+                  scrollTrigger: {
+                      trigger: panel,
+                      containerAnimation: gsap.getById(ScrollTrigger.getAll()[3]?.vars.id) || null, // Need to link to the horizontal tween if possible, or just use standard scrub based on viewport
+                      start: "left right",
+                      end: "right left",
+                      scrub: true,
+                      horizontal: true // Tell ScrollTrigger to track horizontal position
+                  }
+                }
+              );
+          }
+      });
   }
 
   // Cart Logic
@@ -345,7 +390,34 @@ function getOriginForProduct(product: any) {
         100% { transform: scaleY(1); transform-origin: top; }
     }
 
-    /* --- ACT II: HORIZONTAL STORY --- */
+    /* --- ACT II: THE TRUTH --- */
+    .truth-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+    }
+
+    .truth-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        background-image: url('/assets/origins/attappady-landscape.webp');
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        z-index: 1;
+        filter: grayscale(50%) contrast(1.1);
+    }
+
+    /* --- ACT III: EXHIBITION --- */
+    .gsap-exhibition {
+        align-items: flex-start;
+        justify-content: flex-start;
+    }
+
     .horizontal-scroll-container {
         display: flex;
         width: max-content;
@@ -353,7 +425,7 @@ function getOriginForProduct(product: any) {
         height: 100dvh;
     }
 
-    .story-panel {
+    .exhibition-panel {
         position: relative;
         width: 100vw;
         height: 100vh;
@@ -361,46 +433,113 @@ function getOriginForProduct(product: any) {
         display: flex;
         align-items: center;
         justify-content: center;
+        padding: 2rem;
         overflow: hidden;
     }
 
-    .story-bg {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-size: cover;
-        background-position: center;
-        opacity: 0.4;
-        filter: grayscale(40%) contrast(1.1);
-        z-index: 1;
-    }
-
-    .story-content {
-        position: relative;
-        z-index: 2;
-        max-width: 800px;
-        text-align: center;
-        padding: 2rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 2rem;
-    }
-
-    .story-node {
-        width: 12px;
-        height: 12px;
-        background-color: var(--color-gold);
-        position: relative;
-    }
-    
-    /* The connecting thread between panels */
-    .story-node::after {
-        content: '';
+    .exhibition-bg-text {
         position: absolute;
         top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-family: var(--font-institutional);
+        font-size: clamp(10rem, 25vw, 30rem);
+        font-weight: 700;
+        color: rgba(245, 237, 216, 0.03);
+        white-space: nowrap;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .exhibition-content {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: 6rem;
+        max-width: 1400px;
+        width: 100%;
+    }
+
+    .exhibition-image-wrapper {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 60vh;
+    }
+
+    .exhibition-image {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+        filter: drop-shadow(0 30px 50px rgba(0,0,0,0.8));
+    }
+
+    .exhibition-meta {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 3rem;
+    }
+
+    .exhibition-title {
+        font-family: var(--font-institutional);
+        font-size: clamp(3rem, 5vw, 5rem);
+        font-weight: 300;
+        color: var(--color-warm-cream);
+        margin: 0;
+        line-height: 1.1;
+    }
+
+    .exhibition-data {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        border-top: 1px solid rgba(245, 237, 216, 0.2);
+        border-bottom: 1px solid rgba(245, 237, 216, 0.2);
+        padding: 2rem 0;
+    }
+
+    .data-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .data-label {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        letter-spacing: 0.2em;
+        color: rgba(245, 237, 216, 0.5);
+        text-transform: uppercase;
+    }
+
+    .data-value {
+        font-family: var(--font-institutional);
+        font-size: 1.5rem;
+        color: var(--color-gold);
+    }
+
+    .data-value .unit {
+        font-size: 1rem;
+        color: var(--color-warm-cream);
+    }
+
+    .honor-decision-btn {
+        background: transparent;
+        border: 1px solid var(--color-gold);
+        color: var(--color-gold);
+        font-family: var(--font-mono);
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+        width: 100%;
+    }
 
     .honor-decision-btn:hover {
         background: var(--color-gold);
@@ -494,8 +633,29 @@ function getOriginForProduct(product: any) {
 
     /* Responsive */
     @media (max-width: 1024px) {
-        .story-text {
-            font-size: clamp(1.8rem, 5vw, 2.5rem);
+        .exhibition-content {
+            flex-direction: column;
+            gap: 2rem;
+            text-align: center;
+        }
+        
+        .exhibition-image-wrapper {
+            height: 35vh;
+        }
+
+        .exhibition-title {
+            font-size: clamp(2.5rem, 8vw, 4rem);
+        }
+
+        .exhibition-data {
+            padding: 1rem 0;
+            gap: 1rem;
+        }
+
+        .data-row {
+            flex-direction: column;
+            gap: 0.25rem;
+            align-items: center;
         }
 
         .ledger-header h2 {
