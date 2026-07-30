@@ -18,6 +18,11 @@
   "images": {
     "packaging": "/assets/products/white-pepper-packaging.png"
   },
+  "sensoryProfile": {
+    "aroma": "Fermented straw, white floral, dry hay",
+    "flavor": "Direct, sharp heat with a cleaner finish and less woodiness than black pepper",
+    "appearance": "Cream-white, smooth spherical seeds"
+  },
   "chemistry": {
     "activeCompound": "Piperine: 4.2%",
     "moistureContent": "Moisture: 10.5%"

@@ -18,6 +18,11 @@
   "images": {
     "packaging": "/assets/products/green-tea-packaging.png"
   },
+  "sensoryProfile": {
+    "aroma": "Steamed spinach, toasted rice, sea breeze",
+    "flavor": "Clean, mineral sweetness with a delicate astringent edge and umami finish",
+    "appearance": "Curly, dark emerald green needles"
+  },
   "chemistry": {
     "activeCompound": "Catechins: 12.5%",
     "moistureContent": "Moisture: 4.8%"

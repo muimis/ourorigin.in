@@ -18,6 +18,11 @@
   "images": {
     "packaging": "/assets/products/coffee-packaging.png"
   },
+  "sensoryProfile": {
+    "aroma": "Roasted cacao, damp soil, molasses",
+    "flavor": "Deep dark chocolate, caramelized stone fruit, low acidity",
+    "appearance": "Medium-roasted, uniform arabica beans with satin oil finish"
+  },
   "chemistry": {
     "activeCompound": "Caffeine: 1.2%",
     "moistureContent": "Moisture: 11.0%"
