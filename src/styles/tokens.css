@@ -1,7 +1,7 @@
 :root {
-  --color-void: #030503;
-  --color-forest-deep: #081006;
-  --color-warm-cream: #F7F2E6;
+  --color-void: #050804;
+  --color-forest-deep: #0c1509; /* Confirmed OurOrigin Background */
+  --color-warm-cream: #EBE5D9;
   --color-gold: #C69C52;
   --color-gold-muted: rgba(198, 156, 82, 0.4);
   --color-ruby: #8a2a2b;
@@ -69,7 +69,7 @@ a, button, [role="button"], input, select, textarea {
 html, body {
   overflow-x: hidden;
   max-width: 100%;
-  background-color: #030603; /* Richer, softer dark */
+  background-color: var(--color-forest-deep);
   color: var(--color-warm-cream);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;

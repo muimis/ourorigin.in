@@ -1,0 +1,41 @@
+<svg width="400" height="120" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- 
+    The Open Axis
+    Organic Duality. Two forms hovering in a state of near-connection, 
+    arranged along a shared axis but stopping just short of contact.
+    The space between them is the final inch.
+  -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&amp;display=swap');
+    .wordmark {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 44px;
+      font-weight: 300;
+      fill: #EBE5D9;
+      letter-spacing: 0.15em;
+    }
+    .form-yield {
+      fill: #C69C52;
+    }
+    .form-origin {
+      fill: #EBE5D9;
+    }
+  </style>
+
+  <g transform="translate(50, 60)">
+    <!-- Right Form (The Market / The Yield) -->
+    <!-- Sweeps from top-center to bottom-right, bowing outward -->
+    <path class="form-yield" d="M 2, -22 
+             A 22 22 0 0 1 18, 18 
+             A 28 28 0 0 0 2, -22 Z" />
+             
+    <!-- Left Form (The Forest / The Origin) -->
+    <!-- Sweeps from bottom-center to top-left, bowing outward -->
+    <path class="form-origin" d="M -2, 22 
+             A 22 22 0 0 1 -18, -18 
+             A 28 28 0 0 0 -2, 22 Z" />
+  </g>
+
+  <!-- Wordmark -->
+  <text x="100" y="74" class="wordmark">OurOrigin</text>
+</svg>
