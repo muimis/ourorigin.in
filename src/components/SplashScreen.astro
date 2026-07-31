@@ -3,37 +3,95 @@ import OriginMark from './OriginMark.astro';
 ---
 
 <div id="splash-screen" class="splash-screen">
-  <div class="splash-content">
-    <OriginMark size={150} variant="gold" animate={true} id="splash-mark" />
+  <div class="splash-content" id="splash-content">
+    <div class="splash-lockup">
+      <OriginMark size={150} variant="gold" animate={true} id="splash-mark" />
+      <span class="splash-wordmark" id="splash-wordmark">OurOrigin</span>
+    </div>
   </div>
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const splashScreen = document.getElementById('splash-screen');
-    const hasSeenSplash = sessionStorage.getItem('hasSeenSplash');
+  import { gsap } from 'gsap';
 
+  // Inline script to add is-splashing immediately to prevent flashes
+  const hasSeenSplash = sessionStorage.getItem('hasSeenSplash');
+  const splashScreen = document.getElementById('splash-screen');
+  
+  if (hasSeenSplash !== 'true' && splashScreen) {
+    document.body.classList.add('is-splashing');
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
     if (!splashScreen) return;
 
     if (hasSeenSplash === 'true') {
-      // If already seen in this session, remove it immediately
       splashScreen.style.display = 'none';
-      document.body.classList.remove('no-scroll');
-    } else {
-      // Prevent scrolling while splash is active
-      document.body.classList.add('no-scroll');
-      
-      // Wait for animations to complete (1.2s tally + 0.8s wordmark + 0.5s linger)
-      setTimeout(() => {
-        splashScreen.classList.add('fade-out');
-        
-        setTimeout(() => {
-          splashScreen.style.display = 'none';
-          document.body.classList.remove('no-scroll');
-          sessionStorage.setItem('hasSeenSplash', 'true');
-        }, 800); // Wait for fade out transition
-      }, 2500);
+      return;
     }
+
+    const wordmark = document.getElementById('splash-wordmark');
+    const splashMark = document.getElementById('splash-mark');
+    const headerMark = document.querySelector('.site-header .origin-mark');
+
+    // Create cinematic timeline
+    const tl = gsap.timeline({
+      onComplete: () => {
+        splashScreen.style.display = 'none';
+        document.body.classList.remove('is-splashing');
+        sessionStorage.setItem('hasSeenSplash', 'true');
+        // Dispatch event for any other scripts (like reveal.js) to know splash is done
+        window.dispatchEvent(new Event('splashComplete'));
+      }
+    });
+
+    // 1. Wait for tally CSS animation to finish (approx 1.2s)
+    tl.to(wordmark, {
+      opacity: 1,
+      x: 0,
+      duration: 0.8,
+      ease: "power2.out",
+      delay: 1.2
+    });
+
+    // 2. Hold for reading
+    tl.to({}, { duration: 0.6 });
+
+    // 3. Fade out wordmark
+    tl.to(wordmark, {
+      opacity: 0,
+      duration: 0.4,
+      ease: "power2.in"
+    });
+
+    // 4. Glide logo to header and fade background
+    tl.add(() => {
+      if (splashMark && headerMark) {
+        const splashRect = splashMark.getBoundingClientRect();
+        const headerRect = headerMark.getBoundingClientRect();
+
+        const scale = headerRect.width / splashRect.width;
+        const dx = headerRect.left - splashRect.left;
+        const dy = headerRect.top - splashRect.top;
+
+        // Animate the mark to the header position
+        gsap.to(splashMark, {
+          x: dx,
+          y: dy,
+          scale: scale,
+          transformOrigin: "top left",
+          duration: 1.2,
+          ease: "power3.inOut"
+        });
+      }
+      
+      // Fade out the splash background
+      gsap.to(splashScreen, {
+        backgroundColor: "rgba(12, 21, 9, 0)",
+        duration: 1.2,
+        ease: "power3.inOut"
+      });
+    });
   });
 </script>
 
@@ -49,19 +107,25 @@ import OriginMark from './OriginMark.astro';
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: opacity 0.8s var(--ease-settle), visibility 0.8s var(--ease-settle);
+    pointer-events: all; /* Block clicks during splash */
   }
 
-  .splash-screen.fade-out {
-    opacity: 0;
-    visibility: hidden;
+  .splash-lockup {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xl);
   }
 
-  .splash-content {
-    /* Centered by flexbox on parent */
+  .splash-wordmark {
+    font-family: var(--font-institutional);
+    font-size: 4rem;
+    color: var(--color-gold);
+    letter-spacing: 0.1em;
+    opacity: 0; /* Hidden initially, GSAP fades it in */
+    transform: translateX(-20px);
   }
 
-  :global(body.no-scroll) {
+  :global(body.is-splashing) {
     overflow: hidden;
   }
 </style>

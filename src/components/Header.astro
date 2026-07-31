@@ -94,6 +94,11 @@ import OriginMark from './OriginMark.astro';
     display: flex;
     align-items: center;
     gap: var(--space-md);
+    transition: opacity 0.1s; /* Very fast transition just for the handoff */
+  }
+
+  :global(body.is-splashing) .brand-lockup {
+    opacity: 0;
   }
 
   .desktop-nav {

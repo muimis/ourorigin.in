@@ -46,6 +46,15 @@ function createObserver() {
 }
 
 export function initReveal() {
+  if (document.body.classList.contains('is-splashing')) {
+    // Wait for the cinematic splash transition to finish
+    window.addEventListener('splashComplete', doInitReveal, { once: true });
+  } else {
+    doInitReveal();
+  }
+}
+
+function doInitReveal() {
   const observer = createObserver();
   
   document.querySelectorAll('[data-reveal]').forEach((el) => {
