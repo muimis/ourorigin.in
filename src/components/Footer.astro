@@ -1,44 +1,31 @@
 ---
-// src/components/Footer.astro
-import { WHATSAPP_NUMBER, EMAIL_ADDRESS, FSSAI_NUMBER } from '../utils/constants';
-import OriginMark from './OriginMark.astro';
-
-const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}`;
-const formattedPhone = '+91 96455 55668';
+const currentYear = new Date().getFullYear();
 ---
-
 <footer class="site-footer">
   <div class="footer-inner">
     <div class="footer-brand">
-      <OriginMark size={40} variant="gold" />
-      <span class="footer-wordmark-text">OurOrigin</span>
+      <span class="wordmark">OurOrigin</span>
+      <p class="tagline">From the earth, with integrity.</p>
     </div>
-
-    <div class="footer-nav">
-      <a href="/observations" class="footer-link">Field Notes</a>
-      <a href="/contact" class="footer-link">Contact</a>
+    
+    <div class="footer-links">
       <a href="/terms" class="footer-link">Terms & Conditions</a>
       <a href="/privacy" class="footer-link">Privacy Policy</a>
     </div>
 
-    <div class="footer-contact">
-      <a href={whatsappLink} class="footer-link" target="_blank" rel="noopener noreferrer">{formattedPhone}</a>
-      <a href={`mailto:${EMAIL_ADDRESS}`} class="footer-link">{EMAIL_ADDRESS}</a>
-    </div>
-
-    <div class="footer-legal">
-      <span class="footer-fssai">FSSAI Reg. No. {FSSAI_NUMBER}</span>
-      <span class="footer-copy">&copy; {new Date().getFullYear()} OurOrigin</span>
+    <div class="footer-copy">
+      &copy; {currentYear} OurOrigin. All rights reserved.
     </div>
   </div>
 </footer>
 
 <style>
   .site-footer {
-    border-top: 1px solid rgba(245, 237, 216, 0.08);
-    padding: 4rem clamp(1.5rem, 5vw, 4rem) 3rem;
-    background-color: var(--color-forest-deep);
+    border-top: 1px solid rgba(235, 229, 217, 0.08);
+    padding: var(--space-4xl) var(--space-xl);
+    background-color: var(--color-void);
     color: var(--color-warm-cream);
+    margin-top: auto;
   }
 
   .footer-inner {
@@ -46,32 +33,29 @@ const formattedPhone = '+91 96455 55668';
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 3rem;
     align-items: center;
+    gap: var(--space-2xl);
     text-align: center;
   }
-  
-  .footer-brand {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-  }
-  
-  .footer-wordmark-text {
+
+  .wordmark {
     font-family: var(--font-institutional);
-    font-size: 1.5rem;
-    font-weight: 300;
+    font-size: 1.25rem;
     letter-spacing: 0.1em;
-    color: var(--color-warm-cream);
-    opacity: 0.8;
+    display: block;
+    margin-bottom: var(--space-sm);
   }
 
-  .footer-nav {
+  .tagline {
+    font-family: var(--font-narrative);
+    font-size: 1rem;
+    color: rgba(235, 229, 217, 0.6);
+    margin: 0;
+  }
+
+  .footer-links {
     display: flex;
-    gap: 2rem;
-    flex-wrap: wrap;
-    justify-content: center;
+    gap: var(--space-xl);
   }
 
   .footer-link {
@@ -79,38 +63,19 @@ const formattedPhone = '+91 96455 55668';
     font-size: 0.75rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: rgba(245, 237, 216, 0.5);
+    color: rgba(235, 229, 217, 0.5);
     text-decoration: none;
-    transition: color 0.3s ease;
+    transition: color var(--duration-standard) var(--ease-settle);
   }
 
   .footer-link:hover {
     color: var(--color-warm-cream);
   }
 
-  .footer-contact {
-    display: flex;
-    gap: 2rem;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .footer-legal {
-    display: flex;
-    gap: 2rem;
-    flex-wrap: wrap;
-    justify-content: center;
+  .footer-copy {
     font-family: var(--font-mono);
     font-size: 0.65rem;
     letter-spacing: 0.05em;
-    color: rgba(245, 237, 216, 0.25);
-  }
-
-  @media (max-width: 600px) {
-    .footer-nav,
-    .footer-contact {
-      flex-direction: column;
-      gap: 1rem;
-    }
+    color: rgba(235, 229, 217, 0.3);
   }
 </style>

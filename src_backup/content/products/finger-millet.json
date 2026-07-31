@@ -1,0 +1,29 @@
+{
+  "slug": "finger-millet",
+  "name": "Finger Millet (Ragi)",
+  "botanicalName": "Eleusine coracana",
+  "originSlug": "attappady",
+  "batchRef": "ATP-FM-001",
+  "sizes": [
+    {
+      "label": "500g",
+      "priceINR": 149,
+      "isPriceVerified": true
+    }
+  ],
+  "methodDescription": "Harvested by hand, sun-dried on traditional mud floors, and hand-winnowed.",
+  "specimenCopy": "Cultivated on the rain-shadow slopes of Attappady. This ancient grain is intensely nutrient-dense, harvested completely by hand by the Irula community.",
+  "images": {
+    "packaging": "/assets/products/finger-millet.png",
+    "product": "/assets/products/finger-millet.png"
+  },
+  "sensoryProfile": {
+    "aroma": "Earthy, roasted nut, warm grain",
+    "flavor": "Deep, slightly malty, with a robust earthy backbone",
+    "appearance": "Tiny, spherical, reddish-brown grains"
+  },
+  "chemistry": {
+    "activeCompound": "Calcium: 344mg/100g",
+    "moistureContent": "Moisture: 10%"
+  }
+}

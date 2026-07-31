@@ -1,0 +1,66 @@
+---
+---
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="brand">
+      <span class="wordmark">OurOrigin</span>
+    </a>
+    <nav class="main-nav">
+      <a href="/observations" class="nav-link">Field Notes</a>
+      <a href="/about" class="nav-link">About</a>
+      <a href="/contact" class="nav-link">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    padding: var(--space-lg) var(--space-xl);
+    background: linear-gradient(to bottom, rgba(12, 21, 9, 0.9) 0%, rgba(12, 21, 9, 0) 100%);
+    backdrop-filter: blur(4px);
+  }
+
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .brand {
+    text-decoration: none;
+    color: var(--color-warm-cream);
+  }
+
+  .wordmark {
+    font-family: var(--font-institutional);
+    font-size: 1.5rem;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+  }
+
+  .main-nav {
+    display: flex;
+    gap: var(--space-2xl);
+  }
+
+  .nav-link {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(235, 229, 217, 0.7);
+    text-decoration: none;
+    transition: color var(--duration-standard) var(--ease-settle);
+  }
+
+  .nav-link:hover {
+    color: var(--color-gold);
+  }
+</style>

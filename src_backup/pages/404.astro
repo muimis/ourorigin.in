@@ -1,17 +1,20 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import BaseLayout from '../components/BaseLayout.astro';
 ---
 
-<Layout
+<BaseLayout
   title="Not Found — OurOrigin"
   description="The page you're looking for doesn't exist."
+  noIndex={true}
+  navVariant="light"
+  showFooter={true}
 >
     <main class="page-container">
         <h1>404</h1>
         <p>This path doesn't lead anywhere yet.</p>
         <a href="/" class="nav-link">← Back to Home</a>
     </main>
-</Layout>
+</BaseLayout>
 
 <style>
     .page-container {

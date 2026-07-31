@@ -1,0 +1,65 @@
+---
+import '../styles/tokens.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import AllYieldsPanel from '../components/AllYieldsPanel.astro';
+import Ledger from '../components/Ledger.astro';
+import CustomCursor from '../components/CustomCursor.astro';
+
+interface Props {
+	title: string;
+    description?: string;
+}
+
+const { title, description = "OurOrigin Website" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content={description} />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		
+        <!-- Google Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Cormorant+Garamond:wght@300;400;500;600&family=DM+Mono:ital,wght@0,300;0,400;0,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+        
+        <title>{title}</title>
+	</head>
+	<body>
+        <Header />
+        
+        <!-- Unified global UI navigation and checkout system -->
+        <AllYieldsPanel />
+        <Ledger />
+        <CustomCursor />
+
+        <script>
+            import '../scripts/reveal.js';
+        </script>
+		
+        <main class="main-content">
+            <slot />
+        </main>
+
+        <Footer />
+	</body>
+</html>
+
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+    
+    .main-content {
+        flex: 1;
+        /* Padding to account for the fixed header */
+        padding-top: 100px;
+    }
+</style>

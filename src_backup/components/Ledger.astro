@@ -1,0 +1,1078 @@
+---
+import { getCollection } from 'astro:content';
+import { WHATSAPP_NUMBER, FSSAI_NUMBER } from '../utils/constants';
+
+const products = await getCollection('products');
+
+// Build a map of originId -> companion product names
+const companionProductsMap = {};
+products.forEach(product => {
+  if (!product.data.isAnchorProduct) {
+    const originId = typeof product.data.originSlug === 'object' ? product.data.originSlug.id : product.data.originSlug;
+    if (!companionProductsMap[originId]) {
+      companionProductsMap[originId] = [];
+    }
+    companionProductsMap[originId].push({
+      id: product.id,
+      name: product.data.name
+    });
+  }
+});
+
+const companionsJson = JSON.stringify(companionProductsMap);
+---
+
+<!-- Global Toast -->
+<div id="ledger-toast" class="ledger-toast hidden" role="status" aria-live="polite" aria-atomic="true">
+  Honored &#x2713;
+</div>
+
+<!-- Persistent Trigger -->
+<div id="ledger-trigger" class="ledger-trigger hidden" aria-live="polite" role="button" tabindex="0">
+  <span id="ledger-count"></span> in ledger
+</div>
+
+<!-- Slide-up Panel -->
+<div id="ledger-overlay" class="ledger-overlay hidden" data-whatsapp={WHATSAPP_NUMBER} data-companions={companionsJson}>
+  <div class="ledger-backdrop" id="ledger-close-backdrop"></div>
+  <div class="ledger-panel" role="complementary" aria-label="Your Basket">
+    <div class="ledger-header">
+      <h2 class="ledger-title">The Transfer Ledger</h2>
+      <button id="ledger-close-btn" class="ledger-close" aria-label="Close Ledger">Close</button>
+    </div>
+    
+    <div class="ledger-content">
+      <div id="ledger-items-container" class="ledger-items">
+        <!-- JS will populate items here -->
+      </div>
+      
+      <div id="ledger-empty-state" class="ledger-empty hidden">
+        Your ledger is empty.<br>Explore our origins.
+      </div>
+      
+      <div id="ledger-footer" class="ledger-footer hidden">
+        <div class="ledger-total">
+          <span>Subtotal</span>
+          <span id="ledger-subtotal-price" class="price-font">₹0</span>
+        </div>
+        
+        <!-- Order Summary (Gap 2) -->
+        <div id="ledger-order-summary" class="ledger-order-summary">
+          <p class="summary-heading">YOUR ORDER</p>
+          <div id="summary-items" class="summary-items"></div>
+          <hr class="summary-divider" />
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span id="summary-subtotal">₹0</span>
+          </div>
+          <div class="summary-row">
+            <span>Shipping</span>
+            <span id="summary-shipping">Free</span>
+          </div>
+          <div id="shipping-prompt-note" class="shipping-prompt-note hidden"></div>
+          <hr class="summary-divider-solid" />
+          <div class="summary-row total-row">
+            <span>Total</span>
+            <span id="summary-total">₹0</span>
+          </div>
+          <p class="dispatch-timeline">DISPATCH WITHIN 2–3 WORKING DAYS · THIRUVANANTHAPURAM</p>
+        </div>
+        <!-- Community Impact Summary -->
+        <div id="ledger-community-summary" class="ledger-community-summary">
+          <span class="community-summary-tag">SUPPORTED ORIGINS</span>
+          <span id="community-origins-list" class="community-origins-list">First Hands · Western Ghats Community</span>
+        </div>
+
+        <div class="ledger-observation-guide">
+          <p class="observation-title">THE FINAL INCH</p>
+          <p class="observation-text">
+            This ledger reflects a journey deep into the forest. It reflects the First Hands leaving the unripened—and whatever the wild animals claim—to nature with joy, not compromise. Their dignity is inherent. By completing this transfer, you take your place as the final link in this origin system.
+          </p>
+        </div>
+
+        <p class="summary-heading">WHERE TO SEND THIS</p>        
+        <!-- Shipping Form -->
+        <form id="shipping-form" class="shipping-form">
+          <input type="text" id="ship-name" name="name" placeholder="Full name" required />
+          <input type="text" id="ship-house" name="house" placeholder="House/Flat number" required />
+          <input type="text" id="ship-street" name="street" placeholder="Street/Locality" required />
+          <div class="form-row">
+            <input type="text" id="ship-city" name="city" placeholder="City" required />
+            <input type="text" id="ship-state" name="state" placeholder="State" required />
+          </div>
+          <div class="form-row">
+            <input type="text" id="ship-pin" name="pin" placeholder="PIN Code (6 digits)" pattern="[0-9]{6}" required />
+            <input type="tel" id="ship-phone" name="phone" placeholder="Phone (for delivery updates)" pattern="[0-9]{10,12}" required />
+          </div>
+          <div class="shipping-actions">
+            <p id="shipping-saved-note" class="shipping-saved-note hidden">Saved from your last order. Tap any field to change.</p>
+            <button type="button" id="clear-shipping-btn" class="clear-shipping-btn hidden">Clear saved details</button>
+          </div>
+        </form>
+
+        <!-- What happens next (Gap 3) -->
+        <p class="human-note">We'll confirm your order on WhatsApp, usually within a few hours.</p>
+
+        <!-- UPI Option -->
+        <div class="ledger-upi-section">
+          <p class="upi-prompt">Prefer to pay directly?</p>
+          <p class="upi-id">UPI: <span id="upi-text">ourorigin@ybl</span> <button type="button" id="copy-upi-btn" class="copy-upi-btn" aria-label="Copy UPI ID">Copy</button></p>
+          <p class="upi-note human-note-small">Paid via UPI? Include your payment reference in the message and we'll confirm immediately.</p>
+        </div>
+
+        <button id="ledger-connect-btn" class="ledger-connect" aria-label="Complete the transfer via WhatsApp">Complete the Transfer</button>
+        
+        <div class="ledger-fssai">FSSAI Reg. No. {FSSAI_NUMBER}</div>
+      </div>
+      
+      <!-- Post-checkout state (Gap 4) -->
+      <div id="ledger-post-checkout" class="ledger-post-checkout hidden">
+        <p class="post-title">Your order is on its way to us.</p>
+        <p class="post-subtitle">We'll reply on WhatsApp.</p>
+        <div class="post-copy-fallback">
+          <p class="fallback-note">If WhatsApp did not open, you can copy the order details manually to paste:</p>
+          <button type="button" id="copy-order-details-btn" class="copy-order-details-btn">[ COPY ORDER TEXT ]</button>
+        </div>
+        <p id="post-reinvite" class="post-reinvite hidden">Four other origins are still waiting.</p>
+      </div>
+      
+      <!-- Secondary Discovery -->
+      <div id="ledger-discovery" class="ledger-discovery hidden">
+        <p id="discovery-text" class="discovery-text"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { cartState } from '../scripts/cart.js';
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const overlay = document.getElementById('ledger-overlay');
+    if (!overlay) return;
+
+    const whatsappNumber = overlay.getAttribute('data-whatsapp') || '';
+    const companionsMap = JSON.parse(overlay.getAttribute('data-companions') || '{}');
+
+    const trigger = document.getElementById('ledger-trigger');
+    const countDisplay = document.getElementById('ledger-count');
+    const closeBtn = document.getElementById('ledger-close-btn');
+    const backdrop = document.getElementById('ledger-close-backdrop');
+    const itemsContainer = document.getElementById('ledger-items-container');
+    const emptyState = document.getElementById('ledger-empty-state');
+    const footer = document.getElementById('ledger-footer');
+    const totalPriceDisplay = document.getElementById('ledger-total-price');
+    const discoverySection = document.getElementById('ledger-discovery');
+    const discoveryText = document.getElementById('discovery-text');
+    const connectBtn = document.getElementById('ledger-connect-btn');
+    const toast = document.getElementById('ledger-toast');
+    const shippingForm = document.getElementById('shipping-form') as HTMLFormElement;
+    const savedNote = document.getElementById('shipping-saved-note');
+    const clearBtn = document.getElementById('clear-shipping-btn');
+    const copyUpiBtn = document.getElementById('copy-upi-btn');
+    
+    // Load shipping details
+    const savedShipping = localStorage.getItem('ourorigin_shipping_v1');
+    if (savedShipping && shippingForm) {
+      try {
+        const data = JSON.parse(savedShipping);
+        Object.keys(data).forEach(key => {
+          const el = shippingForm.elements[key] as HTMLInputElement;
+          if (el) el.value = data[key];
+        });
+        if (savedNote) savedNote.classList.remove('hidden');
+        if (clearBtn) clearBtn.classList.remove('hidden');
+      } catch (e) {}
+    }
+    
+    if (clearBtn && shippingForm) {
+      clearBtn.addEventListener('click', () => {
+        shippingForm.reset();
+        localStorage.removeItem('ourorigin_shipping_v1');
+        if (savedNote) savedNote.classList.add('hidden');
+        clearBtn.classList.add('hidden');
+      });
+    }
+
+    if (copyUpiBtn) {
+      copyUpiBtn.addEventListener('click', () => {
+        const upiText = document.getElementById('upi-text')?.textContent || '';
+        navigator.clipboard.writeText(upiText).then(() => {
+          const originalText = copyUpiBtn.textContent;
+          copyUpiBtn.textContent = 'Copied.';
+          setTimeout(() => copyUpiBtn.textContent = originalText, 1500);
+        });
+      });
+    }
+    
+    function updateTrigger(count) {
+      if (!trigger || !countDisplay) return;
+      if (count > 0) {
+        countDisplay.textContent = count;
+        trigger.classList.remove('hidden');
+        trigger.setAttribute('aria-label', `Open Ledger — ${count} items held`);
+      } else {
+        trigger.classList.add('hidden');
+        trigger.removeAttribute('aria-label');
+      }
+      
+      // Update global Dossier counts and toggle depth basket visibility
+      document.querySelectorAll('.dossier-count').forEach(el => {
+        el.textContent = count;
+      });
+      
+      const depthBasket = document.getElementById('depth-basket-trigger');
+      if (depthBasket) {
+        depthBasket.style.display = count > 0 ? 'block' : 'none';
+      }
+      
+      const depthYields = document.getElementById('depth-yields-trigger');
+      if (depthYields) {
+        depthYields.textContent = count > 0 ? '[ ALL YIELDS ]' : '[ EXPLORE YIELDS ]';
+      }
+      const ccYields = document.getElementById('trigger-yields');
+      if (ccYields) {
+        ccYields.textContent = count > 0 ? '[ ALL YIELDS ]' : '[ EXPLORE YIELDS ]';
+      }
+    }
+    
+    function renderItems(items) {
+      if (!itemsContainer || !emptyState || !footer || !discoverySection) return;
+      itemsContainer.innerHTML = '';
+      
+      if (!items || items.length === 0) {
+        emptyState.classList.remove('hidden');
+        footer.classList.add('hidden');
+        discoverySection.classList.add('hidden');
+        return;
+      }
+      
+      emptyState.classList.add('hidden');
+      footer.classList.remove('hidden');
+      
+      let total = 0;
+      let originsInLedger = new Set<{id: string, name: string}>();
+      let summaryHtml = '';
+      
+      items.forEach(item => {
+        const lineTotal = item.price * item.quantity;
+        total += lineTotal;
+        originsInLedger.add({id: item.originId, name: item.origin});
+        
+        const el = document.createElement('div');
+        el.className = 'ledger-item';
+        el.innerHTML = `
+          <div class="item-info">
+            <span class="item-name">${item.name}</span>
+            <div class="qty-controls">
+              <button class="qty-btn dec" data-id="${item.id}" aria-label="Decrease quantity of ${item.name}">-</button>
+              <span class="qty-val price-font">${item.quantity}</span>
+              <button class="qty-btn inc" data-id="${item.id}" aria-label="Increase quantity of ${item.name}">+</button>
+            </div>
+            <span class="item-size">${item.size || item.weight} · ₹${item.price}</span>
+            <span class="item-line-total price-font">${item.quantity} &times; ₹${item.price} = ₹${lineTotal}</span>
+          </div>
+        `;
+        itemsContainer.appendChild(el);
+        
+        summaryHtml += `
+          <div class="summary-item-row">
+            <span>${item.name} (${item.size || item.weight}) &times; ${item.quantity}</span>
+            <span>₹${lineTotal}</span>
+          </div>
+        `;
+      });
+      
+      const subtotalPriceEl = document.getElementById('ledger-subtotal-price');
+      if (subtotalPriceEl) subtotalPriceEl.textContent = `₹${total}`;
+      
+      // Update Invoice Summary
+      const summaryItems = document.getElementById('summary-items');
+      const summarySub = document.getElementById('summary-subtotal');
+      const summaryShip = document.getElementById('summary-shipping');
+      const summaryTot = document.getElementById('summary-total');
+      const shipNote = document.getElementById('shipping-prompt-note');
+      
+      if (summaryItems) summaryItems.innerHTML = summaryHtml;
+      if (summarySub) summarySub.textContent = `₹${total}`;
+      
+      const cityVal = ((shippingForm?.elements['city'] as HTMLInputElement)?.value || '').toLowerCase();
+      const isLocal = cityVal.includes('thiruvananthapuram') || cityVal.includes('trivandrum');
+      
+      let shippingCost = 0;
+      let shippingText = '';
+      
+      if (isLocal) {
+        shippingText = 'Free — local delivery';
+        if (shipNote) shipNote.classList.add('hidden');
+      } else if (total < 399) {
+        shippingCost = 60;
+        shippingText = `₹${shippingCost}`;
+        if (shipNote) {
+          shipNote.textContent = `Add ₹${399 - total} more for free shipping.`;
+          shipNote.classList.remove('hidden');
+        }
+      } else {
+        shippingText = 'Free';
+        if (shipNote) shipNote.classList.add('hidden');
+      }
+      
+      if (summaryShip) summaryShip.textContent = shippingText;
+      if (summaryTot) summaryTot.textContent = `₹${total + shippingCost}`;
+      
+      if (shippingForm) {
+        shippingForm.setAttribute('data-shipping-cost', shippingCost.toString());
+        shippingForm.setAttribute('data-shipping-text', shippingText);
+        shippingForm.setAttribute('data-total', (total + shippingCost).toString());
+      }
+      
+      // Wire up qty buttons
+      document.querySelectorAll('.qty-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = (e.target as HTMLElement).getAttribute('data-id');
+          const isInc = (e.target as HTMLElement).classList.contains('inc');
+          if (id) {
+            cartState.updateQuantity(id, isInc ? 1 : -1);
+          }
+        });
+      });
+      
+      // Handle Secondary Discovery
+      let discoveryHtmlChunks = [];
+      const uniqueOriginsMap = new Map();
+      Array.from(originsInLedger).forEach(o => uniqueOriginsMap.set(o.id, o.name));
+      
+      uniqueOriginsMap.forEach((originName, originId) => {
+        const companions = companionsMap[originId];
+        if (companions && companions.length > 0) {
+          const availableCompanions = companions.filter(c => !items.some(i => i.productId === c.id));
+          if (availableCompanions.length > 0) {
+            const linksHtml = availableCompanions.map(c => 
+              `<a href="#" class="discovery-link" data-origin="${originId}" data-product="${c.id}" aria-label="Browse more yields from ${originName}">${c.name}</a>`
+            ).join(', ');
+            discoveryHtmlChunks.push(`Also from ${originName}: ${linksHtml}`);
+          }
+        }
+      });
+      
+      if (discoveryHtmlChunks.length > 0 && discoveryText) {
+        discoveryText.innerHTML = discoveryHtmlChunks.join('<br>');
+        discoverySection.classList.remove('hidden');
+        
+        document.querySelectorAll('.discovery-link').forEach(link => {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const originId = (e.target as HTMLElement).getAttribute('data-origin');
+            closeLedger();
+            window.dispatchEvent(new CustomEvent('open-carousel', { detail: { originId: originId, excludeAnchor: true } }));
+          });
+        });
+      } else {
+        discoverySection.classList.add('hidden');
+      }
+    }
+    
+    // Re-render when shipping city changes to update shipping logic instantly
+    const cityInput = document.getElementById('ship-city');
+    if (cityInput) {
+      cityInput.addEventListener('input', () => renderItems(cartState.items));
+    }
+    
+    // Connection logic
+    if (connectBtn) {
+      connectBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        
+        if (cartState.items.length === 0) return;
+        
+        if (shippingForm && !shippingForm.checkValidity()) {
+          shippingForm.reportValidity();
+          return;
+        }
+        
+        const formData = new FormData(shippingForm);
+        const data = Object.fromEntries(formData.entries());
+        localStorage.setItem('ourorigin_shipping_v1', JSON.stringify(data));
+        if (savedNote) savedNote.classList.remove('hidden');
+        if (clearBtn) clearBtn.classList.remove('hidden');
+
+        const shippingCost = parseInt(shippingForm?.getAttribute('data-shipping-cost') || '0', 10);
+        const shippingText = shippingForm?.getAttribute('data-shipping-text') || 'Free';
+        const orderTotal = shippingForm?.getAttribute('data-total') || '0';
+
+        let currentOrderMessage = '';
+
+        if (cartState.items.length === 1 && cartState.items[0].quantity === 1) {
+          const item = cartState.items[0];
+          currentOrderMessage = `Hi — I'd like to order ${item.name} (${item.size || item.weight}) from OurOrigin.\nTotal: ₹${orderTotal}. Shipping: ${shippingText}.\n\nName: ${data.name}\nAddress: ${data.house}, ${data.street}, ${data.city}, ${data.state} – ${data.pin}\nPhone: ${data.phone}\n\nFound you at ourorigin.in.`;
+        } else {
+          currentOrderMessage = `Hi — I'd like to order the following from OurOrigin.\n\n`;
+          cartState.items.forEach(item => {
+            currentOrderMessage += `– ${item.name} (${item.size || item.weight}) × ${item.quantity} · ₹${item.price * item.quantity}\n`;
+          });
+          currentOrderMessage += `\nTotal: ₹${orderTotal}\nShipping: ${shippingText}\n\nName: ${data.name}\nAddress: ${data.house}, ${data.street}, ${data.city}, ${data.state} – ${data.pin}\nPhone: ${data.phone}\n\nFound you at ourorigin.in.`;
+        }
+        
+        const encodedMessage = encodeURIComponent(currentOrderMessage);
+        window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, '_blank');
+        
+        if (itemsContainer) itemsContainer.classList.add('hidden');
+        if (footer) footer.classList.add('hidden');
+        if (discoverySection) discoverySection.classList.add('hidden');
+        const postCheckout = document.getElementById('ledger-post-checkout');
+        if (postCheckout) postCheckout.classList.remove('hidden');
+        
+        setTimeout(() => {
+          const reinvite = document.getElementById('post-reinvite');
+          if (reinvite) reinvite.classList.remove('hidden');
+        }, 1500);
+
+        const copyOrderBtn = document.getElementById('copy-order-details-btn');
+        if (copyOrderBtn) {
+          copyOrderBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(currentOrderMessage).then(() => {
+              const originalText = copyOrderBtn.textContent;
+              copyOrderBtn.textContent = '[ COPIED TO CLIPBOARD ]';
+              setTimeout(() => {
+                copyOrderBtn.textContent = originalText;
+              }, 1500);
+            });
+          });
+        }
+        
+        // Clear cart
+        cartState.clear();
+        
+        // Close after 15s to give the user enough time to copy order details manually if needed
+        setTimeout(() => {
+          closeLedger();
+          setTimeout(() => {
+            if (postCheckout) postCheckout.classList.add('hidden');
+            if (itemsContainer) itemsContainer.classList.remove('hidden');
+            const reinvite = document.getElementById('post-reinvite');
+            if (reinvite) reinvite.classList.add('hidden');
+          }, 500);
+        }, 15000);
+      });
+    }
+    
+    // Listen to cart-updated broadcasts from cartState
+    window.addEventListener('cart-updated', (e: any) => {
+      const { items, totalItems } = e.detail;
+      updateTrigger(totalItems);
+      renderItems(items);
+      
+      // Pulse trigger on add
+      if (trigger && totalItems > 0) {
+        trigger.classList.add('pulse-anim');
+        setTimeout(() => {
+          trigger.classList.remove('pulse-anim');
+        }, 500);
+      }
+
+      // Show toast if an item was added (we detect if totalItems increased)
+      const prevTotal = parseInt(trigger?.getAttribute('data-prev-total') || '0', 10);
+      if (totalItems > prevTotal && prevTotal >= 0) {
+        if (toast) {
+          toast.classList.remove('hidden');
+          toast.classList.add('visible');
+          setTimeout(() => {
+            toast.classList.remove('visible');
+            setTimeout(() => toast.classList.add('hidden'), 300);
+          }, 2500);
+        }
+      }
+      trigger?.setAttribute('data-prev-total', totalItems.toString());
+    });
+    
+    const openLedger = () => {
+      renderItems(cartState.items);
+      if (overlay) overlay.classList.remove('hidden');
+    };
+    
+    const closeLedger = () => {
+      if (overlay) overlay.classList.add('hidden');
+    };
+    
+    if (trigger) trigger.addEventListener('click', openLedger);
+    if (closeBtn) closeBtn.addEventListener('click', closeLedger);
+    if (backdrop) backdrop.addEventListener('click', closeLedger);
+    
+    const triggerDossier = document.getElementById('trigger-dossier');
+    if (triggerDossier) {
+      triggerDossier.addEventListener('click', openLedger);
+    }
+
+    // Global listeners for direct open-cart/close-cart calls
+    window.addEventListener('open-cart', openLedger);
+    window.addEventListener('close-cart', closeLedger);
+    window.addEventListener('trigger-dossier', openLedger);
+    
+    // Initial sync
+    updateTrigger(cartState.getTotalItems());
+  });
+</script>
+
+<style>
+  .ledger-toast {
+    position: fixed;
+    top: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+    z-index: 10000;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    background-color: var(--color-forest-deep);
+    color: var(--color-warm-cream);
+    padding: 0.6rem 1.2rem;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+    border: 1px solid rgba(245, 237, 216, 0.4);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .ledger-toast.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 237, 216, 0.4); }
+    70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(245, 237, 216, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 237, 216, 0); }
+  }
+
+  .pulse-anim {
+    animation: pulse 0.5s ease-out;
+  }
+
+  .ledger-trigger {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    z-index: 900;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--color-warm-cream);
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    padding: 0;
+    transition: opacity 0.3s ease;
+  }
+  .ledger-trigger.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  .ledger-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 8500;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    pointer-events: auto;
+    opacity: 1;
+    transition: opacity 0.4s ease;
+  }
+  .ledger-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  .ledger-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(12, 21, 9, 0.6);
+    backdrop-filter: blur(4px);
+    transition: opacity 0.4s ease;
+  }
+  
+  .ledger-panel {
+    position: relative;
+    width: 100%;
+    height: 75dvh;
+    background: var(--color-forest-deep);
+    border-top: 1px solid rgba(244, 241, 235, 0.2);
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(0);
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .ledger-overlay.hidden .ledger-panel {
+    transform: translateY(100%);
+  }
+  
+  .ledger-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 5vw 1.5rem;
+    border-bottom: 1px solid rgba(244, 241, 235, 0.1);
+  }
+  .ledger-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.5rem;
+    margin: 0;
+  }
+  .ledger-close {
+    background: none;
+    border: none;
+    color: var(--color-warm-cream);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  
+  .ledger-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 2rem 5vw;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .ledger-empty {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    color: rgba(244, 241, 235, 0.6);
+    text-align: center;
+    margin-top: 2rem;
+  }
+  
+  .ledger-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(244, 241, 235, 0.1);
+  }
+  .item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+  .item-name {
+    font-family: 'Cinzel', serif;
+    font-size: 1.2rem;
+  }
+  .item-size {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: rgba(244, 241, 235, 0.6);
+  }
+  .item-line-total {
+    font-size: 0.75rem;
+    color: rgba(244, 241, 235, 0.4);
+    margin-top: 0.2rem;
+  }
+  .item-controls {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .price-font {
+    font-family: 'DM Mono', monospace;
+  }
+  .qty-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    border: 1px solid rgba(244, 241, 235, 0.3);
+    border-radius: 20px;
+    padding: 0.2rem 0.5rem;
+  }
+  .qty-btn {
+    background: none;
+    border: none;
+    color: var(--color-warm-cream);
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+  }
+  
+  .ledger-footer {
+    margin-top: auto;
+    padding-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .ledger-total {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Cinzel', serif;
+    font-size: 1.2rem;
+  }
+  .ledger-order-summary {
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .summary-heading {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: rgba(244, 241, 235, 0.5);
+    margin: 0 0 1rem 0;
+    text-transform: uppercase;
+  }
+  .summary-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .summary-item-row {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--color-warm-cream);
+  }
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: rgba(244, 241, 235, 0.6);
+  }
+  .total-row {
+    color: var(--color-warm-cream);
+    font-weight: bold;
+  }
+  .summary-divider {
+    border: none;
+    border-top: 1px solid rgba(244, 241, 235, 0.15);
+    margin: 0.5rem 0;
+    width: 100%;
+  }
+  .summary-divider-solid {
+    border: none;
+    border-top: 1px solid rgba(244, 241, 235, 0.6);
+    margin: 0.5rem 0;
+    width: 100%;
+  }
+  .shipping-prompt-note {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 11px;
+    color: rgba(244, 241, 235, 0.4);
+    margin: 0;
+  }
+  .dispatch-timeline {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: rgba(244, 241, 235, 0.35);
+    margin: 1rem 0 0 0;
+    text-transform: uppercase;
+  }
+  .ledger-community-summary {
+    background: rgba(166, 124, 60, 0.08);
+    border: 1px solid rgba(166, 124, 60, 0.2);
+    padding: 12px 16px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .community-summary-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--color-gold);
+    text-transform: uppercase;
+  }
+
+  .community-origins-list {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    color: var(--color-warm-cream);
+  }
+
+  .human-note {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: rgba(244, 241, 235, 0.5);
+    margin: 0 0 1.5rem 0;
+  }
+  .human-note-small {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 11px;
+    color: rgba(244, 241, 235, 0.4);
+    margin: 0;
+  }
+  .ledger-post-checkout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+  }
+  .post-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 22px;
+    color: rgba(244, 241, 235, 0.8);
+    margin: 0 0 0.5rem 0;
+  }
+  .post-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    color: rgba(244, 241, 235, 0.55);
+    margin: 0;
+  }
+  .post-reinvite {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    color: rgba(244, 241, 235, 0.4);
+    margin: 1.5rem 0 0 0;
+    transition: opacity 0.5s ease;
+  }
+  
+  .ledger-connect {
+    background: var(--color-warm-cream);
+    color: var(--color-forest-deep);
+    font-family: 'DM Mono', monospace;
+    font-size: 1rem;
+    padding: 1.4rem;
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    border-radius: 0;
+    width: 100%;
+    margin-top: 2rem;
+    transition: background 0.4s ease;
+  }
+  .ledger-connect:hover {
+    background: var(--color-gold);
+  }
+  
+  .ledger-fssai {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: rgba(245, 237, 216, 0.3);
+    text-align: center;
+    margin-top: 1.5rem;
+    letter-spacing: 0.1em;
+  }
+  
+  .discovery-link {
+    color: var(--color-gold);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(166, 124, 60, 0.4);
+    transition: opacity 0.3s ease;
+  }
+  .discovery-link:hover {
+    opacity: 0.7;
+  }
+  
+  .ledger-discovery {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px dashed rgba(244, 241, 235, 0.2);
+  }
+  .discovery-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: rgba(244, 241, 235, 0.8);
+    margin: 0;
+  }
+  .discovery-link {
+    color: var(--color-warm-cream);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(244, 241, 235, 0.4);
+    transition: border-color 0.2s ease;
+  }
+  .discovery-link:hover {
+    border-bottom-color: var(--color-warm-cream);
+  }
+  
+  .hidden {
+    display: none !important;
+  }
+  
+  .ledger-observation-guide {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    border: 1px dashed rgba(166, 124, 60, 0.3); /* Subtle gold dashed border */
+    background: rgba(12, 21, 9, 0.4);
+    border-radius: 4px;
+  }
+  
+  .observation-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: rgba(166, 124, 60, 0.9); /* Perfect visibility secondary color (gold) */
+    margin: 0 0 1rem 0;
+    text-transform: uppercase;
+  }
+  
+  .observation-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--color-warm-cream); /* Perfect readability */
+    margin: 0;
+    opacity: 0.9;
+  }
+  
+  .shipping-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-bottom: 2rem;
+  }
+  .shipping-form input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(245, 237, 216, 0.2);
+    color: var(--color-warm-cream);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    padding: 0.5rem 0;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+  .shipping-form input:focus {
+    outline: none;
+    border-color: rgba(244, 241, 235, 0.6);
+    background: transparent;
+  }
+  .shipping-form input:user-invalid {
+    border-color: rgba(255, 100, 100, 0.5);
+  }
+  .form-row {
+    display: flex;
+    gap: 1rem;
+  }
+  .shipping-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.5rem;
+  }
+  .shipping-saved-note {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 12px;
+    color: rgba(245, 237, 216, 0.45);
+    margin: 0;
+  }
+  .clear-shipping-btn {
+    background: none;
+    border: none;
+    color: rgba(245, 237, 216, 0.4);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+  }
+  .clear-shipping-btn:hover {
+    color: var(--color-warm-cream);
+  }
+  
+  .ledger-upi-section {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(245, 237, 216, 0.1);
+  }
+  .upi-prompt {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    color: rgba(245, 237, 216, 0.6);
+    margin: 0 0 0.2rem 0;
+  }
+  .upi-id {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    color: rgba(245, 237, 216, 0.8);
+    margin: 0 0 0.4rem 0;
+  }
+  #upi-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+  }
+  .copy-upi-btn {
+    background: rgba(245, 237, 216, 0.1);
+    border: none;
+    color: var(--color-warm-cream);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 0.2rem 0.4rem;
+    border-radius: 2px;
+    cursor: pointer;
+    margin-left: 0.5rem;
+  }
+  .copy-upi-btn:hover {
+    background: rgba(245, 237, 216, 0.2);
+  }
+  .upi-note {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 12px;
+    color: rgba(245, 237, 216, 0.45);
+    margin: 0;
+  }
+
+  .post-copy-fallback {
+    margin: 2rem auto;
+    padding: 1.5rem;
+    border: 1px solid rgba(245, 237, 216, 0.15);
+    background: rgba(245, 237, 216, 0.02);
+    text-align: center;
+    max-width: 400px;
+  }
+  .fallback-note {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    color: rgba(245, 237, 216, 0.7);
+    margin: 0 0 1rem 0;
+    line-height: 1.4;
+  }
+  .copy-order-details-btn {
+    background: transparent;
+    border: 1px solid rgba(245, 237, 216, 0.4);
+    color: var(--color-warm-cream);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 0.8rem 1.5rem;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+  }
+  .copy-order-details-btn:hover {
+    background-color: rgba(245, 237, 216, 0.05);
+    border-color: var(--color-gold);
+    color: var(--color-gold);
+  }
+</style>

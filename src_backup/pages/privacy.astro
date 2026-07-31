@@ -1,11 +1,16 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import BaseLayout from '../components/BaseLayout.astro';
 import { EMAIL_ADDRESS } from '../utils/constants';
 ---
 
-<Layout
+<BaseLayout
   title="Protocol 01: Data & Shipping — OurOrigin"
   description="How OurOrigin handles and stores your data. Privacy by design."
+  canonicalPath="/privacy"
+  ogTitle="Protocol 01: Data & Shipping | OurOrigin"
+  ogDescription="How OurOrigin handles and stores your data. Privacy by design."
+  navVariant="light"
+  showFooter={true}
 >
     <main id="main-content" class="page-container">
         <h1>[ PROTOCOL 01 : DATA RETENTION & SHIPPING CONVENTIONS ]</h1>
@@ -38,7 +43,7 @@ import { EMAIL_ADDRESS } from '../utils/constants';
 
         <a href="/" class="nav-link">← Back to Home</a>
     </main>
-</Layout>
+</BaseLayout>
 
 <style>
     .page-container {

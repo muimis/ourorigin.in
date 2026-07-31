@@ -1,11 +1,16 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import BaseLayout from '../components/BaseLayout.astro';
 import { EMAIL_ADDRESS, FSSAI_NUMBER } from '../utils/constants';
 ---
 
-<Layout
+<BaseLayout
   title="Protocol 02: Checkout & Terms — OurOrigin"
   description="Terms governing orders, seasonal yields, and deliveries from OurOrigin."
+  canonicalPath="/terms"
+  ogTitle="Protocol 02: Checkout & Terms | OurOrigin"
+  ogDescription="Terms governing orders, seasonal yields, and deliveries from OurOrigin."
+  navVariant="light"
+  showFooter={true}
 >
     <main id="main-content" class="page-container">
         <h1>[ PROTOCOL 02 : TRANSITIONAL AGREEMENTS & CHECKOUT POLICIES ]</h1>
@@ -43,7 +48,7 @@ import { EMAIL_ADDRESS, FSSAI_NUMBER } from '../utils/constants';
 
         <a href="/" class="nav-link">← Back to Home</a>
     </main>
-</Layout>
+</BaseLayout>
 
 <style>
     .page-container {

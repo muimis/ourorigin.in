@@ -1,0 +1,230 @@
+---
+const testimonies = [
+  {
+    quote: "\"I've cooked with spices my whole life. This ragi — it's different. You can taste where it came from.\"",
+    name: "Chef Arjun S.",
+    title: "Head Chef, Kochi",
+    rating: 5
+  },
+  {
+    quote: "\"My grandmother used to grow this in Wayanad. I thought it was gone forever. OurOrigin found it.\"",
+    name: "Meena R.",
+    title: "Home cook, Thrissur",
+    rating: 4.5
+  },
+  {
+    quote: "\"I source for three restaurants. OurOrigin is the only brand I don't have to verify myself.\"",
+    name: "Riyaz M.",
+    title: "F&B Procurement, Bangalore",
+    rating: 5
+  },
+  {
+    quote: "\"The foxtail millet cooks in half the time and smells like the Nilgiris themselves.\"",
+    name: "Ananya K.",
+    title: "Nutrition consultant, Chennai",
+    rating: 5
+  }
+];
+
+// Helper to render stars based on rating
+const renderStars = (rating: number) => {
+  const stars = [];
+  for(let i=1; i<=5; i++) {
+    if(rating >= i) {
+      stars.push('★');
+    } else if (rating === i - 0.5) {
+      stars.push('☆'); // Simplified half-star
+    } else {
+      stars.push('☆');
+    }
+  }
+  return stars.join('');
+};
+---
+<section class="testimonies-section">
+  <div class="testimonies-container">
+    
+    <div class="testimonies-header">
+      <h2 class="title">Chefs and farmers across Kerala trust OurOrigin</h2>
+      <p class="desc">Do not take our word for it — see what people say after tasting the real difference.</p>
+    </div>
+
+    <div class="testimonies-table">
+      <div class="table-header">
+        <div class="header-left">Rating & Reviews</div>
+        <div class="header-center">
+          <span>Verified reviews [ 127 ]</span>
+          <span class="global-rating">★★★★★ [ 4.9/5 ]</span>
+        </div>
+        <div class="header-right">OURORIGIN in use</div>
+      </div>
+      
+      <div class="divider"></div>
+
+      {testimonies.map((item) => (
+        <div class="testimony-item">
+          <div class="testimony-content">
+            <div class="testimony-rating">
+              <span class="stars">{renderStars(item.rating)}</span>
+              <span class="rating-text">[ {item.rating}/5 ]</span>
+            </div>
+            
+            <h3 class="quote">{item.quote}</h3>
+            
+            <div class="author-info">
+              <span class="author-name">{item.name}</span>
+              <span class="author-title">{item.title}</span>
+            </div>
+          </div>
+          
+          <!-- Image placeholder for user/usage image -->
+          <div class="testimony-image glass-panel"></div>
+        </div>
+        <div class="divider"></div>
+      ))}
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .testimonies-section {
+    padding: var(--space-4xl) var(--space-xl);
+    position: relative;
+    z-index: 2;
+  }
+
+  .testimonies-container {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .testimonies-header {
+    text-align: center;
+    margin-bottom: var(--space-4xl);
+  }
+
+  .title {
+    font-family: var(--font-display);
+    font-size: var(--text-title);
+    font-weight: 300;
+    line-height: var(--line-height-tight);
+    margin: 0 0 var(--space-md) 0;
+    color: var(--color-warm-cream);
+  }
+
+  .desc {
+    font-family: var(--font-sans);
+    font-size: var(--text-lead);
+    color: rgba(235, 229, 217, 0.7);
+    margin: 0;
+  }
+
+  .testimonies-table {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .table-header {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(235, 229, 217, 0.5);
+    padding-bottom: var(--space-xl);
+  }
+
+  .header-center {
+    display: flex;
+    gap: var(--space-xl);
+  }
+
+  .global-rating {
+    color: var(--color-gold);
+  }
+
+  .divider {
+    height: 1px;
+    background-color: rgba(198, 156, 82, 0.2);
+    width: 100%;
+  }
+
+  .testimony-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-2xl) 0;
+    gap: var(--space-2xl);
+  }
+
+  .testimony-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .testimony-rating {
+    display: flex;
+    gap: var(--space-md);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+  }
+
+  .stars {
+    color: var(--color-gold);
+    letter-spacing: 2px;
+  }
+
+  .rating-text {
+    color: rgba(235, 229, 217, 0.5);
+  }
+
+  .quote {
+    font-family: var(--font-display);
+    font-size: var(--text-lead);
+    font-weight: 400;
+    line-height: 1.4;
+    margin: 0;
+    color: var(--color-warm-cream);
+  }
+
+  .author-info {
+    display: flex;
+    gap: var(--space-md);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+
+  .author-name {
+    color: var(--color-gold);
+  }
+
+  .author-title {
+    color: rgba(235, 229, 217, 0.5);
+  }
+
+  .testimony-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    background: rgba(198, 156, 82, 0.1);
+  }
+
+  @media (max-width: 768px) {
+    .table-header {
+      flex-direction: column;
+      gap: var(--space-md);
+      align-items: flex-start;
+    }
+    
+    .testimony-item {
+      flex-direction: column-reverse;
+      align-items: flex-start;
+    }
+  }
+</style>

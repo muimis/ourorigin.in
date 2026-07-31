@@ -1,0 +1,29 @@
+{
+  "slug": "little-millet",
+  "name": "Little Millet (Chama)",
+  "botanicalName": "Panicum sumatrense",
+  "originSlug": "attappady",
+  "batchRef": "ATP-LM-001",
+  "sizes": [
+    {
+      "label": "500g",
+      "priceINR": 159,
+      "isPriceVerified": true
+    }
+  ],
+  "methodDescription": "Selective hand harvest, natural sun drying, and traditional pounding.",
+  "specimenCopy": "A remarkably resilient grain that survives where others fail. The Kurumba tribe has preserved these specific landrace seeds for centuries.",
+  "images": {
+    "packaging": "/assets/products/little-millet.png",
+    "product": "/assets/products/little-millet.png"
+  },
+  "sensoryProfile": {
+    "aroma": "Mild, sweet, slightly nutty",
+    "flavor": "Subtle sweetness, clean, light on the palate",
+    "appearance": "Small, smooth, ivory-white grains"
+  },
+  "chemistry": {
+    "activeCompound": "Iron: 9.3mg/100g",
+    "moistureContent": "Moisture: 9%"
+  }
+}

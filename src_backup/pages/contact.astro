@@ -1,14 +1,19 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import BaseLayout from '../components/BaseLayout.astro';
 import { WHATSAPP_NUMBER, EMAIL_ADDRESS } from '../utils/constants';
 
 const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}`;
 const formattedPhone = '+91 96455 55668';
 ---
 
-<Layout
+<BaseLayout
   title="Inquiry Dispatch — OurOrigin"
   description="Reach out to OurOrigin for inquiries, harvest reservations, or questions about our origins."
+  canonicalPath="/contact"
+  ogTitle="Inquiry Dispatch | OurOrigin"
+  ogDescription="Reach out to OurOrigin for inquiries, harvest reservations, or questions about our origins."
+  navVariant="light"
+  showFooter={true}
 >
     <main id="main-content" class="page-container">
         <!-- The 12km Thread -->
@@ -26,7 +31,7 @@ const formattedPhone = '+91 96455 55668';
 
         <a href="/" class="nav-link">← Back to Home</a>
     </main>
-</Layout>
+</BaseLayout>
 
 <style>
     .page-container {
@@ -55,7 +60,7 @@ const formattedPhone = '+91 96455 55668';
 
     h1 {
         font-family: var(--font-institutional);
-        font-size: var(--text-massive);
+        font-size: var(--type-display);
         margin: 0 0 var(--space-xl) 0;
         font-weight: 400;
         color: var(--color-warm-cream);
@@ -65,7 +70,7 @@ const formattedPhone = '+91 96455 55668';
 
     .contact-details p {
         font-family: var(--font-display);
-        font-size: var(--text-lead);
+        font-size: var(--type-narrative);
         line-height: var(--line-height-loose);
         margin: 0 0 var(--space-2xl) 0;
         opacity: 0.9;
@@ -74,7 +79,7 @@ const formattedPhone = '+91 96455 55668';
 
     .contact-link {
         font-family: var(--font-mono);
-        font-size: 0.85rem;
+        font-size: var(--type-evidence);
         color: var(--color-warm-cream);
         text-decoration: none;
         display: block;
@@ -90,7 +95,7 @@ const formattedPhone = '+91 96455 55668';
 
     .contact-gifting {
         font-family: var(--font-mono);
-        font-size: 0.75rem;
+        font-size: var(--type-whisper);
         color: rgba(245, 237, 216, 0.4);
         margin-top: var(--space-3xl);
         letter-spacing: 0.05em;
@@ -99,7 +104,7 @@ const formattedPhone = '+91 96455 55668';
 
     .nav-link {
         font-family: var(--font-mono);
-        font-size: 0.75rem;
+        font-size: var(--type-whisper);
         color: rgba(245, 237, 216, 0.5);
         text-decoration: none;
         letter-spacing: 0.05em;

@@ -1,0 +1,288 @@
+---
+// This section acts as a shell for the complex interactive gallery.
+// The IDs and structure here match the original markup so existing JS can hook into it.
+---
+<section id="wearable" class="gallery-section section">
+  <div class="gallery-container">
+    <div id="wearable-copy" class="gallery-copy">
+      <h4 id="wearable-title" class="gallery-title">
+        <span class="block">So pure,</span> 
+        <span class="block">it's elemental</span>
+      </h4>
+      <div id="wearable-title-2-dummy"></div>
+    </div>
+
+    <!-- Thumbnails for desktop -->
+    <div class="wearable-gallery-thumbs-wrapper is-left desktop-only">
+      <div class="wearable-gallery-thumbs-move-container"></div>
+    </div>
+    <div class="wearable-gallery-thumbs-wrapper is-right desktop-only">
+      <div class="wearable-gallery-thumbs-move-container"></div>
+    </div>
+
+    <!-- Main Interactive Area -->
+    <div id="wearable-main" class="gallery-main">
+      <div id="wearable-main-small"></div>
+      <canvas id="wearable-main-canvas"></canvas>
+      
+      <div id="wearable-gallery-wrapper" class="gallery-wrapper">
+        <div id="wearable-gallery-move-container" class="gallery-move-container">
+          
+          <div class="wearable-gallery-item" data-id="intro" data-type="intro" data-file="intro.webp">
+            <div class="wearable-gallery-item-inner glass-panel"></div>
+          </div>
+          
+          <div class="wearable-gallery-item" data-id="yoga" data-type="video" data-file="yoga.webp">
+            <div class="wearable-gallery-item-inner glass-panel"></div>
+            <div id="wearable-gallery-warning" class="gallery-warning glass-panel">
+              <div id="wearable-gallery-warning-icon-wrapper" class="warning-icon sub2">
+                <h5>Note</h5>
+              </div>
+              <div id="wearable-gallery-warning-message" class="warning-message">
+                This grain travelled 48 hours to reach you.<br>Handle it like the rarity it is.
+              </div>
+            </div>
+          </div>
+          
+          <div class="wearable-gallery-item" data-id="shoulder" data-type="image" data-file="shoulder.webp">
+            <div class="wearable-gallery-item-inner glass-panel"></div>
+          </div>
+          
+          <div class="wearable-gallery-item" data-id="bikini" data-type="image" data-file="bikini.webp">
+            <div class="wearable-gallery-item-inner glass-panel">
+              <div id="wearable-gallery-bikini-overlay"></div>
+              <div id="wearable-gallery-bikini-message">
+                <div id="wearable-gallery-bikini-prompt">Hey <span><span>@</span>ourorigin</span>, where does this come from?</div>
+                <div id="wearable-gallery-bikini-send-btn-wrapper">
+                  <button class="btn is-orange glass-panel">Ask</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="wearable-gallery-item" data-id="glasses" data-type="image" data-file="glasses.webp">
+            <div class="wearable-gallery-item-inner glass-panel"></div>
+          </div>
+          
+          <div class="wearable-gallery-item" data-id="bite" data-type="video" data-file="bite.webp">
+            <div class="wearable-gallery-item-inner glass-panel"></div>
+          </div>
+          
+          <div class="wearable-gallery-item" data-id="pocket" data-type="image" data-file="pocket.webp">
+            <div class="wearable-gallery-item-inner glass-panel"></div>
+          </div>
+          
+          <div id="wearable-magazine" class="wearable-gallery-item" data-id="outro" data-type="outro" data-file="outro.webp">
+            <div id="wearable-magazine-title"></div>
+            <div class="wearable-gallery-item-inner glass-panel">
+              <div id="wearable-magazine-issue">LEDGER NO. 001</div>
+              <div id="wearable-magazine-idea">
+                <div id="wearable-magazine-idea-num">
+                  <div id="wearable-magazine-idea-num-inner">
+                    <span>2</span><span>5</span><span><span>5</span><span>6</span><span>7</span><span>8</span></span>
+                  </div>
+                </div>
+                <div id="wearable-magazine-idea-txt">PURE YIELD<br>PROOFS FOR<br>THIS SEASON</div>
+              </div>
+              <div id="wearable-magazine-main">
+                <div id="wearable-magazine-main-title-1" class="magazine-title-small">We Are So</div>
+                <div id="wearable-magazine-main-title-2" class="magazine-title-large">Rooted!</div>
+                <div id="wearable-magazine-main-desc">
+                  <span class="block">OurOrigin is tracing the truth...</span>
+                  <span class="block">and putting it on the ledger.</span>
+                </div>
+              </div>
+              <div id="wearable-magazine-corner">
+                <div id="wearable-magazine-corner-title">WESTERN-GHATS</div>
+                <div id="wearable-magazine-corner-desc">
+                  <span class="block">A transparent proof system designed to</span>
+                  <span class="block">honour the First Hands.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .gallery-section {
+    padding: var(--space-4xl) 0; /* Full bleed section */
+    position: relative;
+    z-index: 2;
+    overflow: hidden;
+    min-height: 80vh;
+  }
+
+  .gallery-container {
+    max-width: 100%;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .gallery-copy {
+    position: absolute;
+    top: var(--space-2xl);
+    left: var(--space-xl);
+    z-index: 10;
+  }
+
+  .gallery-title {
+    font-family: var(--font-display);
+    font-size: var(--text-massive);
+    font-weight: 300;
+    line-height: var(--line-height-tight);
+    color: var(--color-warm-cream);
+    margin: 0;
+  }
+  
+  .block {
+    display: block;
+  }
+
+  /* HTML Shell for Canvas and Gallery */
+  .gallery-main {
+    position: relative;
+    width: 100%;
+    height: 60vh;
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+  }
+
+  #wearable-main-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .gallery-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+    position: relative;
+    z-index: 2;
+    padding: 0 var(--space-xl);
+  }
+
+  .gallery-wrapper::-webkit-scrollbar {
+    display: none;
+  }
+
+  .gallery-move-container {
+    display: flex;
+    gap: var(--space-xl);
+    width: max-content;
+    padding: var(--space-2xl) 0;
+  }
+
+  .wearable-gallery-item {
+    position: relative;
+    width: 300px;
+    height: 400px;
+    flex-shrink: 0;
+  }
+
+  .wearable-gallery-item-inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: var(--space-lg);
+    background: rgba(12, 21, 9, 0.4);
+  }
+
+  /* Specific styles for the Magazine Item */
+  #wearable-magazine {
+    width: 450px;
+  }
+
+  #wearable-magazine-issue {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: var(--color-gold);
+  }
+
+  .magazine-title-small {
+    font-family: var(--font-institutional);
+    font-size: var(--text-lead);
+  }
+
+  .magazine-title-large {
+    font-family: var(--font-display);
+    font-size: var(--text-massive);
+    line-height: 1;
+    color: var(--color-gold);
+  }
+
+  #wearable-magazine-main-desc {
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    color: rgba(235, 229, 217, 0.7);
+    margin-top: var(--space-md);
+  }
+
+  /* Warnings and Overlays */
+  .gallery-warning {
+    position: absolute;
+    bottom: var(--space-md);
+    left: var(--space-md);
+    right: var(--space-md);
+    padding: var(--space-md);
+    border-radius: 8px;
+    border-left: 2px solid var(--color-gold);
+  }
+
+  .warning-icon {
+    color: var(--color-gold);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    margin-bottom: var(--space-xs);
+  }
+
+  .warning-message {
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+
+  .btn.is-orange {
+    background: transparent;
+    color: var(--color-gold);
+    border: 1px solid var(--color-gold);
+    padding: 0.5rem 1.5rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+  }
+
+  .desktop-only {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .desktop-only {
+      display: block;
+    }
+    
+    .gallery-copy {
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+</style>

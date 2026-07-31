@@ -1,0 +1,383 @@
+---
+import { getCollection } from 'astro:content';
+
+const products = await getCollection('products');
+const origins = await getCollection('origins');
+const originMap = new Map();
+origins.forEach(o => {
+  originMap.set(o.id, {
+    name: o.data.name,
+    elevation: o.data.elevation
+  });
+});
+
+const groupedProducts: Record<string, any> = {};
+
+// We want to sort origins by elevation, same as LivingMatrix.
+const orderedSlugs = ['nilgiris', 'idukki', 'wayanad', 'malabar-coast', 'thiruvananthapuram'];
+const orderedOriginIds = orderedSlugs.map(slug => origins.find(o => o.data.slug === slug)?.id).filter(Boolean);
+
+orderedOriginIds.forEach(originId => {
+  if(originId) {
+    groupedProducts[originId] = {
+      originInfo: originMap.get(originId),
+      products: []
+    };
+  }
+});
+
+products.forEach(p => {
+  const originId = typeof p.data.originSlug === 'object' ? p.data.originSlug.id : p.data.originSlug;
+  if (groupedProducts[originId]) {
+    groupedProducts[originId].products.push(p);
+  }
+});
+
+// Helper to get highest elevation from string like "100m - 1500m"
+function getHighestElevation(elevationString: string) {
+  if (!elevationString) return '';
+  const cleanStr = elevationString.replace(/,/g, '');
+  const matches = cleanStr.match(/\d+/g);
+  if (matches) {
+    return Math.max(...matches.map(Number));
+  }
+  return cleanStr.replace(/[^0-9]/g, '');
+}
+---
+
+
+<!-- Slide-in Panel -->
+<div id="all-yields-panel" class="all-yields-panel hidden" aria-hidden="true">
+  <div class="yields-header">
+    <h2>ALL YIELDS</h2>
+    <button id="all-yields-close" aria-label="Close all yields panel">✕</button>
+  </div>
+  <div class="yields-content">
+    {orderedOriginIds.map(originId => {
+      if(!originId) return null;
+      const group = groupedProducts[originId];
+      if (!group || group.products.length === 0) return null;
+      
+      const elevation = getHighestElevation(group.originInfo.elevation);
+      
+      return (
+        <div class="yield-group">
+          <h3>{group.originInfo.name.toUpperCase()} &nbsp;·&nbsp; {elevation}M</h3>
+          <div class="yield-products">
+            {group.products.sort((a, b) => a.data.name.localeCompare(b.data.name)).map((product) => (
+              <div class="yield-product-row">
+                <div class="yield-product-name">{product.data.name}</div>
+                <div class="yield-product-sizes">
+                  {product.data.isAnchorProduct ? (
+                    <div class="anchor-product-wrapper" data-explore-key={`ourorigin_explored_${originId}_${product.id}`}>
+                      <div class="anchor-first-time">
+                        <a href={`/origins/${originId}/${product.id}`} class="yield-action-btn enter-origin-btn">Enter this origin &rarr;</a>
+                      </div>
+                      <div class="anchor-returning hidden">
+                        <p class="returning-note">You've been here before.</p>
+                        {product.data.sizes.map((sizeObj) => (
+                          <div class="yield-size-row">
+                            <div class="yield-size-price">
+                              {sizeObj.label} &nbsp;₹{sizeObj.priceINR}
+                            </div>
+                            <button class="yield-action-btn add-to-ledger-btn" data-product={JSON.stringify({
+                              id: product.id,
+                              name: product.data.name,
+                              origin: group.originInfo.name,
+                              originId: originId,
+                              size: sizeObj.label,
+                              price: sizeObj.priceINR
+                            })}>Add</button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    product.data.sizes.map((sizeObj) => (
+                      <div class="yield-size-row">
+                        <div class="yield-size-price">
+                          {sizeObj.label} &nbsp;₹{sizeObj.priceINR}
+                        </div>
+                        <button class="yield-action-btn add-to-ledger-btn" data-product={JSON.stringify({
+                          id: product.id,
+                          name: product.data.name,
+                          origin: group.originInfo.name,
+                          originId: originId,
+                          size: sizeObj.label,
+                          price: sizeObj.priceINR
+                        })}>Add</button>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    })}
+    <div class="panel-fssai">FSSAI Reg. No. 21326135000354</div>
+  </div>
+</div>
+
+<div id="all-yields-backdrop" class="yields-backdrop hidden"></div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const panel = document.getElementById('all-yields-panel');
+    const closeBtn = document.getElementById('all-yields-close');
+    const backdrop = document.getElementById('all-yields-backdrop');
+
+    const openPanel = () => {
+      // Evaluate returning visitor state for anchor products
+      document.querySelectorAll('.anchor-product-wrapper').forEach(wrapper => {
+        const key = wrapper.getAttribute('data-explore-key');
+        if (localStorage.getItem(key) === 'true') {
+          wrapper.querySelector('.anchor-first-time').classList.add('hidden');
+          wrapper.querySelector('.anchor-returning').classList.remove('hidden');
+        } else {
+          wrapper.querySelector('.anchor-first-time').classList.remove('hidden');
+          wrapper.querySelector('.anchor-returning').classList.add('hidden');
+        }
+      });
+
+      panel.classList.remove('hidden');
+      void panel.offsetWidth;
+      panel.classList.add('open');
+      backdrop.classList.remove('hidden');
+      void backdrop.offsetWidth;
+      backdrop.classList.add('visible');
+      panel.setAttribute('aria-hidden', 'false');
+    };
+
+    const closePanel = () => {
+      panel.classList.remove('open');
+      backdrop.classList.remove('visible');
+      panel.setAttribute('aria-hidden', 'true');
+      setTimeout(() => {
+        panel.classList.add('hidden');
+        backdrop.classList.add('hidden');
+      }, 400); 
+    };
+
+    if (closeBtn) closeBtn.addEventListener('click', closePanel);
+    if (backdrop) backdrop.addEventListener('click', closePanel);
+    
+    // Listen for global event from DepthExperience
+    window.addEventListener('open-all-yields-panel', openPanel);
+    
+    // Wiring Add buttons
+    document.querySelectorAll('.add-to-ledger-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const productData = JSON.parse(btn.getAttribute('data-product') || '{}');
+        
+        const item = {
+          id: productData.id + '-' + productData.size,
+          productId: productData.id,
+          name: productData.name,
+          origin: productData.origin,
+          originId: productData.originId,
+          size: productData.size,
+          price: productData.price,
+          quantity: 1
+        };
+        
+        window.dispatchEvent(new CustomEvent('add-to-ledger', { detail: item }));
+
+        // Dynamic feedback
+        const originalText = btn.textContent;
+        btn.textContent = 'Honored \u2713';
+        btn.classList.add('is-added');
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.classList.remove('is-added');
+        }, 1200);
+      });
+    });
+  });
+</script>
+
+<style>
+  .all-yields-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    max-width: 360px;
+    height: 100vh;
+    height: 100dvh;
+    background-color: var(--color-forest-deep);
+    border-left: 1px solid rgba(245, 237, 216, 0.1);
+    z-index: 1100;
+    transform: translateX(100%);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    color: var(--color-warm-cream);
+  }
+  
+  @media (max-width: 768px) {
+    .all-yields-panel {
+      max-width: 70vw;
+    }
+  }
+  
+  .all-yields-panel.open {
+    transform: translateX(0);
+  }
+
+  .yields-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(12, 21, 9, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 1050;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+  .yields-backdrop.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .yields-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 1.5rem;
+    border-bottom: 1px solid rgba(245, 237, 216, 0.1);
+  }
+  .yields-header h2 {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: rgba(245, 237, 216, 0.4);
+    font-weight: 400;
+    margin: 0;
+  }
+  .yields-header button {
+    background: none;
+    border: none;
+    color: var(--color-warm-cream);
+    font-size: 1rem;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.3s;
+    padding: 0;
+  }
+  .yields-header button:hover {
+    opacity: 1;
+  }
+
+  .yields-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+  }
+  
+  .yield-group {
+    margin-bottom: 2rem;
+  }
+  .yield-group h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: rgba(245, 237, 216, 0.5);
+    margin: 0 0 1rem 0;
+    font-weight: 400;
+  }
+  
+  .yield-products {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+  
+  .yield-product-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  
+  .yield-product-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    color: rgba(245, 237, 216, 0.9);
+    flex: 1;
+    padding-right: 1rem;
+    line-height: 1.2;
+  }
+  
+  .yield-product-sizes {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 140px;
+  }
+  
+  .yield-size-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  
+  .yield-size-price {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--color-gold);
+    white-space: pre;
+  }
+  
+  .yield-action-btn {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 12px;
+    font-style: italic;
+    color: rgba(245, 237, 216, 0.6);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .yield-action-btn:hover {
+    color: var(--color-warm-cream);
+  }
+  
+  .anchor-first-time {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .anchor-returning {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .returning-note {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 11px;
+    color: rgba(245, 237, 216, 0.4);
+    margin: 0;
+    text-align: right;
+  }
+
+  .panel-fssai {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--color-warm-cream);
+    opacity: 0.3;
+    text-align: center;
+    margin-top: 4rem;
+    letter-spacing: 0.05em;
+  }
+
+  .yield-action-btn.is-added {
+    color: var(--color-gold) !important;
+  }
+</style>

@@ -1,0 +1,125 @@
+---
+const socialItems = [
+  {
+    id: "edge",
+    title: "Grown on the edge<br>of the Ghats",
+    note: "Single-origin.",
+    img: "/images/social-content/edge.webp"
+  },
+  {
+    id: "sticker_1",
+    title: "",
+    note: "",
+    img: "/images/social-content/sticker_1.webp"
+  },
+  {
+    id: "always_on",
+    title: "Always Seasonal",
+    note: "Monsoon-aligned. Harvest-honest.",
+    img: "/images/social-content/always_on.webp"
+  },
+  {
+    id: "color",
+    title: "",
+    note: "",
+    img: "/images/social-content/color.webp"
+  }
+];
+---
+<section id="social-content" class="social-section">
+  <div class="social-container">
+    
+    <div class="social-grid">
+      {socialItems.map(item => (
+        <div class="social-item glass-panel">
+          <div class="social-image-wrapper">
+            <!-- Using a solid color as placeholder since images might not exist in fresh install -->
+            <div class="image-placeholder" style={`background-image: url('${item.img}')`}></div>
+          </div>
+          
+          {(item.title || item.note) && (
+            <div class="social-content">
+              {item.title && <h5 class="social-title" set:html={item.title} />}
+              {item.note && <div class="social-note">{item.note}</div>}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .social-section {
+    padding: var(--space-4xl) var(--space-xl);
+    position: relative;
+    z-index: 2;
+  }
+
+  .social-container {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .social-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-xl);
+  }
+
+  .social-item {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    aspect-ratio: 4/5; /* Portrait style like Instagram */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .social-image-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  .image-placeholder {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(198, 156, 82, 0.05);
+    background-size: cover;
+    background-position: center;
+    transition: transform var(--duration-slow) var(--ease-settle);
+  }
+
+  .social-item:hover .image-placeholder {
+    transform: scale(1.05);
+  }
+
+  .social-content {
+    position: relative;
+    z-index: 2;
+    padding: var(--space-2xl) var(--space-xl);
+    background: linear-gradient(to top, rgba(12, 21, 9, 0.9) 0%, rgba(12, 21, 9, 0) 100%);
+  }
+
+  .social-title {
+    font-family: var(--font-display);
+    font-size: var(--text-lead);
+    color: var(--color-warm-cream);
+    margin: 0 0 var(--space-sm) 0;
+    line-height: 1.2;
+  }
+
+  .social-note {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-gold);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+</style>
