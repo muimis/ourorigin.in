@@ -78,7 +78,7 @@ const renderStars = (rating: number) => {
           </div>
           
           <!-- Image placeholder for user/usage image -->
-          <div class="testimony-image glass-panel"></div>
+          <div class="testimony-image raw-panel"></div>
         </div>
         <div class="divider"></div>
       ))}
@@ -146,8 +146,8 @@ const renderStars = (rating: number) => {
   }
 
   .divider {
-    height: 1px;
-    background-color: rgba(198, 156, 82, 0.2);
+    height: 0;
+    border-top: 1px dashed rgba(198, 156, 82, 0.4);
     width: 100%;
   }
 

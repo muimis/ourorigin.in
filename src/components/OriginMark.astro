@@ -25,7 +25,7 @@ const strokeColor = colorMap[variant];
 
 <svg 
   id={`origin-mark-${id}`}
-  class={`origin-mark variant-${variant} ${animate ? 'is-breathing' : ''}`} 
+  class={`origin-mark variant-${variant} ${animate ? 'is-animated' : ''}`} 
   width={size} 
   height={size} 
   viewBox="0 0 120 120" 
@@ -36,15 +36,15 @@ const strokeColor = colorMap[variant];
   <!-- 5 primitive, hand-drawn hash marks representing the arduous walk, 1 irregular dot representing the yield -->
   <g transform="translate(10, 35)" stroke={strokeColor} stroke-width="5" stroke-linecap="round" fill="none">
     <!-- Primitive hash marks -->
-    <path d="M 2 10 Q 4 25 1 38" />
-    <path d="M 18 0 Q 16 25 17 48" />
-    <path d="M 34 15 Q 35 25 32 33" />
-    <path d="M 50 5 Q 48 25 51 43" />
-    <path d="M 66 18 Q 65 24 67 29" />
+    <path class="tally-line line-1" d="M 2 10 Q 4 25 1 38" />
+    <path class="tally-line line-2" d="M 18 0 Q 16 25 17 48" />
+    <path class="tally-line line-3" d="M 34 15 Q 35 25 32 33" />
+    <path class="tally-line line-4" d="M 50 5 Q 48 25 51 43" />
+    <path class="tally-line line-5" d="M 66 18 Q 65 24 67 29" />
     
     <!-- Primitive, irregular yield dot -->
     {!hideDot && (
-      <path d="M 90 22 C 93 18, 98 22, 97 26 C 96 30, 90 32, 87 27 C 84 22, 87 19, 90 22 Z" fill="var(--color-gold)" stroke="none" />
+      <path class="tally-dot" d="M 90 22 C 93 18, 98 22, 97 26 C 96 30, 90 32, 87 27 C 84 22, 87 19, 90 22 Z" fill="var(--color-gold)" stroke="none" />
     )}
   </g>
 </svg>
@@ -55,12 +55,34 @@ const strokeColor = colorMap[variant];
     transform-origin: center;
   }
   
-  .origin-mark.is-breathing g {
-    animation: breatheOrigin 4s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+  .origin-mark.is-animated .tally-line {
+    stroke-dasharray: 60;
+    stroke-dashoffset: 60;
+    animation: drawTally 0.4s var(--ease-settle) forwards;
   }
   
-  @keyframes breatheOrigin {
-    0% { opacity: 0.5; }
-    100% { opacity: 1; }
+  .origin-mark.is-animated .tally-dot {
+    opacity: 0;
+    transform: scale(0.5);
+    transform-origin: center;
+    animation: popDot 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  .origin-mark.is-animated .line-1 { animation-delay: 0.1s; }
+  .origin-mark.is-animated .line-2 { animation-delay: 0.25s; }
+  .origin-mark.is-animated .line-3 { animation-delay: 0.4s; }
+  .origin-mark.is-animated .line-4 { animation-delay: 0.55s; }
+  .origin-mark.is-animated .line-5 { animation-delay: 0.7s; }
+  .origin-mark.is-animated .tally-dot { animation-delay: 1.0s; }
+  
+  @keyframes drawTally {
+    to { stroke-dashoffset: 0; }
+  }
+
+  @keyframes popDot {
+    to { 
+      opacity: 1; 
+      transform: scale(1);
+    }
   }
 </style>

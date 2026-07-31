@@ -207,7 +207,7 @@ function getHighestElevation(elevationString: string) {
     height: 100vh;
     height: 100dvh;
     background-color: var(--color-forest-deep);
-    border-left: 1px solid rgba(245, 237, 216, 0.1);
+    border-left: 1px dashed rgba(245, 237, 216, 0.2);
     z-index: 1100;
     transform: translateX(100%);
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -249,7 +249,7 @@ function getHighestElevation(elevationString: string) {
     justify-content: space-between;
     align-items: center;
     padding: 2rem 1.5rem;
-    border-bottom: 1px solid rgba(245, 237, 216, 0.1);
+    border-bottom: 1px dashed rgba(245, 237, 216, 0.2);
   }
   .yields-header h2 {
     font-family: 'DM Mono', monospace;
@@ -282,7 +282,7 @@ function getHighestElevation(elevationString: string) {
     margin-bottom: 2rem;
   }
   .yield-group h3 {
-    font-family: 'Cinzel', serif;
+    font-family: var(--font-institutional);
     font-size: 10px;
     letter-spacing: 0.3em;
     color: rgba(245, 237, 216, 0.5);
