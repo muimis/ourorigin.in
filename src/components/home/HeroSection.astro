@@ -1,29 +1,47 @@
 ---
 ---
 <section class="hero-section">
+  <!-- Dynamic Background: Auto-playing silent video or high-res image -->
+  <div class="hero-background">
+    <!-- Using a placeholder image that looks cinematic, since we don't have a video yet -->
+    <div class="bg-image" style="background-image: url('/assets/origins/idukki-canopy.webp');"></div>
+    <div class="bg-overlay"></div>
+  </div>
+
   <div class="hero-container">
-    <div class="hero-tagline">
-      <span>Hand-picked. Soil-honest. First Hands only.</span>
+    <div class="hero-tagline" data-reveal="fade" data-delay="100">
+      <span class="tag-dot"></span> Hand-picked. Soil-honest. First Hands only.
     </div>
 
-    <div class="hero-content">
-      <h1 class="hero-title">Grown by the First Hands. Proven by the Soil.</h1>
+    <div class="hero-content" data-reveal="stagger" data-delay="300">
+      <h1 class="hero-title">
+        Grown by the First Hands.<br />
+        <span class="title-accent">Proven by the Soil.</span>
+      </h1>
       
       <p class="hero-copy">
         Sourced single-origin from the Western Ghats. OurOrigin makes the most indigenous yields feel undeniably real.
       </p>
 
-      <div class="hero-desc">
-        <span class="highlight">The world's most</span>
-        <span class="highlight">rigorously</span>
-        <span class="highlight">traceable single-origin yield.</span>
+      <div class="hero-actions">
+        <a href="#yields" class="btn-primary" onclick="document.getElementById('all-yields-trigger')?.click(); return false;">
+          <span class="btn-text">Explore the Yields</span>
+          <span class="btn-arrow">&rarr;</span>
+        </a>
       </div>
     </div>
 
-    <div class="hero-video-wrapper glass-panel">
-      <!-- Placeholder for video thumbnail, maintaining original dimensions approximately -->
-      <div class="video-placeholder">
-        <div class="play-button">PLAY</div>
+    <!-- Cinematic floating stats/evidence -->
+    <div class="hero-evidence" data-reveal="up" data-delay="600">
+      <div class="evidence-box glass-panel">
+        <div class="evidence-stat">
+          <span class="stat-value">05</span>
+          <span class="stat-label">Verified Origins</span>
+        </div>
+        <div class="evidence-divider"></div>
+        <div class="evidence-desc">
+          The world's most rigorously traceable single-origin yields.
+        </div>
       </div>
     </div>
   </div>
@@ -31,7 +49,8 @@
 
 <style>
   .hero-section {
-    min-height: 100vh;
+    height: 100vh;
+    min-height: 800px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -40,8 +59,38 @@
     overflow: hidden;
   }
 
+  .hero-background {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 0;
+  }
+
+  .bg-image {
+    width: 100%; height: 100%;
+    background-size: cover;
+    background-position: center;
+    transform: scale(1.05); /* Slight scale for potential parallax/pan effect */
+    animation: slowPan 30s linear infinite alternate;
+  }
+
+  .bg-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(
+      to bottom,
+      rgba(12, 21, 9, 0.4) 0%,
+      rgba(12, 21, 9, 0.8) 50%,
+      var(--color-forest-deep) 100%
+    );
+  }
+
+  @keyframes slowPan {
+    0% { transform: scale(1.05) translate(0, 0); }
+    100% { transform: scale(1.05) translate(-1%, -1%); }
+  }
+
   .hero-container {
-    max-width: 1200px;
+    max-width: 1400px;
     width: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -49,6 +98,7 @@
     align-items: center;
     position: relative;
     z-index: 10;
+    margin-top: 5vh;
   }
 
   .hero-tagline {
@@ -58,7 +108,19 @@
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--color-gold);
-    margin-bottom: var(--space-2xl);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .tag-dot {
+    width: 6px;
+    height: 6px;
+    background-color: var(--color-gold);
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 10px var(--color-gold);
   }
 
   .hero-content {
@@ -76,91 +138,134 @@
     color: var(--color-warm-cream);
   }
 
+  .title-accent {
+    font-style: italic;
+    color: var(--color-gold);
+  }
+
   .hero-copy {
     font-family: var(--font-sans);
     font-size: var(--text-lead);
     line-height: var(--line-height-loose);
     color: rgba(235, 229, 217, 0.8);
-    max-width: 480px;
+    max-width: 500px;
     margin: 0;
   }
 
-  .hero-desc {
+  .hero-actions {
+    margin-top: var(--space-md);
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 2rem;
+    background: transparent;
+    border: 1px solid var(--color-gold);
+    color: var(--color-warm-cream);
+    text-decoration: none;
     font-family: var(--font-mono);
-    font-size: 0.85rem;
-    letter-spacing: 0.05em;
-    color: rgba(235, 229, 217, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.9rem;
+    transition: all var(--duration-standard) var(--ease-settle);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: var(--color-gold);
+    transform: translateX(-100%);
+    transition: transform var(--duration-standard) var(--ease-settle);
+    z-index: 0;
+  }
+
+  .btn-primary:hover::before {
+    transform: translateX(0);
+  }
+
+  .btn-text, .btn-arrow {
+    position: relative;
+    z-index: 1;
+    transition: color var(--duration-standard) var(--ease-settle);
+  }
+
+  .btn-primary:hover .btn-text, .btn-primary:hover .btn-arrow {
+    color: var(--color-forest-deep);
+    font-weight: 600;
+  }
+
+  /* Right Side Evidence Box */
+  .hero-evidence {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    height: 100%;
+  }
+
+  .evidence-box {
+    padding: var(--space-2xl);
+    max-width: 320px;
+    border-radius: 2px;
+  }
+
+  .evidence-stat {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
-    border-left: 1px solid rgba(198, 156, 82, 0.3);
-    padding-left: var(--space-md);
+    gap: 0.5rem;
   }
 
-  .hero-desc .highlight {
+  .stat-value {
+    font-family: var(--font-institutional);
+    font-size: 4rem;
+    line-height: 1;
     color: var(--color-gold);
   }
 
-  .hero-video-wrapper {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 16/9;
-    border-radius: 8px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: transform var(--duration-standard) var(--ease-settle);
-  }
-
-  .hero-video-wrapper:hover {
-    transform: scale(1.02);
-  }
-
-  .video-placeholder {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, rgba(12, 21, 9, 0.8) 0%, rgba(198, 156, 82, 0.1) 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .play-button {
+  .stat-label {
     font-family: var(--font-mono);
-    font-size: 0.9rem;
-    letter-spacing: 0.2em;
-    padding: var(--space-md) var(--space-xl);
-    border: 1px solid var(--color-gold);
-    color: var(--color-gold);
-    border-radius: 20px;
-    background: rgba(12, 21, 9, 0.5);
-    backdrop-filter: blur(4px);
-    transition: all var(--duration-standard) var(--ease-settle);
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(235, 229, 217, 0.7);
   }
 
-  .hero-video-wrapper:hover .play-button {
-    background: var(--color-gold);
-    color: var(--color-forest-deep);
+  .evidence-divider {
+    height: 1px;
+    width: 100%;
+    background: rgba(198, 156, 82, 0.3);
+    margin: var(--space-xl) 0;
   }
 
-  @media (max-width: 900px) {
+  .evidence-desc {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    line-height: var(--line-height-base);
+    color: rgba(235, 229, 217, 0.9);
+  }
+
+  @media (max-width: 1024px) {
     .hero-container {
       grid-template-columns: 1fr;
       text-align: center;
+      gap: var(--space-2xl);
     }
-
-    .hero-desc {
-      border-left: none;
-      border-top: 1px solid rgba(198, 156, 82, 0.3);
-      padding-left: 0;
-      padding-top: var(--space-md);
-      align-items: center;
+    .hero-tagline {
+      justify-content: center;
     }
-
     .hero-copy {
       margin: 0 auto;
+    }
+    .hero-evidence {
+      justify-content: center;
+      margin-top: var(--space-2xl);
+    }
+    .evidence-box {
+      text-align: left;
     }
   }
 </style>

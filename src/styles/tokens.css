@@ -86,3 +86,25 @@ body::after {
   border: 1px solid rgba(235, 229, 217, 0.06);
   box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.4);
 }
+
+/* Scroll Reveal Animations */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s var(--ease-settle), transform 0.8s var(--ease-settle);
+  will-change: opacity, transform;
+}
+[data-reveal="fade"] {
+  transform: none;
+}
+[data-reveal].is-revealed,
+[data-reveal="stagger"].is-revealed > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+[data-reveal="stagger"] > * {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s var(--ease-settle), transform 0.8s var(--ease-settle);
+}
+
