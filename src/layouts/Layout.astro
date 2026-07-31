@@ -2,6 +2,9 @@
 import '../styles/tokens.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import AllYieldsPanel from '../components/AllYieldsPanel.astro';
+import Ledger from '../components/Ledger.astro';
+import CustomCursor from '../components/CustomCursor.astro';
 
 interface Props {
 	title: string;
@@ -29,6 +32,15 @@ const { title, description = "OurOrigin Website" } = Astro.props;
 	</head>
 	<body>
         <Header />
+        
+        <!-- Unified global UI navigation and checkout system -->
+        <AllYieldsPanel />
+        <Ledger />
+        <CustomCursor />
+
+        <script>
+            import '../scripts/reveal.js';
+        </script>
 		
         <main class="main-content">
             <slot />

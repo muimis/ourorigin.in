@@ -1,0 +1,29 @@
+{
+  "slug": "black-pepper",
+  "name": "Forest Black Pepper",
+  "botanicalName": "Piper nigrum",
+  "originSlug": "wayanad",
+  "batchRef": "WYD-BP-001",
+  "sizes": [
+    {
+      "label": "100g",
+      "priceINR": 199,
+      "isPriceVerified": true
+    }
+  ],
+  "methodDescription": "Harvested by hand, sun-dried on traditional mats.",
+  "specimenCopy": "The berries are picked green — they only turn black in the drying. The colour you've always known as black pepper isn't the colour it grew. It's the colour of what happened to it afterward.",
+  "images": {
+    "packaging": "/assets/products/black-pepper-packaging.png",
+    "product": "/assets/products/black-pepper-product.png"
+  },
+  "sensoryProfile": {
+    "aroma": "The sharp smell of the woodsmoke it was dried over.",
+    "flavor": "Immediate, searing heat without the delay of commercial pepper.",
+    "appearance": "Deep purple-black, heavily wrinkled, dense uniform berries."
+  },
+  "chemistry": {
+    "activeCompound": "Piperine: 5.8%",
+    "moistureContent": "Moisture: 10.2%"
+  }
+}

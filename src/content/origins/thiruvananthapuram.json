@@ -1,0 +1,26 @@
+{
+  "slug": "thiruvananthapuram",
+  "name": "Thiruvananthapuram",
+  "elevation": "10m",
+  "bioregion": "Western Ghats",
+  "coordinates": "8°31′N, 76°56′E",
+  "rainfall": "2,200–2,800mm annually",
+  "soil": "SANDY LOAM · LATERITIC GRAVELLY TRANSITION",
+  "community": {
+    "description": "Indigenous farming communities, Thiruvananthapuram",
+    "verified": false
+  },
+  "method": "LOWLAND HOMESTEADING · LIFTED, NOT PICKED",
+  "images": {
+    "canopy": "/assets/origins/thiruvananthapuram-canopy.webp",
+    "land": "",
+    "hand": "/assets/origins/thiruvananthapuram-hand.webp",
+    "specimen": "/assets/origins/thiruvananthapuram-specimen.webp",
+    "isPlaceholderImagery": false
+  },
+  "narrative": {
+    "canopy": "The lowest of the five origins. No altitude to shape the growing conditions, no elevation to create a microclimate. Warm and humid nearly year-round. Cultivation here works with heat and wet, not against them.",
+    "land": "Small household plots, ginger grown alongside whatever else is already being raised. Not a monoculture. One of several things in the same ground at the same time. This mixed character is partly why it tastes the way it does.",
+    "hand": "The ginger is lifted from the soil by a household that has grown it alongside everything else — not as a monoculture, not as a commercial operation, but as part of a small, mixed plot tended the way a home is tended. The care is the same."
+  }
+}
