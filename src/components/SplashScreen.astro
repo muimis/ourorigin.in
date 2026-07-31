@@ -1,0 +1,67 @@
+---
+import OriginMark from './OriginMark.astro';
+---
+
+<div id="splash-screen" class="splash-screen">
+  <div class="splash-content">
+    <OriginMark size={150} variant="gold" animate={true} id="splash-mark" />
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const splashScreen = document.getElementById('splash-screen');
+    const hasSeenSplash = sessionStorage.getItem('hasSeenSplash');
+
+    if (!splashScreen) return;
+
+    if (hasSeenSplash === 'true') {
+      // If already seen in this session, remove it immediately
+      splashScreen.style.display = 'none';
+      document.body.classList.remove('no-scroll');
+    } else {
+      // Prevent scrolling while splash is active
+      document.body.classList.add('no-scroll');
+      
+      // Wait for animations to complete (1.2s tally + 0.8s wordmark + 0.5s linger)
+      setTimeout(() => {
+        splashScreen.classList.add('fade-out');
+        
+        setTimeout(() => {
+          splashScreen.style.display = 'none';
+          document.body.classList.remove('no-scroll');
+          sessionStorage.setItem('hasSeenSplash', 'true');
+        }, 800); // Wait for fade out transition
+      }, 2500);
+    }
+  });
+</script>
+
+<style>
+  .splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--color-forest-deep);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.8s var(--ease-settle), visibility 0.8s var(--ease-settle);
+  }
+
+  .splash-screen.fade-out {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .splash-content {
+    /* Centered by flexbox on parent */
+  }
+
+  :global(body.no-scroll) {
+    overflow: hidden;
+  }
+</style>

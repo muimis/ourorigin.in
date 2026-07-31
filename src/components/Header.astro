@@ -5,8 +5,7 @@ import OriginMark from './OriginMark.astro';
   <div class="header-inner">
     <a href="/" class="brand" aria-label="Our Origin">
       <div class="brand-lockup">
-        <OriginMark size={36} variant="gold" animate={true} />
-        <span class="wordmark">OurOrigin</span>
+        <OriginMark size={40} variant="gold" animate={false} />
       </div>
     </a>
 
@@ -95,24 +94,6 @@ import OriginMark from './OriginMark.astro';
     display: flex;
     align-items: center;
     gap: var(--space-md);
-  }
-
-  .wordmark {
-    font-family: var(--font-institutional);
-    font-size: 1.5rem;
-    font-weight: 400;
-    letter-spacing: 0.1em;
-    opacity: 0;
-    transform: translateX(-10px);
-    animation: revealWordmark 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    animation-delay: 1.2s; /* Wait for tally mark animation to finish */
-  }
-
-  @keyframes revealWordmark {
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
   }
 
   .desktop-nav {
