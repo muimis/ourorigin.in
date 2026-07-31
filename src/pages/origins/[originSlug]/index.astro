@@ -1,0 +1,319 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../../layouts/Layout.astro';
+import OriginMark from '../../../components/OriginMark.astro';
+
+export async function getStaticPaths() {
+  const origins = await getCollection('origins');
+  return origins.map((origin) => {
+    return {
+      params: { originSlug: origin.id },
+      props: { origin },
+    };
+  });
+}
+
+const { origin } = Astro.props;
+
+// Get all products for this origin
+const allProducts = await getCollection('products');
+const originProducts = allProducts.filter((product) => {
+  const pOriginId = typeof product.data.originSlug === 'object' ? (product.data.originSlug as any).id : product.data.originSlug;
+  return pOriginId === origin.id;
+});
+
+const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp')
+  ? 'https://ourorigin.in/og-image.jpg'
+  : `https://ourorigin.in${origin.data.images?.specimen || '/og-image.jpg'}`;
+---
+
+<Layout
+  title={`${origin.data.name} — OurOrigin`}
+  description={`Discover yields from ${origin.data.name} — ${origin.data.elevation}, ${origin.data.bioregion}.`}
+>
+  <main class="origin-overview-viewport">
+    <!-- Background Image -->
+    <div class="layer bg-mask-layer pedestal-mask">
+      <div class="bg-image active" style={`background-image: url('${origin.data.images.canopy || origin.data.images.specimen}'); filter: grayscale(80%) brightness(0.3);`}></div>
+    </div>
+
+    <div class="layer ui-layer origin-ui">
+      
+      <a href="/#testimonies" class="back-link">
+        <OriginMark size={24} variant="gold" hideDot={true} />
+        <span>Return to Journey</span>
+      </a>
+
+      <div class="origin-content-grid">
+        <!-- Left Column: Origin Facts -->
+        <div class="origin-facts-col">
+          <h1 class="origin-title">{origin.data.name}</h1>
+          <div class="origin-meta">
+            <span>{origin.data.bioregion}</span>
+            <span>{origin.data.elevation}</span>
+          </div>
+
+          <div class="narrative-box">
+            {origin.data.narrative?.canopy && <p>{origin.data.narrative.canopy}</p>}
+            {origin.data.narrative?.land && <p>{origin.data.narrative.land}</p>}
+            {origin.data.narrative?.hand && <p>{origin.data.narrative.hand}</p>}
+          </div>
+
+          <div class="data-grid">
+            <div class="data-item">
+              <div class="data-label">Coordinates</div>
+              <div class="data-value">{origin.data.coordinates}</div>
+            </div>
+            {origin.data.rainfall && (
+              <div class="data-item">
+                <div class="data-label">Rainfall</div>
+                <div class="data-value">{origin.data.rainfall}</div>
+              </div>
+            )}
+            {origin.data.soil && (
+              <div class="data-item">
+                <div class="data-label">Soil</div>
+                <div class="data-value">{origin.data.soil}</div>
+              </div>
+            )}
+            {origin.data.method && (
+              <div class="data-item">
+                <div class="data-label">Method</div>
+                <div class="data-value">{origin.data.method}</div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <!-- Right Column: Products List -->
+        <div class="origin-products-col">
+          <h2 class="products-header">Yields from this Origin</h2>
+          <div class="products-list">
+            {originProducts.map(product => (
+              <a href={`/origins/${origin.id}/${product.id}`} class="product-card">
+                <div class="product-info">
+                  <h3 class="product-name">{product.data.name}</h3>
+                  {product.data.botanicalName && <div class="product-botanical">{product.data.botanicalName}</div>}
+                  <div class="product-sizes">
+                    {product.data.sizes.map(size => (
+                      <span class="size-tag">{size.label} - ₹{size.priceINR}</span>
+                    ))}
+                  </div>
+                </div>
+                <div class="product-arrow">&rarr;</div>
+              </a>
+            ))}
+            {originProducts.length === 0 && (
+              <p class="no-products">We are currently resting the yields from this origin.</p>
+            )}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .origin-overview-viewport {
+    position: relative;
+    min-height: 100vh;
+    width: 100vw;
+    pointer-events: auto;
+    overflow-x: hidden;
+    color: var(--color-warm-cream);
+  }
+
+  .pedestal-mask {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: -1;
+  }
+  
+  .bg-image {
+    width: 100%; height: 100%;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .ui-layer {
+    padding: 8rem 5vw 4rem 5vw;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .back-link {
+    position: absolute;
+    top: 2rem;
+    left: 5vw;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--color-gold);
+    text-decoration: none;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    z-index: 100;
+    transition: opacity 0.3s;
+  }
+
+  .back-link:hover {
+    opacity: 0.7;
+  }
+
+  .origin-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    margin-top: 4rem;
+  }
+
+  @media (max-width: 900px) {
+    .origin-content-grid {
+      grid-template-columns: 1fr;
+      gap: 4rem;
+    }
+  }
+
+  /* Left Col */
+  .origin-title {
+    font-family: 'Cinzel', serif;
+    font-size: 4rem;
+    line-height: 1.1;
+    margin: 0 0 1rem 0;
+  }
+
+  .origin-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--color-gold);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .narrative-box {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-bottom: 3rem;
+    color: rgba(245, 237, 216, 0.9);
+  }
+
+  .narrative-box p {
+    margin-bottom: 1.5rem;
+  }
+
+  .data-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .data-item {
+    border-left: 1px solid var(--color-gold);
+    padding-left: 1rem;
+  }
+
+  .data-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: var(--color-gold);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+  }
+
+  .data-value {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: rgba(245, 237, 216, 0.8);
+  }
+
+  /* Right Col */
+  .products-header {
+    font-family: 'Cinzel', serif;
+    font-size: 1.5rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid rgba(245, 237, 216, 0.2);
+    padding-bottom: 1rem;
+  }
+
+  .products-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .product-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-decoration: none;
+    color: var(--color-warm-cream);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+  }
+
+  .product-card:hover {
+    border-color: var(--color-gold);
+    background: rgba(198, 156, 82, 0.05);
+    transform: translateX(5px);
+  }
+
+  .product-name {
+    font-family: 'Cinzel', serif;
+    font-size: 1.2rem;
+    margin: 0 0 0.25rem 0;
+  }
+
+  .product-botanical {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-style: italic;
+    color: rgba(245, 237, 216, 0.6);
+    margin-bottom: 1rem;
+  }
+
+  .product-sizes {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .size-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--color-gold);
+    border: 1px solid rgba(198, 156, 82, 0.3);
+    padding: 0.2rem 0.5rem;
+    border-radius: 2px;
+  }
+
+  .product-arrow {
+    font-size: 1.5rem;
+    color: var(--color-gold);
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+  }
+
+  .product-card:hover .product-arrow {
+    opacity: 1;
+  }
+
+  .no-products {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: rgba(245, 237, 216, 0.6);
+  }
+</style>
