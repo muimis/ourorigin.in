@@ -1,0 +1,128 @@
+---
+---
+<section class="sustainability-section">
+  <div class="sustainability-container">
+    
+    <div class="sustainability-header">
+      <div class="tagline">100% Indigenous</div>
+      <h2 class="title">Soil-first authenticity</h2>
+      <p class="desc">
+        Pure yields sourced ethically.<br/>
+        Completely indigenous — no shortcuts taken,<br/>
+        and zero synthetic interference. Ever.
+      </p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-item">
+        <h3 class="stat-title">Average<br>age of<br>soil</h3>
+        <p class="stat-desc">The Western Ghats are older than the Himalayas — older than most mountain ranges on earth. The soil holds memory.</p>
+        <div class="stat-value">25M</div>
+      </div>
+
+      <div class="stat-item">
+        <h3 class="stat-title">Harvest<br>cycles</h3>
+        <p class="stat-desc">Each harvest follows the natural monsoon rhythm — no forcing, no accelerating. The season decides.</p>
+        <div class="stat-value">100%</div>
+      </div>
+
+      <div class="stat-item">
+        <h3 class="stat-title">Pesticides<br>used</h3>
+        <p class="stat-desc">Zero synthetic chemicals. No exceptions. What goes into the soil comes back to you — we take that seriously.</p>
+        <div class="stat-value">0%</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .sustainability-section {
+    padding: var(--space-4xl) var(--space-xl);
+    position: relative;
+    z-index: 2;
+  }
+
+  .sustainability-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .sustainability-header {
+    text-align: center;
+    margin-bottom: var(--space-4xl);
+  }
+
+  .tagline {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+    margin-bottom: var(--space-lg);
+  }
+
+  .title {
+    font-family: var(--font-display);
+    font-size: var(--text-massive);
+    font-weight: 300;
+    line-height: var(--line-height-tight);
+    margin: 0 0 var(--space-lg) 0;
+    color: var(--color-warm-cream);
+  }
+
+  .desc {
+    font-family: var(--font-sans);
+    font-size: var(--text-lead);
+    color: rgba(235, 229, 217, 0.7);
+    line-height: 1.6;
+    margin: 0 auto;
+    max-width: 600px;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-3xl);
+  }
+
+  .stat-item {
+    border-top: 1px solid rgba(198, 156, 82, 0.3);
+    padding-top: var(--space-xl);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stat-title {
+    font-family: var(--font-display);
+    font-size: var(--text-title);
+    font-weight: 400;
+    line-height: 1.1;
+    margin: 0 0 var(--space-lg) 0;
+    color: var(--color-warm-cream);
+  }
+
+  .stat-desc {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: rgba(235, 229, 217, 0.6);
+    margin: 0 0 var(--space-2xl) 0;
+    flex-grow: 1;
+  }
+
+  .stat-value {
+    font-family: var(--font-mono);
+    font-size: clamp(3rem, 5vw, 5rem);
+    font-weight: 300;
+    color: var(--color-gold);
+    line-height: 1;
+  }
+
+  @media (max-width: 900px) {
+    .stats-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-4xl);
+    }
+  }
+</style>
