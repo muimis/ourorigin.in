@@ -5,13 +5,60 @@
     <a href="/" class="brand">
       <span class="wordmark">OurOrigin</span>
     </a>
-    <nav class="main-nav">
+
+    <!-- Desktop Nav -->
+    <nav class="main-nav desktop-nav">
       <a href="/observations" class="nav-link">Field Notes</a>
       <a href="/about" class="nav-link">About</a>
       <a href="/contact" class="nav-link">Contact</a>
     </nav>
+
+    <!-- Mobile Hamburger Toggle -->
+    <button class="mobile-toggle" aria-label="Toggle menu" id="mobile-menu-toggle">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
   </div>
+
+  <!-- Mobile Nav Menu -->
+  <nav class="mobile-nav" id="mobile-nav">
+    <a href="/observations" class="nav-link mobile-nav-link">Field Notes</a>
+    <a href="/about" class="nav-link mobile-nav-link">About</a>
+    <a href="/contact" class="nav-link mobile-nav-link">Contact</a>
+  </nav>
 </header>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const toggleBtn = document.getElementById('mobile-menu-toggle');
+    const mobileNav = document.getElementById('mobile-nav');
+
+    if (toggleBtn && mobileNav) {
+      toggleBtn.addEventListener('click', () => {
+        const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+        toggleBtn.setAttribute('aria-expanded', (!isExpanded).toString());
+        mobileNav.classList.toggle('is-open');
+        toggleBtn.classList.toggle('is-active');
+      });
+    }
+  });
+
+  // Re-init on astro page transitions
+  document.addEventListener('astro:page-load', () => {
+    const toggleBtn = document.getElementById('mobile-menu-toggle');
+    const mobileNav = document.getElementById('mobile-nav');
+
+    if (toggleBtn && mobileNav) {
+      toggleBtn.addEventListener('click', () => {
+        const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+        toggleBtn.setAttribute('aria-expanded', (!isExpanded).toString());
+        mobileNav.classList.toggle('is-open');
+        toggleBtn.classList.toggle('is-active');
+      });
+    }
+  });
+</script>
 
 <style>
   .site-header {
@@ -21,7 +68,7 @@
     width: 100%;
     z-index: 1000;
     padding: var(--space-lg) var(--space-xl);
-    background: linear-gradient(to bottom, rgba(12, 21, 9, 0.9) 0%, rgba(12, 21, 9, 0) 100%);
+    background: linear-gradient(to bottom, rgba(12, 21, 9, 0.95) 0%, rgba(12, 21, 9, 0) 100%);
     backdrop-filter: blur(4px);
   }
 
@@ -31,6 +78,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative;
+    z-index: 1001;
   }
 
   .brand {
@@ -45,7 +94,7 @@
     letter-spacing: 0.1em;
   }
 
-  .main-nav {
+  .desktop-nav {
     display: flex;
     gap: var(--space-2xl);
   }
@@ -62,5 +111,81 @@
 
   .nav-link:hover {
     color: var(--color-gold);
+  }
+
+  /* Mobile Toggle */
+  .mobile-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    flex-direction: column;
+    gap: 5px;
+    padding: 0.5rem;
+  }
+
+  .hamburger-line {
+    width: 24px;
+    height: 1px;
+    background-color: var(--color-warm-cream);
+    transition: transform var(--duration-standard) var(--ease-settle), opacity 0.2s;
+  }
+
+  .mobile-toggle.is-active .hamburger-line:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
+  }
+
+  .mobile-toggle.is-active .hamburger-line:nth-child(2) {
+    opacity: 0;
+  }
+
+  .mobile-toggle.is-active .hamburger-line:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
+  }
+
+  /* Mobile Nav Container */
+  .mobile-nav {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: var(--color-forest-deep);
+    padding: 8rem var(--space-xl) var(--space-xl);
+    flex-direction: column;
+    gap: var(--space-xl);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-10px);
+    transition: all var(--duration-standard) var(--ease-settle);
+  }
+
+  .mobile-nav.is-open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .mobile-nav-link {
+    font-size: 1.25rem;
+  }
+
+  @media (max-width: 768px) {
+    .site-header {
+      padding: var(--space-md) var(--space-lg);
+    }
+
+    .desktop-nav {
+      display: none;
+    }
+
+    .mobile-toggle {
+      display: flex;
+    }
+
+    .mobile-nav {
+      display: flex;
+    }
   }
 </style>

@@ -21,7 +21,7 @@
   --text-base: clamp(1rem, 1.2vw, 1.25rem);
   --text-lead: clamp(1.25rem, 1.5vw, 1.5rem);
   --text-title: clamp(2rem, 4vw, 3.5rem);
-  --text-massive: clamp(3.5rem, 8vw, 8rem);
+  --text-massive: clamp(3rem, 8vw, 8rem); /* Adjusted minimum for mobile */
   
   --line-height-tight: 1.1;
   --line-height-base: 1.4;
@@ -56,6 +56,7 @@ html, body {
   line-height: var(--line-height-base);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 /* Grain Overlay Effect */
@@ -107,4 +108,3 @@ body::after {
   transform: translateY(30px);
   transition: opacity 0.8s var(--ease-settle), transform 0.8s var(--ease-settle);
 }
-
