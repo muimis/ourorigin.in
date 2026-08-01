@@ -1,117 +1,330 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import HeroSection from '../components/home/HeroSection.astro';
-import GallerySection from '../components/home/GallerySection.astro';
-import FeaturesSection from '../components/home/FeaturesSection.astro';
 import VerificationSection from '../components/home/VerificationSection.astro';
 import SustainabilitySection from '../components/home/SustainabilitySection.astro';
 import TestimoniesSection from '../components/home/TestimoniesSection.astro';
 import SocialSection from '../components/home/SocialSection.astro';
-import ProductShowcase from '../components/home/ProductShowcase.astro';
+
+// Load 12 Products for the climax grid
+const productFiles = import.meta.glob('../content/products/*.json', { eager: true });
+const allProducts = Object.values(productFiles).slice(0, 12).map((mod: any) => mod.default);
 ---
 
 <Layout title="OurOrigin | The Proof System" description="Single-origin yields from the Western Ghats, ethically sourced by the First Hands. A proof system for indigenous food.">
 	
-	<!-- The Morphing Transpose Element -->
-	<div class="morph-backdrop" id="morph-backdrop">
-		<div class="morph-image" style="background-image: url('/assets/origins/idukki-canopy.webp');"></div>
-		<div class="morph-overlay"></div>
+	<!-- The Master Scroll Track -> this provides the physical scroll height -->
+	<div class="scroll-track" id="master-scroll-track">
+		<!-- We will have 4 distinct phases, each roughly 150vh long -->
+		<div class="phase-marker" id="phase-1-forest"></div>
+		<div class="phase-marker" id="phase-2-text"></div>
+		<div class="phase-marker" id="phase-3-lens"></div>
+		<div class="phase-marker" id="phase-4-products"></div>
 	</div>
 
-	<main class="story-container" id="story-container">
-		<div class="scene scene-hero" id="scene-hero">
-			<HeroSection />
-		</div>
+	<!-- The Cinematic Canvas -> fixed to screen, holds all the visual elements -->
+	<div class="cinematic-canvas" id="cinematic-canvas">
 		
-		<div class="scene scene-features" id="scene-features">
-			<div class="features-scroll-track">
-				<FeaturesSection />
+		<!-- Act 1 & 2: The Forest & The Mask -->
+		<div class="layer layer-forest" id="layer-forest">
+			<!-- A primitive SVG clip path for the Tally Marks -->
+			<svg width="0" height="0" class="svg-defs">
+				<clipPath id="tally-clip" clipPathUnits="objectBoundingBox">
+					<!-- 4 primitive, slightly uneven strokes -->
+					<path class="tally-stroke stroke-1" d="M0.40,0.30 Q0.41,0.50 0.39,0.70 L0.41,0.70 Q0.43,0.50 0.42,0.30 Z" />
+					<path class="tally-stroke stroke-2" d="M0.46,0.31 Q0.45,0.51 0.47,0.71 L0.49,0.71 Q0.47,0.51 0.48,0.31 Z" />
+					<path class="tally-stroke stroke-3" d="M0.53,0.29 Q0.54,0.49 0.52,0.69 L0.54,0.69 Q0.56,0.49 0.55,0.29 Z" />
+					<path class="tally-stroke stroke-4" d="M0.59,0.30 Q0.58,0.50 0.60,0.70 L0.62,0.70 Q0.60,0.50 0.61,0.30 Z" />
+				</clipPath>
+			</svg>
+			
+			<div class="forest-image-container" id="forest-image-container">
+				<div class="forest-image" style="background-image: url('/assets/origins/idukki-canopy.webp');"></div>
+				<!-- Deep dark overlay to give it a cinematic, earthy mood -->
+				<div class="forest-overlay"></div>
 			</div>
 		</div>
 
-		<div class="scene scene-gallery" id="scene-gallery">
-			<GallerySection />
+		<!-- Act 2: Typography -->
+		<div class="layer layer-typography" id="layer-typography">
+			<h1 class="primitive-text" id="primitive-text-untouched">
+				<span class="letter">U</span>
+				<span class="letter">N</span>
+				<span class="letter">T</span>
+				<span class="letter center-o" id="the-lens-o">O</span>
+				<span class="letter">U</span>
+				<span class="letter">C</span>
+				<span class="letter">H</span>
+				<span class="letter">E</span>
+				<span class="letter">D</span>
+			</h1>
 		</div>
 
-		<div class="scene scene-products" id="scene-products">
-			<ProductShowcase />
+		<!-- Act 3: The Lens Features -->
+		<div class="layer layer-features" id="layer-features">
+			<div class="feature-text" id="feature-1">Dried by the sun.</div>
+			<div class="feature-text" id="feature-2">Left to the elements.</div>
+			<div class="feature-text" id="feature-3">Nothing added.</div>
+			<div class="feature-text" id="feature-4">Nothing taken.</div>
 		</div>
 
+		<!-- Act 4: The Products Grid -->
+		<div class="layer layer-products" id="layer-products">
+			<div class="product-grid-canvas" id="product-grid-canvas">
+				{allProducts.map((product, i) => (
+					<a href={`/origins/attappady/${product.slug || product.name.toLowerCase().replace(/ /g, '-')}`} class="product-tile" data-index={i}>
+						<div class="product-tile-bg" style={`background-image: url('${product.images?.product || product.images?.packaging || '/assets/origins/idukki-canopy.webp'}');`}></div>
+						<div class="product-tile-content">
+							<h3>{product.name || product.title}</h3>
+						</div>
+					</a>
+				))}
+			</div>
+		</div>
+		
+		<!-- Grain Overlay for primitive, organic feel -->
+		<div class="grain-overlay"></div>
+	</div>
+
+	<div class="post-cinema-content">
+		<!-- Traditional scrolling resumes here for footer elements -->
 		<VerificationSection />
 		<SustainabilitySection />
 		<TestimoniesSection />
 		<SocialSection />
-	</main>
+	</div>
+
 </Layout>
 
 <style>
-	/* The global morphing element that builds the scenes */
-	.morph-backdrop {
+	/* -- Variables -- */
+	:root {
+		--bg-dark: #070905; /* Deep earthy black */
+		--gold-primitive: #C69C52;
+	}
+
+	body {
+		background-color: var(--bg-dark);
+		color: var(--color-warm-cream);
+	}
+
+	/* -- Layout Structure -- */
+	.scroll-track {
+		position: relative;
+		width: 100%;
+		height: 600vh; /* Extended for slower, smoother pacing */
+		z-index: 1; /* Sits behind canvas but allows scrolling */
+	}
+
+	.phase-marker {
+		height: 100vh;
+		width: 100%;
+		pointer-events: none;
+	}
+
+	.cinematic-canvas {
 		position: fixed;
 		top: 0;
 		left: 0;
 		width: 100vw;
 		height: 100vh;
-		z-index: 0;
+		z-index: 10;
+		pointer-events: none; /* Let clicks pass through unless active */
 		overflow: hidden;
-		transform-origin: center center;
-		will-change: transform, width, height, border-radius, top, left;
+		background-color: var(--bg-dark);
 	}
 
-	.morph-image {
-		width: 100%; 
+	.layer {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	/* -- Act 1: Forest & Tally Strokes -- */
+	.layer-forest {
+		z-index: 11;
+	}
+	
+	.forest-image-container {
+		width: 100%;
+		height: 100%;
+		/* We start with the image clipped to the primitive tally shapes */
+		clip-path: url(#tally-clip);
+		will-change: clip-path, transform;
+	}
+
+	.forest-image {
+		width: 100%;
 		height: 100%;
 		background-size: cover;
 		background-position: center;
-		transform: scale(1.05);
-		animation: slowPan 30s linear infinite alternate;
+		transform: scale(1.1); /* Slight zoom so we can pan */
+	}
+	
+	.forest-overlay {
+		position: absolute;
+		top: 0; left: 0; right: 0; bottom: 0;
+		background: radial-gradient(circle at center, rgba(7,9,5,0) 0%, rgba(7,9,5,0.8) 100%);
 	}
 
-	.morph-overlay {
+	/* -- Act 2: Typography -- */
+	.layer-typography {
+		z-index: 12;
+	}
+
+	.primitive-text {
+		font-family: var(--font-display);
+		font-size: clamp(2rem, 10vw, 12rem); /* Fits perfectly on mobile */
+		font-weight: 300;
+		letter-spacing: -0.05em;
+		color: var(--color-warm-cream);
+		display: flex;
+		flex-direction: row; /* Always horizontal */
+		justify-content: center;
+		align-items: center;
+		width: 100%;
+		gap: 0.2vw;
+		text-transform: uppercase;
+		opacity: 0; /* Starts hidden */
+	}
+
+	.letter {
+		display: inline-block;
+		will-change: transform, opacity;
+	}
+	
+	.center-o {
+		color: var(--gold-primitive);
+		position: relative;
+	}
+
+	/* -- Act 3: Features -- */
+	.layer-features {
+		z-index: 13;
+	}
+
+	.feature-text {
+		position: absolute;
+		font-family: var(--font-display);
+		font-size: clamp(2rem, 5vw, 4rem);
+		color: var(--color-warm-cream);
+		opacity: 0;
+		text-align: center;
+		text-shadow: 0 4px 20px rgba(0,0,0,0.8);
+	}
+
+	/* -- Act 4: Product Grid -- */
+	.layer-products {
+		z-index: 14;
+		pointer-events: auto; /* Allow clicking products */
+		opacity: 0; /* Hidden until climax */
+	}
+
+	.product-grid-canvas {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		grid-template-rows: repeat(3, 1fr);
+		width: 100vw;
+		height: 100vh;
+		gap: 2px;
+		background-color: var(--bg-dark); /* Grid lines */
+		padding: 2px;
+	}
+
+	.product-tile {
+		position: relative;
+		overflow: hidden;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		text-decoration: none;
+		opacity: 0; /* Fade in staggered */
+		transform: scale(0.9);
+	}
+
+	.product-tile-bg {
 		position: absolute;
 		top: 0; left: 0; width: 100%; height: 100%;
-		background: radial-gradient(circle at center, rgba(12, 21, 9, 0.2) 0%, rgba(12, 21, 9, 0.7) 60%, rgba(12, 21, 9, 0.95) 100%);
-		transition: background 1s ease;
+		background-size: cover;
+		background-position: center;
+		filter: grayscale(100%) brightness(0.4);
+		transition: all 0.8s var(--ease-settle);
 	}
 
-	@keyframes slowPan {
-		0% { transform: scale(1.05) translate(0, 0); }
-		100% { transform: scale(1.05) translate(-1%, -1%); }
+	.product-tile::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(to top, rgba(7,9,5,0.9) 0%, rgba(7,9,5,0) 60%);
+		opacity: 0.8;
+		transition: opacity 0.8s var(--ease-settle);
 	}
 
-	/* Story Container lays out the trigger scenes */
-	.story-container {
-		position: relative;
-		z-index: 1; /* Above the fixed backdrop */
-	}
-
-	.scene {
-		position: relative;
-		width: 100%;
-	}
-
-	/* Make the features scroll track tall so the user scrolls past it while pinned */
-	.scene-features {
-		/* Removed 100vh padding so it flows immediately from the hero */
-		margin-top: -20vh; /* Pull it up to overlap the hero fadeout */
+	.product-tile:hover .product-tile-bg {
+		filter: grayscale(0%) brightness(0.9);
+		transform: scale(1.05);
 	}
 	
-	.features-scroll-track {
-		min-height: 150vh; /* Enough scroll room to read features */
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		padding-top: 30vh;
+	.product-tile:hover::after {
+		opacity: 0.4;
 	}
 
-	.scene-gallery {
-		min-height: 100vh;
-		/* Ensure smooth transition from features */
+	.product-tile-content {
+		position: relative;
+		z-index: 2;
+		color: var(--color-warm-cream);
+		font-family: var(--font-display);
+		font-size: 1.5rem;
+		text-align: center;
+		opacity: 0;
+		transform: translateY(10px);
+		transition: all 0.5s ease;
 	}
 	
-	.scene-products {
-		padding-top: var(--space-4xl);
-		background-color: var(--color-forest-deep); /* Solidify the background for the rest of the site */
+	.product-tile:hover .product-tile-content {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	/* -- Organic Grain -- */
+	.grain-overlay {
+		position: absolute;
+		top: -100%; left: -100%; width: 300%; height: 300%;
+		background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
+		pointer-events: none;
+		z-index: 99;
+		animation: grainPan 8s steps(10) infinite;
+	}
+
+	@keyframes grainPan {
+		0%, 100% { transform: translate(0, 0); }
+		10% { transform: translate(-5%, -10%); }
+		20% { transform: translate(-15%, 5%); }
+		30% { transform: translate(7%, -25%); }
+		40% { transform: translate(-5%, 25%); }
+		50% { transform: translate(-15%, 10%); }
+		60% { transform: translate(15%, 0%); }
+		70% { transform: translate(0%, 15%); }
+		80% { transform: translate(3%, 35%); }
+		90% { transform: translate(-10%, 10%); }
+	}
+
+	.post-cinema-content {
+		position: relative;
+		z-index: 20;
+		background: var(--bg-dark);
+	}
+
+	/* Mobile adjustments */
+	@media (max-width: 768px) {
+		.product-grid-canvas {
+			grid-template-columns: repeat(2, 1fr);
+			grid-template-rows: repeat(6, 1fr);
+		}
 	}
 </style>
 
@@ -122,66 +335,108 @@ import ProductShowcase from '../components/home/ProductShowcase.astro';
 	gsap.registerPlugin(ScrollTrigger);
 
 	document.addEventListener('DOMContentLoaded', () => {
-		const backdrop = document.getElementById('morph-backdrop');
-		if(!backdrop) return;
-
-		// 1. Hero -> Features Transposition
-		// As we scroll into features, the backdrop shrinks into a card on the left
-		gsap.to(backdrop, {
+		
+		// Master timeline for the cinematic experience
+		const tl = gsap.timeline({
 			scrollTrigger: {
-				trigger: "#scene-features",
-				start: "top 80%", // Start shrinking when features just come into view
-				end: "top 20%", // Finish shrinking before features hit the top
-				scrub: 1,
-			},
-			width: "35vw",
-			height: "55vh",
-			top: "22vh",
-			left: "8vw",
-			borderRadius: "24px",
+				trigger: "#master-scroll-track",
+				start: "top top",
+				end: "bottom bottom",
+				scrub: 1, // Smooth scrubbing
+			}
+		});
+
+		// ----------------------------------------------------
+		// ACT 1: Tally Strokes -> Forest (0.0 to 2.0)
+		// ----------------------------------------------------
+		const fullRectD = "M0,0 Q0,0.5 0,1 L1,1 Q1,0.5 1,0 Z";
+		
+		tl.to(".tally-stroke", {
+			attr: { d: fullRectD },
+			duration: 2.0,
 			ease: "power2.inOut"
-		});
+		}, 0);
 
-		// Also animate the overlay of the backdrop to get darker/lighter during this
-		gsap.to(".morph-overlay", {
-			scrollTrigger: {
-				trigger: "#scene-features",
-				start: "top bottom",
-				end: "top top",
-				scrub: 1,
-			},
-			background: "radial-gradient(circle at center, rgba(12, 21, 9, 0.4) 0%, rgba(12, 21, 9, 0.8) 100%)"
-		});
+		tl.to(".forest-image", {
+			scale: 1, 
+			y: "-5%",
+			duration: 2.0,
+			ease: "power1.inOut"
+		}, 0);
 
-		// 2. Features -> Gallery Transposition
-		// As we scroll past features into gallery, the backdrop expands horizontally
-		gsap.to(backdrop, {
-			scrollTrigger: {
-				trigger: "#scene-gallery",
-				start: "top 90%",
-				end: "top 30%", 
-				scrub: 1,
-			},
-			width: "90vw",
-			height: "70vh",
-			top: "15vh",
-			left: "5vw",
-			borderRadius: "12px",
+		// ----------------------------------------------------
+		// ACT 2: Forest -> Typography (UNTOUCHED) (1.5 to 2.5)
+		// ----------------------------------------------------
+		tl.to(".primitive-text", {
+			opacity: 1,
+			duration: 1.0,
 			ease: "power2.inOut"
-		});
+		}, 1.5); // Text is fully visible from 2.5 to 3.5
 
-		// 3. Gallery -> Products Transposition
-		// As we enter the product showcase, the backdrop fades/scales away as the real DOM grid takes over
-		gsap.to(backdrop, {
-			scrollTrigger: {
-				trigger: "#scene-products",
-				start: "top bottom",
-				end: "top center",
-				scrub: 1,
-			},
+		// ----------------------------------------------------
+		// ACT 3: Typography -> Lens (The letter 'O') (3.5 to 5.0)
+		// ----------------------------------------------------
+		const otherLetters = document.querySelectorAll('.letter:not(.center-o)');
+		tl.to(otherLetters, {
 			opacity: 0,
-			scale: 0.9,
-			borderRadius: "40px",
+			scale: 0.8,
+			y: 50,
+			stagger: 0.05,
+			duration: 0.8,
+			ease: "power2.in"
+		}, 3.5);
+
+		tl.to(".center-o", {
+			scale: 25, 
+			color: "rgba(198, 156, 82, 0.05)",
+			duration: 1.5,
+			ease: "power3.inOut"
+		}, 3.8);
+
+		tl.to(".layer-forest", {
+			opacity: 0,
+			duration: 1.0
+		}, 4.0);
+
+		// Flash features inside the Lens (4.5 to 6.5)
+		const features = document.querySelectorAll('.feature-text');
+		features.forEach((feature, i) => {
+			tl.to(feature, {
+				opacity: 1,
+				scale: 1.1,
+				duration: 0.6,
+				ease: "power2.out"
+			}, 4.5 + (i * 1.0));
+			tl.to(feature, {
+				opacity: 0,
+				scale: 1.2,
+				filter: "blur(10px)",
+				duration: 0.6,
+				ease: "power2.in"
+			}, 5.2 + (i * 1.0));
 		});
+
+		// ----------------------------------------------------
+		// ACT 4: Lens -> Grid (8.0 to 10.0)
+		// ----------------------------------------------------
+		tl.to(".layer-products", {
+			opacity: 1,
+			duration: 0.8
+		}, 8.0);
+
+		tl.to(".product-tile", {
+			opacity: 1,
+			scale: 1,
+			stagger: 0.1,
+			duration: 1.2,
+			ease: "back.out(1.2)"
+		}, 8.2);
+
+		// Unpin canvas
+		tl.to("#cinematic-canvas", {
+			position: "absolute",
+			top: "600vh", 
+			duration: 0.1
+		}, 10.0);
 	});
 </script>
