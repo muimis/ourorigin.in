@@ -1,12 +1,7 @@
 ---
 ---
 <section class="hero-section">
-  <!-- Dynamic Background: Auto-playing silent video or high-res image -->
-  <div class="hero-background">
-    <!-- Using a placeholder image that looks cinematic -->
-    <div class="bg-image" style="background-image: url('/assets/origins/idukki-canopy.webp');"></div>
-    <div class="bg-overlay"></div>
-  </div>
+  <!-- Background is now handled globally in index.astro for cinematic morphing -->
 
   <div class="hero-container">
     <div class="hero-content" data-reveal="stagger" data-delay="300">
@@ -57,31 +52,7 @@
     overflow: hidden;
   }
 
-  .hero-background {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 0;
-  }
 
-  .bg-image {
-    width: 100%; height: 100%;
-    background-size: cover;
-    background-position: center;
-    transform: scale(1.05); /* Slight scale for potential parallax/pan effect */
-    animation: slowPan 30s linear infinite alternate;
-  }
-
-  .bg-overlay {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    /* Cinematic vignette */
-    background: radial-gradient(circle at center, rgba(12, 21, 9, 0.2) 0%, rgba(12, 21, 9, 0.7) 60%, rgba(12, 21, 9, 0.95) 100%);
-  }
-
-  @keyframes slowPan {
-    0% { transform: scale(1.05) translate(0, 0); }
-    100% { transform: scale(1.05) translate(-1%, -1%); }
-  }
 
   .hero-container {
     max-width: 1200px;

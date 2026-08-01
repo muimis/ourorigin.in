@@ -11,11 +11,32 @@ import ProductShowcase from '../components/home/ProductShowcase.astro';
 ---
 
 <Layout title="OurOrigin | The Proof System" description="Single-origin yields from the Western Ghats, ethically sourced by the First Hands. A proof system for indigenous food.">
+	
+	<!-- The Morphing Transpose Element -->
+	<div class="morph-backdrop" id="morph-backdrop">
+		<div class="morph-image" style="background-image: url('/assets/origins/idukki-canopy.webp');"></div>
+		<div class="morph-overlay"></div>
+	</div>
+
 	<main class="story-container" id="story-container">
-		<HeroSection />
-		<FeaturesSection />
-		<GallerySection />
-		<ProductShowcase />
+		<div class="scene scene-hero" id="scene-hero">
+			<HeroSection />
+		</div>
+		
+		<div class="scene scene-features" id="scene-features">
+			<div class="features-scroll-track">
+				<FeaturesSection />
+			</div>
+		</div>
+
+		<div class="scene scene-gallery" id="scene-gallery">
+			<GallerySection />
+		</div>
+
+		<div class="scene scene-products" id="scene-products">
+			<ProductShowcase />
+		</div>
+
 		<VerificationSection />
 		<SustainabilitySection />
 		<TestimoniesSection />
@@ -24,12 +45,73 @@ import ProductShowcase from '../components/home/ProductShowcase.astro';
 </Layout>
 
 <style>
+	/* The global morphing element that builds the scenes */
+	.morph-backdrop {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 100vh;
+		z-index: 0;
+		overflow: hidden;
+		transform-origin: center center;
+		will-change: transform, width, height, border-radius, top, left;
+	}
+
+	.morph-image {
+		width: 100%; 
+		height: 100%;
+		background-size: cover;
+		background-position: center;
+		transform: scale(1.05);
+		animation: slowPan 30s linear infinite alternate;
+	}
+
+	.morph-overlay {
+		position: absolute;
+		top: 0; left: 0; width: 100%; height: 100%;
+		background: radial-gradient(circle at center, rgba(12, 21, 9, 0.2) 0%, rgba(12, 21, 9, 0.7) 60%, rgba(12, 21, 9, 0.95) 100%);
+		transition: background 1s ease;
+	}
+
+	@keyframes slowPan {
+		0% { transform: scale(1.05) translate(0, 0); }
+		100% { transform: scale(1.05) translate(-1%, -1%); }
+	}
+
+	/* Story Container lays out the trigger scenes */
 	.story-container {
+		position: relative;
+		z-index: 1; /* Above the fixed backdrop */
+	}
+
+	.scene {
+		position: relative;
+		width: 100%;
+	}
+
+	/* Make the features scroll track tall so the user scrolls past it while pinned */
+	.scene-features {
+		/* Removed 100vh padding so it flows immediately from the hero */
+		margin-top: -20vh; /* Pull it up to overlap the hero fadeout */
+	}
+	
+	.features-scroll-track {
+		min-height: 150vh; /* Enough scroll room to read features */
 		display: flex;
 		flex-direction: column;
-		/* gap handles the spacing between sections */
-		gap: var(--space-4xl);
-		position: relative;
+		justify-content: center;
+		padding-top: 30vh;
+	}
+
+	.scene-gallery {
+		min-height: 100vh;
+		/* Ensure smooth transition from features */
+	}
+	
+	.scene-products {
+		padding-top: var(--space-4xl);
+		background-color: var(--color-forest-deep); /* Solidify the background for the rest of the site */
 	}
 </style>
 
@@ -39,37 +121,67 @@ import ProductShowcase from '../components/home/ProductShowcase.astro';
 
 	gsap.registerPlugin(ScrollTrigger);
 
-	// The transpose effect: as the user scrolls past the Hero, the background scales and pins,
-	// transitioning smoothly into the Features and Product Showcase.
 	document.addEventListener('DOMContentLoaded', () => {
-		const storyContainer = document.getElementById('story-container');
-		if(!storyContainer) return;
+		const backdrop = document.getElementById('morph-backdrop');
+		if(!backdrop) return;
 
-		// A timeline that ties the hero to the rest of the story
-		const tl = gsap.timeline({
+		// 1. Hero -> Features Transposition
+		// As we scroll into features, the backdrop shrinks into a card on the left
+		gsap.to(backdrop, {
 			scrollTrigger: {
-				trigger: ".hero-section",
-				start: "top top",
-				end: "+=150%", // How long the scrub lasts
+				trigger: "#scene-features",
+				start: "top 80%", // Start shrinking when features just come into view
+				end: "top 20%", // Finish shrinking before features hit the top
 				scrub: 1,
-				pin: true,
-				pinSpacing: true,
-			}
+			},
+			width: "35vw",
+			height: "55vh",
+			top: "22vh",
+			left: "8vw",
+			borderRadius: "24px",
+			ease: "power2.inOut"
 		});
 
-		// Transpose the hero background to become smaller and darker
-		tl.to(".bg-image", {
-			scale: 0.8,
-			opacity: 0.3,
-			borderRadius: "20px",
-			ease: "power2.inOut"
-		}, 0);
+		// Also animate the overlay of the backdrop to get darker/lighter during this
+		gsap.to(".morph-overlay", {
+			scrollTrigger: {
+				trigger: "#scene-features",
+				start: "top bottom",
+				end: "top top",
+				scrub: 1,
+			},
+			background: "radial-gradient(circle at center, rgba(12, 21, 9, 0.4) 0%, rgba(12, 21, 9, 0.8) 100%)"
+		});
 
-		// Fade out hero content
-		tl.to(".hero-content, .hero-evidence", {
+		// 2. Features -> Gallery Transposition
+		// As we scroll past features into gallery, the backdrop expands horizontally
+		gsap.to(backdrop, {
+			scrollTrigger: {
+				trigger: "#scene-gallery",
+				start: "top 90%",
+				end: "top 30%", 
+				scrub: 1,
+			},
+			width: "90vw",
+			height: "70vh",
+			top: "15vh",
+			left: "5vw",
+			borderRadius: "12px",
+			ease: "power2.inOut"
+		});
+
+		// 3. Gallery -> Products Transposition
+		// As we enter the product showcase, the backdrop fades/scales away as the real DOM grid takes over
+		gsap.to(backdrop, {
+			scrollTrigger: {
+				trigger: "#scene-products",
+				start: "top bottom",
+				end: "top center",
+				scrub: 1,
+			},
 			opacity: 0,
-			y: -50,
-			ease: "power1.inOut"
-		}, 0);
+			scale: 0.9,
+			borderRadius: "40px",
+		});
 	});
 </script>
