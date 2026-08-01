@@ -1,4 +1,5 @@
 ---
+import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import VerificationSection from '../components/home/VerificationSection.astro';
 import SustainabilitySection from '../components/home/SustainabilitySection.astro';
@@ -7,9 +8,12 @@ import SocialSection from '../components/home/SocialSection.astro';
 import OriginMark from '../components/OriginMark.astro';
 import OriginWordmark from '../components/OriginWordmark.astro';
 
-// Load 12 Products for the climax grid
-const productFiles = import.meta.glob('../content/products/*.json', { eager: true });
-const allProducts = Object.values(productFiles).slice(0, 12).map((mod: any) => mod.default);
+// Load 12 Products for the climax grid using Astro's highly optimized content collections API
+const allProductEntries = await getCollection('products');
+const allProducts = allProductEntries.slice(0, 12).map((p) => ({
+	...p.data,
+	slug: p.id
+}));
 ---
 
 <Layout title="OurOrigin | The Proof System" description="Single-origin yields from the Western Ghats, ethically sourced by the First Hands. A proof system for indigenous food.">

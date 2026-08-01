@@ -1,7 +1,12 @@
 ---
-// Load products using Vite's glob import
-const productFiles = import.meta.glob('../../content/products/*.json', { eager: true });
-const products = Object.values(productFiles);
+import { getCollection } from 'astro:content';
+
+// Load products using Astro's content collections API
+const productEntries = await getCollection('products');
+const products = productEntries.map(p => ({
+  ...p.data,
+  slug: p.id
+}));
 
 // Select a few key products to showcase
 const showcaseSlugs = ['black-pepper', 'cardamom', 'turmeric', 'cinnamon'];
