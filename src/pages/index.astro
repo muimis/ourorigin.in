@@ -7,13 +7,15 @@ import VerificationSection from '../components/home/VerificationSection.astro';
 import SustainabilitySection from '../components/home/SustainabilitySection.astro';
 import TestimoniesSection from '../components/home/TestimoniesSection.astro';
 import SocialSection from '../components/home/SocialSection.astro';
+import ProductShowcase from '../components/home/ProductShowcase.astro';
 ---
 
 <Layout title="OurOrigin | The Proof System" description="Single-origin yields from the Western Ghats, ethically sourced by the First Hands. A proof system for indigenous food.">
-	<main>
+	<main class="story-container" id="story-container">
 		<HeroSection />
-		<GallerySection />
 		<FeaturesSection />
+		<GallerySection />
+		<ProductShowcase />
 		<VerificationSection />
 		<SustainabilitySection />
 		<TestimoniesSection />
@@ -22,10 +24,52 @@ import SocialSection from '../components/home/SocialSection.astro';
 </Layout>
 
 <style>
-	main {
+	.story-container {
 		display: flex;
 		flex-direction: column;
 		/* gap handles the spacing between sections */
 		gap: var(--space-4xl);
+		position: relative;
 	}
 </style>
+
+<script>
+	import gsap from 'gsap';
+	import ScrollTrigger from 'gsap/ScrollTrigger';
+
+	gsap.registerPlugin(ScrollTrigger);
+
+	// The transpose effect: as the user scrolls past the Hero, the background scales and pins,
+	// transitioning smoothly into the Features and Product Showcase.
+	document.addEventListener('DOMContentLoaded', () => {
+		const storyContainer = document.getElementById('story-container');
+		if(!storyContainer) return;
+
+		// A timeline that ties the hero to the rest of the story
+		const tl = gsap.timeline({
+			scrollTrigger: {
+				trigger: ".hero-section",
+				start: "top top",
+				end: "+=150%", // How long the scrub lasts
+				scrub: 1,
+				pin: true,
+				pinSpacing: true,
+			}
+		});
+
+		// Transpose the hero background to become smaller and darker
+		tl.to(".bg-image", {
+			scale: 0.8,
+			opacity: 0.3,
+			borderRadius: "20px",
+			ease: "power2.inOut"
+		}, 0);
+
+		// Fade out hero content
+		tl.to(".hero-content, .hero-evidence", {
+			opacity: 0,
+			y: -50,
+			ease: "power1.inOut"
+		}, 0);
+	});
+</script>
