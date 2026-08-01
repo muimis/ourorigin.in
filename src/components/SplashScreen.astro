@@ -1,12 +1,15 @@
 ---
 import OriginMark from './OriginMark.astro';
+import OriginWordmark from './OriginWordmark.astro';
 ---
 
 <div id="splash-screen" class="splash-screen">
   <div class="splash-content" id="splash-content">
     <div class="splash-lockup">
       <OriginMark size={150} variant="gold" animate={true} id="splash-mark" />
-      <span class="splash-wordmark" id="splash-wordmark">OurOrigin</span>
+      <div class="splash-wordmark-container" id="splash-wordmark">
+        <OriginWordmark size={300} variant="gold" animate={true} id="splash-wordmark-svg" />
+      </div>
     </div>
   </div>
 </div>
@@ -116,13 +119,12 @@ import OriginMark from './OriginMark.astro';
     gap: var(--space-xl);
   }
 
-  .splash-wordmark {
-    font-family: var(--font-institutional);
-    font-size: 4rem;
-    color: var(--color-gold);
-    letter-spacing: 0.1em;
+  .splash-wordmark-container {
     opacity: 0; /* Hidden initially, GSAP fades it in */
     transform: translateX(-20px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   :global(body.is-splashing) {

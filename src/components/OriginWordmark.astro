@@ -1,0 +1,124 @@
+---
+export interface Props {
+  size?: number;
+  variant?: 'primary' | 'reversed' | 'gold';
+  id?: string;
+  animate?: boolean;
+}
+
+const { 
+  size = 200, 
+  variant = 'gold', 
+  id = Math.random().toString(36).substring(7),
+  animate = false,
+} = Astro.props;
+
+const colorMap = {
+  primary: 'var(--color-warm-cream)',
+  reversed: 'var(--color-forest-deep)',
+  gold: 'var(--color-gold, #c8a04d)'
+};
+const strokeColor = colorMap[variant];
+---
+
+<svg 
+  id={`origin-wordmark-${id}`}
+  class={`origin-wordmark variant-${variant} ${animate ? 'is-animated' : ''}`} 
+  width={size} 
+  viewBox="0 0 420 130" 
+  aria-label="OurOrigin"
+  fill="none"
+>
+  <g transform="translate(10, 10)" stroke={strokeColor} stroke-width="5" stroke-linecap="round" fill="none">
+    <!-- O -->
+    <path class="word-line w-1" d="M 30 20 Q 10 55 30 90" />
+    <path class="word-line w-2" d="M 30 20 Q 50 55 30 90" />
+    
+    <!-- u -->
+    <path class="word-line w-3" d="M 70 45 Q 65 85 80 88" />
+    <path class="word-line w-4" d="M 90 45 Q 92 65 88 90" />
+    
+    <!-- r -->
+    <path class="word-line w-5" d="M 120 45 Q 115 65 117 90" />
+    <path class="word-line w-6" d="M 116 55 Q 130 40 140 50" />
+    
+    <!-- O -->
+    <path class="word-line w-7" d="M 175 20 Q 155 55 175 90" />
+    <path class="word-line w-8" d="M 175 20 Q 195 55 175 90" />
+    
+    <!-- r -->
+    <path class="word-line w-9" d="M 215 45 Q 210 65 212 90" />
+    <path class="word-line w-10" d="M 211 55 Q 225 40 235 50" />
+    
+    <!-- i -->
+    <circle class="word-dot w-11" cx="255" cy="25" r="3" fill={strokeColor} stroke="none" />
+    <path class="word-line w-12" d="M 255 45 Q 252 65 254 90" />
+    
+    <!-- g -->
+    <path class="word-line w-13" d="M 295 45 Q 275 60 295 75" />
+    <path class="word-line w-14" d="M 295 45 Q 315 60 295 75" />
+    <path class="word-line w-15" d="M 305 60 Q 300 110 275 115" />
+    
+    <!-- i -->
+    <circle class="word-dot w-16" cx="335" cy="25" r="3" fill={strokeColor} stroke="none" />
+    <path class="word-line w-17" d="M 335 45 Q 332 65 334 90" />
+    
+    <!-- n -->
+    <path class="word-line w-18" d="M 370 45 Q 365 65 368 90" />
+    <path class="word-line w-19" d="M 366 55 Q 385 40 395 50" />
+    <path class="word-line w-20" d="M 395 50 Q 390 70 392 90" />
+  </g>
+</svg>
+
+<style>
+  .origin-wordmark {
+    overflow: visible;
+    transform-origin: left center;
+  }
+  
+  .origin-wordmark.is-animated .word-line {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: drawWord 0.6s var(--ease-settle) forwards;
+  }
+  
+  .origin-wordmark.is-animated .word-dot {
+    opacity: 0;
+    transform: scale(0.5);
+    transform-origin: center;
+    animation: popWordDot 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  /* Stagger the drawing of the strokes for a handwritten effect */
+  .origin-wordmark.is-animated .w-1 { animation-delay: 0.1s; }
+  .origin-wordmark.is-animated .w-2 { animation-delay: 0.2s; }
+  .origin-wordmark.is-animated .w-3 { animation-delay: 0.3s; }
+  .origin-wordmark.is-animated .w-4 { animation-delay: 0.4s; }
+  .origin-wordmark.is-animated .w-5 { animation-delay: 0.5s; }
+  .origin-wordmark.is-animated .w-6 { animation-delay: 0.6s; }
+  .origin-wordmark.is-animated .w-7 { animation-delay: 0.7s; }
+  .origin-wordmark.is-animated .w-8 { animation-delay: 0.8s; }
+  .origin-wordmark.is-animated .w-9 { animation-delay: 0.9s; }
+  .origin-wordmark.is-animated .w-10 { animation-delay: 1.0s; }
+  .origin-wordmark.is-animated .w-11 { animation-delay: 1.1s; }
+  .origin-wordmark.is-animated .w-12 { animation-delay: 1.2s; }
+  .origin-wordmark.is-animated .w-13 { animation-delay: 1.3s; }
+  .origin-wordmark.is-animated .w-14 { animation-delay: 1.4s; }
+  .origin-wordmark.is-animated .w-15 { animation-delay: 1.5s; }
+  .origin-wordmark.is-animated .w-16 { animation-delay: 1.6s; }
+  .origin-wordmark.is-animated .w-17 { animation-delay: 1.7s; }
+  .origin-wordmark.is-animated .w-18 { animation-delay: 1.8s; }
+  .origin-wordmark.is-animated .w-19 { animation-delay: 1.9s; }
+  .origin-wordmark.is-animated .w-20 { animation-delay: 2.0s; }
+  
+  @keyframes drawWord {
+    to { stroke-dashoffset: 0; }
+  }
+
+  @keyframes popWordDot {
+    to { 
+      opacity: 1; 
+      transform: scale(1);
+    }
+  }
+</style>
