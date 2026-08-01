@@ -1,0 +1,122 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="Field Notes — OurOrigin">
+  <main class="page-container">
+    <div class="content-wrapper" data-reveal="up">
+      <h1 class="page-title">Field Notes</h1>
+      <div class="divider"></div>
+      <div class="page-content">
+        <p class="lead-text">
+          Observations from the forest, the ledger, and the changing seasons.
+        </p>
+        <div class="notes-grid">
+          <div class="note-card raw-panel">
+            <span class="note-date">01 OCT 2026</span>
+            <h2 class="note-title">The First Harvest of Attappady</h2>
+            <p class="note-excerpt">The Black Pepper harvest has begun. The density of the peppercorns this year is remarkable, a direct result of the extended dry spell followed by sudden, intense monsoons.</p>
+          </div>
+          <div class="note-card raw-panel">
+            <span class="note-date">15 SEP 2026</span>
+            <h2 class="note-title">Sun-drying and Essential Oils</h2>
+            <p class="note-excerpt">Why we insist on ambient sun-drying. Industrial dryers strip away the volatile compounds that give our spices their signature aroma and therapeutic properties.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .page-container {
+    min-height: 100vh;
+    padding: 12rem var(--space-xl) var(--space-4xl);
+    background-color: var(--color-forest-deep);
+    color: var(--color-warm-cream);
+    display: flex;
+    justify-content: center;
+  }
+
+  .content-wrapper {
+    max-width: 1000px;
+    width: 100%;
+  }
+
+  .page-title {
+    font-family: var(--font-display);
+    font-size: var(--text-hero);
+    font-weight: 400;
+    line-height: 1.1;
+    margin: 0;
+  }
+
+  .divider {
+    width: 40px;
+    height: 0;
+    border-top: 2px solid var(--color-gold);
+    margin: var(--space-2xl) 0;
+  }
+
+  .page-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xl);
+  }
+
+  .lead-text {
+    font-family: var(--font-institutional);
+    font-size: 1.5rem;
+    line-height: 1.4;
+    color: var(--color-gold);
+    margin: 0;
+    max-width: 800px;
+  }
+
+  .notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-xl);
+  }
+
+  .note-card {
+    padding: var(--space-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .note-date {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: rgba(235, 229, 217, 0.5);
+  }
+
+  .note-title {
+    font-family: var(--font-institutional);
+    font-size: 1.2rem;
+    color: var(--color-warm-cream);
+    margin: 0;
+  }
+
+  .note-excerpt {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: rgba(235, 229, 217, 0.7);
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .page-container {
+      padding: 8rem var(--space-lg) var(--space-2xl);
+    }
+    
+    .notes-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -28,6 +28,16 @@ const currentYear = new Date().getFullYear();
     margin-top: auto;
   }
 
+  @media (max-width: 768px) {
+    .site-footer {
+      padding: var(--space-2xl) var(--space-lg);
+    }
+    .footer-links {
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+  }
+
   .footer-inner {
     max-width: 1200px;
     margin: 0 auto;

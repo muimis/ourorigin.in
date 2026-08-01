@@ -1,0 +1,84 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="About — OurOrigin">
+  <main class="page-container">
+    <div class="content-wrapper" data-reveal="up">
+      <h1 class="page-title">The First Hands</h1>
+      <div class="divider"></div>
+      <div class="page-content">
+        <p class="lead-text">
+          OurOrigin was born from a simple observation: the hands that grow the world's most exceptional yields are often the ones farthest from its reward.
+        </p>
+        <p>
+          We exist to collapse the distance between the forest and the final cup. By creating a direct, transparent ledger, we ensure that the value remains where the effort originates. 
+        </p>
+        <p>
+          This isn't a supply chain. It's a transfer of dignity, directly from the soil to you.
+        </p>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .page-container {
+    min-height: 100vh;
+    padding: 12rem var(--space-xl) var(--space-4xl);
+    background-color: var(--color-forest-deep);
+    color: var(--color-warm-cream);
+    display: flex;
+    justify-content: center;
+  }
+
+  .content-wrapper {
+    max-width: 800px;
+    width: 100%;
+  }
+
+  .page-title {
+    font-family: var(--font-display);
+    font-size: var(--text-hero);
+    font-weight: 400;
+    line-height: 1.1;
+    margin: 0;
+  }
+
+  .divider {
+    width: 40px;
+    height: 0;
+    border-top: 2px solid var(--color-gold);
+    margin: var(--space-2xl) 0;
+  }
+
+  .page-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+  }
+
+  .lead-text {
+    font-family: var(--font-institutional);
+    font-size: 1.5rem;
+    line-height: 1.4;
+    color: var(--color-gold);
+    margin: 0;
+  }
+
+  p {
+    font-family: var(--font-sans);
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: rgba(235, 229, 217, 0.8);
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .page-container {
+      padding: 8rem var(--space-lg) var(--space-2xl);
+    }
+  }
+</style>
