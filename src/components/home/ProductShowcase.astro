@@ -1,23 +1,11 @@
 ---
-import fs from 'node:fs/promises';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-// Load products
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const productsDir = path.resolve(__dirname, '../../content/products');
-const productFiles = await fs.readdir(productsDir);
-const products = [];
-for (const file of productFiles) {
-  if (file.endsWith('.json')) {
-    const raw = await fs.readFile(path.join(productsDir, file), 'utf-8');
-    products.push(JSON.parse(raw));
-  }
-}
+// Load products using Vite's glob import
+const productFiles = import.meta.glob('../../content/products/*.json', { eager: true });
+const products = Object.values(productFiles);
 
 // Select a few key products to showcase
 const showcaseSlugs = ['black-pepper', 'cardamom', 'turmeric', 'cinnamon'];
-const showcased = products.filter(p => showcaseSlugs.includes(p.slug));
+const showcased = products.filter((p: any) => showcaseSlugs.includes(p.slug));
 ---
 
 <section class="product-showcase-section" id="product-showcase">
