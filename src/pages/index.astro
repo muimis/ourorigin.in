@@ -4,6 +4,8 @@ import VerificationSection from '../components/home/VerificationSection.astro';
 import SustainabilitySection from '../components/home/SustainabilitySection.astro';
 import TestimoniesSection from '../components/home/TestimoniesSection.astro';
 import SocialSection from '../components/home/SocialSection.astro';
+import OriginMark from '../components/OriginMark.astro';
+import OriginWordmark from '../components/OriginWordmark.astro';
 
 // Load 12 Products for the climax grid
 const productFiles = import.meta.glob('../content/products/*.json', { eager: true });
@@ -24,6 +26,16 @@ const allProducts = Object.values(productFiles).slice(0, 12).map((mod: any) => m
 	<!-- The Cinematic Canvas -> fixed to screen, holds all the visual elements -->
 	<div class="cinematic-canvas" id="cinematic-canvas">
 		
+		<!-- Act 0: The Intro (Splash) -->
+		<div class="layer layer-intro" id="layer-intro">
+			<div class="intro-lockup">
+				<OriginMark size={150} variant="gold" animate={true} id="intro-mark" />
+				<div class="intro-wordmark-container" id="intro-wordmark">
+					<OriginWordmark size={300} variant="gold" animate={true} id="intro-wordmark-svg" />
+				</div>
+			</div>
+		</div>
+
 		<!-- Act 1 & 2: The Forest & The Mask -->
 		<div class="layer layer-forest" id="layer-forest">
 			<!-- A primitive SVG clip path for the Tally Marks -->
@@ -71,7 +83,7 @@ const allProducts = Object.values(productFiles).slice(0, 12).map((mod: any) => m
 		<div class="layer layer-products" id="layer-products">
 			<div class="product-grid-canvas" id="product-grid-canvas">
 				{allProducts.map((product, i) => (
-					<a href={`/origins/attappady/${product.slug || product.name.toLowerCase().replace(/ /g, '-')}`} class="product-tile" data-index={i}>
+					<a href={`/origins/${product.originSlug || 'attappady'}/${product.slug || product.name.toLowerCase().replace(/ /g, '-')}`} class="product-tile" data-index={i}>
 						<div class="product-tile-bg" style={`background-image: url('${product.images?.product || product.images?.packaging || '/assets/origins/idukki-canopy.webp'}');`}></div>
 						<div class="product-tile-content">
 							<h3>{product.name || product.title}</h3>
@@ -128,7 +140,7 @@ const allProducts = Object.values(productFiles).slice(0, 12).map((mod: any) => m
 		width: 100vw;
 		height: 100vh;
 		z-index: 10;
-		pointer-events: none; /* Let clicks pass through unless active */
+		pointer-events: auto; /* Block clicks to background while pinned */
 		overflow: hidden;
 		background-color: var(--bg-dark);
 	}
@@ -144,9 +156,33 @@ const allProducts = Object.values(productFiles).slice(0, 12).map((mod: any) => m
 		align-items: center;
 	}
 
+	/* -- Act 0: Intro -- */
+	.layer-intro {
+		z-index: 20; /* Highest in canvas */
+		background-color: var(--bg-dark);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.intro-lockup {
+		display: flex;
+		align-items: center;
+		gap: var(--space-xl);
+	}
+
+	.intro-wordmark-container {
+		opacity: 0; /* Hidden initially, GSAP fades it in */
+		transform: translateX(-20px);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
 	/* -- Act 1: Forest & Tally Strokes -- */
 	.layer-forest {
 		z-index: 11;
+		opacity: 0; /* Hidden until intro finishes */
 	}
 	
 	.forest-image-container {
@@ -335,14 +371,84 @@ const allProducts = Object.values(productFiles).slice(0, 12).map((mod: any) => m
 	gsap.registerPlugin(ScrollTrigger);
 
 	document.addEventListener('DOMContentLoaded', () => {
+		// Immediately hide header brand lockup
+		document.body.classList.add('is-splashing');
 		
-		// Master timeline for the cinematic experience
+		// ----------------------------------------------------
+		// ACT 0: The Intro (Plays Automatically On Load)
+		// ----------------------------------------------------
+		const introWordmark = document.getElementById('intro-wordmark');
+		const introMark = document.getElementById('intro-mark');
+		const headerMark = document.querySelector('.site-header .origin-mark');
+		
+		const introTl = gsap.timeline();
+		
+		// 1. Fade in Wordmark
+		introTl.to(introWordmark, {
+			opacity: 1,
+			x: 0,
+			duration: 0.8,
+			ease: "power2.out",
+			delay: 1.2
+		});
+
+		// 2. Hold for reading
+		introTl.to({}, { duration: 0.6 });
+
+		// 3. Fade out Wordmark
+		introTl.to(introWordmark, {
+			opacity: 0,
+			duration: 0.4,
+			ease: "power2.in"
+		});
+
+		// 4. Glide logo to header and fade intro background to reveal layer-forest
+		introTl.add(() => {
+			if (introMark && headerMark) {
+				const introRect = introMark.getBoundingClientRect();
+				const headerRect = headerMark.getBoundingClientRect();
+
+				const scale = headerRect.width / introRect.width;
+				const dx = headerRect.left - introRect.left;
+				const dy = headerRect.top - introRect.top;
+
+				gsap.to(introMark, {
+					x: dx,
+					y: dy,
+					scale: scale,
+					transformOrigin: "top left",
+					duration: 1.2,
+					ease: "power3.inOut"
+				});
+			}
+			
+			// Reveal the forest layer (which is masked by the tally strokes)
+			gsap.to(".layer-forest", {
+				opacity: 1,
+				duration: 0.1
+			});
+
+			// Fade out the intro background
+			gsap.to(".layer-intro", {
+				backgroundColor: "rgba(7, 9, 5, 0)",
+				duration: 1.2,
+				ease: "power3.inOut",
+				onComplete: () => {
+					document.body.classList.remove('is-splashing');
+					document.querySelector('.layer-intro')?.remove(); // Clean up DOM
+				}
+			});
+		});
+
+		// ----------------------------------------------------
+		// ACT 1-4: Master Scroll Timeline
+		// ----------------------------------------------------
 		const tl = gsap.timeline({
 			scrollTrigger: {
 				trigger: "#master-scroll-track",
 				start: "top top",
 				end: "bottom bottom",
-				scrub: 1, // Smooth scrubbing
+				scrub: 1, 
 			}
 		});
 

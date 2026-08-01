@@ -2,7 +2,6 @@
 import '../styles/tokens.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import SplashScreen from '../components/SplashScreen.astro';
 import AllYieldsPanel from '../components/AllYieldsPanel.astro';
 import Ledger from '../components/Ledger.astro';
 import CustomCursor from '../components/CustomCursor.astro';
@@ -32,7 +31,6 @@ const { title, description = "OurOrigin Website" } = Astro.props;
         <title>{title}</title>
 	</head>
 	<body>
-        <SplashScreen />
         <Header />
         
         <!-- Unified global UI navigation and checkout system -->
