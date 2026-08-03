@@ -16,11 +16,11 @@ const activeProducts = allProducts.filter(p => {
 
 // The narrative beats
 const dimensions = [
-  { dim: 'method', statement: 'The product was shaped by the method. Sun-dried. Hand-sorted. Zero synthetics.' },
-  { dim: 'community', statement: 'The method was executed by the community. The First Hands who know the soil.' },
-  { dim: 'time', statement: 'The community moves in rhythm with time. The monsoon dictates the harvest. We don\'t force it.' },
-  { dim: 'bio', statement: 'Time is governed by the biology. An ancient canopy that has thrived for millennia.' },
-  { dim: 'geo', statement: 'And the biology is rooted in the geography. The deep slopes of the Western Ghats.' },
+  { dim: 'method', statement: 'The yield was shaped by the method. Sun-dried. Hand-sorted. Zero synthetics.' },
+  { dim: 'community', statement: 'The method requires a community. First Hands, fluent in the soil.' },
+  { dim: 'time', statement: 'The community submits to time. The monsoon decides. We wait.' },
+  { dim: 'bio', statement: 'Time answers to biology. An ancient canopy, breathing for millennia.' },
+  { dim: 'geo', statement: 'Biology is anchored by geography. The deep, violent slopes of the Western Ghats.' },
 ];
 ---
 
@@ -41,8 +41,8 @@ const dimensions = [
     </div>
     <div class="hook-overlay"></div>
     <div class="hook-content">
-      <h1 class="hook-title">You think you are looking at a spice.</h1>
-      <p class="hook-subtitle">But what you're actually holding is a cross-section of an entire ecosystem.</p>
+      <h1 class="hook-title">You are not looking at a spice.</h1>
+      <p class="hook-subtitle">You are looking at the cross-section of an entire ecosystem.</p>
       <div class="scroll-indicator">
         <span class="scroll-line"></span>
         <span class="scroll-text">Unpack the Origin</span>
@@ -67,7 +67,7 @@ const dimensions = [
           </div>
           <p class="beat-statement">
             {d.statement.split(' ').map((word, wi) => (
-              <span class="beat-word" style={`--word-delay: ${wi * 40}ms`}>{word} </span>
+              <span class="beat-word" style={`--word-delay: ${wi * 60}ms`}>{word} </span>
             ))}
           </p>
           <span class="beat-marker" aria-hidden="true">·</span>
@@ -82,11 +82,11 @@ const dimensions = [
           ))}
           <CipherGlyphs dim="product" size={28} active={true} />
         </div>
-        <p class="resolution-statement">Origin isn't a location on a map.</p>
-        <p class="resolution-climax">Origin is the convergence of all these forces. If one is compromised, the entire system breaks.</p>
+        <p class="resolution-statement">Origin is not a pin on a map.</p>
+        <p class="resolution-climax">It is a fragile convergence. Compromise one element, and the system shatters.</p>
         <div class="resolution-divider"></div>
-        <p class="resolution-promise">We don't sell spices. We built a proof system to ensure this ecosystem remains unbroken.</p>
-        <p class="resolution-promise-final">What ends up in your hand is proof it was true. Or it's nothing.</p>
+        <p class="resolution-promise">We are not merchants. We are a proof system.</p>
+        <p class="resolution-promise-final">The yield in your hand is the evidence. If it doesn't prove the origin, it is nothing.</p>
       </div>
     </div>
   </section>
@@ -204,6 +204,13 @@ const dimensions = [
     height: 100%;
     object-fit: cover;
     filter: grayscale(20%) contrast(1.1);
+    transform-origin: center;
+    animation: slowBreathing 20s ease-in-out infinite alternate;
+  }
+
+  @keyframes slowBreathing {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.1); }
   }
 
   .hook-placeholder {
@@ -358,13 +365,15 @@ const dimensions = [
   .beat-word {
     display: inline-block;
     opacity: 0;
-    transform: translateY(8px);
-    transition: opacity 0.4s var(--ease-settle), transform 0.4s var(--ease-settle);
+    filter: blur(8px);
+    transform: translateY(12px);
+    transition: opacity 0.8s var(--ease-settle), transform 0.8s var(--ease-settle), filter 0.8s var(--ease-settle);
     transition-delay: var(--word-delay);
   }
 
   .beat.is-active .beat-word {
     opacity: 1;
+    filter: blur(0);
     transform: translateY(0);
   }
 
