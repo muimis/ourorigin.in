@@ -5,36 +5,22 @@ import CipherGlyphs from '../components/CipherGlyphs.astro';
 import OriginMark from '../components/OriginMark.astro';
 
 // Load content
-const allOrigins = await getCollection('origins');
 const allProducts = await getCollection('products');
+const allOrigins = await getCollection('origins');
 
-// Filter out placeholder origins (Malabar Coast has no real products)
-const activeOrigins = allOrigins
-  .filter(o => o.id !== 'malabar-coast')
-  .sort((a, b) => {
-    // Elevation-descending: highest first (Nilgiris → Idukki → Wayanad → etc.)
-    const elevA = parseInt(String(a.data.elevation).replace(/[^0-9]/g, '')) || 0;
-    const elevB = parseInt(String(b.data.elevation).replace(/[^0-9]/g, '')) || 0;
-    return elevB - elevA;
-  });
-
-// Group products by origin
-const productsByOrigin: Record<string, typeof allProducts> = {};
-allProducts.forEach(p => {
-  const oid = typeof p.data.originSlug === 'object' ? (p.data.originSlug as any).id : p.data.originSlug;
-  if (!productsByOrigin[oid]) productsByOrigin[oid] = [];
-  productsByOrigin[oid].push(p);
+// Active products (exclude Malabar Coast items if any, and filter out ones without sizes)
+const activeProducts = allProducts.filter(p => {
+  const originId = typeof p.data.originSlug === 'object' ? (p.data.originSlug as any).id : p.data.originSlug;
+  return originId !== 'malabar-coast' && p.data.sizes && p.data.sizes.length > 0;
 });
 
-// The seven dimension statements
+// The narrative beats
 const dimensions = [
-  { dim: 'geo', statement: 'Every true thing comes from one exact place. Not a region. A place.' },
-  { dim: 'bio', statement: 'Before anyone arrives to take anything, the place already has a life of its own.' },
-  { dim: 'community', statement: 'Someone has understood this place longer than we\'ve known it exists.' },
-  { dim: 'method', statement: 'There is a way of taking, and a way of taking too much. This is the difference we look for.' },
-  { dim: 'observation', statement: 'Not a photograph from last year. What\'s happening there, right now.' },
-  { dim: 'time', statement: 'It has seasons. It changes. What you\'re looking at is alive, not preserved.' },
-  { dim: 'product', statement: 'What ends up in your hand is proof all of this was true. Or it\'s nothing.' },
+  { dim: 'method', statement: 'The product was shaped by the method. Sun-dried. Hand-sorted. Zero synthetics.' },
+  { dim: 'community', statement: 'The method was executed by the community. The First Hands who know the soil.' },
+  { dim: 'time', statement: 'The community moves in rhythm with time. The monsoon dictates the harvest. We don\'t force it.' },
+  { dim: 'bio', statement: 'Time is governed by the biology. An ancient canopy that has thrived for millennia.' },
+  { dim: 'geo', statement: 'And the biology is rooted in the geography. The deep slopes of the Western Ghats.' },
 ];
 ---
 
@@ -44,21 +30,35 @@ const dimensions = [
   noHeaderPadding={true}
 >
 
-  <!-- ═══════════════════════════════════════════════════════
-       ACT I: The Opening Sequence
-       Seven beats, one per dimension, teaching the concept
-       before showing a single product.
-       ═══════════════════════════════════════════════════════ -->
-  <section class="opening-sequence" id="opening-sequence" aria-label="The seven dimensions of an origin">
-    
-    <!-- Progress bar: 7 segments -->
+  <!-- ACT I: The Hook -->
+  <section class="the-hook">
+    <div class="hook-visual">
+      {activeProducts[0] && activeProducts[0].data.images?.product ? (
+        <img src={activeProducts[0].data.images.product} alt="Our Yield" loading="eager" class="hook-image" />
+      ) : (
+        <div class="hook-placeholder"><OriginMark size={60} variant="gold" /></div>
+      )}
+    </div>
+    <div class="hook-overlay"></div>
+    <div class="hook-content">
+      <h1 class="hook-title">You think you are looking at a spice.</h1>
+      <p class="hook-subtitle">But what you're actually holding is a cross-section of an entire ecosystem.</p>
+      <div class="scroll-indicator">
+        <span class="scroll-line"></span>
+        <span class="scroll-text">Unpack the Origin</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACT II & III: Unpacking the Origin -->
+  <section class="opening-sequence" id="opening-sequence" aria-label="The unpacking of an origin">
     <div class="progress-bar" id="sequence-progress" aria-hidden="true">
       {dimensions.map((_, i) => (
         <div class="progress-segment" data-index={i}></div>
       ))}
+      <div class="progress-segment" data-index="resolution"></div>
     </div>
 
-    <!-- The 7 Beats -->
     <div class="beats-viewport" id="beats-viewport">
       {dimensions.map((d, i) => (
         <div class="beat" data-beat={i} data-dim={d.dim}>
@@ -67,118 +67,92 @@ const dimensions = [
           </div>
           <p class="beat-statement">
             {d.statement.split(' ').map((word, wi) => (
-              <span class="beat-word" style={`--word-delay: ${wi * 50}ms`}>{word} </span>
+              <span class="beat-word" style={`--word-delay: ${wi * 40}ms`}>{word} </span>
             ))}
           </p>
           <span class="beat-marker" aria-hidden="true">·</span>
         </div>
       ))}
 
-      <!-- Resolution Beat -->
+      <!-- Resolution Beat (Climax & Proof System) -->
       <div class="beat beat--resolution" data-beat="resolution">
         <div class="resolution-glyphs">
           {dimensions.map(d => (
             <CipherGlyphs dim={d.dim as any} size={28} active={true} />
           ))}
+          <CipherGlyphs dim="product" size={28} active={true} />
         </div>
-        <p class="resolution-statement">This is what we mean by an origin.</p>
-        <p class="resolution-grounding">Right now, ours is the Western Ghats.</p>
-        <button class="btn-enter" id="btn-enter-core" type="button">
-          <span>ENTER</span>
-        </button>
+        <p class="resolution-statement">Origin isn't a location on a map.</p>
+        <p class="resolution-climax">Origin is the convergence of all these forces. If one is compromised, the entire system breaks.</p>
+        <div class="resolution-divider"></div>
+        <p class="resolution-promise">We don't sell spices. We built a proof system to ensure this ecosystem remains unbroken.</p>
+        <p class="resolution-promise-final">What ends up in your hand is proof it was true. Or it's nothing.</p>
       </div>
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════════════════════
-       ACT II: The Core — Origin-First Landing
-       Four origins as equally weighted points.
-       Selecting one reveals its products in place.
-       ═══════════════════════════════════════════════════════ -->
-  <section class="the-core" id="the-core" aria-label="Explore the origins">
-    
-    <div class="core-header">
-      <h2 class="core-title" data-reveal="fade">The Origins</h2>
-      <p class="core-subtitle" data-reveal="fade">Four places in the Western Ghats. Each with its own elevation, ecology, and yield.</p>
+  <!-- ACT IV: The Yields -->
+  <section class="the-yields" id="the-yields" aria-label="The Active Yields">
+    <div class="yields-header">
+      <h2 class="yields-title" data-reveal="fade">The Yields</h2>
+      <p class="yields-subtitle" data-reveal="fade">The physical proof that survived the system this season.</p>
     </div>
 
-    <div class="origins-row" id="origins-row">
-      {activeOrigins.map((origin, i) => {
-        const originProducts = productsByOrigin[origin.id] || [];
-        const canopyImage = origin.data.images?.canopy;
-        return (
-          <div class="origin-card" data-origin={origin.id} data-reveal="up">
-            {canopyImage && (
-              <div class="origin-card-bg" style={`background-image: url('${canopyImage}')`}></div>
-            )}
-            <div class="origin-card-content">
-              <h3 class="origin-name">{origin.data.name}</h3>
-              <div class="origin-evidence">
-                <span class="origin-elevation">{origin.data.elevation}</span>
-                <span class="origin-coords">{origin.data.coordinates}</span>
-              </div>
-              <div class="origin-soil">{origin.data.soil}</div>
-              <button class="origin-expand-btn" data-target={origin.id} aria-expanded="false" type="button">
-                Explore {originProducts.length} yield{originProducts.length !== 1 ? 's' : ''} ↓
-              </button>
-            </div>
+    <div class="yields-grid">
+      {activeProducts.map(product => {
+        const originId = typeof product.data.originSlug === 'object' ? (product.data.originSlug as any).id : product.data.originSlug;
+        const originObj = allOrigins.find(o => o.id === originId);
+        const originName = originObj ? originObj.data.name : originId;
 
-            <!-- Expandable product row (accordion) -->
-            <div class="origin-products" id={`products-${origin.id}`} aria-hidden="true">
-              <div class="origin-products-scroll">
-                {originProducts.map(product => (
-                  <div class="product-card">
-                    <div class="product-card-image">
-                      {product.data.images?.product ? (
-                        <img 
-                          src={product.data.images.product} 
-                          alt={product.data.name} 
-                          loading="lazy" 
-                          width="200" 
-                          height="200"
-                        />
-                      ) : product.data.images?.packaging ? (
-                        <img 
-                          src={product.data.images.packaging} 
-                          alt={product.data.name} 
-                          loading="lazy" 
-                          width="200" 
-                          height="200"
-                        />
-                      ) : (
-                        <div class="product-card-placeholder">
-                          <OriginMark size={24} variant="gold" />
-                        </div>
-                      )}
-                    </div>
-                    <h4 class="product-card-name">{product.data.name}</h4>
-                    <div class="product-card-price">
-                      ₹{product.data.sizes[0]?.priceINR} <span class="product-card-size">/ {product.data.sizes[0]?.label}</span>
-                    </div>
-                    <div class="product-card-actions">
-                      <button 
-                        class="btn-add-quick add-to-ledger-btn" 
-                        type="button"
-                        data-product={JSON.stringify({
-                          id: product.id + '-' + product.data.sizes[0]?.label,
-                          productId: product.id,
-                          name: product.data.name,
-                          origin: origin.data.name,
-                          originId: origin.id,
-                          size: product.data.sizes[0]?.label,
-                          price: product.data.sizes[0]?.priceINR,
-                          quantity: 1
-                        })}
-                      >
-                        Add
-                      </button>
-                      <a href={`/origins/${origin.id}/${product.id}`} class="btn-enter-product">
-                        Enter →
-                      </a>
-                    </div>
+        return (
+          <div class="product-card" data-reveal="up">
+            <a href={`/origins/${originId}/${product.id}`} class="product-card-link">
+              <div class="product-card-image">
+                {product.data.images?.product ? (
+                  <img 
+                    src={product.data.images.product} 
+                    alt={product.data.name} 
+                    loading="lazy" 
+                  />
+                ) : product.data.images?.packaging ? (
+                  <img 
+                    src={product.data.images.packaging} 
+                    alt={product.data.name} 
+                    loading="lazy" 
+                  />
+                ) : (
+                  <div class="product-card-placeholder">
+                    <OriginMark size={24} variant="gold" />
                   </div>
-                ))}
+                )}
               </div>
+              <div class="product-card-content">
+                <div class="product-card-meta">
+                  <span class="product-origin">{originName}</span>
+                </div>
+                <h3 class="product-card-name">{product.data.name}</h3>
+                <div class="product-card-price">
+                  ₹{product.data.sizes[0]?.priceINR} <span class="product-card-size">/ {product.data.sizes[0]?.label}</span>
+                </div>
+              </div>
+            </a>
+            <div class="product-card-actions">
+              <button 
+                class="btn-add-quick add-to-ledger-btn" 
+                type="button"
+                data-product={JSON.stringify({
+                  id: product.id + '-' + product.data.sizes[0]?.label,
+                  productId: product.id,
+                  name: product.data.name,
+                  origin: originName,
+                  originId: originId,
+                  size: product.data.sizes[0]?.label,
+                  price: product.data.sizes[0]?.priceINR,
+                  quantity: 1
+                })}
+              >
+                Honor the Decision
+              </button>
             </div>
           </div>
         );
@@ -186,49 +160,7 @@ const dimensions = [
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════════════════════
-       ACT III: The Evidence
-       Real data from the origins, not marketing claims.
-       ═══════════════════════════════════════════════════════ -->
-  <section class="the-evidence" id="the-evidence" aria-label="The evidence">
-    <div class="evidence-container">
-      <div class="evidence-statement" data-reveal="fade">
-        <p class="evidence-wide">
-          Soil older than the Himalayas. Monsoon-aligned harvest cycles. Zero synthetic intervention.
-        </p>
-        <p class="evidence-qualifier">
-          These are facts about the Western Ghats — not claims about our brand.
-        </p>
-      </div>
-
-      <div class="evidence-grid" data-reveal="stagger">
-        <div class="evidence-item">
-          <div class="evidence-label">Soil Age</div>
-          <div class="evidence-value">25M+ years</div>
-          <p class="evidence-note">The Western Ghats are older than the Himalayas. The soil holds memory no document can match.</p>
-        </div>
-        <div class="evidence-item">
-          <div class="evidence-label">Harvest Alignment</div>
-          <div class="evidence-value">Monsoon</div>
-          <p class="evidence-note">Each harvest follows the natural monsoon rhythm. No forcing. No accelerating. The season decides.</p>
-        </div>
-        <div class="evidence-item">
-          <div class="evidence-label">Synthetic Input</div>
-          <div class="evidence-value">Zero</div>
-          <p class="evidence-note">No synthetic chemicals. No exceptions. What goes into the soil comes back to you.</p>
-        </div>
-        <div class="evidence-item">
-          <div class="evidence-label">Active Origins</div>
-          <div class="evidence-value">{activeOrigins.length}</div>
-          <p class="evidence-note">Each verified, documented, and traceable to one exact place.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════════════════
-       ACT IV: The Walk — pre-footer moment
-       ═══════════════════════════════════════════════════════ -->
+  <!-- ACT V: The Walk -->
   <section class="the-walk" aria-label="The walk">
     <div class="walk-bg" style="background-image: url('/images/prefooter.webp')"></div>
     <div class="walk-overlay"></div>
@@ -239,14 +171,120 @@ const dimensions = [
       <a href="/about" class="walk-link">Read the manifesto →</a>
     </div>
   </section>
-
 </Layout>
 
 <style>
   /* ════════════════════════════════════════════════════════════
-     OPENING SEQUENCE
+     ACT I: THE HOOK
      ════════════════════════════════════════════════════════════ */
+  .the-hook {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: var(--color-void);
+    overflow: hidden;
+  }
 
+  .hook-visual {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    opacity: 0.6;
+  }
+
+  .hook-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(20%) contrast(1.1);
+  }
+
+  .hook-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  .hook-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(5,8,4,0.3) 0%, rgba(5,8,4,0.8) 70%, var(--color-forest-deep) 100%);
+    z-index: 2;
+  }
+
+  .hook-content {
+    position: relative;
+    z-index: 3;
+    padding: var(--space-2xl);
+    max-width: 800px;
+    margin-top: auto;
+    margin-bottom: 15vh;
+  }
+
+  .hook-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 400;
+    color: var(--color-warm-cream);
+    margin: 0 0 var(--space-md) 0;
+    line-height: 1.1;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+
+  .hook-subtitle {
+    font-family: var(--font-narrative);
+    font-size: var(--type-statement);
+    color: rgba(245, 240, 232, 0.9);
+    font-style: italic;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .scroll-indicator {
+    position: absolute;
+    bottom: -10vh;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .scroll-line {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, var(--color-gold) 0%, transparent 100%);
+    animation: scrollLine 2s infinite ease-in-out;
+  }
+
+  .scroll-text {
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    color: var(--color-gold);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+  }
+
+  @keyframes scrollLine {
+    0% { transform: scaleY(0); transform-origin: top; opacity: 0; }
+    50% { transform: scaleY(1); transform-origin: top; opacity: 1; }
+    50.1% { transform: scaleY(1); transform-origin: bottom; opacity: 1; }
+    100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
+  }
+
+  /* ════════════════════════════════════════════════════════════
+     ACT II & III: OPENING SEQUENCE (THE UNPACKING)
+     ════════════════════════════════════════════════════════════ */
   .opening-sequence {
     position: relative;
     min-height: 100vh;
@@ -254,7 +292,6 @@ const dimensions = [
     overflow: hidden;
   }
 
-  /* Progress Bar */
   .progress-bar {
     position: fixed;
     top: var(--space-xl);
@@ -282,7 +319,6 @@ const dimensions = [
     background: var(--color-gold);
   }
 
-  /* Beats Container */
   .beats-viewport {
     position: relative;
     width: 100%;
@@ -315,7 +351,7 @@ const dimensions = [
     font-weight: 300;
     line-height: 1.3;
     color: var(--color-warm-cream);
-    max-width: 480px;
+    max-width: 600px;
     margin: 0;
   }
 
@@ -339,7 +375,6 @@ const dimensions = [
     opacity: 0.3;
   }
 
-  /* Resolution Beat */
   .beat--resolution {
     padding-bottom: 20vh;
   }
@@ -354,57 +389,63 @@ const dimensions = [
 
   .resolution-statement {
     font-family: var(--font-narrative);
-    font-style: italic;
-    font-size: var(--type-statement);
+    font-size: var(--type-display);
     font-weight: 300;
     color: var(--color-warm-cream);
+    margin: 0 0 var(--space-md) 0;
+  }
+
+  .resolution-climax {
+    font-family: var(--font-narrative);
+    font-style: italic;
+    font-size: var(--type-statement);
+    color: rgba(245, 240, 232, 0.8);
+    margin: 0 0 var(--space-2xl) 0;
+    max-width: 600px;
+  }
+
+  .resolution-divider {
+    width: 40px;
+    height: 1px;
+    background: var(--color-gold);
+    margin: 0 auto var(--space-2xl);
+  }
+
+  .resolution-promise {
+    font-family: var(--font-evidence);
+    font-size: var(--type-narrative);
+    color: var(--color-warm-cream);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    max-width: 700px;
+    margin: 0 0 var(--space-lg) 0;
+    line-height: 1.6;
+  }
+
+  .resolution-promise-final {
+    font-family: var(--font-evidence);
+    font-size: var(--type-evidence);
+    color: var(--color-gold);
+    letter-spacing: 0.1em;
     margin: 0;
   }
 
-  .resolution-grounding {
-    font-family: var(--font-narrative);
-    font-size: var(--type-narrative);
-    color: var(--color-warm-cream);
-    opacity: 0.8;
-    margin: var(--space-lg) 0 0 0;
-  }
-
-  .btn-enter {
-    margin-top: var(--space-3xl);
-    padding: var(--space-lg) var(--space-3xl);
-    background: transparent;
-    border: 1px solid var(--color-gold);
-    color: var(--color-gold);
-    font-family: var(--font-evidence);
-    font-size: var(--type-evidence);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: background var(--duration-standard) var(--ease-settle),
-                color var(--duration-standard) var(--ease-settle);
-  }
-
-  .btn-enter:hover {
-    background: var(--color-gold);
-    color: var(--color-forest-deep);
-  }
 
   /* ════════════════════════════════════════════════════════════
-     THE CORE — Origin-First Landing
+     ACT IV: THE YIELDS
      ════════════════════════════════════════════════════════════ */
-
-  .the-core {
+  .the-yields {
     padding: var(--space-4xl) var(--space-xl);
     background-color: var(--color-forest-deep);
     min-height: 100vh;
   }
 
-  .core-header {
+  .yields-header {
     text-align: center;
     margin-bottom: var(--space-4xl);
   }
 
-  .core-title {
+  .yields-title {
     font-family: var(--font-display);
     font-size: var(--type-display);
     font-weight: 400;
@@ -413,7 +454,7 @@ const dimensions = [
     letter-spacing: 0.05em;
   }
 
-  .core-subtitle {
+  .yields-subtitle {
     font-family: var(--font-narrative);
     font-size: var(--type-narrative);
     color: rgba(245, 240, 232, 0.7);
@@ -422,169 +463,61 @@ const dimensions = [
     line-height: var(--line-height-loose);
   }
 
-  .origins-row {
+  .yields-grid {
     max-width: 1200px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-xl);
-  }
-
-  .origin-card {
-    position: relative;
-    border: 1px solid rgba(198, 156, 82, 0.15);
-    overflow: hidden;
-    transition: border-color var(--duration-standard) var(--ease-settle);
-  }
-
-  .origin-card:hover {
-    border-color: rgba(198, 156, 82, 0.4);
-  }
-
-  .origin-card-bg {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-    opacity: 0.2;
-    filter: grayscale(60%);
-    transition: opacity var(--duration-slow) var(--ease-settle);
-  }
-
-  .origin-card:hover .origin-card-bg {
-    opacity: 0.35;
-  }
-
-  .origin-card-content {
-    position: relative;
-    z-index: 2;
-    padding: var(--space-3xl) var(--space-2xl);
-  }
-
-  .origin-name {
-    font-family: var(--font-display);
-    font-size: clamp(20px, 3vw, 28px);
-    font-weight: 400;
-    color: var(--color-warm-cream);
-    margin: 0 0 var(--space-lg) 0;
-    letter-spacing: 0.03em;
-  }
-
-  .origin-evidence {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xs);
-    margin-bottom: var(--space-lg);
-  }
-
-  .origin-elevation {
-    font-family: var(--font-evidence);
-    font-size: var(--type-evidence);
-    color: var(--color-gold);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-
-  .origin-coords {
-    font-family: var(--font-evidence);
-    font-size: var(--type-whisper);
-    color: rgba(245, 240, 232, 0.4);
-    letter-spacing: 0.05em;
-  }
-
-  .origin-soil {
-    font-family: var(--font-evidence);
-    font-size: var(--type-whisper);
-    color: rgba(245, 240, 232, 0.5);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: var(--space-xl);
-  }
-
-  .origin-expand-btn {
-    background: transparent;
-    border: 1px solid rgba(198, 156, 82, 0.3);
-    color: var(--color-warm-cream);
-    font-family: var(--font-evidence);
-    font-size: var(--type-evidence);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: var(--space-md) var(--space-xl);
-    cursor: pointer;
-    transition: all var(--duration-standard) var(--ease-settle);
-    min-height: 44px;
-    min-width: 44px;
-  }
-
-  .origin-expand-btn:hover {
-    border-color: var(--color-gold);
-    color: var(--color-gold);
-  }
-
-  .origin-expand-btn[aria-expanded="true"] {
-    border-color: var(--color-gold);
-    color: var(--color-gold);
-  }
-
-  /* Product Accordion */
-  .origin-products {
-    position: relative;
-    z-index: 2;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height var(--duration-slow) var(--ease-settle),
-                padding var(--duration-slow) var(--ease-settle);
-    background: rgba(5, 8, 4, 0.6);
-    border-top: 0 solid rgba(198, 156, 82, 0);
-  }
-
-  .origin-products.is-expanded {
-    max-height: 600px;
-    border-top: 1px solid rgba(198, 156, 82, 0.15);
-  }
-
-  .origin-products-scroll {
-    display: flex;
-    gap: var(--space-xl);
-    padding: var(--space-2xl);
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-
-  .origin-products-scroll::-webkit-scrollbar {
-    display: none;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-2xl);
   }
 
   .product-card {
-    flex: 0 0 200px;
-    scroll-snap-align: start;
     display: flex;
     flex-direction: column;
-    gap: var(--space-sm);
+    height: 100%;
+    border: 1px solid rgba(198, 156, 82, 0.1);
+    background: rgba(245, 240, 232, 0.01);
+    transition: transform var(--duration-standard) var(--ease-settle),
+                border-color var(--duration-standard) var(--ease-settle);
+  }
+
+  .product-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(198, 156, 82, 0.3);
+  }
+
+  .product-card-link {
+    text-decoration: none;
+    color: inherit;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
   }
 
   .product-card-image {
-    width: 200px;
-    height: 200px;
+    width: 100%;
+    aspect-ratio: 1;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
     background: rgba(245, 240, 232, 0.03);
+    border-bottom: 1px solid rgba(245, 240, 232, 0.05);
   }
 
   .product-card-image img {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    filter: grayscale(30%) brightness(0.9);
-    transition: filter var(--duration-standard) var(--ease-settle);
+    padding: var(--space-xl);
+    filter: grayscale(20%) brightness(0.9);
+    transition: filter var(--duration-standard) var(--ease-settle),
+                transform var(--duration-slow) var(--ease-settle);
   }
 
   .product-card:hover .product-card-image img {
     filter: grayscale(0%) brightness(1);
+    transform: scale(1.05);
   }
 
   .product-card-placeholder {
@@ -593,12 +526,27 @@ const dimensions = [
     justify-content: center;
     width: 100%;
     height: 100%;
-    border: 1px dashed rgba(198, 156, 82, 0.2);
+  }
+
+  .product-card-content {
+    padding: var(--space-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    flex-grow: 1;
+  }
+
+  .product-card-meta {
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    color: var(--color-gold);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
   }
 
   .product-card-name {
     font-family: var(--font-display);
-    font-size: 1rem;
+    font-size: var(--type-statement);
     font-weight: 400;
     color: var(--color-warm-cream);
     margin: 0;
@@ -609,6 +557,7 @@ const dimensions = [
     font-family: var(--font-evidence);
     font-size: var(--type-evidence);
     color: var(--color-warm-cream);
+    margin-top: auto;
   }
 
   .product-card-size {
@@ -616,24 +565,21 @@ const dimensions = [
   }
 
   .product-card-actions {
-    display: flex;
-    gap: var(--space-sm);
-    margin-top: var(--space-sm);
+    padding: 0 var(--space-xl) var(--space-xl);
   }
 
   .btn-add-quick {
-    flex: 0 0 auto;
-    padding: var(--space-sm) var(--space-lg);
+    width: 100%;
+    padding: var(--space-md) var(--space-lg);
     background: transparent;
     border: 1px solid rgba(198, 156, 82, 0.4);
     color: var(--color-gold);
     font-family: var(--font-evidence);
-    font-size: var(--type-whisper);
+    font-size: var(--type-evidence);
     text-transform: uppercase;
     letter-spacing: 0.1em;
     cursor: pointer;
     min-height: 44px;
-    min-width: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -645,107 +591,9 @@ const dimensions = [
     border-color: var(--color-gold);
   }
 
-  .btn-enter-product {
-    flex: 1;
-    padding: var(--space-sm) var(--space-lg);
-    background: transparent;
-    border: 1px solid rgba(245, 240, 232, 0.15);
-    color: var(--color-warm-cream);
-    font-family: var(--font-evidence);
-    font-size: var(--type-whisper);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    text-decoration: none;
-    text-align: center;
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all var(--duration-standard) var(--ease-settle);
-  }
-
-  .btn-enter-product:hover {
-    border-color: var(--color-warm-cream);
-  }
-
   /* ════════════════════════════════════════════════════════════
-     THE EVIDENCE
+     ACT V: THE WALK
      ════════════════════════════════════════════════════════════ */
-
-  .the-evidence {
-    padding: var(--space-4xl) var(--space-xl);
-    background-color: var(--color-void);
-  }
-
-  .evidence-container {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .evidence-statement {
-    text-align: left;
-    margin-bottom: var(--space-4xl);
-    max-width: 700px;
-  }
-
-  .evidence-wide {
-    font-family: var(--font-narrative);
-    font-size: var(--type-statement);
-    font-weight: 300;
-    line-height: 1.3;
-    color: var(--color-warm-cream);
-    margin: 0 0 var(--space-xl) 0;
-  }
-
-  .evidence-qualifier {
-    font-family: var(--font-evidence);
-    font-size: var(--type-evidence);
-    color: rgba(245, 240, 232, 0.5);
-    letter-spacing: 0.05em;
-    margin: 0;
-  }
-
-  .evidence-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: var(--space-xl);
-  }
-
-  .evidence-item {
-    border-top: 1px solid rgba(198, 156, 82, 0.25);
-    padding-top: var(--space-xl);
-  }
-
-  .evidence-label {
-    font-family: var(--font-evidence);
-    font-size: var(--type-whisper);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--color-gold);
-    margin-bottom: var(--space-sm);
-  }
-
-  .evidence-value {
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 5vw, 3.5rem);
-    font-weight: 400;
-    color: var(--color-warm-cream);
-    line-height: 1;
-    margin-bottom: var(--space-lg);
-  }
-
-  .evidence-note {
-    font-family: var(--font-narrative);
-    font-size: var(--type-narrative);
-    color: rgba(245, 240, 232, 0.6);
-    line-height: var(--line-height-base);
-    margin: 0;
-  }
-
-  /* ════════════════════════════════════════════════════════════
-     THE WALK — Pre-footer
-     ════════════════════════════════════════════════════════════ */
-
   .the-walk {
     position: relative;
     min-height: 70vh;
@@ -800,175 +648,96 @@ const dimensions = [
   .walk-link:hover {
     opacity: 0.7;
   }
-
-  /* ════════════════════════════════════════════════════════════
-     MOBILE
-     ════════════════════════════════════════════════════════════ */
-
-  @media (max-width: 768px) {
-    .progress-bar {
-      left: var(--space-lg);
-      right: var(--space-lg);
-      gap: 2px;
-    }
-
-    .beat-statement {
-      max-width: 320px;
-    }
-
-    .beat-glyph :global(.cipher-glyph) {
-      width: 100px;
-      height: 100px;
-    }
-
-    .origins-row {
-      grid-template-columns: 1fr;
-    }
-
-    .evidence-grid {
-      grid-template-columns: 1fr 1fr;
-    }
-
-    .product-card {
-      flex: 0 0 170px;
-    }
-
-    .product-card-image {
-      width: 170px;
-      height: 170px;
-    }
-
-    .btn-enter {
-      /* Thumb zone: bottom 40% of viewport */
-      position: relative;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .evidence-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .resolution-glyphs {
-      gap: var(--space-sm);
-    }
-  }
 </style>
 
 <script>
-  import gsap from 'gsap';
-  import ScrollTrigger from 'gsap/ScrollTrigger';
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
   gsap.registerPlugin(ScrollTrigger);
 
-  document.addEventListener('DOMContentLoaded', () => {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const progressBar = document.getElementById('sequence-progress');
-    const beats = document.querySelectorAll('.beat');
-    const segments = document.querySelectorAll('.progress-segment');
-    
-    // ── Opening Sequence ──
-    // Shuffle dimensions order (Fisher-Yates), pin Product last
-    const beatsArray = Array.from(beats).filter(b => b.getAttribute('data-beat') !== 'resolution');
-    const resolutionBeat = document.querySelector('.beat--resolution');
-    const productBeat = beatsArray.find(b => b.getAttribute('data-dim') === 'product');
-    const otherBeats = beatsArray.filter(b => b.getAttribute('data-dim') !== 'product');
-    
-    // Fisher-Yates shuffle for non-product beats
-    for (let i = otherBeats.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [otherBeats[i], otherBeats[j]] = [otherBeats[j], otherBeats[i]];
-    }
-    
-    // Reorder DOM: shuffled beats + product last + resolution
+  function initOpeningSequence() {
+    const sequence = document.getElementById('opening-sequence');
     const viewport = document.getElementById('beats-viewport');
-    if (viewport) {
-      const shuffledOrder = [...otherBeats, productBeat, resolutionBeat].filter(Boolean);
-      shuffledOrder.forEach(beat => viewport.appendChild(beat as Node));
-    }
+    const beats = document.querySelectorAll('.beat');
+    const progressBar = document.getElementById('sequence-progress');
+    const progressSegments = document.querySelectorAll('.progress-segment');
 
-    // Show progress bar
-    if (progressBar) {
-      progressBar.classList.add('is-visible');
-    }
+    if (!sequence || !viewport || beats.length === 0) return;
 
-    // Create scroll-triggered reveals for each beat
-    const allBeats = document.querySelectorAll('.beat');
-    allBeats.forEach((beat, i) => {
-      ScrollTrigger.create({
-        trigger: beat,
-        start: 'top 60%',
-        end: 'bottom 40%',
-        onEnter: () => {
-          beat.classList.add('is-active');
-          // Update progress bar
-          if (i < segments.length) {
-            segments[i].classList.add('is-filled');
+    // Pin the viewport while scrolling through the beats
+    ScrollTrigger.create({
+      trigger: sequence,
+      start: "top top",
+      end: `+=${beats.length * 100}%`,
+      pin: viewport,
+      pinSpacing: true,
+      onEnter: () => progressBar?.classList.add('is-visible'),
+      onLeaveBack: () => progressBar?.classList.remove('is-visible'),
+      onLeave: () => progressBar?.classList.remove('is-visible'),
+      onEnterBack: () => progressBar?.classList.add('is-visible'),
+      onUpdate: (self) => {
+        // Calculate which beat is active
+        const progress = self.progress;
+        const totalBeats = beats.length;
+        const activeIndex = Math.min(
+          Math.floor(progress * totalBeats),
+          totalBeats - 1
+        );
+
+        // Update beats
+        beats.forEach((beat, i) => {
+          if (i === activeIndex) {
+            beat.classList.add('is-active');
+            // reset transform for scrolling effect
+            gsap.set(beat, { y: 0 });
+          } else if (i < activeIndex) {
+            beat.classList.remove('is-active');
+            // move up out of view
+            gsap.set(beat, { y: -100 });
+          } else {
+            beat.classList.remove('is-active');
+            // stay down
+            gsap.set(beat, { y: 100 });
           }
+        });
+
+        // Update progress bar
+        progressSegments.forEach((seg, i) => {
+          if (i <= activeIndex) {
+            seg.classList.add('is-filled');
+          } else {
+            seg.classList.remove('is-filled');
+          }
+        });
+      }
+    });
+
+    // Simple reveal animations for other sections
+    const reveals = document.querySelectorAll('[data-reveal]');
+    reveals.forEach(el => {
+      const type = el.getAttribute('data-reveal');
+      
+      gsap.fromTo(el, 
+        { 
+          y: type === 'up' ? 30 : 0,
+          opacity: 0 
         },
-        onLeaveBack: () => {
-          beat.classList.remove('is-active');
-          if (i < segments.length) {
-            segments[i].classList.remove('is-filled');
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 85%",
           }
         }
-      });
+      );
     });
+  }
 
-    // ── ENTER button → scroll to The Core ──
-    const enterBtn = document.getElementById('btn-enter-core');
-    if (enterBtn) {
-      enterBtn.addEventListener('click', () => {
-        const core = document.getElementById('the-core');
-        if (core) {
-          core.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth' });
-        }
-      });
-    }
-
-    // ── Origin Card Accordion ──
-    document.querySelectorAll('.origin-expand-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const targetId = btn.getAttribute('data-target');
-        const panel = document.getElementById(`products-${targetId}`);
-        const isExpanded = btn.getAttribute('aria-expanded') === 'true';
-
-        // Close all other panels first
-        document.querySelectorAll('.origin-products').forEach(p => {
-          p.classList.remove('is-expanded');
-          p.setAttribute('aria-hidden', 'true');
-        });
-        document.querySelectorAll('.origin-expand-btn').forEach(b => {
-          b.setAttribute('aria-expanded', 'false');
-        });
-
-        // Toggle current
-        if (!isExpanded && panel) {
-          panel.classList.add('is-expanded');
-          panel.setAttribute('aria-hidden', 'false');
-          btn.setAttribute('aria-expanded', 'true');
-        }
-      });
-    });
-
-    // ── Quick Add to Ledger ──
-    document.querySelectorAll('.add-to-ledger-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const productData = JSON.parse(btn.getAttribute('data-product') || '{}');
-        window.dispatchEvent(new CustomEvent('add-to-ledger', { detail: productData }));
-
-        // Visual feedback
-        const el = btn as HTMLElement;
-        el.style.background = 'rgba(198, 156, 82, 0.25)';
-        el.style.borderColor = 'var(--color-gold)';
-        el.textContent = '✓';
-        setTimeout(() => {
-          el.style.background = '';
-          el.style.borderColor = '';
-          el.textContent = 'Add';
-        }, 1200);
-      });
-    });
-  });
+  // Initialize on load and view transitions
+  initOpeningSequence();
+  document.addEventListener('astro:after-swap', initOpeningSequence);
 </script>
