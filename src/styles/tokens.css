@@ -1,48 +1,76 @@
+/* ═══════════════════════════════════════════════════════════
+   OurOrigin — Design Tokens (Locked)
+   Source of truth for every visual decision.
+   No component should redeclare these values.
+   ═══════════════════════════════════════════════════════════ */
+
 :root {
-  /* Brand Colors */
+  /* ── Brand Colors ── */
   --color-void: #050804;
-  --color-forest-deep: #0c1509;
-  --color-warm-cream: #EBE5D9;
-  --color-gold: #C69C52;
+  --color-forest-deep: #0c1509;       /* Primary background. Locked. */
+  --color-warm-cream: #F5F0E8;        /* Primary text */
+  --color-gold: #C69C52;              /* Accent. Yield dot. Labels. */
   --color-gold-muted: rgba(198, 156, 82, 0.4);
   --color-ruby: #8a2a2b;
   --color-copper: #b87333;
   --color-silver: #c0c0c0;
 
-  /* Typography */
-  --font-display: 'Cormorant Garamond', serif;
-  --font-institutional: 'Cormorant Garamond', serif;
+  /* ── Typography — Two Densities ──
+     A section either breathes or it reports. Never both in the same block.
+     WIDE  = Cormorant Garamond (narratives, statements, manifesto)
+     DENSE = DM Mono (coordinates, batch codes, timestamps, labels)
+     Display = Cinzel (section headers, wordmark) */
+  --font-display: 'Cinzel', serif;
+  --font-institutional: 'Cinzel', serif;
   --font-narrative: 'Cormorant Garamond', serif;
   --font-evidence: 'DM Mono', monospace;
   --font-mono: 'DM Mono', monospace;
   --font-sans: 'Inter', -apple-system, sans-serif;
 
-  /* Typographic Scales */
+  /* ── Fluid Type Scale ── */
+  --type-display:   clamp(28px, 8vw, 64px);   /* Origin/product name, rare */
+  --type-statement: clamp(22px, 6vw, 40px);   /* Cipher lines, section titles */
+  --type-narrative: clamp(16px, 4vw, 20px);   /* Body copy */
+  --type-evidence:  clamp(12px, 2.8vw, 13px); /* Coordinates, labels */
+  --type-whisper:   clamp(10px, 2.2vw, 11px); /* Micro captions, batch codes */
+
+  /* Legacy aliases (used in existing components — migrate gradually) */
   --text-base: clamp(1rem, 1.2vw, 1.25rem);
   --text-lead: clamp(1.25rem, 1.5vw, 1.5rem);
   --text-title: clamp(2rem, 4vw, 3.5rem);
-  --text-massive: clamp(4rem, 12vw, 10rem); /* Truly monumental cinematic scale */
-  
+  --text-massive: clamp(4rem, 12vw, 10rem);
+  --text-hero: clamp(3rem, 8vw, 6rem);
+
   --line-height-tight: 1.1;
   --line-height-base: 1.4;
   --line-height-loose: 1.8;
 
-  /* Spacing Tokens */
-  --space-xs: 0.25rem;
-  --space-sm: 0.5rem;
-  --space-md: 0.75rem;
-  --space-lg: 1rem;
-  --space-xl: 1.5rem;
-  --space-2xl: 2rem;
-  --space-3xl: 3rem;
-  --space-4xl: 4rem;
+  /* ── Spacing ── */
+  --space-xs: 0.25rem;   /* 4px */
+  --space-sm: 0.5rem;    /* 8px */
+  --space-md: 0.75rem;   /* 12px */
+  --space-lg: 1rem;      /* 16px */
+  --space-xl: 1.5rem;    /* 24px */
+  --space-2xl: 2rem;     /* 32px */
+  --space-3xl: 3rem;     /* 48px */
+  --space-4xl: 4rem;     /* 64px */
 
-  /* UI Utilities */
+  /* ── Motion ── */
   --ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-quick: 120ms;
   --duration-standard: 320ms;
+  --duration-slow: 700ms;
+  --duration-cinematic: 1000ms;
+
+  /* ── Layout ──
+     Border radius is 0 everywhere. Deliberate. Brutalist. Locked. */
+  --radius: 0;
 }
 
-/* Global Reset & Base Styles */
+/* ═══════════════════════════════════════════════════════════
+   Global Reset & Base
+   ═══════════════════════════════════════════════════════════ */
+
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -59,7 +87,10 @@ html, body {
   overflow-x: hidden;
 }
 
-/* Grain Overlay Effect */
+/* ═══════════════════════════════════════════════════════════
+   Cinematic Grain — subliminal texture
+   ═══════════════════════════════════════════════════════════ */
+
 body::after {
   content: '';
   position: fixed;
@@ -68,50 +99,62 @@ body::after {
   width: 100vw;
   height: 100vh;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: 0.025; /* Subliminal cinematic grain */
+  opacity: 0.025;
   pointer-events: none;
   z-index: 9999;
 }
 
-/* Selection */
+/* ═══════════════════════════════════════════════════════════
+   Selection
+   ═══════════════════════════════════════════════════════════ */
+
 ::selection {
   background-color: var(--color-gold);
   color: var(--color-forest-deep);
 }
 
-/* Raw Panel (Cinematic Glass) */
-.raw-panel {
-  background: rgba(12, 21, 9, 0.4);
-  border: 1px solid rgba(198, 156, 82, 0.15);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 4px;
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
-  transition: border-color var(--duration-standard) var(--ease-settle), transform var(--duration-standard) var(--ease-settle), box-shadow var(--duration-standard) var(--ease-settle);
-}
+/* ═══════════════════════════════════════════════════════════
+   Scroll Reveal Animations
+   ═══════════════════════════════════════════════════════════ */
 
-.raw-panel:hover {
-  border-color: rgba(198, 156, 82, 0.3);
-  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
-}
-
-/* Scroll Reveal Animations */
 [data-reveal] {
   opacity: 0;
   transform: translateY(30px);
   transition: opacity 0.8s var(--ease-settle), transform 0.8s var(--ease-settle);
   will-change: opacity, transform;
 }
+
 [data-reveal="fade"] {
   transform: none;
 }
+
 [data-reveal].is-revealed,
 [data-reveal="stagger"].is-revealed > * {
   opacity: 1;
   transform: translateY(0);
 }
+
 [data-reveal="stagger"] > * {
   opacity: 0;
   transform: translateY(30px);
   transition: opacity 0.8s var(--ease-settle), transform 0.8s var(--ease-settle);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Reduced Motion — respected globally
+   ═══════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }

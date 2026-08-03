@@ -5,13 +5,24 @@ import Footer from '../components/Footer.astro';
 import AllYieldsPanel from '../components/AllYieldsPanel.astro';
 import Ledger from '../components/Ledger.astro';
 import CustomCursor from '../components/CustomCursor.astro';
+import { SITE_URL } from '../utils/constants';
 
 interface Props {
 	title: string;
     description?: string;
+    ogImage?: string;
+    noHeaderPadding?: boolean;
 }
 
-const { title, description = "OurOrigin Website" } = Astro.props;
+const { 
+    title, 
+    description = "Single-origin yields from the Western Ghats, ethically sourced by the First Hands. A proof system for indigenous food.",
+    ogImage = "/og-image.jpg",
+    noHeaderPadding = false
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
+const fullOgImage = ogImage.startsWith('http') ? ogImage : `${SITE_URL}${ogImage}`;
 ---
 
 <!doctype html>
@@ -19,14 +30,29 @@ const { title, description = "OurOrigin Website" } = Astro.props;
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="description" content={description} />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="canonical" href={canonicalURL} />
 		<meta name="generator" content={Astro.generator} />
 		
+        <!-- Open Graph -->
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:image" content={fullOgImage} />
+        <meta property="og:url" content={canonicalURL} />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="OurOrigin" />
+
+        <!-- Twitter Card -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={fullOgImage} />
+
         <!-- Google Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Cormorant+Garamond:wght@300;400;500;600&family=DM+Mono:ital,wght@0,300;0,400;0,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=DM+Mono:ital,wght@0,300;0,400;0,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
         
         <title>{title}</title>
 	</head>
@@ -42,7 +68,7 @@ const { title, description = "OurOrigin Website" } = Astro.props;
             import '../scripts/reveal.js';
         </script>
 		
-        <main class="main-content">
+        <main class:list={["main-content", { "main-content--no-pad": noHeaderPadding }]}>
             <slot />
         </main>
 
@@ -59,7 +85,12 @@ const { title, description = "OurOrigin Website" } = Astro.props;
     
     .main-content {
         flex: 1;
-        /* Padding to account for the fixed header */
-        padding-top: 100px;
+        /* Default: account for fixed header */
+        padding-top: 80px;
+    }
+
+    /* Homepage and cinematic pages override this */
+    .main-content--no-pad {
+        padding-top: 0;
     }
 </style>

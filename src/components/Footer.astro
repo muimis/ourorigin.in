@@ -1,91 +1,167 @@
 ---
+import { WHATSAPP_NUMBER, EMAIL_ADDRESS, FSSAI_NUMBER } from '../utils/constants';
+
 const currentYear = new Date().getFullYear();
+const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}`;
 ---
 <footer class="site-footer">
   <div class="footer-inner">
-    <div class="footer-brand">
-      <span class="wordmark">OurOrigin</span>
-      <p class="tagline">From the earth, with integrity.</p>
-    </div>
-    
-    <div class="footer-links">
-      <a href="/terms" class="footer-link">Terms & Conditions</a>
-      <a href="/privacy" class="footer-link">Privacy Policy</a>
+
+    <div class="footer-top">
+      <div class="footer-brand">
+        <span class="wordmark">OurOrigin</span>
+        <p class="tagline">The proof is in the soil. The soil is the proof.</p>
+      </div>
+
+      <nav class="footer-nav" aria-label="Footer navigation">
+        <div class="footer-col">
+          <span class="footer-col-title">Explore</span>
+          <a href="/" class="footer-link">Home</a>
+          <a href="/about" class="footer-link">Why This Exists</a>
+          <a href="/observations" class="footer-link">Field Notes</a>
+        </div>
+        <div class="footer-col">
+          <span class="footer-col-title">Connect</span>
+          <a href={whatsappLink} class="footer-link" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+          <a href={`mailto:${EMAIL_ADDRESS}`} class="footer-link">{EMAIL_ADDRESS}</a>
+          <a href="/contact" class="footer-link">Contact</a>
+        </div>
+        <div class="footer-col">
+          <span class="footer-col-title">Legal</span>
+          <a href="/terms" class="footer-link">Terms & Conditions</a>
+          <a href="/privacy" class="footer-link">Privacy Policy</a>
+        </div>
+      </nav>
     </div>
 
-    <div class="footer-copy">
-      &copy; {currentYear} OurOrigin. All rights reserved.
+    <div class="footer-bottom">
+      <div class="footer-copy">
+        &copy; {currentYear} OurOrigin. All rights reserved.
+      </div>
+      <div class="footer-fssai">
+        FSSAI Reg. No. {FSSAI_NUMBER}
+      </div>
     </div>
+
   </div>
 </footer>
 
 <style>
   .site-footer {
-    border-top: 1px solid rgba(235, 229, 217, 0.08);
-    padding: var(--space-4xl) var(--space-xl);
+    border-top: 1px solid rgba(245, 240, 232, 0.06);
+    padding: var(--space-4xl) var(--space-xl) var(--space-2xl);
     background-color: var(--color-void);
     color: var(--color-warm-cream);
     margin-top: auto;
   }
 
-  @media (max-width: 768px) {
-    .site-footer {
-      padding: var(--space-2xl) var(--space-lg);
-    }
-    .footer-links {
-      flex-direction: column;
-      gap: var(--space-md);
-    }
-  }
-
   .footer-inner {
     max-width: 1200px;
     margin: 0 auto;
+  }
+
+  .footer-top {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-2xl);
-    text-align: center;
+    justify-content: space-between;
+    gap: var(--space-4xl);
+    margin-bottom: var(--space-4xl);
+  }
+
+  .footer-brand {
+    max-width: 280px;
   }
 
   .wordmark {
-    font-family: var(--font-institutional);
+    font-family: var(--font-display);
     font-size: 1.25rem;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.05em;
     display: block;
-    margin-bottom: var(--space-sm);
+    margin-bottom: var(--space-md);
   }
 
   .tagline {
     font-family: var(--font-narrative);
-    font-size: 1rem;
-    color: rgba(235, 229, 217, 0.6);
+    font-style: italic;
+    font-size: var(--type-narrative);
+    color: rgba(245, 240, 232, 0.5);
     margin: 0;
+    line-height: var(--line-height-base);
   }
 
-  .footer-links {
+  .footer-nav {
     display: flex;
-    gap: var(--space-xl);
+    gap: var(--space-4xl);
+  }
+
+  .footer-col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .footer-col-title {
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--color-gold);
+    margin-bottom: var(--space-sm);
   }
 
   .footer-link {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: rgba(235, 229, 217, 0.5);
+    font-family: var(--font-evidence);
+    font-size: var(--type-evidence);
+    color: rgba(245, 240, 232, 0.45);
     text-decoration: none;
     transition: color var(--duration-standard) var(--ease-settle);
+    line-height: 1.8;
   }
 
   .footer-link:hover {
     color: var(--color-warm-cream);
   }
 
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(245, 240, 232, 0.06);
+    padding-top: var(--space-xl);
+  }
+
   .footer-copy {
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    color: rgba(245, 240, 232, 0.25);
     letter-spacing: 0.05em;
-    color: rgba(235, 229, 217, 0.3);
+  }
+
+  .footer-fssai {
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    color: rgba(245, 240, 232, 0.2);
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 768px) {
+    .site-footer {
+      padding: var(--space-3xl) var(--space-lg) var(--space-xl);
+    }
+
+    .footer-top {
+      flex-direction: column;
+      gap: var(--space-3xl);
+    }
+
+    .footer-nav {
+      flex-direction: column;
+      gap: var(--space-2xl);
+    }
+
+    .footer-bottom {
+      flex-direction: column;
+      gap: var(--space-md);
+      text-align: center;
+    }
   }
 </style>

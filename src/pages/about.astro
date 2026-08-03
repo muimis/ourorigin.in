@@ -1,84 +1,186 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Footer from '../components/Footer.astro';
 ---
 
-<Layout title="About — OurOrigin">
-  <main class="page-container">
-    <div class="content-wrapper" data-reveal="up">
-      <h1 class="page-title">The First Hands</h1>
-      <div class="divider"></div>
-      <div class="page-content">
-        <p class="lead-text">
-          OurOrigin was born from a simple observation: the hands that grow the world's most exceptional yields are often the ones farthest from its reward.
-        </p>
-        <p>
-          We exist to collapse the distance between the forest and the final cup. By creating a direct, transparent ledger, we ensure that the value remains where the effort originates. 
-        </p>
-        <p>
-          This isn't a supply chain. It's a transfer of dignity, directly from the soil to you.
-        </p>
+<Layout 
+  title="Why This Exists — OurOrigin" 
+  description="OurOrigin is a proof system. Not a spice company. Not a supply chain. A proof system."
+>
+  <main class="why-page">
+
+    <!-- Beat 1 -->
+    <section class="manifesto-beat" data-reveal="fade">
+      <p class="wide-statement">
+        OurOrigin is not a spice company.
+      </p>
+    </section>
+
+    <!-- Beat 2 -->
+    <section class="manifesto-beat" data-reveal="fade">
+      <p class="wide-statement">
+        It is a proof system.
+      </p>
+      <p class="wide-qualifier">
+        It proves that something real happened between a place and the person who understood it.
+      </p>
+    </section>
+
+    <!-- Beat 3 -->
+    <section class="manifesto-beat" data-reveal="fade">
+      <p class="wide-statement">
+        The hands that grow the world's most exceptional yields are the ones farthest from its reward.
+      </p>
+    </section>
+
+    <!-- Beat 4 -->
+    <section class="manifesto-beat" data-reveal="fade">
+      <p class="wide-statement">
+        We exist to collapse the distance between the forest and the final cup.
+      </p>
+      <p class="wide-qualifier">
+        By creating a direct, transparent ledger, we ensure that the value remains where the effort originates.
+      </p>
+    </section>
+
+    <!-- Beat 5 -->
+    <section class="manifesto-beat" data-reveal="fade">
+      <p class="wide-statement">
+        This isn't a supply chain.
+      </p>
+      <p class="wide-qualifier">
+        It's a transfer of dignity, directly from the soil to you.
+      </p>
+    </section>
+
+    <!-- Beat 6 — the seven dimensions condensed -->
+    <section class="manifesto-beat manifesto-beat--dense" data-reveal="fade">
+      <div class="dimension-list">
+        <span class="dimension-item">Geography</span>
+        <span class="dimension-item">Biology</span>
+        <span class="dimension-item">Community</span>
+        <span class="dimension-item">Method</span>
+        <span class="dimension-item">Observation</span>
+        <span class="dimension-item">Time</span>
+        <span class="dimension-item">Product</span>
       </div>
+      <p class="wide-qualifier">
+        Seven dimensions. Each one verified. Each one traceable.
+        Together, they are the definition of an origin.
+      </p>
+    </section>
+
+    <!-- Beat 7 — closing -->
+    <section class="manifesto-beat" data-reveal="fade">
+      <p class="wide-statement">
+        The origin remains the protagonist.
+      </p>
+      <p class="wide-closer">
+        Always.
+      </p>
+    </section>
+
+    <div class="manifesto-return">
+      <a href="/" class="return-link">← Back to the origins</a>
     </div>
+
   </main>
-  <Footer />
 </Layout>
 
 <style>
-  .page-container {
+  .why-page {
     min-height: 100vh;
-    padding: 12rem var(--space-xl) var(--space-4xl);
     background-color: var(--color-forest-deep);
     color: var(--color-warm-cream);
-    display: flex;
-    justify-content: center;
+    padding: 0;
   }
 
-  .content-wrapper {
-    max-width: 800px;
-    width: 100%;
-  }
-
-  .page-title {
-    font-family: var(--font-display);
-    font-size: var(--text-hero);
-    font-weight: 400;
-    line-height: 1.1;
-    margin: 0;
-  }
-
-  .divider {
-    width: 40px;
-    height: 0;
-    border-top: 2px solid var(--color-gold);
-    margin: var(--space-2xl) 0;
-  }
-
-  .page-content {
+  .manifesto-beat {
+    min-height: 80vh;
     display: flex;
     flex-direction: column;
-    gap: var(--space-xl);
+    justify-content: center;
+    align-items: flex-start;
+    padding: var(--space-4xl) clamp(2rem, 10vw, 12rem);
+    max-width: 900px;
   }
 
-  .lead-text {
-    font-family: var(--font-institutional);
-    font-size: 1.5rem;
-    line-height: 1.4;
+  .wide-statement {
+    font-family: var(--font-narrative);
+    font-size: clamp(26px, 5vw, 42px);
+    font-weight: 300;
+    line-height: 1.3;
+    color: var(--color-warm-cream);
+    margin: 0;
+  }
+
+  .wide-qualifier {
+    font-family: var(--font-narrative);
+    font-size: var(--type-narrative);
+    color: rgba(245, 240, 232, 0.6);
+    line-height: var(--line-height-loose);
+    margin: var(--space-2xl) 0 0 0;
+    max-width: 600px;
+  }
+
+  .wide-closer {
+    font-family: var(--font-narrative);
+    font-style: italic;
+    font-size: var(--type-statement);
     color: var(--color-gold);
-    margin: 0;
+    margin: var(--space-xl) 0 0 0;
   }
 
-  p {
-    font-family: var(--font-sans);
-    font-size: 1.1rem;
-    line-height: 1.7;
-    color: rgba(235, 229, 217, 0.8);
-    margin: 0;
+  /* Dense — the seven dimensions */
+  .manifesto-beat--dense {
+    align-items: center;
+    text-align: center;
+    max-width: 100%;
+  }
+
+  .dimension-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-lg) var(--space-2xl);
+    justify-content: center;
+    margin-bottom: var(--space-3xl);
+  }
+
+  .dimension-item {
+    font-family: var(--font-evidence);
+    font-size: var(--type-evidence);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--color-gold);
+    padding: var(--space-sm) var(--space-lg);
+    border: 1px solid rgba(198, 156, 82, 0.3);
+  }
+
+  .manifesto-return {
+    padding: var(--space-4xl) clamp(2rem, 10vw, 12rem);
+  }
+
+  .return-link {
+    font-family: var(--font-evidence);
+    font-size: var(--type-evidence);
+    color: rgba(245, 240, 232, 0.4);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: color var(--duration-standard) var(--ease-settle);
+  }
+
+  .return-link:hover {
+    color: var(--color-warm-cream);
   }
 
   @media (max-width: 768px) {
-    .page-container {
-      padding: 8rem var(--space-lg) var(--space-2xl);
+    .manifesto-beat {
+      min-height: 70vh;
+      padding: var(--space-3xl) var(--space-xl);
+    }
+
+    .dimension-list {
+      gap: var(--space-md);
     }
   }
 </style>

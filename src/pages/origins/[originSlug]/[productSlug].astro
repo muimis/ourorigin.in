@@ -37,28 +37,39 @@ const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp')
 
 <Layout
   title={`${product.data.name} from ${origin.data.name} — OurOrigin`}
-  description={`${product.data.name} from ${origin.data.name} — ${origin.data.elevation}, ${origin.data.bioregion}.`}
+  description={`${product.data.name} from ${origin.data.name} — ${origin.data.elevation}, ${origin.data.bioregion}. ${product.data.specimenCopy?.slice(0, 120) || ''}`}
+  ogImage={ogImageUrl}
 >
   <main class="product-viewport">
       
-    <!-- Background Layer (Grayscaled Specimen) -->
-    <div class="layer bg-mask-layer pedestal-mask">
-      <div class="bg-image active" style={`background-image: url('${origin.data.images.specimen || origin.data.images.canopy}'); filter: grayscale(100%) brightness(0.2);`}></div>
+    <!-- Background Layer -->
+    <div class="product-bg">
+      <div class="product-bg-image" style={`background-image: url('${origin.data.images.specimen || origin.data.images.canopy || ''}');`}></div>
+      <div class="product-bg-overlay"></div>
     </div>
 
-    <div class="layer ui-layer product-ui">
+    <div class="product-ui">
         
-      <a href={`/origins/${origin.id}`} class="back-link">
-        <OriginMark size={24} variant="gold" hideDot={true} />
-        <span>Back to {origin.data.name}</span>
+      <a href="/" class="back-link">
+        <OriginMark size={20} variant="gold" hideDot={true} />
+        <span>Back to Origins</span>
       </a>
 
       <div class="product-content-grid">
           
-        <!-- Left Panel: Product Data -->
+        <!-- Left Panel: Product Data (WIDE + DENSE alternation) -->
         <div class="product-data-panel">
           <h1 class="product-title">{product.data.name}</h1>
-          {product.data.botanicalName && <div class="product-botanical">{product.data.botanicalName}</div>}
+          
+          {product.data.botanicalName && (
+            <div class="product-botanical">{product.data.botanicalName}</div>
+          )}
+
+          <!-- DENSE: Evidence line -->
+          <div class="product-evidence-line">
+            {origin.data.elevation} · {origin.data.bioregion}
+            {product.data.batchRef && <span class="batch-ref"> · {product.data.batchRef}</span>}
+          </div>
           
           {product.data.specimenCopy && (
             <div class="product-narrative">
@@ -66,6 +77,7 @@ const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp')
             </div>
           )}
 
+          <!-- DENSE: Data grid -->
           <div class="data-grid">
             {product.data.methodDescription && (
               <div class="data-item">
@@ -93,6 +105,22 @@ const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp')
                     <div class="data-value">{product.data.sensoryProfile.flavor}</div>
                   </div>
                 )}
+                {product.data.sensoryProfile.appearance && (
+                  <div class="data-item">
+                    <div class="data-label">Appearance</div>
+                    <div class="data-value">{product.data.sensoryProfile.appearance}</div>
+                  </div>
+                )}
+              </>
+            )}
+            {product.data.chemistry && (
+              <>
+                {product.data.chemistry.activeCompound && (
+                  <div class="data-item">
+                    <div class="data-label">Chemistry</div>
+                    <div class="data-value">{product.data.chemistry.activeCompound}</div>
+                  </div>
+                )}
               </>
             )}
           </div>
@@ -101,40 +129,69 @@ const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp')
         <!-- Center Panel: The Artifact Image -->
         <div class="product-artifact-panel">
           {product.data.images.product ? (
-            <img src={product.data.images.product} alt={product.data.name} class="artifact-hero-image" />
+            <img 
+              src={product.data.images.product} 
+              alt={`${product.data.name} — ${product.data.sensoryProfile?.appearance || 'product image'}`} 
+              class="artifact-hero-image" 
+              width="400"
+              height="400"
+            />
+          ) : product.data.images.packaging ? (
+            <img 
+              src={product.data.images.packaging} 
+              alt={`${product.data.name} packaging`} 
+              class="artifact-hero-image" 
+              width="400"
+              height="400"
+            />
           ) : (
-            <div class="artifact-placeholder">Image arriving soon</div>
+            <div class="artifact-placeholder">
+              <OriginMark size={48} variant="gold" />
+              <span>Image arriving soon</span>
+            </div>
           )}
         </div>
 
-        <!-- Right Panel: The Ledger (Purchase) -->
+        <!-- Right Panel: The Offering (Purchase) -->
         <div class="product-ledger-panel">
-          <div class="ledger-header">The Ledger</div>
+          <div class="ledger-header">The Offering</div>
+          
           <div class="ledger-origin">
             <span class="origin-name">{origin.data.name}</span>
             <span class="origin-region">{origin.data.bioregion}</span>
             <span class="origin-coords">{origin.data.coordinates}</span>
           </div>
 
+          <!-- DENSE: Sizes & Prices -->
           <div class="sizes-container">
-            {product.data.sizes.map((size) => (
-              <button class="size-btn add-to-ledger-btn" data-product={JSON.stringify({
-                id: product.id,
-                name: product.data.name,
-                origin: origin.data.name,
-                originId: origin.id,
-                size: size.label,
-                price: size.priceINR
-              })}>
+            {product.data.sizes.map((size, i) => (
+              <button 
+                class:list={["size-btn", "add-to-ledger-btn", { "size-btn--selected": i === 0 }]} 
+                data-product={JSON.stringify({
+                  id: product.id + '-' + size.label,
+                  productId: product.id,
+                  name: product.data.name,
+                  origin: origin.data.name,
+                  originId: origin.id,
+                  size: size.label,
+                  price: size.priceINR,
+                  quantity: 1
+                })}
+              >
                 <span class="size-label">{size.label}</span>
                 <span class="size-price">₹{size.priceINR}</span>
               </button>
             ))}
           </div>
 
-          <button class="btn-purchase" onclick="document.querySelector('.add-to-ledger-btn').click(); document.getElementById('ledger-trigger')?.click();">
-            Honor the Harvest
+          <!-- Von Restorff: The one element that visually breaks the pattern -->
+          <button class="btn-purchase" id="purchase-cta" type="button">
+            Honor the Decision
           </button>
+
+          <div class="ledger-footer">
+            <span class="ledger-footer-note">Added to your Transfer Ledger</span>
+          </div>
         </div>
 
       </div>
@@ -143,38 +200,52 @@ const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp')
 </Layout>
 
 <script>
-  // Wire up Add to Ledger buttons specific to this page
   document.addEventListener('DOMContentLoaded', () => {
+    // Wire up Add to Ledger buttons
     document.querySelectorAll('.add-to-ledger-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const productData = JSON.parse(btn.getAttribute('data-product') || '{}');
         
-        const item = {
-          id: productData.id + '-' + productData.size,
-          productId: productData.id,
+        window.dispatchEvent(new CustomEvent('add-to-ledger', { detail: {
+          id: productData.id,
+          productId: productData.productId,
           name: productData.name,
           origin: productData.origin,
           originId: productData.originId,
           size: productData.size,
           price: productData.price,
           quantity: 1
-        };
-        
-        window.dispatchEvent(new CustomEvent('add-to-ledger', { detail: item }));
+        }}));
 
         // Visual feedback
-        const originalBg = (btn as HTMLElement).style.background;
-        const originalBorder = (btn as HTMLElement).style.borderColor;
+        const el = btn as HTMLElement;
+        el.style.background = 'rgba(198, 156, 82, 0.2)';
+        el.style.borderColor = 'var(--color-gold)';
         
-        (btn as HTMLElement).style.background = 'rgba(198, 156, 82, 0.2)';
-        (btn as HTMLElement).style.borderColor = 'var(--color-gold)';
+        // Select this size
+        document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('size-btn--selected'));
+        el.classList.add('size-btn--selected');
         
         setTimeout(() => {
-          (btn as HTMLElement).style.background = originalBg;
-          (btn as HTMLElement).style.borderColor = originalBorder;
+          el.style.background = '';
+          el.style.borderColor = '';
         }, 800);
       });
     });
+
+    // Purchase CTA: add first size and open ledger
+    const purchaseBtn = document.getElementById('purchase-cta');
+    if (purchaseBtn) {
+      purchaseBtn.addEventListener('click', () => {
+        const selectedBtn = document.querySelector('.size-btn--selected') || document.querySelector('.add-to-ledger-btn');
+        if (selectedBtn) {
+          (selectedBtn as HTMLElement).click();
+        }
+        setTimeout(() => {
+          document.getElementById('ledger-trigger')?.click();
+        }, 200);
+      });
+    }
   });
 </script>
 
@@ -182,218 +253,319 @@ const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp')
   .product-viewport {
     position: relative;
     min-height: 100vh;
-    width: 100vw;
-    pointer-events: auto;
-    overflow-x: hidden;
+    width: 100%;
     color: var(--color-warm-cream);
   }
 
-  .pedestal-mask {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    z-index: -1;
-  }
-  
-  .bg-image {
-    width: 100%; height: 100%;
-    background-size: cover;
-    background-position: center;
+  /* Background */
+  .product-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
   }
 
-  .ui-layer {
-    padding: 8rem 5vw 4rem 5vw;
+  .product-bg-image {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    filter: grayscale(100%) brightness(0.15);
+  }
+
+  .product-bg-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(12, 21, 9, 0.3) 0%, rgba(12, 21, 9, 0.85) 100%);
+  }
+
+  /* UI Layer */
+  .product-ui {
+    position: relative;
+    z-index: 1;
+    padding: 7rem 5vw 4rem;
     max-width: 1600px;
     margin: 0 auto;
   }
 
   .back-link {
-    position: absolute;
-    top: 2rem;
-    left: 5vw;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 1rem;
+    gap: var(--space-md);
     color: var(--color-gold);
     text-decoration: none;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.8rem;
+    font-family: var(--font-evidence);
+    font-size: var(--type-evidence);
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    z-index: 100;
-    transition: opacity 0.3s;
+    margin-bottom: var(--space-3xl);
+    transition: opacity var(--duration-standard) var(--ease-settle);
+    min-height: 44px;
   }
 
   .back-link:hover {
     opacity: 0.7;
   }
 
+  /* Three-Panel Grid */
   .product-content-grid {
     display: grid;
     grid-template-columns: 1fr 400px 1fr;
     gap: 4rem;
-    align-items: center;
-    min-height: 70vh;
+    align-items: start;
+    min-height: 60vh;
   }
 
-  @media (max-width: 1100px) {
-    .product-content-grid {
-      grid-template-columns: 1fr;
-      gap: 4rem;
-    }
-  }
-
-  /* Left Panel */
+  /* Left Panel — WIDE/DENSE alternation */
   .product-data-panel {
-    max-width: 450px;
+    max-width: 480px;
   }
 
   .product-title {
-    font-family: 'Cinzel', serif;
-    font-size: 3rem;
-    line-height: 1.1;
-    margin: 0 0 0.5rem 0;
+    font-family: var(--font-display);
+    font-size: var(--type-display);
+    line-height: var(--line-height-tight);
+    font-weight: 400;
+    margin: 0 0 var(--space-sm) 0;
   }
 
   .product-botanical {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.9rem;
+    font-family: var(--font-evidence);
+    font-size: var(--type-evidence);
+    font-style: italic;
     color: var(--color-gold);
-    margin-bottom: 2rem;
+    margin-bottom: var(--space-lg);
     letter-spacing: 0.05em;
   }
 
+  .product-evidence-line {
+    font-family: var(--font-evidence);
+    font-size: var(--type-evidence);
+    color: rgba(245, 240, 232, 0.5);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-2xl);
+  }
+
+  .batch-ref {
+    color: var(--color-gold);
+  }
+
   .product-narrative {
-    font-family: 'Inter', sans-serif;
-    font-size: 1rem;
-    line-height: 1.6;
-    color: rgba(245, 237, 216, 0.8);
-    margin-bottom: 3rem;
+    font-family: var(--font-narrative);
+    font-size: var(--type-narrative);
+    line-height: var(--line-height-loose);
+    color: rgba(245, 240, 232, 0.85);
+    margin-bottom: var(--space-3xl);
+    max-width: 480px;
+  }
+
+  .product-narrative p {
+    margin: 0;
   }
 
   .data-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: var(--space-xl);
   }
 
   .data-item {
-    border-left: 1px solid var(--color-gold);
-    padding-left: 1rem;
+    border-left: 1px solid rgba(198, 156, 82, 0.3);
+    padding-left: var(--space-lg);
   }
 
   .data-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
     text-transform: uppercase;
     color: var(--color-gold);
     letter-spacing: 0.1em;
-    margin-bottom: 0.25rem;
+    margin-bottom: var(--space-xs);
   }
 
   .data-value {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.9rem;
-    line-height: 1.4;
+    font-family: var(--font-narrative);
+    font-size: var(--type-narrative);
+    line-height: var(--line-height-base);
+    color: rgba(245, 240, 232, 0.8);
   }
 
-  /* Center Panel */
+  /* Center Panel — The Artifact */
   .product-artifact-panel {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100%;
+    padding-top: var(--space-4xl);
   }
 
   .artifact-hero-image {
     max-width: 100%;
     max-height: 70vh;
     object-fit: contain;
-    filter: drop-shadow(0 30px 40px rgba(0,0,0,0.8));
+    filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.6));
   }
 
   .artifact-placeholder {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.9rem;
-    color: rgba(245, 237, 216, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-lg);
+    font-family: var(--font-evidence);
+    font-size: var(--type-evidence);
+    color: rgba(245, 240, 232, 0.3);
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    padding: 4rem;
-    border: 1px dashed rgba(245, 237, 216, 0.2);
-    border-radius: 50%;
+    padding: var(--space-4xl);
+    border: 1px dashed rgba(198, 156, 82, 0.15);
   }
 
-  /* Right Panel */
+  /* Right Panel — The Offering */
   .product-ledger-panel {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 2.5rem;
+    background: rgba(5, 8, 4, 0.6);
+    border: 1px solid rgba(245, 240, 232, 0.08);
+    padding: var(--space-2xl);
     max-width: 350px;
-    backdrop-filter: blur(10px);
     margin-left: auto;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
 
   .ledger-header {
-    font-family: 'Cinzel', serif;
-    font-size: 1.5rem;
-    letter-spacing: 0.1em;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    margin-bottom: 2rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding-bottom: 1rem;
+    margin-bottom: var(--space-2xl);
+    border-bottom: 1px solid rgba(245, 240, 232, 0.08);
+    padding-bottom: var(--space-lg);
   }
 
   .ledger-origin {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
-    margin-bottom: 2rem;
+    gap: var(--space-xs);
+    margin-bottom: var(--space-2xl);
   }
 
-  .origin-name { font-size: 1.2rem; font-family: 'Cinzel', serif; }
-  .origin-region { font-size: 0.9rem; opacity: 0.7; font-family: 'Inter', sans-serif; }
-  .origin-coords { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--color-gold); margin-top: 0.5rem; }
+  .origin-name {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+  }
+
+  .origin-region {
+    font-family: var(--font-narrative);
+    font-size: var(--type-narrative);
+    opacity: 0.6;
+  }
+
+  .origin-coords {
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    color: var(--color-gold);
+    margin-top: var(--space-xs);
+    letter-spacing: 0.05em;
+  }
 
   .sizes-container {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    margin-bottom: 2rem;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-2xl);
   }
 
   .size-btn {
     display: flex;
     justify-content: space-between;
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(245, 240, 232, 0.12);
     color: var(--color-warm-cream);
-    padding: 1rem;
-    font-family: 'DM Mono', monospace;
+    padding: var(--space-lg);
+    font-family: var(--font-evidence);
+    font-size: var(--type-evidence);
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all var(--duration-standard) var(--ease-settle);
+    min-height: 44px;
   }
 
-  .size-btn:hover {
+  .size-btn:hover,
+  .size-btn--selected {
     border-color: var(--color-gold);
-    background: rgba(198, 156, 82, 0.1);
+    background: rgba(198, 156, 82, 0.08);
   }
 
+  /* Von Restorff: the one element that visually breaks the pattern */
   .btn-purchase {
     width: 100%;
-    padding: 1.25rem;
-    background: var(--color-warm-cream);
+    padding: var(--space-lg);
+    background: var(--color-gold);
     color: var(--color-forest-deep);
     border: none;
-    font-family: 'Cinzel', serif;
+    font-family: var(--font-display);
     font-size: 1rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: background var(--duration-standard) var(--ease-settle);
+    min-height: 52px;
   }
 
   .btn-purchase:hover {
-    background: var(--color-gold);
-    color: var(--color-warm-cream);
+    background: var(--color-warm-cream);
+  }
+
+  .ledger-footer {
+    margin-top: var(--space-lg);
+    text-align: center;
+  }
+
+  .ledger-footer-note {
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    color: rgba(245, 240, 232, 0.3);
+    opacity: 0;
+    transition: opacity var(--duration-standard) var(--ease-settle);
+  }
+
+  /* Responsive */
+  @media (max-width: 1100px) {
+    .product-content-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-3xl);
+    }
+
+    .product-data-panel {
+      max-width: 100%;
+    }
+
+    .product-artifact-panel {
+      padding-top: 0;
+    }
+
+    .product-ledger-panel {
+      max-width: 100%;
+      margin-left: 0;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .product-ui {
+      padding: 6rem var(--space-lg) var(--space-2xl);
+    }
+
+    /* Thumb zone: purchase button fixed to bottom on mobile */
+    .btn-purchase {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: var(--space-lg);
+      padding-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom, 0px));
+    }
+
+    .product-ledger-panel {
+      padding-bottom: 80px; /* Space for fixed purchase button */
+    }
   }
 </style>

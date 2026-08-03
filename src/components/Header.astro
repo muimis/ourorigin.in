@@ -1,23 +1,33 @@
 ---
 import OriginMark from './OriginMark.astro';
 ---
-<header class="site-header">
+<header class="site-header" id="site-header">
   <div class="header-inner">
-    <a href="/" class="brand" aria-label="Our Origin">
+    <a href="/" class="brand" aria-label="OurOrigin — Home">
       <div class="brand-lockup">
-        <OriginMark size={40} variant="gold" animate={false} />
+        <OriginMark size={32} variant="gold" animate={false} />
       </div>
     </a>
 
     <!-- Desktop Nav -->
-    <nav class="main-nav desktop-nav">
+    <nav class="main-nav desktop-nav" aria-label="Main navigation">
+      <a href="/" class="nav-link">Home</a>
+      <a href="/#the-core" class="nav-link">Origins</a>
       <a href="/observations" class="nav-link">Field Notes</a>
-      <a href="/about" class="nav-link">About</a>
+      <a href="/about" class="nav-link">Why</a>
       <a href="/contact" class="nav-link">Contact</a>
+      <button class="nav-link nav-link--yields" id="all-yields-trigger" type="button" aria-label="Browse all yields">
+        All Yields
+      </button>
     </nav>
 
+    <!-- Ledger Count (always visible) -->
+    <button class="ledger-indicator" id="ledger-trigger" type="button" aria-label="Open your ledger">
+      <span class="ledger-count" id="ledger-count">0</span>
+    </button>
+
     <!-- Mobile Hamburger Toggle -->
-    <button class="mobile-toggle" aria-label="Toggle menu" id="mobile-menu-toggle">
+    <button class="mobile-toggle" aria-label="Toggle menu" id="mobile-menu-toggle" aria-expanded="false">
       <span class="hamburger-line"></span>
       <span class="hamburger-line"></span>
       <span class="hamburger-line"></span>
@@ -25,42 +35,62 @@ import OriginMark from './OriginMark.astro';
   </div>
 
   <!-- Mobile Nav Menu -->
-  <nav class="mobile-nav" id="mobile-nav">
-    <a href="/observations" class="nav-link mobile-nav-link">Field Notes</a>
-    <a href="/about" class="nav-link mobile-nav-link">About</a>
-    <a href="/contact" class="nav-link mobile-nav-link">Contact</a>
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation">
+    <a href="/" class="mobile-nav-link">Home</a>
+    <a href="/#the-core" class="mobile-nav-link">Origins</a>
+    <a href="/observations" class="mobile-nav-link">Field Notes</a>
+    <a href="/about" class="mobile-nav-link">Why</a>
+    <a href="/contact" class="mobile-nav-link">Contact</a>
+    <button class="mobile-nav-link mobile-nav-link--yields" id="mobile-yields-trigger" type="button">
+      All Yields →
+    </button>
   </nav>
 </header>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
+  function initHeader() {
     const toggleBtn = document.getElementById('mobile-menu-toggle');
     const mobileNav = document.getElementById('mobile-nav');
 
     if (toggleBtn && mobileNav) {
-      toggleBtn.addEventListener('click', () => {
-        const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
-        toggleBtn.setAttribute('aria-expanded', (!isExpanded).toString());
+      // Remove existing listeners by cloning
+      const newToggle = toggleBtn.cloneNode(true) as HTMLElement;
+      toggleBtn.parentNode?.replaceChild(newToggle, toggleBtn);
+
+      newToggle.addEventListener('click', () => {
+        const isExpanded = newToggle.getAttribute('aria-expanded') === 'true';
+        newToggle.setAttribute('aria-expanded', (!isExpanded).toString());
         mobileNav.classList.toggle('is-open');
-        toggleBtn.classList.toggle('is-active');
+        newToggle.classList.toggle('is-active');
+      });
+
+      // Close mobile nav when a link is clicked
+      mobileNav.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          mobileNav.classList.remove('is-open');
+          newToggle.classList.remove('is-active');
+          newToggle.setAttribute('aria-expanded', 'false');
+        });
       });
     }
-  });
 
-  // Re-init on astro page transitions
-  document.addEventListener('astro:page-load', () => {
-    const toggleBtn = document.getElementById('mobile-menu-toggle');
-    const mobileNav = document.getElementById('mobile-nav');
-
-    if (toggleBtn && mobileNav) {
-      toggleBtn.addEventListener('click', () => {
-        const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
-        toggleBtn.setAttribute('aria-expanded', (!isExpanded).toString());
-        mobileNav.classList.toggle('is-open');
-        toggleBtn.classList.toggle('is-active');
+    // Mobile yields trigger → open the All Yields panel
+    const mobileYields = document.getElementById('mobile-yields-trigger');
+    if (mobileYields) {
+      mobileYields.addEventListener('click', () => {
+        document.getElementById('all-yields-trigger')?.click();
+        // Close mobile nav
+        const toggle = document.getElementById('mobile-menu-toggle');
+        const nav = document.getElementById('mobile-nav');
+        nav?.classList.remove('is-open');
+        toggle?.classList.remove('is-active');
+        toggle?.setAttribute('aria-expanded', 'false');
       });
     }
-  });
+  }
+
+  document.addEventListener('DOMContentLoaded', initHeader);
+  document.addEventListener('astro:page-load', initHeader);
 </script>
 
 <style>
@@ -73,6 +103,7 @@ import OriginMark from './OriginMark.astro';
     padding: var(--space-lg) var(--space-xl);
     background: linear-gradient(to bottom, rgba(12, 21, 9, 0.95) 0%, rgba(12, 21, 9, 0) 100%);
     backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
   }
 
   .header-inner {
@@ -94,7 +125,7 @@ import OriginMark from './OriginMark.astro';
     display: flex;
     align-items: center;
     gap: var(--space-md);
-    transition: opacity 0.1s; /* Very fast transition just for the handoff */
+    transition: opacity 0.1s;
   }
 
   :global(body.is-splashing) .brand-lockup {
@@ -104,20 +135,65 @@ import OriginMark from './OriginMark.astro';
   .desktop-nav {
     display: flex;
     gap: var(--space-2xl);
+    align-items: center;
   }
 
   .nav-link {
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: rgba(235, 229, 217, 0.7);
+    color: rgba(245, 240, 232, 0.6);
     text-decoration: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
     transition: color var(--duration-standard) var(--ease-settle);
   }
 
   .nav-link:hover {
     color: var(--color-gold);
+  }
+
+  .nav-link--yields {
+    color: var(--color-gold);
+    border: 1px solid rgba(198, 156, 82, 0.3);
+    padding: var(--space-xs) var(--space-lg);
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  .nav-link--yields:hover {
+    border-color: var(--color-gold);
+    background: rgba(198, 156, 82, 0.1);
+  }
+
+  /* Ledger Indicator */
+  .ledger-indicator {
+    position: relative;
+    background: none;
+    border: 1px solid rgba(245, 240, 232, 0.15);
+    color: var(--color-warm-cream);
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-family: var(--font-evidence);
+    font-size: var(--type-evidence);
+    transition: border-color var(--duration-standard) var(--ease-settle);
+  }
+
+  .ledger-indicator:hover {
+    border-color: var(--color-gold);
+    color: var(--color-gold);
+  }
+
+  .ledger-count {
+    font-variant-numeric: tabular-nums;
   }
 
   /* Mobile Toggle */
@@ -128,7 +204,11 @@ import OriginMark from './OriginMark.astro';
     cursor: pointer;
     flex-direction: column;
     gap: 5px;
-    padding: 0.5rem;
+    padding: var(--space-sm);
+    min-height: 44px;
+    min-width: 44px;
+    align-items: center;
+    justify-content: center;
   }
 
   .hamburger-line {
@@ -160,12 +240,14 @@ import OriginMark from './OriginMark.astro';
     height: 100vh;
     background: var(--color-forest-deep);
     padding: 8rem var(--space-xl) var(--space-xl);
+    padding-bottom: calc(var(--space-xl) + env(safe-area-inset-bottom, 0px));
     flex-direction: column;
     gap: var(--space-xl);
     opacity: 0;
     pointer-events: none;
     transform: translateY(-10px);
     transition: all var(--duration-standard) var(--ease-settle);
+    z-index: 999;
   }
 
   .mobile-nav.is-open {
@@ -175,7 +257,28 @@ import OriginMark from './OriginMark.astro';
   }
 
   .mobile-nav-link {
-    font-size: 1.25rem;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--color-warm-cream);
+    text-decoration: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    padding: var(--space-sm) 0;
+    transition: color var(--duration-standard) var(--ease-settle);
+  }
+
+  .mobile-nav-link:hover {
+    color: var(--color-gold);
+  }
+
+  .mobile-nav-link--yields {
+    color: var(--color-gold);
+    margin-top: var(--space-xl);
+    border-top: 1px solid rgba(198, 156, 82, 0.2);
+    padding-top: var(--space-xl);
   }
 
   @media (max-width: 768px) {
@@ -193,6 +296,10 @@ import OriginMark from './OriginMark.astro';
 
     .mobile-nav {
       display: flex;
+    }
+
+    .ledger-indicator {
+      margin-right: var(--space-sm);
     }
   }
 </style>

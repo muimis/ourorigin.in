@@ -1,552 +1,974 @@
 ---
 import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
-import VerificationSection from '../components/home/VerificationSection.astro';
-import SustainabilitySection from '../components/home/SustainabilitySection.astro';
-import TestimoniesSection from '../components/home/TestimoniesSection.astro';
-import SocialSection from '../components/home/SocialSection.astro';
+import CipherGlyphs from '../components/CipherGlyphs.astro';
 import OriginMark from '../components/OriginMark.astro';
-import OriginWordmark from '../components/OriginWordmark.astro';
 
-// Load 12 Products for the climax grid using Astro's highly optimized content collections API
-const allProductEntries = await getCollection('products');
-const allProducts = allProductEntries.slice(0, 12).map((p) => ({
-	...p.data,
-	slug: p.id
-}));
+// Load content
+const allOrigins = await getCollection('origins');
+const allProducts = await getCollection('products');
+
+// Filter out placeholder origins (Malabar Coast has no real products)
+const activeOrigins = allOrigins
+  .filter(o => o.id !== 'malabar-coast')
+  .sort((a, b) => {
+    // Elevation-descending: highest first (Nilgiris → Idukki → Wayanad → etc.)
+    const elevA = parseInt(String(a.data.elevation).replace(/[^0-9]/g, '')) || 0;
+    const elevB = parseInt(String(b.data.elevation).replace(/[^0-9]/g, '')) || 0;
+    return elevB - elevA;
+  });
+
+// Group products by origin
+const productsByOrigin: Record<string, typeof allProducts> = {};
+allProducts.forEach(p => {
+  const oid = typeof p.data.originSlug === 'object' ? (p.data.originSlug as any).id : p.data.originSlug;
+  if (!productsByOrigin[oid]) productsByOrigin[oid] = [];
+  productsByOrigin[oid].push(p);
+});
+
+// The seven dimension statements
+const dimensions = [
+  { dim: 'geo', statement: 'Every true thing comes from one exact place. Not a region. A place.' },
+  { dim: 'bio', statement: 'Before anyone arrives to take anything, the place already has a life of its own.' },
+  { dim: 'community', statement: 'Someone has understood this place longer than we\'ve known it exists.' },
+  { dim: 'method', statement: 'There is a way of taking, and a way of taking too much. This is the difference we look for.' },
+  { dim: 'observation', statement: 'Not a photograph from last year. What\'s happening there, right now.' },
+  { dim: 'time', statement: 'It has seasons. It changes. What you\'re looking at is alive, not preserved.' },
+  { dim: 'product', statement: 'What ends up in your hand is proof all of this was true. Or it\'s nothing.' },
+];
 ---
 
-<Layout title="OurOrigin | The Proof System" description="Single-origin yields from the Western Ghats, ethically sourced by the First Hands. A proof system for indigenous food.">
-	
-	<!-- The Master Scroll Track -> this provides the physical scroll height -->
-	<div class="scroll-track" id="master-scroll-track">
-		<!-- We will have 4 distinct phases, each roughly 150vh long -->
-		<div class="phase-marker" id="phase-1-forest"></div>
-		<div class="phase-marker" id="phase-2-text"></div>
-		<div class="phase-marker" id="phase-3-lens"></div>
-		<div class="phase-marker" id="phase-4-products"></div>
-	</div>
+<Layout 
+  title="OurOrigin — The Proof System" 
+  description="Single-origin yields from the Western Ghats, ethically sourced by the First Hands. A proof system for indigenous food."
+  noHeaderPadding={true}
+>
 
-	<!-- The Cinematic Canvas -> fixed to screen, holds all the visual elements -->
-	<div class="cinematic-canvas" id="cinematic-canvas">
-		
-		<!-- Act 0: The Intro (Splash) -->
-		<div class="layer layer-intro" id="layer-intro">
-			<div class="intro-lockup">
-				<OriginMark size={150} variant="gold" animate={true} id="intro-mark" />
-				<div class="intro-wordmark-container" id="intro-wordmark">
-					<OriginWordmark size={300} variant="gold" animate={true} id="intro-wordmark-svg" />
-				</div>
-			</div>
-		</div>
+  <!-- ═══════════════════════════════════════════════════════
+       ACT I: The Opening Sequence
+       Seven beats, one per dimension, teaching the concept
+       before showing a single product.
+       ═══════════════════════════════════════════════════════ -->
+  <section class="opening-sequence" id="opening-sequence" aria-label="The seven dimensions of an origin">
+    
+    <!-- Progress bar: 7 segments -->
+    <div class="progress-bar" id="sequence-progress" aria-hidden="true">
+      {dimensions.map((_, i) => (
+        <div class="progress-segment" data-index={i}></div>
+      ))}
+    </div>
 
-		<!-- Act 1 & 2: The Forest & The Mask -->
-		<div class="layer layer-forest" id="layer-forest">
-			<!-- A primitive SVG clip path for the Tally Marks -->
-			<svg width="0" height="0" class="svg-defs">
-				<clipPath id="tally-clip" clipPathUnits="objectBoundingBox">
-					<!-- 4 primitive, slightly uneven strokes -->
-					<path class="tally-stroke stroke-1" d="M0.40,0.30 Q0.41,0.50 0.39,0.70 L0.41,0.70 Q0.43,0.50 0.42,0.30 Z" />
-					<path class="tally-stroke stroke-2" d="M0.46,0.31 Q0.45,0.51 0.47,0.71 L0.49,0.71 Q0.47,0.51 0.48,0.31 Z" />
-					<path class="tally-stroke stroke-3" d="M0.53,0.29 Q0.54,0.49 0.52,0.69 L0.54,0.69 Q0.56,0.49 0.55,0.29 Z" />
-					<path class="tally-stroke stroke-4" d="M0.59,0.30 Q0.58,0.50 0.60,0.70 L0.62,0.70 Q0.60,0.50 0.61,0.30 Z" />
-				</clipPath>
-			</svg>
-			
-			<div class="forest-image-container" id="forest-image-container">
-				<div class="forest-image" style="background-image: url('/assets/origins/idukki-canopy.webp');"></div>
-				<!-- Deep dark overlay to give it a cinematic, earthy mood -->
-				<div class="forest-overlay"></div>
-			</div>
-		</div>
+    <!-- The 7 Beats -->
+    <div class="beats-viewport" id="beats-viewport">
+      {dimensions.map((d, i) => (
+        <div class="beat" data-beat={i} data-dim={d.dim}>
+          <div class="beat-glyph">
+            <CipherGlyphs dim={d.dim as any} size={120} />
+          </div>
+          <p class="beat-statement">
+            {d.statement.split(' ').map((word, wi) => (
+              <span class="beat-word" style={`--word-delay: ${wi * 50}ms`}>{word} </span>
+            ))}
+          </p>
+          <span class="beat-marker" aria-hidden="true">·</span>
+        </div>
+      ))}
 
-		<!-- Act 2: Typography -->
-		<div class="layer layer-typography" id="layer-typography">
-			<h1 class="primitive-text" id="primitive-text-untouched">
-				<span class="letter">U</span>
-				<span class="letter">N</span>
-				<span class="letter">T</span>
-				<span class="letter center-o" id="the-lens-o">O</span>
-				<span class="letter">U</span>
-				<span class="letter">C</span>
-				<span class="letter">H</span>
-				<span class="letter">E</span>
-				<span class="letter">D</span>
-			</h1>
-		</div>
+      <!-- Resolution Beat -->
+      <div class="beat beat--resolution" data-beat="resolution">
+        <div class="resolution-glyphs">
+          {dimensions.map(d => (
+            <CipherGlyphs dim={d.dim as any} size={28} active={true} />
+          ))}
+        </div>
+        <p class="resolution-statement">This is what we mean by an origin.</p>
+        <p class="resolution-grounding">Right now, ours is the Western Ghats.</p>
+        <button class="btn-enter" id="btn-enter-core" type="button">
+          <span>ENTER</span>
+        </button>
+      </div>
+    </div>
+  </section>
 
-		<!-- Act 3: The Lens Features -->
-		<div class="layer layer-features" id="layer-features">
-			<div class="feature-text" id="feature-1">Dried by the sun.</div>
-			<div class="feature-text" id="feature-2">Left to the elements.</div>
-			<div class="feature-text" id="feature-3">Nothing added.</div>
-			<div class="feature-text" id="feature-4">Nothing taken.</div>
-		</div>
+  <!-- ═══════════════════════════════════════════════════════
+       ACT II: The Core — Origin-First Landing
+       Four origins as equally weighted points.
+       Selecting one reveals its products in place.
+       ═══════════════════════════════════════════════════════ -->
+  <section class="the-core" id="the-core" aria-label="Explore the origins">
+    
+    <div class="core-header">
+      <h2 class="core-title" data-reveal="fade">The Origins</h2>
+      <p class="core-subtitle" data-reveal="fade">Four places in the Western Ghats. Each with its own elevation, ecology, and yield.</p>
+    </div>
 
-		<!-- Act 4: The Products Grid -->
-		<div class="layer layer-products" id="layer-products">
-			<div class="product-grid-canvas" id="product-grid-canvas">
-				{allProducts.map((product, i) => (
-					<a href={`/origins/${product.originSlug || 'attappady'}/${product.slug || product.name.toLowerCase().replace(/ /g, '-')}`} class="product-tile" data-index={i}>
-						<div class="product-tile-bg" style={`background-image: url('${product.images?.product || product.images?.packaging || '/assets/origins/idukki-canopy.webp'}');`}></div>
-						<div class="product-tile-content">
-							<h3>{product.name || product.title}</h3>
-						</div>
-					</a>
-				))}
-			</div>
-		</div>
-		
-		<!-- Grain Overlay for primitive, organic feel -->
-		<div class="grain-overlay"></div>
-	</div>
+    <div class="origins-row" id="origins-row">
+      {activeOrigins.map((origin, i) => {
+        const originProducts = productsByOrigin[origin.id] || [];
+        const canopyImage = origin.data.images?.canopy;
+        return (
+          <div class="origin-card" data-origin={origin.id} data-reveal="up">
+            {canopyImage && (
+              <div class="origin-card-bg" style={`background-image: url('${canopyImage}')`}></div>
+            )}
+            <div class="origin-card-content">
+              <h3 class="origin-name">{origin.data.name}</h3>
+              <div class="origin-evidence">
+                <span class="origin-elevation">{origin.data.elevation}</span>
+                <span class="origin-coords">{origin.data.coordinates}</span>
+              </div>
+              <div class="origin-soil">{origin.data.soil}</div>
+              <button class="origin-expand-btn" data-target={origin.id} aria-expanded="false" type="button">
+                Explore {originProducts.length} yield{originProducts.length !== 1 ? 's' : ''} ↓
+              </button>
+            </div>
 
-	<div class="post-cinema-content">
-		<!-- Traditional scrolling resumes here for footer elements -->
-		<VerificationSection />
-		<SustainabilitySection />
-		<TestimoniesSection />
-		<SocialSection />
-	</div>
+            <!-- Expandable product row (accordion) -->
+            <div class="origin-products" id={`products-${origin.id}`} aria-hidden="true">
+              <div class="origin-products-scroll">
+                {originProducts.map(product => (
+                  <div class="product-card">
+                    <div class="product-card-image">
+                      {product.data.images?.product ? (
+                        <img 
+                          src={product.data.images.product} 
+                          alt={product.data.name} 
+                          loading="lazy" 
+                          width="200" 
+                          height="200"
+                        />
+                      ) : product.data.images?.packaging ? (
+                        <img 
+                          src={product.data.images.packaging} 
+                          alt={product.data.name} 
+                          loading="lazy" 
+                          width="200" 
+                          height="200"
+                        />
+                      ) : (
+                        <div class="product-card-placeholder">
+                          <OriginMark size={24} variant="gold" />
+                        </div>
+                      )}
+                    </div>
+                    <h4 class="product-card-name">{product.data.name}</h4>
+                    <div class="product-card-price">
+                      ₹{product.data.sizes[0]?.priceINR} <span class="product-card-size">/ {product.data.sizes[0]?.label}</span>
+                    </div>
+                    <div class="product-card-actions">
+                      <button 
+                        class="btn-add-quick add-to-ledger-btn" 
+                        type="button"
+                        data-product={JSON.stringify({
+                          id: product.id + '-' + product.data.sizes[0]?.label,
+                          productId: product.id,
+                          name: product.data.name,
+                          origin: origin.data.name,
+                          originId: origin.id,
+                          size: product.data.sizes[0]?.label,
+                          price: product.data.sizes[0]?.priceINR,
+                          quantity: 1
+                        })}
+                      >
+                        Add
+                      </button>
+                      <a href={`/origins/${origin.id}/${product.id}`} class="btn-enter-product">
+                        Enter →
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       ACT III: The Evidence
+       Real data from the origins, not marketing claims.
+       ═══════════════════════════════════════════════════════ -->
+  <section class="the-evidence" id="the-evidence" aria-label="The evidence">
+    <div class="evidence-container">
+      <div class="evidence-statement" data-reveal="fade">
+        <p class="evidence-wide">
+          Soil older than the Himalayas. Monsoon-aligned harvest cycles. Zero synthetic intervention.
+        </p>
+        <p class="evidence-qualifier">
+          These are facts about the Western Ghats — not claims about our brand.
+        </p>
+      </div>
+
+      <div class="evidence-grid" data-reveal="stagger">
+        <div class="evidence-item">
+          <div class="evidence-label">Soil Age</div>
+          <div class="evidence-value">25M+ years</div>
+          <p class="evidence-note">The Western Ghats are older than the Himalayas. The soil holds memory no document can match.</p>
+        </div>
+        <div class="evidence-item">
+          <div class="evidence-label">Harvest Alignment</div>
+          <div class="evidence-value">Monsoon</div>
+          <p class="evidence-note">Each harvest follows the natural monsoon rhythm. No forcing. No accelerating. The season decides.</p>
+        </div>
+        <div class="evidence-item">
+          <div class="evidence-label">Synthetic Input</div>
+          <div class="evidence-value">Zero</div>
+          <p class="evidence-note">No synthetic chemicals. No exceptions. What goes into the soil comes back to you.</p>
+        </div>
+        <div class="evidence-item">
+          <div class="evidence-label">Active Origins</div>
+          <div class="evidence-value">{activeOrigins.length}</div>
+          <p class="evidence-note">Each verified, documented, and traceable to one exact place.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       ACT IV: The Walk — pre-footer moment
+       ═══════════════════════════════════════════════════════ -->
+  <section class="the-walk" aria-label="The walk">
+    <div class="walk-bg" style="background-image: url('/images/prefooter.webp')"></div>
+    <div class="walk-overlay"></div>
+    <div class="walk-content" data-reveal="fade">
+      <p class="walk-statement">
+        The origin doesn't end at the farm gate. It extends to where the road begins, and continues to where you're reading this now.
+      </p>
+      <a href="/about" class="walk-link">Read the manifesto →</a>
+    </div>
+  </section>
 
 </Layout>
 
 <style>
-	/* -- Variables -- */
-	:root {
-		--bg-dark: #070905; /* Deep earthy black */
-		--gold-primitive: #C69C52;
-	}
+  /* ════════════════════════════════════════════════════════════
+     OPENING SEQUENCE
+     ════════════════════════════════════════════════════════════ */
 
-	body {
-		background-color: var(--bg-dark);
-		color: var(--color-warm-cream);
-	}
+  .opening-sequence {
+    position: relative;
+    min-height: 100vh;
+    background-color: var(--color-forest-deep);
+    overflow: hidden;
+  }
 
-	/* -- Layout Structure -- */
-	.scroll-track {
-		position: relative;
-		width: 100%;
-		height: 600vh; /* Extended for slower, smoother pacing */
-		z-index: 1; /* Sits behind canvas but allows scrolling */
-	}
+  /* Progress Bar */
+  .progress-bar {
+    position: fixed;
+    top: var(--space-xl);
+    left: var(--space-xl);
+    right: var(--space-xl);
+    height: 3px;
+    display: flex;
+    gap: 4px;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity var(--duration-slow) var(--ease-settle);
+  }
 
-	.phase-marker {
-		height: 100vh;
-		width: 100%;
-		pointer-events: none;
-	}
+  .progress-bar.is-visible {
+    opacity: 1;
+  }
 
-	.cinematic-canvas {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100vw;
-		height: 100vh;
-		z-index: 10;
-		pointer-events: auto; /* Block clicks to background while pinned */
-		overflow: hidden;
-		background-color: var(--bg-dark);
-	}
+  .progress-segment {
+    flex: 1;
+    background: rgba(245, 240, 232, 0.15);
+    transition: background var(--duration-standard) var(--ease-settle);
+  }
 
-	.layer {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
+  .progress-segment.is-filled {
+    background: var(--color-gold);
+  }
 
-	/* -- Act 0: Intro -- */
-	.layer-intro {
-		z-index: 20; /* Highest in canvas */
-		background-color: var(--bg-dark);
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
+  /* Beats Container */
+  .beats-viewport {
+    position: relative;
+    width: 100%;
+  }
 
-	.intro-lockup {
-		display: flex;
-		align-items: center;
-		gap: var(--space-xl);
-	}
+  .beat {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: var(--space-4xl) var(--space-xl);
+    opacity: 0;
+    transition: opacity var(--duration-cinematic) var(--ease-settle);
+  }
 
-	.intro-wordmark-container {
-		opacity: 0; /* Hidden initially, GSAP fades it in */
-		transform: translateX(-20px);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
+  .beat.is-active {
+    opacity: 1;
+  }
 
-	/* -- Act 1: Forest & Tally Strokes -- */
-	.layer-forest {
-		z-index: 11;
-		opacity: 0; /* Hidden until intro finishes */
-	}
-	
-	.forest-image-container {
-		width: 100%;
-		height: 100%;
-		/* We start with the image clipped to the primitive tally shapes */
-		clip-path: url(#tally-clip);
-		will-change: clip-path, transform;
-	}
+  .beat-glyph {
+    margin-bottom: var(--space-3xl);
+  }
 
-	.forest-image {
-		width: 100%;
-		height: 100%;
-		background-size: cover;
-		background-position: center;
-		transform: scale(1.1); /* Slight zoom so we can pan */
-	}
-	
-	.forest-overlay {
-		position: absolute;
-		top: 0; left: 0; right: 0; bottom: 0;
-		background: radial-gradient(circle at center, rgba(7,9,5,0) 0%, rgba(7,9,5,0.8) 100%);
-	}
+  .beat-statement {
+    font-family: var(--font-narrative);
+    font-style: italic;
+    font-size: var(--type-statement);
+    font-weight: 300;
+    line-height: 1.3;
+    color: var(--color-warm-cream);
+    max-width: 480px;
+    margin: 0;
+  }
 
-	/* -- Act 2: Typography -- */
-	.layer-typography {
-		z-index: 12;
-	}
+  .beat-word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.4s var(--ease-settle), transform 0.4s var(--ease-settle);
+    transition-delay: var(--word-delay);
+  }
 
-	.primitive-text {
-		font-family: var(--font-display);
-		font-size: clamp(2rem, 10vw, 12rem); /* Fits perfectly on mobile */
-		font-weight: 300;
-		letter-spacing: -0.05em;
-		color: var(--color-warm-cream);
-		display: flex;
-		flex-direction: row; /* Always horizontal */
-		justify-content: center;
-		align-items: center;
-		width: 100%;
-		gap: 0.2vw;
-		text-transform: uppercase;
-		opacity: 0; /* Starts hidden */
-	}
+  .beat.is-active .beat-word {
+    opacity: 1;
+    transform: translateY(0);
+  }
 
-	.letter {
-		display: inline-block;
-		will-change: transform, opacity;
-	}
-	
-	.center-o {
-		color: var(--gold-primitive);
-		position: relative;
-	}
+  .beat-marker {
+    margin-top: var(--space-3xl);
+    font-size: 11px;
+    color: var(--color-warm-cream);
+    opacity: 0.3;
+  }
 
-	/* -- Act 3: Features -- */
-	.layer-features {
-		z-index: 13;
-	}
+  /* Resolution Beat */
+  .beat--resolution {
+    padding-bottom: 20vh;
+  }
 
-	.feature-text {
-		position: absolute;
-		font-family: var(--font-display);
-		font-size: clamp(2rem, 5vw, 4rem);
-		color: var(--color-warm-cream);
-		opacity: 0;
-		text-align: center;
-		text-shadow: 0 4px 20px rgba(0,0,0,0.8);
-	}
+  .resolution-glyphs {
+    display: flex;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-3xl);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
 
-	/* -- Act 4: Product Grid -- */
-	.layer-products {
-		z-index: 14;
-		pointer-events: auto; /* Allow clicking products */
-		opacity: 0; /* Hidden until climax */
-	}
+  .resolution-statement {
+    font-family: var(--font-narrative);
+    font-style: italic;
+    font-size: var(--type-statement);
+    font-weight: 300;
+    color: var(--color-warm-cream);
+    margin: 0;
+  }
 
-	.product-grid-canvas {
-		display: grid;
-		grid-template-columns: repeat(4, 1fr);
-		grid-template-rows: repeat(3, 1fr);
-		width: 100vw;
-		height: 100vh;
-		gap: 2px;
-		background-color: var(--bg-dark); /* Grid lines */
-		padding: 2px;
-	}
+  .resolution-grounding {
+    font-family: var(--font-narrative);
+    font-size: var(--type-narrative);
+    color: var(--color-warm-cream);
+    opacity: 0.8;
+    margin: var(--space-lg) 0 0 0;
+  }
 
-	.product-tile {
-		position: relative;
-		overflow: hidden;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		text-decoration: none;
-		opacity: 0; /* Fade in staggered */
-		transform: scale(0.9);
-	}
+  .btn-enter {
+    margin-top: var(--space-3xl);
+    padding: var(--space-lg) var(--space-3xl);
+    background: transparent;
+    border: 1px solid var(--color-gold);
+    color: var(--color-gold);
+    font-family: var(--font-evidence);
+    font-size: var(--type-evidence);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background var(--duration-standard) var(--ease-settle),
+                color var(--duration-standard) var(--ease-settle);
+  }
 
-	.product-tile-bg {
-		position: absolute;
-		top: 0; left: 0; width: 100%; height: 100%;
-		background-size: cover;
-		background-position: center;
-		filter: grayscale(100%) brightness(0.4);
-		transition: all 0.8s var(--ease-settle);
-	}
+  .btn-enter:hover {
+    background: var(--color-gold);
+    color: var(--color-forest-deep);
+  }
 
-	.product-tile::after {
-		content: '';
-		position: absolute;
-		inset: 0;
-		background: linear-gradient(to top, rgba(7,9,5,0.9) 0%, rgba(7,9,5,0) 60%);
-		opacity: 0.8;
-		transition: opacity 0.8s var(--ease-settle);
-	}
+  /* ════════════════════════════════════════════════════════════
+     THE CORE — Origin-First Landing
+     ════════════════════════════════════════════════════════════ */
 
-	.product-tile:hover .product-tile-bg {
-		filter: grayscale(0%) brightness(0.9);
-		transform: scale(1.05);
-	}
-	
-	.product-tile:hover::after {
-		opacity: 0.4;
-	}
+  .the-core {
+    padding: var(--space-4xl) var(--space-xl);
+    background-color: var(--color-forest-deep);
+    min-height: 100vh;
+  }
 
-	.product-tile-content {
-		position: relative;
-		z-index: 2;
-		color: var(--color-warm-cream);
-		font-family: var(--font-display);
-		font-size: 1.5rem;
-		text-align: center;
-		opacity: 0;
-		transform: translateY(10px);
-		transition: all 0.5s ease;
-	}
-	
-	.product-tile:hover .product-tile-content {
-		opacity: 1;
-		transform: translateY(0);
-	}
+  .core-header {
+    text-align: center;
+    margin-bottom: var(--space-4xl);
+  }
 
-	/* -- Organic Grain -- */
-	.grain-overlay {
-		position: absolute;
-		top: -100%; left: -100%; width: 300%; height: 300%;
-		background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
-		pointer-events: none;
-		z-index: 99;
-		animation: grainPan 8s steps(10) infinite;
-	}
+  .core-title {
+    font-family: var(--font-display);
+    font-size: var(--type-display);
+    font-weight: 400;
+    color: var(--color-warm-cream);
+    margin: 0 0 var(--space-lg) 0;
+    letter-spacing: 0.05em;
+  }
 
-	@keyframes grainPan {
-		0%, 100% { transform: translate(0, 0); }
-		10% { transform: translate(-5%, -10%); }
-		20% { transform: translate(-15%, 5%); }
-		30% { transform: translate(7%, -25%); }
-		40% { transform: translate(-5%, 25%); }
-		50% { transform: translate(-15%, 10%); }
-		60% { transform: translate(15%, 0%); }
-		70% { transform: translate(0%, 15%); }
-		80% { transform: translate(3%, 35%); }
-		90% { transform: translate(-10%, 10%); }
-	}
+  .core-subtitle {
+    font-family: var(--font-narrative);
+    font-size: var(--type-narrative);
+    color: rgba(245, 240, 232, 0.7);
+    max-width: 540px;
+    margin: 0 auto;
+    line-height: var(--line-height-loose);
+  }
 
-	.post-cinema-content {
-		position: relative;
-		z-index: 20;
-		background: var(--bg-dark);
-	}
+  .origins-row {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-xl);
+  }
 
-	/* Mobile adjustments */
-	@media (max-width: 768px) {
-		.product-grid-canvas {
-			grid-template-columns: repeat(2, 1fr);
-			grid-template-rows: repeat(6, 1fr);
-		}
-	}
+  .origin-card {
+    position: relative;
+    border: 1px solid rgba(198, 156, 82, 0.15);
+    overflow: hidden;
+    transition: border-color var(--duration-standard) var(--ease-settle);
+  }
+
+  .origin-card:hover {
+    border-color: rgba(198, 156, 82, 0.4);
+  }
+
+  .origin-card-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.2;
+    filter: grayscale(60%);
+    transition: opacity var(--duration-slow) var(--ease-settle);
+  }
+
+  .origin-card:hover .origin-card-bg {
+    opacity: 0.35;
+  }
+
+  .origin-card-content {
+    position: relative;
+    z-index: 2;
+    padding: var(--space-3xl) var(--space-2xl);
+  }
+
+  .origin-name {
+    font-family: var(--font-display);
+    font-size: clamp(20px, 3vw, 28px);
+    font-weight: 400;
+    color: var(--color-warm-cream);
+    margin: 0 0 var(--space-lg) 0;
+    letter-spacing: 0.03em;
+  }
+
+  .origin-evidence {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    margin-bottom: var(--space-lg);
+  }
+
+  .origin-elevation {
+    font-family: var(--font-evidence);
+    font-size: var(--type-evidence);
+    color: var(--color-gold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .origin-coords {
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    color: rgba(245, 240, 232, 0.4);
+    letter-spacing: 0.05em;
+  }
+
+  .origin-soil {
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    color: rgba(245, 240, 232, 0.5);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-xl);
+  }
+
+  .origin-expand-btn {
+    background: transparent;
+    border: 1px solid rgba(198, 156, 82, 0.3);
+    color: var(--color-warm-cream);
+    font-family: var(--font-evidence);
+    font-size: var(--type-evidence);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: var(--space-md) var(--space-xl);
+    cursor: pointer;
+    transition: all var(--duration-standard) var(--ease-settle);
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .origin-expand-btn:hover {
+    border-color: var(--color-gold);
+    color: var(--color-gold);
+  }
+
+  .origin-expand-btn[aria-expanded="true"] {
+    border-color: var(--color-gold);
+    color: var(--color-gold);
+  }
+
+  /* Product Accordion */
+  .origin-products {
+    position: relative;
+    z-index: 2;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height var(--duration-slow) var(--ease-settle),
+                padding var(--duration-slow) var(--ease-settle);
+    background: rgba(5, 8, 4, 0.6);
+    border-top: 0 solid rgba(198, 156, 82, 0);
+  }
+
+  .origin-products.is-expanded {
+    max-height: 600px;
+    border-top: 1px solid rgba(198, 156, 82, 0.15);
+  }
+
+  .origin-products-scroll {
+    display: flex;
+    gap: var(--space-xl);
+    padding: var(--space-2xl);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .origin-products-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .product-card {
+    flex: 0 0 200px;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .product-card-image {
+    width: 200px;
+    height: 200px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(245, 240, 232, 0.03);
+  }
+
+  .product-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: grayscale(30%) brightness(0.9);
+    transition: filter var(--duration-standard) var(--ease-settle);
+  }
+
+  .product-card:hover .product-card-image img {
+    filter: grayscale(0%) brightness(1);
+  }
+
+  .product-card-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    border: 1px dashed rgba(198, 156, 82, 0.2);
+  }
+
+  .product-card-name {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--color-warm-cream);
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .product-card-price {
+    font-family: var(--font-evidence);
+    font-size: var(--type-evidence);
+    color: var(--color-warm-cream);
+  }
+
+  .product-card-size {
+    color: rgba(245, 240, 232, 0.5);
+  }
+
+  .product-card-actions {
+    display: flex;
+    gap: var(--space-sm);
+    margin-top: var(--space-sm);
+  }
+
+  .btn-add-quick {
+    flex: 0 0 auto;
+    padding: var(--space-sm) var(--space-lg);
+    background: transparent;
+    border: 1px solid rgba(198, 156, 82, 0.4);
+    color: var(--color-gold);
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--duration-standard) var(--ease-settle);
+  }
+
+  .btn-add-quick:hover {
+    background: rgba(198, 156, 82, 0.15);
+    border-color: var(--color-gold);
+  }
+
+  .btn-enter-product {
+    flex: 1;
+    padding: var(--space-sm) var(--space-lg);
+    background: transparent;
+    border: 1px solid rgba(245, 240, 232, 0.15);
+    color: var(--color-warm-cream);
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    text-align: center;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--duration-standard) var(--ease-settle);
+  }
+
+  .btn-enter-product:hover {
+    border-color: var(--color-warm-cream);
+  }
+
+  /* ════════════════════════════════════════════════════════════
+     THE EVIDENCE
+     ════════════════════════════════════════════════════════════ */
+
+  .the-evidence {
+    padding: var(--space-4xl) var(--space-xl);
+    background-color: var(--color-void);
+  }
+
+  .evidence-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .evidence-statement {
+    text-align: left;
+    margin-bottom: var(--space-4xl);
+    max-width: 700px;
+  }
+
+  .evidence-wide {
+    font-family: var(--font-narrative);
+    font-size: var(--type-statement);
+    font-weight: 300;
+    line-height: 1.3;
+    color: var(--color-warm-cream);
+    margin: 0 0 var(--space-xl) 0;
+  }
+
+  .evidence-qualifier {
+    font-family: var(--font-evidence);
+    font-size: var(--type-evidence);
+    color: rgba(245, 240, 232, 0.5);
+    letter-spacing: 0.05em;
+    margin: 0;
+  }
+
+  .evidence-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-xl);
+  }
+
+  .evidence-item {
+    border-top: 1px solid rgba(198, 156, 82, 0.25);
+    padding-top: var(--space-xl);
+  }
+
+  .evidence-label {
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-gold);
+    margin-bottom: var(--space-sm);
+  }
+
+  .evidence-value {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 400;
+    color: var(--color-warm-cream);
+    line-height: 1;
+    margin-bottom: var(--space-lg);
+  }
+
+  .evidence-note {
+    font-family: var(--font-narrative);
+    font-size: var(--type-narrative);
+    color: rgba(245, 240, 232, 0.6);
+    line-height: var(--line-height-base);
+    margin: 0;
+  }
+
+  /* ════════════════════════════════════════════════════════════
+     THE WALK — Pre-footer
+     ════════════════════════════════════════════════════════════ */
+
+  .the-walk {
+    position: relative;
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .walk-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: grayscale(40%) brightness(0.35);
+  }
+
+  .walk-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, var(--color-forest-deep) 0%, transparent 40%, transparent 60%, var(--color-void) 100%);
+  }
+
+  .walk-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 600px;
+    padding: var(--space-4xl) var(--space-xl);
+  }
+
+  .walk-statement {
+    font-family: var(--font-narrative);
+    font-style: italic;
+    font-size: var(--type-statement);
+    font-weight: 300;
+    line-height: 1.4;
+    color: var(--color-warm-cream);
+    margin: 0 0 var(--space-3xl) 0;
+  }
+
+  .walk-link {
+    font-family: var(--font-evidence);
+    font-size: var(--type-evidence);
+    color: var(--color-gold);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: opacity var(--duration-standard) var(--ease-settle);
+  }
+
+  .walk-link:hover {
+    opacity: 0.7;
+  }
+
+  /* ════════════════════════════════════════════════════════════
+     MOBILE
+     ════════════════════════════════════════════════════════════ */
+
+  @media (max-width: 768px) {
+    .progress-bar {
+      left: var(--space-lg);
+      right: var(--space-lg);
+      gap: 2px;
+    }
+
+    .beat-statement {
+      max-width: 320px;
+    }
+
+    .beat-glyph :global(.cipher-glyph) {
+      width: 100px;
+      height: 100px;
+    }
+
+    .origins-row {
+      grid-template-columns: 1fr;
+    }
+
+    .evidence-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .product-card {
+      flex: 0 0 170px;
+    }
+
+    .product-card-image {
+      width: 170px;
+      height: 170px;
+    }
+
+    .btn-enter {
+      /* Thumb zone: bottom 40% of viewport */
+      position: relative;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .evidence-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .resolution-glyphs {
+      gap: var(--space-sm);
+    }
+  }
 </style>
 
 <script>
-	import gsap from 'gsap';
-	import ScrollTrigger from 'gsap/ScrollTrigger';
+  import gsap from 'gsap';
+  import ScrollTrigger from 'gsap/ScrollTrigger';
 
-	gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger);
 
-	document.addEventListener('DOMContentLoaded', () => {
-		// Immediately hide header brand lockup
-		document.body.classList.add('is-splashing');
-		
-		// ----------------------------------------------------
-		// ACT 0: The Intro (Plays Automatically On Load)
-		// ----------------------------------------------------
-		const introWordmark = document.getElementById('intro-wordmark');
-		const introMark = document.getElementById('intro-mark');
-		const headerMark = document.querySelector('.site-header .origin-mark');
-		
-		const introTl = gsap.timeline();
-		
-		// 1. Fade in Wordmark
-		introTl.to(introWordmark, {
-			opacity: 1,
-			x: 0,
-			duration: 0.8,
-			ease: "power2.out",
-			delay: 1.2
-		});
+  document.addEventListener('DOMContentLoaded', () => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const progressBar = document.getElementById('sequence-progress');
+    const beats = document.querySelectorAll('.beat');
+    const segments = document.querySelectorAll('.progress-segment');
+    
+    // ── Opening Sequence ──
+    // Shuffle dimensions order (Fisher-Yates), pin Product last
+    const beatsArray = Array.from(beats).filter(b => b.getAttribute('data-beat') !== 'resolution');
+    const resolutionBeat = document.querySelector('.beat--resolution');
+    const productBeat = beatsArray.find(b => b.getAttribute('data-dim') === 'product');
+    const otherBeats = beatsArray.filter(b => b.getAttribute('data-dim') !== 'product');
+    
+    // Fisher-Yates shuffle for non-product beats
+    for (let i = otherBeats.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [otherBeats[i], otherBeats[j]] = [otherBeats[j], otherBeats[i]];
+    }
+    
+    // Reorder DOM: shuffled beats + product last + resolution
+    const viewport = document.getElementById('beats-viewport');
+    if (viewport) {
+      const shuffledOrder = [...otherBeats, productBeat, resolutionBeat].filter(Boolean);
+      shuffledOrder.forEach(beat => viewport.appendChild(beat as Node));
+    }
 
-		// 2. Hold for reading
-		introTl.to({}, { duration: 0.6 });
+    // Show progress bar
+    if (progressBar) {
+      progressBar.classList.add('is-visible');
+    }
 
-		// 3. Fade out Wordmark
-		introTl.to(introWordmark, {
-			opacity: 0,
-			duration: 0.4,
-			ease: "power2.in"
-		});
+    // Create scroll-triggered reveals for each beat
+    const allBeats = document.querySelectorAll('.beat');
+    allBeats.forEach((beat, i) => {
+      ScrollTrigger.create({
+        trigger: beat,
+        start: 'top 60%',
+        end: 'bottom 40%',
+        onEnter: () => {
+          beat.classList.add('is-active');
+          // Update progress bar
+          if (i < segments.length) {
+            segments[i].classList.add('is-filled');
+          }
+        },
+        onLeaveBack: () => {
+          beat.classList.remove('is-active');
+          if (i < segments.length) {
+            segments[i].classList.remove('is-filled');
+          }
+        }
+      });
+    });
 
-		// 4. Glide logo to header and fade intro background to reveal layer-forest
-		introTl.add(() => {
-			if (introMark && headerMark) {
-				const introRect = introMark.getBoundingClientRect();
-				const headerRect = headerMark.getBoundingClientRect();
+    // ── ENTER button → scroll to The Core ──
+    const enterBtn = document.getElementById('btn-enter-core');
+    if (enterBtn) {
+      enterBtn.addEventListener('click', () => {
+        const core = document.getElementById('the-core');
+        if (core) {
+          core.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+        }
+      });
+    }
 
-				const scale = headerRect.width / introRect.width;
-				const dx = headerRect.left - introRect.left;
-				const dy = headerRect.top - introRect.top;
+    // ── Origin Card Accordion ──
+    document.querySelectorAll('.origin-expand-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetId = btn.getAttribute('data-target');
+        const panel = document.getElementById(`products-${targetId}`);
+        const isExpanded = btn.getAttribute('aria-expanded') === 'true';
 
-				gsap.to(introMark, {
-					x: dx,
-					y: dy,
-					scale: scale,
-					transformOrigin: "top left",
-					duration: 1.2,
-					ease: "power3.inOut"
-				});
-			}
-			
-			// Reveal the forest layer (which is masked by the tally strokes)
-			gsap.to(".layer-forest", {
-				opacity: 1,
-				duration: 0.1
-			});
+        // Close all other panels first
+        document.querySelectorAll('.origin-products').forEach(p => {
+          p.classList.remove('is-expanded');
+          p.setAttribute('aria-hidden', 'true');
+        });
+        document.querySelectorAll('.origin-expand-btn').forEach(b => {
+          b.setAttribute('aria-expanded', 'false');
+        });
 
-			// Fade out the intro background
-			gsap.to(".layer-intro", {
-				backgroundColor: "rgba(7, 9, 5, 0)",
-				duration: 1.2,
-				ease: "power3.inOut",
-				onComplete: () => {
-					document.body.classList.remove('is-splashing');
-					document.querySelector('.layer-intro')?.remove(); // Clean up DOM
-				}
-			});
-		});
+        // Toggle current
+        if (!isExpanded && panel) {
+          panel.classList.add('is-expanded');
+          panel.setAttribute('aria-hidden', 'false');
+          btn.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
 
-		// ----------------------------------------------------
-		// ACT 1-4: Master Scroll Timeline
-		// ----------------------------------------------------
-		const tl = gsap.timeline({
-			scrollTrigger: {
-				trigger: "#master-scroll-track",
-				start: "top top",
-				end: "bottom bottom",
-				scrub: 1, 
-			}
-		});
+    // ── Quick Add to Ledger ──
+    document.querySelectorAll('.add-to-ledger-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const productData = JSON.parse(btn.getAttribute('data-product') || '{}');
+        window.dispatchEvent(new CustomEvent('add-to-ledger', { detail: productData }));
 
-		// ----------------------------------------------------
-		// ACT 1: Tally Strokes -> Forest (0.0 to 2.0)
-		// ----------------------------------------------------
-		const fullRectD = "M0,0 Q0,0.5 0,1 L1,1 Q1,0.5 1,0 Z";
-		
-		tl.to(".tally-stroke", {
-			attr: { d: fullRectD },
-			duration: 2.0,
-			ease: "power2.inOut"
-		}, 0);
-
-		tl.to(".forest-image", {
-			scale: 1, 
-			y: "-5%",
-			duration: 2.0,
-			ease: "power1.inOut"
-		}, 0);
-
-		// ----------------------------------------------------
-		// ACT 2: Forest -> Typography (UNTOUCHED) (1.5 to 2.5)
-		// ----------------------------------------------------
-		tl.to(".primitive-text", {
-			opacity: 1,
-			duration: 1.0,
-			ease: "power2.inOut"
-		}, 1.5); // Text is fully visible from 2.5 to 3.5
-
-		// ----------------------------------------------------
-		// ACT 3: Typography -> Lens (The letter 'O') (3.5 to 5.0)
-		// ----------------------------------------------------
-		const otherLetters = document.querySelectorAll('.letter:not(.center-o)');
-		tl.to(otherLetters, {
-			opacity: 0,
-			scale: 0.8,
-			y: 50,
-			stagger: 0.05,
-			duration: 0.8,
-			ease: "power2.in"
-		}, 3.5);
-
-		tl.to(".center-o", {
-			scale: 25, 
-			color: "rgba(198, 156, 82, 0.05)",
-			duration: 1.5,
-			ease: "power3.inOut"
-		}, 3.8);
-
-		tl.to(".layer-forest", {
-			opacity: 0,
-			duration: 1.0
-		}, 4.0);
-
-		// Flash features inside the Lens (4.5 to 6.5)
-		const features = document.querySelectorAll('.feature-text');
-		features.forEach((feature, i) => {
-			tl.to(feature, {
-				opacity: 1,
-				scale: 1.1,
-				duration: 0.6,
-				ease: "power2.out"
-			}, 4.5 + (i * 1.0));
-			tl.to(feature, {
-				opacity: 0,
-				scale: 1.2,
-				filter: "blur(10px)",
-				duration: 0.6,
-				ease: "power2.in"
-			}, 5.2 + (i * 1.0));
-		});
-
-		// ----------------------------------------------------
-		// ACT 4: Lens -> Grid (8.0 to 10.0)
-		// ----------------------------------------------------
-		tl.to(".layer-products", {
-			opacity: 1,
-			duration: 0.8
-		}, 8.0);
-
-		tl.to(".product-tile", {
-			opacity: 1,
-			scale: 1,
-			stagger: 0.1,
-			duration: 1.2,
-			ease: "back.out(1.2)"
-		}, 8.2);
-
-		// Unpin canvas
-		tl.to("#cinematic-canvas", {
-			position: "absolute",
-			top: "600vh", 
-			duration: 0.1
-		}, 10.0);
-	});
+        // Visual feedback
+        const el = btn as HTMLElement;
+        el.style.background = 'rgba(198, 156, 82, 0.25)';
+        el.style.borderColor = 'var(--color-gold)';
+        el.textContent = '✓';
+        setTimeout(() => {
+          el.style.background = '';
+          el.style.borderColor = '';
+          el.textContent = 'Add';
+        }, 1200);
+      });
+    });
+  });
 </script>

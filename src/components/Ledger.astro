@@ -520,15 +520,15 @@ const companionsJson = JSON.stringify(companionProductsMap);
     left: 50%;
     transform: translateX(-50%) translateY(-10px);
     z-index: 10000;
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
+    font-family: var(--font-evidence);
+    font-size: var(--type-evidence);
     background-color: var(--color-forest-deep);
     color: var(--color-warm-cream);
     padding: 0.6rem 1.2rem;
     opacity: 0;
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition: opacity 0.3s ease, transform var(--duration-standard) var(--ease-settle);
     pointer-events: none;
-    border: 1px solid rgba(245, 237, 216, 0.4);
+    border: 1px solid rgba(245, 240, 232, 0.4);
     box-shadow: 0 4px 20px rgba(0,0,0,0.5);
     text-align: center;
     text-transform: uppercase;
@@ -540,9 +540,9 @@ const companionsJson = JSON.stringify(companionProductsMap);
   }
 
   @keyframes pulse {
-    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 237, 216, 0.4); }
-    70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(245, 237, 216, 0); }
-    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 237, 216, 0); }
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 240, 232, 0.4); }
+    70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(245, 240, 232, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 240, 232, 0); }
   }
 
   .pulse-anim {
@@ -554,14 +554,14 @@ const companionsJson = JSON.stringify(companionProductsMap);
     bottom: 2rem;
     left: 2rem;
     z-index: 900;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.9rem;
+    font-family: var(--font-evidence);
+    font-size: var(--type-evidence);
     color: var(--color-warm-cream);
     cursor: pointer;
     background: transparent;
     border: none;
     padding: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity var(--duration-standard) var(--ease-settle);
   }
   .ledger-trigger.hidden {
     opacity: 0;
@@ -580,7 +580,7 @@ const companionsJson = JSON.stringify(companionProductsMap);
     justify-content: flex-end;
     pointer-events: auto;
     opacity: 1;
-    transition: opacity 0.4s ease;
+    transition: opacity var(--duration-standard) var(--ease-settle);
   }
   .ledger-overlay.hidden {
     opacity: 0;
@@ -595,7 +595,7 @@ const companionsJson = JSON.stringify(companionProductsMap);
     height: 100%;
     background: rgba(12, 21, 9, 0.6);
     backdrop-filter: blur(4px);
-    transition: opacity 0.4s ease;
+    transition: opacity var(--duration-standard) var(--ease-settle);
   }
   
   .ledger-panel {
@@ -603,13 +603,13 @@ const companionsJson = JSON.stringify(companionProductsMap);
     width: 100%;
     height: 75dvh;
     background: var(--color-forest-deep);
-    border-top: 1px dashed rgba(244, 241, 235, 0.4);
+    border-top: 1px dashed rgba(245, 240, 232, 0.4);
     z-index: 1;
     display: flex;
     flex-direction: column;
     transform: translateY(0);
-    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    padding-bottom: env(safe-area-inset-bottom);
+    transition: transform var(--duration-standard) var(--ease-settle);
+    padding-bottom: calc(var(--space-xl) + env(safe-area-inset-bottom, 0px));
   }
   .ledger-overlay.hidden .ledger-panel {
     transform: translateY(100%);
@@ -620,22 +620,27 @@ const companionsJson = JSON.stringify(companionProductsMap);
     justify-content: space-between;
     align-items: center;
     padding: 2rem 5vw 1.5rem;
-    border-bottom: 1px dashed rgba(244, 241, 235, 0.2);
+    border-bottom: 1px dashed rgba(245, 240, 232, 0.2);
   }
   .ledger-title {
-    font-family: var(--font-institutional);
-    font-size: 1.5rem;
+    font-family: var(--font-display);
+    font-size: var(--type-display);
     margin: 0;
   }
   .ledger-close {
     background: none;
     border: none;
     color: var(--color-warm-cream);
-    font-family: 'DM Mono', monospace;
-    font-size: 0.9rem;
+    font-family: var(--font-evidence);
+    font-size: var(--type-evidence);
     cursor: pointer;
     text-transform: uppercase;
     letter-spacing: 0.1em;
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .ledger-content {
@@ -647,9 +652,9 @@ const companionsJson = JSON.stringify(companionProductsMap);
   }
   
   .ledger-empty {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.2rem;
-    color: rgba(244, 241, 235, 0.6);
+    font-family: var(--font-narrative);
+    font-size: var(--type-statement);
+    color: rgba(245, 240, 232, 0.6);
     text-align: center;
     margin-top: 2rem;
   }
@@ -660,7 +665,7 @@ const companionsJson = JSON.stringify(companionProductsMap);
     align-items: center;
     padding-bottom: 1.5rem;
     margin-bottom: 1.5rem;
-    border-bottom: 1px solid rgba(244, 241, 235, 0.1);
+    border-bottom: 1px solid rgba(245, 240, 232, 0.1);
   }
   @media (max-width: 600px) {
     .ledger-item {
@@ -675,17 +680,17 @@ const companionsJson = JSON.stringify(companionProductsMap);
     gap: 0.2rem;
   }
   .item-name {
-    font-family: var(--font-institutional);
-    font-size: 1.2rem;
+    font-family: var(--font-display);
+    font-size: var(--type-statement);
   }
   .item-size {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.8rem;
-    color: rgba(244, 241, 235, 0.6);
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    color: rgba(245, 240, 232, 0.6);
   }
   .item-line-total {
-    font-size: 0.75rem;
-    color: rgba(244, 241, 235, 0.4);
+    font-size: var(--type-whisper);
+    color: rgba(245, 240, 232, 0.4);
     margin-top: 0.2rem;
   }
   .item-controls {
@@ -694,13 +699,13 @@ const companionsJson = JSON.stringify(companionProductsMap);
     gap: 1.5rem;
   }
   .price-font {
-    font-family: 'DM Mono', monospace;
+    font-family: var(--font-evidence);
   }
   .qty-controls {
     display: flex;
     align-items: center;
     gap: 0.8rem;
-    border: 1px solid rgba(244, 241, 235, 0.3);
+    border: 1px solid rgba(245, 240, 232, 0.3);
     border-radius: 20px;
     padding: 0.2rem 0.5rem;
   }
@@ -709,11 +714,12 @@ const companionsJson = JSON.stringify(companionProductsMap);
     border: none;
     color: var(--color-warm-cream);
     cursor: pointer;
-    font-size: 1.2rem;
+    font-size: var(--type-statement);
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 20px;
+    min-width: 44px;
+    min-height: 44px;
   }
   
   .ledger-footer {
@@ -726,8 +732,8 @@ const companionsJson = JSON.stringify(companionProductsMap);
   .ledger-total {
     display: flex;
     justify-content: space-between;
-    font-family: var(--font-institutional);
-    font-size: 1.2rem;
+    font-family: var(--font-display);
+    font-size: var(--type-statement);
   }
   .ledger-order-summary {
     margin-top: 1rem;
@@ -737,10 +743,10 @@ const companionsJson = JSON.stringify(companionProductsMap);
     gap: 0.5rem;
   }
   .summary-heading {
-    font-family: var(--font-institutional);
-    font-size: 10px;
+    font-family: var(--font-display);
+    font-size: var(--type-whisper);
     letter-spacing: 0.3em;
-    color: rgba(244, 241, 235, 0.5);
+    color: rgba(245, 240, 232, 0.5);
     margin: 0 0 1rem 0;
     text-transform: uppercase;
   }
@@ -752,16 +758,16 @@ const companionsJson = JSON.stringify(companionProductsMap);
   .summary-item-row {
     display: flex;
     justify-content: space-between;
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
+    font-family: var(--font-evidence);
+    font-size: var(--type-evidence);
     color: var(--color-warm-cream);
   }
   .summary-row {
     display: flex;
     justify-content: space-between;
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: rgba(244, 241, 235, 0.6);
+    font-family: var(--font-evidence);
+    font-size: var(--type-evidence);
+    color: rgba(245, 240, 232, 0.6);
   }
   .total-row {
     color: var(--color-warm-cream);
@@ -769,33 +775,33 @@ const companionsJson = JSON.stringify(companionProductsMap);
   }
   .summary-divider {
     border: none;
-    border-top: 1px dashed rgba(244, 241, 235, 0.25);
+    border-top: 1px dashed rgba(245, 240, 232, 0.25);
     margin: 0.5rem 0;
     width: 100%;
   }
   .summary-divider-solid {
     border: none;
-    border-top: 1px dashed rgba(244, 241, 235, 0.6);
+    border-top: 1px dashed rgba(245, 240, 232, 0.6);
     margin: 0.5rem 0;
     width: 100%;
   }
   .shipping-prompt-note {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: var(--font-narrative);
     font-style: italic;
-    font-size: 11px;
-    color: rgba(244, 241, 235, 0.4);
+    font-size: var(--type-evidence);
+    color: rgba(245, 240, 232, 0.4);
     margin: 0;
   }
   .dispatch-timeline {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    color: rgba(244, 241, 235, 0.35);
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    color: rgba(245, 240, 232, 0.35);
     margin: 1rem 0 0 0;
     text-transform: uppercase;
   }
   .ledger-community-summary {
-    background: rgba(166, 124, 60, 0.08);
-    border: 1px solid rgba(166, 124, 60, 0.2);
+    background: rgba(198, 156, 82, 0.08);
+    border: 1px solid rgba(198, 156, 82, 0.2);
     padding: 12px 16px;
     margin-bottom: 1.5rem;
     display: flex;
@@ -804,31 +810,31 @@ const companionsJson = JSON.stringify(companionProductsMap);
   }
 
   .community-summary-tag {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
     letter-spacing: 0.15em;
     color: var(--color-gold);
     text-transform: uppercase;
   }
 
   .community-origins-list {
-    font-family: var(--font-institutional);
-    font-size: 12px;
+    font-family: var(--font-display);
+    font-size: var(--type-evidence);
     color: var(--color-warm-cream);
   }
 
   .human-note {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: var(--font-narrative);
     font-style: italic;
-    font-size: 13px;
-    color: rgba(244, 241, 235, 0.5);
+    font-size: var(--type-evidence);
+    color: rgba(245, 240, 232, 0.5);
     margin: 0 0 1.5rem 0;
   }
   .human-note-small {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: var(--font-narrative);
     font-style: italic;
-    font-size: 11px;
-    color: rgba(244, 241, 235, 0.4);
+    font-size: var(--type-evidence);
+    color: rgba(245, 240, 232, 0.4);
     margin: 0;
   }
   .ledger-post-checkout {
@@ -840,31 +846,31 @@ const companionsJson = JSON.stringify(companionProductsMap);
     text-align: center;
   }
   .post-title {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: var(--font-narrative);
     font-style: italic;
-    font-size: 22px;
-    color: rgba(244, 241, 235, 0.8);
+    font-size: var(--type-display);
+    color: rgba(245, 240, 232, 0.8);
     margin: 0 0 0.5rem 0;
   }
   .post-subtitle {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 14px;
-    color: rgba(244, 241, 235, 0.55);
+    font-family: var(--font-narrative);
+    font-size: var(--type-narrative);
+    color: rgba(245, 240, 232, 0.55);
     margin: 0;
   }
   .post-reinvite {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 13px;
-    color: rgba(244, 241, 235, 0.4);
+    font-family: var(--font-narrative);
+    font-size: var(--type-evidence);
+    color: rgba(245, 240, 232, 0.4);
     margin: 1.5rem 0 0 0;
-    transition: opacity 0.5s ease;
+    transition: opacity var(--duration-standard) var(--ease-settle);
   }
   
   .ledger-connect {
     background: var(--color-warm-cream);
     color: var(--color-forest-deep);
-    font-family: 'DM Mono', monospace;
-    font-size: 1rem;
+    font-family: var(--font-evidence);
+    font-size: var(--type-narrative);
     padding: 1.4rem;
     border: none;
     cursor: pointer;
@@ -874,16 +880,16 @@ const companionsJson = JSON.stringify(companionProductsMap);
     border-radius: 0;
     width: 100%;
     margin-top: 2rem;
-    transition: background 0.4s ease;
+    transition: background var(--duration-standard) var(--ease-settle);
   }
   .ledger-connect:hover {
     background: var(--color-gold);
   }
   
   .ledger-fssai {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    color: rgba(245, 237, 216, 0.3);
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    color: rgba(245, 240, 232, 0.3);
     text-align: center;
     margin-top: 1.5rem;
     letter-spacing: 0.1em;
@@ -892,8 +898,8 @@ const companionsJson = JSON.stringify(companionProductsMap);
   .discovery-link {
     color: var(--color-gold);
     text-decoration: none;
-    border-bottom: 1px solid rgba(166, 124, 60, 0.4);
-    transition: opacity 0.3s ease;
+    border-bottom: 1px solid rgba(198, 156, 82, 0.4);
+    transition: opacity var(--duration-standard) var(--ease-settle);
   }
   .discovery-link:hover {
     opacity: 0.7;
@@ -902,20 +908,20 @@ const companionsJson = JSON.stringify(companionProductsMap);
   .ledger-discovery {
     margin-top: 2rem;
     padding-top: 1.5rem;
-    border-top: 1px dashed rgba(244, 241, 235, 0.2);
+    border-top: 1px dashed rgba(245, 240, 232, 0.2);
   }
   .discovery-text {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: var(--font-narrative);
     font-size: 1.1rem;
     line-height: 1.6;
-    color: rgba(244, 241, 235, 0.8);
+    color: rgba(245, 240, 232, 0.8);
     margin: 0;
   }
   .discovery-link {
     color: var(--color-warm-cream);
     text-decoration: none;
-    border-bottom: 1px solid rgba(244, 241, 235, 0.4);
-    transition: border-color 0.2s ease;
+    border-bottom: 1px solid rgba(245, 240, 232, 0.4);
+    transition: border-color var(--duration-standard) var(--ease-settle);
   }
   .discovery-link:hover {
     border-bottom-color: var(--color-warm-cream);
@@ -928,23 +934,23 @@ const companionsJson = JSON.stringify(companionProductsMap);
   .ledger-observation-guide {
     margin: 2rem 0;
     padding: 1.5rem;
-    border: 1px dashed rgba(166, 124, 60, 0.3); /* Subtle gold dashed border */
+    border: 1px dashed rgba(198, 156, 82, 0.3); /* Subtle gold dashed border */
     background: rgba(12, 21, 9, 0.4);
     border-radius: 4px;
   }
   
   .observation-title {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
     letter-spacing: 0.15em;
-    color: rgba(166, 124, 60, 0.9); /* Perfect visibility secondary color (gold) */
+    color: rgba(198, 156, 82, 0.9); /* Perfect visibility secondary color (gold) */
     margin: 0 0 1rem 0;
     text-transform: uppercase;
   }
   
   .observation-text {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 14px;
+    font-family: var(--font-narrative);
+    font-size: var(--type-narrative);
     line-height: 1.5;
     color: var(--color-warm-cream); /* Perfect readability */
     margin: 0;
@@ -960,18 +966,18 @@ const companionsJson = JSON.stringify(companionProductsMap);
   .shipping-form input {
     background: transparent;
     border: none;
-    border-bottom: 1px dashed rgba(245, 237, 216, 0.3);
+    border-bottom: 1px dashed rgba(245, 240, 232, 0.3);
     color: var(--color-warm-cream);
-    font-family: 'DM Mono', monospace;
-    font-size: 0.85rem;
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
     padding: 0.5rem 0;
     width: 100%;
     box-sizing: border-box;
-    transition: border-color 0.2s ease, background 0.2s ease;
+    transition: border-color 0.2s ease, background var(--duration-standard) var(--ease-settle);
   }
   .shipping-form input:focus {
     outline: none;
-    border-color: rgba(244, 241, 235, 0.6);
+    border-color: rgba(245, 240, 232, 0.6);
     background: transparent;
   }
   .shipping-form input:user-invalid {
@@ -988,21 +994,23 @@ const companionsJson = JSON.stringify(companionProductsMap);
     margin-top: 0.5rem;
   }
   .shipping-saved-note {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: var(--font-narrative);
     font-style: italic;
-    font-size: 12px;
-    color: rgba(245, 237, 216, 0.45);
+    font-size: var(--type-evidence);
+    color: rgba(245, 240, 232, 0.45);
     margin: 0;
   }
   .clear-shipping-btn {
     background: none;
     border: none;
-    color: rgba(245, 237, 216, 0.4);
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
+    color: rgba(245, 240, 232, 0.4);
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
     cursor: pointer;
     text-decoration: underline;
     padding: 0;
+    min-height: 44px;
+    min-width: 44px;
   }
   .clear-shipping-btn:hover {
     color: var(--color-warm-cream);
@@ -1011,74 +1019,79 @@ const companionsJson = JSON.stringify(companionProductsMap);
   .ledger-upi-section {
     margin-bottom: 1.5rem;
     padding-bottom: 1.5rem;
-    border-bottom: 1px solid rgba(245, 237, 216, 0.1);
+    border-bottom: 1px solid rgba(245, 240, 232, 0.1);
   }
   .upi-prompt {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 13px;
-    color: rgba(245, 237, 216, 0.6);
+    font-family: var(--font-narrative);
+    font-size: var(--type-evidence);
+    color: rgba(245, 240, 232, 0.6);
     margin: 0 0 0.2rem 0;
   }
   .upi-id {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 14px;
-    color: rgba(245, 237, 216, 0.8);
+    font-family: var(--font-narrative);
+    font-size: var(--type-narrative);
+    color: rgba(245, 240, 232, 0.8);
     margin: 0 0 0.4rem 0;
   }
   #upi-text {
-    font-family: 'DM Mono', monospace;
-    font-size: 13px;
+    font-family: var(--font-evidence);
+    font-size: var(--type-evidence);
   }
   .copy-upi-btn {
-    background: rgba(245, 237, 216, 0.1);
+    background: rgba(245, 240, 232, 0.1);
     border: none;
     color: var(--color-warm-cream);
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
     padding: 0.2rem 0.4rem;
     border-radius: 2px;
     cursor: pointer;
     margin-left: 0.5rem;
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
   .copy-upi-btn:hover {
-    background: rgba(245, 237, 216, 0.2);
+    background: rgba(245, 240, 232, 0.2);
   }
   .upi-note {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: var(--font-narrative);
     font-style: italic;
-    font-size: 12px;
-    color: rgba(245, 237, 216, 0.45);
+    font-size: var(--type-evidence);
+    color: rgba(245, 240, 232, 0.45);
     margin: 0;
   }
 
   .post-copy-fallback {
     margin: 2rem auto;
     padding: 1.5rem;
-    border: 1px solid rgba(245, 237, 216, 0.15);
-    background: rgba(245, 237, 216, 0.02);
+    border: 1px solid rgba(245, 240, 232, 0.15);
+    background: rgba(245, 240, 232, 0.02);
     text-align: center;
     max-width: 400px;
   }
   .fallback-note {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 13px;
-    color: rgba(245, 237, 216, 0.7);
+    font-family: var(--font-narrative);
+    font-size: var(--type-evidence);
+    color: rgba(245, 240, 232, 0.7);
     margin: 0 0 1rem 0;
     line-height: 1.4;
   }
   .copy-order-details-btn {
     background: transparent;
-    border: 1px solid rgba(245, 237, 216, 0.4);
+    border: 1px solid rgba(245, 240, 232, 0.4);
     color: var(--color-warm-cream);
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
+    font-family: var(--font-evidence);
+    font-size: var(--type-evidence);
     padding: 0.8rem 1.5rem;
     cursor: pointer;
     width: 100%;
     transition: background-color 0.2s, border-color 0.2s, color 0.2s;
   }
   .copy-order-details-btn:hover {
-    background-color: rgba(245, 237, 216, 0.05);
+    background-color: rgba(245, 240, 232, 0.05);
     border-color: var(--color-gold);
     color: var(--color-gold);
   }

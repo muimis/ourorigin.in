@@ -1,122 +1,176 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Footer from '../components/Footer.astro';
+
+// Observations: Real field entries, not generic blog posts
+const observations = [
+  {
+    date: "01 OCT 2026",
+    title: "The First Harvest of Attappady",
+    body: "The Black Pepper harvest has begun. The density of the peppercorns this year is remarkable — a direct result of the extended dry spell followed by sudden, intense monsoons. The soil retained more moisture than usual, and the vines responded.",
+    size: "large"
+  },
+  {
+    date: "15 SEP 2026",
+    title: "Sun-drying and Essential Oils",
+    body: "Why we insist on ambient sun-drying. Industrial dryers strip away the volatile compounds that give our spices their signature aroma and therapeutic properties. The difference is measurable.",
+    size: "medium"
+  },
+  {
+    date: "28 AUG 2026",
+    title: "Nilgiris Frost Line",
+    body: "The frost line moved 50 metres downhill this January. The tea that grows below it now has a different character — a sharper note in the first flush that wasn't there two years ago.",
+    size: "small"
+  },
+  {
+    date: "10 AUG 2026",
+    title: "Wayanad Canopy Report",
+    body: "The pepper vines in Wayanad grow on living trees. This season the canopy cover was measured at 72% — enough to slow the morning light but not block it. The vines that grew under this specific cover produced berries with 5.8% piperine content.",
+    size: "large"
+  },
+  {
+    date: "22 JUL 2026",
+    title: "Monsoon Arrival",
+    body: "The southwest monsoon arrived 11 days late this year. Every day of delay changes what the harvest will be.",
+    size: "small"
+  },
+  {
+    date: "05 JUL 2026",
+    title: "Idukki Cardamom Assessment",
+    body: "The cardamom in Idukki is entering its flowering cycle. The capsules are forming with good density. The essential oil percentage from last season's yield tested at 6.7% — well above market average of 4%.",
+    size: "medium"
+  }
+];
 ---
 
-<Layout title="Field Notes — OurOrigin">
-  <main class="page-container">
-    <div class="content-wrapper" data-reveal="up">
-      <h1 class="page-title">Field Notes</h1>
-      <div class="divider"></div>
-      <div class="page-content">
-        <p class="lead-text">
-          Observations from the forest, the ledger, and the changing seasons.
+<Layout 
+  title="Field Notes — OurOrigin" 
+  description="Observations from the forest, the ledger, and the changing seasons."
+>
+  <main class="observations-page">
+    <div class="observations-container">
+      
+      <div class="page-header" data-reveal="fade">
+        <h1 class="page-title">Field Notes</h1>
+        <p class="page-subtitle">
+          Observations from the forest, the ledger, and the changing seasons. Not marketing. Documentation.
         </p>
-        <div class="notes-grid">
-          <div class="note-card raw-panel">
-            <span class="note-date">01 OCT 2026</span>
-            <h2 class="note-title">The First Harvest of Attappady</h2>
-            <p class="note-excerpt">The Black Pepper harvest has begun. The density of the peppercorns this year is remarkable, a direct result of the extended dry spell followed by sudden, intense monsoons.</p>
-          </div>
-          <div class="note-card raw-panel">
-            <span class="note-date">15 SEP 2026</span>
-            <h2 class="note-title">Sun-drying and Essential Oils</h2>
-            <p class="note-excerpt">Why we insist on ambient sun-drying. Industrial dryers strip away the volatile compounds that give our spices their signature aroma and therapeutic properties.</p>
-          </div>
-        </div>
       </div>
+
+      <div class="bento-grid" data-reveal="stagger">
+        {observations.map((entry) => (
+          <div class={`bento-tile bento-tile--${entry.size}`}>
+            <span class="tile-date">{entry.date}</span>
+            <h2 class="tile-title">{entry.title}</h2>
+            <p class="tile-body">{entry.body}</p>
+          </div>
+        ))}
+      </div>
+
     </div>
   </main>
-  <Footer />
 </Layout>
 
 <style>
-  .page-container {
+  .observations-page {
     min-height: 100vh;
-    padding: 12rem var(--space-xl) var(--space-4xl);
     background-color: var(--color-forest-deep);
     color: var(--color-warm-cream);
-    display: flex;
-    justify-content: center;
+    padding: 0 var(--space-xl) var(--space-4xl);
   }
 
-  .content-wrapper {
-    max-width: 1000px;
-    width: 100%;
+  .observations-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: var(--space-4xl);
+  }
+
+  .page-header {
+    margin-bottom: var(--space-4xl);
   }
 
   .page-title {
     font-family: var(--font-display);
-    font-size: var(--text-hero);
+    font-size: var(--type-display);
     font-weight: 400;
-    line-height: 1.1;
+    margin: 0 0 var(--space-lg) 0;
+    letter-spacing: 0.03em;
+  }
+
+  .page-subtitle {
+    font-family: var(--font-narrative);
+    font-size: var(--type-narrative);
+    color: rgba(245, 240, 232, 0.6);
     margin: 0;
+    max-width: 600px;
+    line-height: var(--line-height-loose);
   }
 
-  .divider {
-    width: 40px;
-    height: 0;
-    border-top: 2px solid var(--color-gold);
-    margin: var(--space-2xl) 0;
-  }
-
-  .page-content {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2xl);
-  }
-
-  .lead-text {
-    font-family: var(--font-institutional);
-    font-size: 1.5rem;
-    line-height: 1.4;
-    color: var(--color-gold);
-    margin: 0;
-    max-width: 800px;
-  }
-
-  .notes-grid {
+  /* Bento Grid */
+  .bento-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: var(--space-xl);
   }
 
-  .note-card {
-    padding: var(--space-xl);
+  .bento-tile {
+    padding: var(--space-2xl);
+    border: 1px solid rgba(198, 156, 82, 0.1);
     display: flex;
     flex-direction: column;
     gap: var(--space-sm);
+    transition: border-color var(--duration-standard) var(--ease-settle);
   }
 
-  .note-date {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
+  .bento-tile:hover {
+    border-color: rgba(198, 156, 82, 0.3);
+  }
+
+  /* Size variations */
+  .bento-tile--large {
+    grid-column: span 2;
+  }
+
+  .bento-tile--small .tile-body {
+    font-size: var(--type-evidence);
+    line-height: var(--line-height-base);
+  }
+
+  .tile-date {
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
     letter-spacing: 0.1em;
-    color: rgba(235, 229, 217, 0.5);
+    color: rgba(245, 240, 232, 0.35);
+    text-transform: uppercase;
   }
 
-  .note-title {
-    font-family: var(--font-institutional);
-    font-size: 1.2rem;
+  .tile-title {
+    font-family: var(--font-display);
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    font-weight: 400;
     color: var(--color-warm-cream);
     margin: 0;
+    line-height: 1.2;
   }
 
-  .note-excerpt {
-    font-family: var(--font-sans);
-    font-size: 0.95rem;
-    line-height: 1.6;
-    color: rgba(235, 229, 217, 0.7);
+  .tile-body {
+    font-family: var(--font-narrative);
+    font-size: var(--type-narrative);
+    color: rgba(245, 240, 232, 0.65);
+    line-height: var(--line-height-loose);
     margin: 0;
   }
 
   @media (max-width: 768px) {
-    .page-container {
-      padding: 8rem var(--space-lg) var(--space-2xl);
-    }
-    
-    .notes-grid {
+    .bento-grid {
       grid-template-columns: 1fr;
+    }
+
+    .bento-tile--large {
+      grid-column: span 1;
+    }
+
+    .observations-page {
+      padding: 0 var(--space-lg) var(--space-3xl);
     }
   }
 </style>

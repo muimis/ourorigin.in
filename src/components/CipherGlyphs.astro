@@ -1,0 +1,76 @@
+---
+/**
+ * CipherGlyphs — Seven dimension SVG glyphs sharing the Origin Mark visual language.
+ * Same stroke weight (0.5), same 100×100 viewBox grid, same restraint.
+ * Used in the Opening Sequence and eventually in the Depth Experience.
+ */
+
+interface Props {
+  dim: 'geo' | 'bio' | 'community' | 'method' | 'observation' | 'time' | 'product';
+  size?: number;
+  active?: boolean;
+}
+
+const { dim, size = 48, active = false } = Astro.props;
+
+const glyphs: Record<string, string> = {
+  // Geo — A pin/point: exact place, not a region
+  geo: `<path d="M50 15 L50 85" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="50" cy="85" r="4" fill="currentColor"/>`,
+  
+  // Bio — A leaf/growth: the place has a life of its own
+  bio: `<path d="M50 90 C50 90 30 60 30 40 C30 20 50 10 50 10 C50 10 70 20 70 40 C70 60 50 90 50 90 Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+        <path d="M50 75 L50 25" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>`,
+  
+  // Community — Two parallel marks: people standing together
+  community: `<path d="M38 20 L38 80" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <path d="M62 20 L62 80" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <path d="M38 50 L62 50" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity="0.5"/>`,
+  
+  // Method — A diagonal mark: the way, the process
+  method: `<path d="M25 75 L75 25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+           <path d="M65 25 L75 25 L75 35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>`,
+  
+  // Observation — An eye/circle: documented evidence, right now
+  observation: `<circle cx="50" cy="50" r="25" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                <circle cx="50" cy="50" r="4" fill="currentColor"/>`,
+  
+  // Time — An arc: seasons, cycles, alive
+  time: `<path d="M25 50 A25 25 0 1 1 50 75" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+         <circle cx="50" cy="75" r="3" fill="currentColor"/>`,
+  
+  // Product — A single dot with radiating marks: the yield, the proof
+  product: `<circle cx="50" cy="50" r="6" fill="currentColor"/>
+            <path d="M50 20 L50 30" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M50 70 L50 80" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M20 50 L30 50" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M70 50 L80 50" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`
+};
+---
+
+<svg 
+  class:list={["cipher-glyph", { "cipher-glyph--active": active }]}
+  data-dim={dim}
+  viewBox="0 0 100 100" 
+  width={size} 
+  height={size} 
+  fill="none"
+  aria-label={`${dim.charAt(0).toUpperCase() + dim.slice(1)} dimension`}
+  role="img"
+>
+  <Fragment set:html={glyphs[dim]} />
+</svg>
+
+<style>
+  .cipher-glyph {
+    color: var(--color-warm-cream);
+    opacity: 0.4;
+    transition: color var(--duration-slow) var(--ease-settle),
+                opacity var(--duration-slow) var(--ease-settle);
+  }
+
+  .cipher-glyph--active {
+    color: var(--color-gold);
+    opacity: 1;
+  }
+</style>
