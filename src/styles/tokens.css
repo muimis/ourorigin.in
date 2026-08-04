@@ -6,11 +6,11 @@
 
 :root {
   /* ── Brand Colors ── */
-  --color-void: #050804;
-  --color-forest-deep: #0c1509;       /* Primary background. Locked. */
-  --color-warm-cream: #F5F0E8;        /* Primary text */
-  --color-gold: #C69C52;              /* Accent. Yield dot. Labels. */
-  --color-gold-muted: rgba(198, 156, 82, 0.4);
+  --color-void: #000000;
+  --color-forest-deep: #000000;       /* Primary background. Locked to true black. */
+  --color-warm-cream: #F0EAD6;        /* Bone White */
+  --color-gold: #FF4500;              /* Surveyor's Orange (action/highlight) */
+  --color-gold-muted: rgba(255, 69, 0, 0.2);
   --color-ruby: #8a2a2b;
   --color-copper: #b87333;
   --color-silver: #c0c0c0;

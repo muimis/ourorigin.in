@@ -3,17 +3,8 @@
 ---
 
 <div id="custom-cursor" class="custom-cursor" style="pointer-events: none;">
-  <!-- Organic single tally line acting as a pointer -->
-  <svg width="24" height="24" viewBox="0 0 40 40" fill="none" aria-hidden="true" class="cursor-svg" style="pointer-events: none;">
-    <!-- Organic Tally Pointer -->
-    <g stroke="currentColor" stroke-width="4" stroke-linecap="round">
-      <path d="M 16 10 C 14 20, 17 30, 15 35" />
-    </g>
-  </svg>
+  <div class="cursor-dot"></div>
 </div>
-
-<!-- Container for temporary tally marks drawn on click -->
-<div id="tally-canvas" class="tally-canvas" aria-hidden="true" style="pointer-events: none;"></div>
 
 <style>
   @media (pointer: fine) {
@@ -29,51 +20,32 @@
       position: fixed;
       top: 0;
       left: 0;
-      width: 24px;
-      height: 24px;
-      color: var(--color-gold);
+      width: 12px;
+      height: 12px;
       transform: translate(-50%, -50%);
       pointer-events: none;
       z-index: 999999;
       will-change: transform;
       mix-blend-mode: difference;
-      transition: color 0.3s ease, mix-blend-mode 0.3s ease;
     }
 
-    .cursor-svg {
+    .cursor-dot {
       width: 100%;
       height: 100%;
-      /* Subtle breathing animation */
-      animation: cursorBreathe 3s ease-in-out infinite alternate;
-    }
-
-    @keyframes cursorBreathe {
-      0% { transform: scale(1) rotate(-5deg); }
-      100% { transform: scale(1.1) rotate(5deg); }
+      background-color: var(--color-gold);
+      border-radius: 50%;
+      transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.2s ease;
     }
 
     /* Hover States */
-    .custom-cursor.is-magnetic {
-      color: var(--color-warm-cream);
-      mix-blend-mode: normal;
-    }
-
-    .custom-cursor.is-magnetic .cursor-svg {
-      animation: none;
-      transform: scale(1.5);
-      transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-    }
-    
-    .tally-canvas {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 999998;
+    .custom-cursor.is-magnetic .cursor-dot {
+      transform: scale(3);
+      background-color: var(--color-warm-cream);
     }
   }
 
   @media (pointer: coarse) {
-    .custom-cursor, .tally-canvas {
+    .custom-cursor {
       display: none;
     }
   }
@@ -84,8 +56,7 @@
     if (window.matchMedia('(pointer: coarse)').matches) return;
 
     const cursor = document.getElementById('custom-cursor');
-    const canvas = document.getElementById('tally-canvas');
-    if (!cursor || !canvas) return;
+    if (!cursor) return;
 
     let mouseX = 0;
     let mouseY = 0;
@@ -97,35 +68,6 @@
     };
 
     window.addEventListener('mousemove', onMouseMove);
-
-    // Draw tally mark on click
-    const onClick = (e: MouseEvent) => {
-      const mark = document.createElement('div');
-      mark.style.position = 'absolute';
-      mark.style.left = `${e.clientX}px`;
-      mark.style.top = `${e.clientY}px`;
-      mark.style.transform = `translate(-50%, -50%) rotate(${Math.random() * 20 - 10}deg)`;
-      mark.style.color = 'var(--color-gold)';
-      mark.style.opacity = '0.7';
-      mark.style.pointerEvents = 'none';
-      
-      mark.innerHTML = `
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M 12 4 C 10 10, 14 18, 11 20" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-        </svg>
-      `;
-      
-      canvas.appendChild(mark);
-      
-      // Animate out
-      setTimeout(() => {
-        mark.style.transition = 'opacity 1s ease';
-        mark.style.opacity = '0';
-        setTimeout(() => mark.remove(), 1000);
-      }, 500);
-    };
-    
-    window.addEventListener('click', onClick);
 
     // Interaction Observers
     const setupInteractions = () => {
@@ -141,7 +83,6 @@
     // Clean up function attached to document to prevent memory leaks on SPA nav
     document.addEventListener('astro:before-swap', () => {
       window.removeEventListener('mousemove', onMouseMove);
-      window.removeEventListener('click', onClick);
     }, { once: true });
   }
 
