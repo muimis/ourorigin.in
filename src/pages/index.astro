@@ -158,8 +158,11 @@ const activeProducts = allProducts.filter(p => {
 
     if (!track || beats.length === 0) return;
 
-    // Reset styles for SPA nav
+    // Hide all beats initially, except the first one which should be visible
     gsap.set(beats, { opacity: 0, filter: 'blur(15px)', scale: 1.05 });
+    if (beats[0]) {
+      gsap.set(beats[0], { opacity: 1, filter: 'blur(0px)', scale: 1 });
+    }
     
     // Mobile / Desktop logic via matchMedia
     let mm = gsap.matchMedia();
@@ -173,6 +176,7 @@ const activeProducts = allProducts.filter(p => {
           end: `+=${beats.length * 100}%`,
           scrub: 1,
           pin: true,
+          onEnter: () => document.dispatchEvent(new Event('play-origin-mark-entrance'))
         }
       });
 

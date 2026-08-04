@@ -1,0 +1,17 @@
+---
+export interface Props {
+  size?: number;
+  color?: string;
+}
+const { size = 100, color = 'var(--color-gold)' } = Astro.props;
+---
+<svg class="organic-mark" width={size} height={size} viewBox="0 0 60 60" aria-hidden="true" fill="none" style={`color: ${color};`}>
+  <g stroke="currentColor" stroke-width="4" stroke-linecap="round">
+    <path d="M 10 10 C 8 25, 12 40, 9 50" />
+    <path d="M 22 8 C 19 25, 23 40, 20 52" />
+    <path d="M 34 12 C 37 25, 32 35, 35 48" />
+    <path d="M 46 6 C 43 20, 47 40, 44 55" />
+    <!-- The Cross -->
+    <path d="M 2 45 C 20 35, 35 20, 52 10" />
+  </g>
+</svg>

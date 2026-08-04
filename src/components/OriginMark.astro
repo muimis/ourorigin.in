@@ -110,9 +110,8 @@ const strokeColor = colorMap[variant];
   }
 
   // Ensure it only initializes once
-  // cast to any: custom one-time-init flag on window, not in default Window type
-  if (!(window as any).originMarkAnimationInitialized) {
+  if (!window['originMarkAnimationInitialized']) {
     new OriginMarkAnimation();
-    (window as any).originMarkAnimationInitialized = true;
+    window['originMarkAnimationInitialized'] = true;
   }
 </script>
