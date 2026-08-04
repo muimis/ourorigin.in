@@ -3,8 +3,8 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout 
-  title="Why This Exists — OurOrigin" 
-  description="OurOrigin is a proof system. Not a spice company. Not a supply chain. A proof system."
+  title="The Ledger of Truth — OurOrigin" 
+  description="We believe there is an invisible, profound exchange of dignity between the earth and the people who truly understand it."
   noHeaderPadding={true}
 >
   <main class="manifesto-viewport">
@@ -16,56 +16,46 @@ import Layout from '../layouts/Layout.astro';
       <!-- Beat 1 -->
       <section class="manifesto-beat">
         <div class="beat-content" data-cinematic="scale-down">
-          <h1 class="massive-statement">We are not a spice company.</h1>
+          <h1 class="massive-statement">The modern world takes without asking.</h1>
         </div>
       </section>
 
       <!-- Beat 2 -->
       <section class="manifesto-beat">
         <div class="beat-content" data-cinematic="scale-down">
-          <h2 class="massive-statement">We are a proof system.</h2>
-          <p class="qualifier-text">Proving that something real happened between a place and the person who understood it.</p>
+          <h2 class="massive-statement">It strips the context.<br/>It erases the hands.<br/>It silences the soil.</h2>
+          <p class="qualifier-text">What remains is just inventory. Empty of memory.</p>
         </div>
       </section>
 
       <!-- Beat 3 -->
       <section class="manifesto-beat">
         <div class="beat-content" data-cinematic="scale-down">
-          <h2 class="massive-statement">The forest is distant.</h2>
-          <p class="qualifier-text">The hands that grow the world's most exceptional yields are the ones farthest from its reward. We exist to collapse that distance.</p>
+          <h2 class="massive-statement">OurOrigin exists to refuse this.</h2>
         </div>
       </section>
 
       <!-- Beat 4 -->
       <section class="manifesto-beat">
         <div class="beat-content" data-cinematic="scale-down">
-          <h2 class="massive-statement">Not a supply chain.</h2>
-          <p class="qualifier-text">A transfer of dignity, directly from the soil to you.</p>
+          <h2 class="massive-statement">We believe there is an invisible, profound exchange of dignity...</h2>
+          <p class="qualifier-text">...between the earth and the people who truly understand it.</p>
         </div>
       </section>
 
-      <!-- Beat 5: Dimensions -->
+      <!-- Beat 5 -->
       <section class="manifesto-beat">
-        <div class="beat-content" data-cinematic="blur-in">
-          <div class="dimension-grid">
-            <span>Geography</span>
-            <span>Biology</span>
-            <span>Community</span>
-            <span>Method</span>
-            <span>Observation</span>
-            <span>Time</span>
-            <span>Product</span>
-          </div>
-          <p class="qualifier-text text-center">Seven dimensions. Each one verified. Each one traceable. Together, they are the definition of an origin.</p>
+        <div class="beat-content" data-cinematic="scale-down">
+          <h2 class="massive-statement">When you hold one of our yields, you are holding the physical proof of that dignity.</h2>
         </div>
       </section>
 
       <!-- Beat 6: Closer -->
       <section class="manifesto-beat beat-closer">
         <div class="beat-content" data-cinematic="scale-down">
-          <h2 class="massive-statement">The origin remains the protagonist.</h2>
-          <p class="closer-text">Always.</p>
-          <a href="/" class="return-link">← Return to Origins</a>
+          <h2 class="massive-statement">We are not a company.</h2>
+          <p class="closer-text">We are a ledger of truth.</p>
+          <a href="/" class="return-link">← Return to the Yields</a>
         </div>
       </section>
 
@@ -83,11 +73,9 @@ import Layout from '../layouts/Layout.astro';
     const scaleElements = document.querySelectorAll('[data-cinematic="scale-down"]');
     
     scaleElements.forEach((el) => {
-      // Create a cinematic effect where the text starts massive and blurred,
-      // and as you scroll it scales down, comes into focus, and then fades out as you leave.
       gsap.fromTo(el,
         {
-          scale: 1.8,
+          scale: 1.2,
           opacity: 0,
           filter: 'blur(20px)'
         },
@@ -101,7 +89,7 @@ import Layout from '../layouts/Layout.astro';
             trigger: el,
             start: "top 80%",
             end: "center center",
-            scrub: 1, // Smooth scrubbing
+            scrub: 1,
           }
         }
       );
@@ -110,7 +98,7 @@ import Layout from '../layouts/Layout.astro';
       gsap.to(el, {
         opacity: 0,
         filter: 'blur(10px)',
-        y: -100,
+        scale: 0.9,
         scrollTrigger: {
           trigger: el,
           start: "center center",
@@ -118,22 +106,6 @@ import Layout from '../layouts/Layout.astro';
           scrub: 1
         }
       });
-    });
-
-    const blurElements = document.querySelectorAll('[data-cinematic="blur-in"]');
-    blurElements.forEach(el => {
-      gsap.fromTo(el,
-        { opacity: 0, filter: 'blur(10px)', y: 50 },
-        {
-          opacity: 1, filter: 'blur(0px)', y: 0,
-          scrollTrigger: {
-            trigger: el,
-            start: "top 70%",
-            end: "center center",
-            scrub: 1
-          }
-        }
-      );
     });
   }
 
@@ -165,7 +137,7 @@ import Layout from '../layouts/Layout.astro';
   }
 
   .manifesto-beat {
-    min-height: 120vh; /* Extra height to allow for long scrolling */
+    min-height: 120vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -184,13 +156,12 @@ import Layout from '../layouts/Layout.astro';
 
   .massive-statement {
     font-family: var(--font-display);
-    font-size: clamp(3rem, 8vw, 7rem);
-    line-height: 1;
+    font-size: clamp(2.5rem, 6vw, 5.5rem);
+    line-height: 1.1;
     font-weight: 400;
     color: var(--color-warm-cream);
     margin: 0;
-    text-transform: uppercase;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
   }
 
   .qualifier-text {
@@ -208,28 +179,6 @@ import Layout from '../layouts/Layout.astro';
     font-style: italic;
     color: var(--color-gold);
     margin: 0;
-  }
-
-  .dimension-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-lg);
-    justify-content: center;
-    margin-bottom: var(--space-xl);
-  }
-
-  .dimension-grid span {
-    font-family: var(--font-evidence);
-    font-size: var(--type-evidence);
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: var(--color-gold);
-    padding: var(--space-md) var(--space-xl);
-    border: 1px solid rgba(198, 156, 82, 0.3);
-  }
-
-  .text-center {
-    text-align: center;
   }
 
   .beat-closer {

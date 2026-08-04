@@ -86,21 +86,21 @@ const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp')
 
         {product.data.specimenCopy && (
           <div class="narrative-section" data-reveal="blur">
-            <div class="data-label">The Provenance</div>
+            <div class="data-label">The Soil's Record</div>
             <div class="data-value narrative-text">{product.data.specimenCopy}</div>
           </div>
         )}
 
         {product.data.methodDescription && (
           <div class="narrative-section" data-reveal="blur">
-            <div class="data-label">The Method</div>
+            <div class="data-label">The Human Touch</div>
             <div class="data-value">{product.data.methodDescription}</div>
           </div>
         )}
 
         {product.data.sensoryProfile && (
           <div class="narrative-section" data-reveal="blur">
-            <div class="data-label">Sensory Profile</div>
+            <div class="data-label">The Breath</div>
             <div class="data-grid-small">
               {product.data.sensoryProfile.aroma && (
                 <div class="data-cell">
@@ -120,7 +120,7 @@ const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp')
 
         {(product.data.botanicalName || product.data.chemistry?.activeCompound) && (
           <div class="narrative-section" data-reveal="blur">
-            <div class="data-label">Biology & Chemistry</div>
+            <div class="data-label">The Living Forest</div>
             <div class="data-value">
               {product.data.botanicalName && <span class="botanical-name">{product.data.botanicalName}</span>}
               {product.data.botanicalName && product.data.chemistry?.activeCompound && <br/>}
