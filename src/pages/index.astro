@@ -164,6 +164,9 @@ const activeProducts = allProducts.filter(p => {
       gsap.set(beats[0], { opacity: 1, filter: 'blur(0px)', scale: 1 });
     }
     
+    // Trigger logo entrance immediately
+    setTimeout(() => document.dispatchEvent(new Event('play-origin-mark-entrance')), 100);
+    
     // Mobile / Desktop logic via matchMedia
     let mm = gsap.matchMedia();
 
@@ -175,22 +178,23 @@ const activeProducts = allProducts.filter(p => {
           start: "top top",
           end: `+=${beats.length * 100}%`,
           scrub: 1,
-          pin: true,
-          onEnter: () => document.dispatchEvent(new Event('play-origin-mark-entrance'))
+          pin: true
         }
       });
 
       tl.to(visual, { opacity: 0, scale: 0.9, duration: beats.length * 2 }, 0);
 
       beats.forEach((beat, i) => {
-        tl.to(beat, 
-          { opacity: 1, filter: 'blur(0px)', scale: 1, duration: 1, ease: "power2.out" },
-          i === 0 ? 0 : "+=0.2"
-        );
+        if (i > 0) {
+          tl.to(beat, 
+            { opacity: 1, filter: 'blur(0px)', scale: 1, duration: 1, ease: "power2.out" },
+            "+=0.2"
+          );
+        }
         if (i < beats.length - 1) {
           tl.to(beat, 
             { opacity: 0, filter: 'blur(10px)', scale: 0.95, duration: 1, ease: "power2.in" },
-            "+=1.5"
+            i === 0 ? 0 : "+=1.5"
           );
         }
       });

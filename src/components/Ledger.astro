@@ -311,18 +311,18 @@ const companionsJson = JSON.stringify(companionProductsMap);
             <span class="item-name">${item.name}</span>
             <div class="qty-controls">
               <button class="qty-btn dec" data-id="${item.id}" aria-label="Decrease quantity of ${item.name}">-</button>
-              <span class="qty-val price-font">${item.quantity}</span>
+              <span class="qty-val price-font">${generateTallyHTML(item.quantity, 16)}</span>
               <button class="qty-btn inc" data-id="${item.id}" aria-label="Increase quantity of ${item.name}">+</button>
             </div>
             <span class="item-size">${item.size || item.weight} · ₹${item.price}</span>
-            <span class="item-line-total price-font">${item.quantity} &times; ₹${item.price} = ₹${lineTotal}</span>
+            <span class="item-line-total price-font"><span style="display:inline-flex;align-items:center;gap:4px;">${generateTallyHTML(item.quantity, 14)} &times; ₹${item.price} = ₹${lineTotal}</span></span>
           </div>
         `;
         itemsContainer.appendChild(el);
         
         summaryHtml += `
           <div class="summary-item-row">
-            <span>${item.name} (${item.size || item.weight}) &times; ${item.quantity}</span>
+            <span style="display:flex;align-items:center;gap:6px;">${item.name} (${item.size || item.weight}) &times; ${generateTallyHTML(item.quantity, 12)}</span>
             <span>₹${lineTotal}</span>
           </div>
         `;

@@ -2,15 +2,18 @@
 // src/components/CustomCursor.astro
 ---
 
-<div id="custom-cursor" class="custom-cursor">
+<div id="custom-cursor" class="custom-cursor" style="pointer-events: none;">
   <!-- Organic single tally line acting as a pointer -->
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true" class="cursor-svg">
-    <path class="cursor-mark" d="M 12 4 C 10 10, 14 18, 11 20" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+  <svg width="24" height="24" viewBox="0 0 40 40" fill="none" aria-hidden="true" class="cursor-svg" style="pointer-events: none;">
+    <!-- Organic Tally Pointer -->
+    <g stroke="currentColor" stroke-width="4" stroke-linecap="round">
+      <path d="M 16 10 C 14 20, 17 30, 15 35" />
+    </g>
   </svg>
 </div>
 
 <!-- Container for temporary tally marks drawn on click -->
-<div id="tally-canvas" class="tally-canvas" aria-hidden="true"></div>
+<div id="tally-canvas" class="tally-canvas" aria-hidden="true" style="pointer-events: none;"></div>
 
 <style>
   @media (pointer: fine) {
