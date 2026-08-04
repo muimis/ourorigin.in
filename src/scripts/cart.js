@@ -66,7 +66,11 @@ class CartState {
 
   _save() {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('ourorigin_cart', JSON.stringify(this.items));
+      try {
+        localStorage.setItem('ourorigin_cart', JSON.stringify(this.items));
+      } catch (e) {
+        console.warn("Could not save to localStorage", e);
+      }
       this._broadcast();
     }
   }
