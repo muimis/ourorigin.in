@@ -39,130 +39,100 @@ const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp')
   title={`${product.data.name} from ${origin.data.name} — OurOrigin`}
   description={`${product.data.name} from ${origin.data.name} — ${origin.data.elevation}, ${origin.data.bioregion}. ${product.data.specimenCopy?.slice(0, 120) || ''}`}
   ogImage={ogImageUrl}
+  noHeaderPadding={true}
 >
-  <main class="product-viewport">
+  <main class="museum-viewport">
+    <a href="/" class="back-link">
+      <OriginMark size={20} variant="gold" hideDot={true} />
+      <span>Back to Origins</span>
+    </a>
+
+    <div class="museum-grid">
       
-    <!-- Background Layer -->
-    <div class="product-bg">
-      <div class="product-bg-image" style={`background-image: url('${origin.data.images.specimen || origin.data.images.canopy || ''}');`}></div>
-      <div class="product-bg-overlay"></div>
-    </div>
-
-    <div class="product-ui">
-        
-      <a href="/" class="back-link">
-        <OriginMark size={20} variant="gold" hideDot={true} />
-        <span>Back to Origins</span>
-      </a>
-
-      <div class="product-content-grid">
-          
-        <!-- Left Panel: Product Data (WIDE + DENSE alternation) -->
-        <div class="product-data-panel">
-          <h1 class="product-title">{product.data.name}</h1>
-          
-          {product.data.botanicalName && (
-            <div class="product-botanical">{product.data.botanicalName}</div>
-          )}
-
-          <!-- DENSE: Evidence line -->
-          <div class="product-evidence-line">
-            {origin.data.elevation} · {origin.data.bioregion}
-            {product.data.batchRef && <span class="batch-ref"> · {product.data.batchRef}</span>}
-          </div>
-          
-          {product.data.specimenCopy && (
-            <div class="product-narrative">
-              <p>{product.data.specimenCopy}</p>
-            </div>
-          )}
-
-          <!-- DENSE: Data grid -->
-          <div class="data-grid">
-            {product.data.methodDescription && (
-              <div class="data-item">
-                <div class="data-label">Method</div>
-                <div class="data-value">{product.data.methodDescription}</div>
-              </div>
-            )}
-            {product.data.harvestMonth && (
-              <div class="data-item">
-                <div class="data-label">Harvest</div>
-                <div class="data-value">{product.data.harvestMonth}</div>
-              </div>
-            )}
-            {product.data.sensoryProfile && (
-              <>
-                {product.data.sensoryProfile.aroma && (
-                  <div class="data-item">
-                    <div class="data-label">Aroma</div>
-                    <div class="data-value">{product.data.sensoryProfile.aroma}</div>
-                  </div>
-                )}
-                {product.data.sensoryProfile.flavor && (
-                  <div class="data-item">
-                    <div class="data-label">Flavor</div>
-                    <div class="data-value">{product.data.sensoryProfile.flavor}</div>
-                  </div>
-                )}
-                {product.data.sensoryProfile.appearance && (
-                  <div class="data-item">
-                    <div class="data-label">Appearance</div>
-                    <div class="data-value">{product.data.sensoryProfile.appearance}</div>
-                  </div>
-                )}
-              </>
-            )}
-            {product.data.chemistry && (
-              <>
-                {product.data.chemistry.activeCompound && (
-                  <div class="data-item">
-                    <div class="data-label">Chemistry</div>
-                    <div class="data-value">{product.data.chemistry.activeCompound}</div>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        </div>
-
-        <!-- Center Panel: The Artifact Image -->
-        <div class="product-artifact-panel">
+      <!-- Left Panel: Pinned Artifact -->
+      <div class="museum-visual-container">
+        <div class="museum-visual" id="museum-visual">
+          <div class="spotlight"></div>
           {product.data.images.product ? (
             <img 
               src={product.data.images.product} 
               alt={`${product.data.name} — ${product.data.sensoryProfile?.appearance || 'product image'}`} 
-              class="artifact-hero-image" 
-              width="400"
-              height="400"
+              class="museum-artifact" 
             />
           ) : product.data.images.packaging ? (
             <img 
               src={product.data.images.packaging} 
               alt={`${product.data.name} packaging`} 
-              class="artifact-hero-image" 
-              width="400"
-              height="400"
+              class="museum-artifact" 
             />
           ) : (
             <div class="artifact-placeholder">
-              <OriginMark size={48} variant="gold" />
-              <span>Image arriving soon</span>
+              <OriginMark size={60} variant="gold" />
             </div>
           )}
         </div>
+      </div>
 
-        <!-- Right Panel: The Offering (Purchase) -->
-        <div class="product-ledger-panel">
+      <!-- Right Panel: Scrolling Narrative -->
+      <div class="museum-narrative" id="museum-narrative">
+        
+        <div class="narrative-section narrative-header">
+          <h1 class="product-title">{product.data.name}</h1>
+          <div class="product-evidence-line">
+            {origin.data.elevation} · {origin.data.bioregion}
+            {product.data.batchRef && <span class="batch-ref"> · {product.data.batchRef}</span>}
+          </div>
+        </div>
+
+        {product.data.specimenCopy && (
+          <div class="narrative-section" data-reveal="blur">
+            <div class="data-label">The Provenance</div>
+            <div class="data-value narrative-text">{product.data.specimenCopy}</div>
+          </div>
+        )}
+
+        {product.data.methodDescription && (
+          <div class="narrative-section" data-reveal="blur">
+            <div class="data-label">The Method</div>
+            <div class="data-value">{product.data.methodDescription}</div>
+          </div>
+        )}
+
+        {product.data.sensoryProfile && (
+          <div class="narrative-section" data-reveal="blur">
+            <div class="data-label">Sensory Profile</div>
+            <div class="data-grid-small">
+              {product.data.sensoryProfile.aroma && (
+                <div class="data-cell">
+                  <span class="cell-label">Aroma</span>
+                  <span class="cell-value">{product.data.sensoryProfile.aroma}</span>
+                </div>
+              )}
+              {product.data.sensoryProfile.flavor && (
+                <div class="data-cell">
+                  <span class="cell-label">Flavor</span>
+                  <span class="cell-value">{product.data.sensoryProfile.flavor}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {(product.data.botanicalName || product.data.chemistry?.activeCompound) && (
+          <div class="narrative-section" data-reveal="blur">
+            <div class="data-label">Biology & Chemistry</div>
+            <div class="data-value">
+              {product.data.botanicalName && <span class="botanical-name">{product.data.botanicalName}</span>}
+              {product.data.botanicalName && product.data.chemistry?.activeCompound && <br/>}
+              {product.data.chemistry?.activeCompound}
+            </div>
+          </div>
+        )}
+
+        <!-- The Climax: Offering -->
+        <div class="narrative-section offering-section" data-reveal="up">
           <div class="ledger-header">The Offering</div>
           
-          <div class="ledger-origin">
-            <span class="origin-name">{origin.data.name}</span>
-            <span class="origin-region">{origin.data.bioregion}</span>
-            <span class="origin-coords">{origin.data.coordinates}</span>
-          </div>
-
-          <!-- DENSE: Sizes & Prices -->
           <div class="sizes-container">
             {product.data.sizes.map((size, i) => (
               <button 
@@ -184,14 +154,9 @@ const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp')
             ))}
           </div>
 
-          <!-- Von Restorff: The one element that visually breaks the pattern -->
           <button class="btn-purchase" id="purchase-cta" type="button">
             Honor the Decision
           </button>
-
-          <div class="ledger-footer">
-            <span class="ledger-footer-note">Added to your Transfer Ledger</span>
-          </div>
         </div>
 
       </div>
@@ -200,11 +165,58 @@ const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp')
 </Layout>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initMuseumExperience() {
+    // Reveal animations for narrative sections
+    const reveals = document.querySelectorAll('[data-reveal="blur"]');
+    reveals.forEach(el => {
+      gsap.fromTo(el, 
+        { 
+          y: 40,
+          opacity: 0,
+          filter: 'blur(10px)'
+        },
+        {
+          y: 0,
+          opacity: 1,
+          filter: 'blur(0px)',
+          duration: 1.2,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 80%",
+          }
+        }
+      );
+    });
+
+    const upReveals = document.querySelectorAll('[data-reveal="up"]');
+    upReveals.forEach(el => {
+      gsap.fromTo(el, 
+        { y: 30, opacity: 0 },
+        {
+          y: 0, opacity: 1, duration: 1, ease: "power2.out",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 85%",
+          }
+        }
+      );
+    });
+
     // Wire up Add to Ledger buttons
-    document.querySelectorAll('.add-to-ledger-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const productData = JSON.parse(btn.getAttribute('data-product') || '{}');
+    const btns = document.querySelectorAll('.add-to-ledger-btn');
+    btns.forEach(btn => {
+      // clone and replace to avoid duplicate listeners on SPA navigation
+      const newBtn = btn.cloneNode(true) as HTMLElement;
+      btn.parentNode?.replaceChild(newBtn, btn);
+
+      newBtn.addEventListener('click', () => {
+        const productData = JSON.parse(newBtn.getAttribute('data-product') || '{}');
         
         window.dispatchEvent(new CustomEvent('add-to-ledger', { detail: {
           id: productData.id,
@@ -218,25 +230,27 @@ const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp')
         }}));
 
         // Visual feedback
-        const el = btn as HTMLElement;
-        el.style.background = 'rgba(198, 156, 82, 0.2)';
-        el.style.borderColor = 'var(--color-gold)';
+        newBtn.style.background = 'rgba(198, 156, 82, 0.2)';
+        newBtn.style.borderColor = 'var(--color-gold)';
         
         // Select this size
         document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('size-btn--selected'));
-        el.classList.add('size-btn--selected');
+        newBtn.classList.add('size-btn--selected');
         
         setTimeout(() => {
-          el.style.background = '';
-          el.style.borderColor = '';
+          newBtn.style.background = '';
+          newBtn.style.borderColor = '';
         }, 800);
       });
     });
 
-    // Purchase CTA: add first size and open ledger
+    // Purchase CTA
     const purchaseBtn = document.getElementById('purchase-cta');
     if (purchaseBtn) {
-      purchaseBtn.addEventListener('click', () => {
+      const newPurchaseBtn = purchaseBtn.cloneNode(true) as HTMLElement;
+      purchaseBtn.parentNode?.replaceChild(newPurchaseBtn, purchaseBtn);
+
+      newPurchaseBtn.addEventListener('click', () => {
         const selectedBtn = document.querySelector('.size-btn--selected') || document.querySelector('.add-to-ledger-btn');
         if (selectedBtn) {
           (selectedBtn as HTMLElement).click();
@@ -246,48 +260,26 @@ const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp')
         }, 200);
       });
     }
-  });
+  }
+
+  // Initialize on load and view transitions
+  initMuseumExperience();
+  document.addEventListener('astro:after-swap', initMuseumExperience);
 </script>
 
 <style>
-  .product-viewport {
-    position: relative;
-    min-height: 100vh;
-    width: 100%;
+  .museum-viewport {
+    background-color: var(--color-void);
     color: var(--color-warm-cream);
-  }
-
-  /* Background */
-  .product-bg {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-  }
-
-  .product-bg-image {
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
-    filter: grayscale(100%) brightness(0.15);
-  }
-
-  .product-bg-overlay {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at center, rgba(12, 21, 9, 0.3) 0%, rgba(12, 21, 9, 0.85) 100%);
-  }
-
-  /* UI Layer */
-  .product-ui {
+    min-height: 100vh;
     position: relative;
-    z-index: 1;
-    padding: 7rem 5vw 4rem;
-    max-width: 1600px;
-    margin: 0 auto;
   }
 
   .back-link {
+    position: fixed;
+    top: 30px;
+    left: 30px;
+    z-index: 100;
     display: inline-flex;
     align-items: center;
     gap: var(--space-md);
@@ -297,81 +289,94 @@ const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp')
     font-size: var(--type-evidence);
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    margin-bottom: var(--space-3xl);
     transition: opacity var(--duration-standard) var(--ease-settle);
-    min-height: 44px;
   }
 
   .back-link:hover {
     opacity: 0.7;
   }
 
-  /* Three-Panel Grid */
-  .product-content-grid {
+  .museum-grid {
     display: grid;
-    grid-template-columns: 1fr 400px 1fr;
-    gap: 4rem;
-    align-items: start;
-    min-height: 60vh;
+    grid-template-columns: 1fr 1fr;
+    min-height: 100vh;
   }
 
-  /* Left Panel — WIDE/DENSE alternation */
-  .product-data-panel {
-    max-width: 480px;
+  /* Left Panel - Sticky Visual */
+  .museum-visual-container {
+    position: relative;
+    border-right: 1px solid rgba(245, 240, 232, 0.05);
+  }
+
+  .museum-visual {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: var(--space-4xl);
+  }
+
+  .spotlight {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(198, 156, 82, 0.08) 0%, transparent 60%);
+    z-index: 0;
+  }
+
+  .museum-artifact {
+    position: relative;
+    z-index: 1;
+    max-width: 80%;
+    max-height: 80vh;
+    object-fit: contain;
+    filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.8));
+    animation: slowFloat 8s ease-in-out infinite alternate;
+  }
+
+  @keyframes slowFloat {
+    0% { transform: translateY(0px) scale(1); }
+    100% { transform: translateY(-15px) scale(1.02); }
+  }
+
+  .artifact-placeholder {
+    position: relative;
+    z-index: 1;
+    opacity: 0.3;
+  }
+
+  /* Right Panel - Scrolling Narrative */
+  .museum-narrative {
+    padding: 20vh 10vw 20vh 5vw;
+    display: flex;
+    flex-direction: column;
+    gap: 15vh;
+  }
+
+  .narrative-section {
+    max-width: 600px;
   }
 
   .product-title {
     font-family: var(--font-display);
-    font-size: var(--type-display);
+    font-size: clamp(3rem, 6vw, 5rem);
     line-height: var(--line-height-tight);
     font-weight: 400;
-    margin: 0 0 var(--space-sm) 0;
-  }
-
-  .product-botanical {
-    font-family: var(--font-evidence);
-    font-size: var(--type-evidence);
-    font-style: italic;
-    color: var(--color-gold);
-    margin-bottom: var(--space-lg);
-    letter-spacing: 0.05em;
+    margin: 0 0 var(--space-md) 0;
   }
 
   .product-evidence-line {
     font-family: var(--font-evidence);
     font-size: var(--type-evidence);
     color: rgba(245, 240, 232, 0.5);
-    letter-spacing: 0.08em;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    margin-bottom: var(--space-2xl);
   }
 
   .batch-ref {
     color: var(--color-gold);
-  }
-
-  .product-narrative {
-    font-family: var(--font-narrative);
-    font-size: var(--type-narrative);
-    line-height: var(--line-height-loose);
-    color: rgba(245, 240, 232, 0.85);
-    margin-bottom: var(--space-3xl);
-    max-width: 480px;
-  }
-
-  .product-narrative p {
-    margin: 0;
-  }
-
-  .data-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-xl);
-  }
-
-  .data-item {
-    border-left: 1px solid rgba(198, 156, 82, 0.3);
-    padding-left: var(--space-lg);
   }
 
   .data-label {
@@ -379,97 +384,75 @@ const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp')
     font-size: var(--type-whisper);
     text-transform: uppercase;
     color: var(--color-gold);
-    letter-spacing: 0.1em;
-    margin-bottom: var(--space-xs);
+    letter-spacing: 0.2em;
+    margin-bottom: var(--space-lg);
   }
 
   .data-value {
     font-family: var(--font-narrative);
-    font-size: var(--type-narrative);
-    line-height: var(--line-height-base);
-    color: rgba(245, 240, 232, 0.8);
+    font-size: var(--type-statement);
+    line-height: 1.5;
+    font-weight: 300;
+    color: rgba(245, 240, 232, 0.85);
   }
 
-  /* Center Panel — The Artifact */
-  .product-artifact-panel {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-top: var(--space-4xl);
+  .narrative-text {
+    font-size: clamp(1.2rem, 2vw, 1.8rem);
+    line-height: 1.6;
   }
 
-  .artifact-hero-image {
-    max-width: 100%;
-    max-height: 70vh;
-    object-fit: contain;
-    filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.6));
+  .botanical-name {
+    font-style: italic;
+    color: var(--color-warm-cream);
   }
 
-  .artifact-placeholder {
+  .data-grid-small {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xl);
+  }
+
+  .data-cell {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: var(--space-lg);
-    font-family: var(--font-evidence);
-    font-size: var(--type-evidence);
-    color: rgba(245, 240, 232, 0.3);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    padding: var(--space-4xl);
-    border: 1px dashed rgba(198, 156, 82, 0.15);
+    gap: var(--space-xs);
   }
 
-  /* Right Panel — The Offering */
-  .product-ledger-panel {
-    background: rgba(5, 8, 4, 0.6);
-    border: 1px solid rgba(245, 240, 232, 0.08);
-    padding: var(--space-2xl);
-    max-width: 350px;
-    margin-left: auto;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+  .cell-label {
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(245, 240, 232, 0.4);
+  }
+
+  .cell-value {
+    font-family: var(--font-narrative);
+    font-size: var(--type-narrative);
+  }
+
+  /* The Climax: Offering */
+  .offering-section {
+    background: rgba(245, 240, 232, 0.02);
+    border: 1px solid rgba(198, 156, 82, 0.15);
+    padding: var(--space-3xl);
   }
 
   .ledger-header {
     font-family: var(--font-display);
-    font-size: 1.25rem;
-    letter-spacing: 0.08em;
+    font-size: 2rem;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
     margin-bottom: var(--space-2xl);
-    border-bottom: 1px solid rgba(245, 240, 232, 0.08);
-    padding-bottom: var(--space-lg);
-  }
-
-  .ledger-origin {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xs);
-    margin-bottom: var(--space-2xl);
-  }
-
-  .origin-name {
-    font-family: var(--font-display);
-    font-size: 1.1rem;
-  }
-
-  .origin-region {
-    font-family: var(--font-narrative);
-    font-size: var(--type-narrative);
-    opacity: 0.6;
-  }
-
-  .origin-coords {
-    font-family: var(--font-evidence);
-    font-size: var(--type-whisper);
     color: var(--color-gold);
-    margin-top: var(--space-xs);
-    letter-spacing: 0.05em;
+    border-bottom: 1px solid rgba(198, 156, 82, 0.2);
+    padding-bottom: var(--space-lg);
   }
 
   .sizes-container {
     display: flex;
     flex-direction: column;
-    gap: var(--space-sm);
+    gap: var(--space-md);
     margin-bottom: var(--space-2xl);
   }
 
@@ -477,95 +460,61 @@ const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp')
     display: flex;
     justify-content: space-between;
     background: transparent;
-    border: 1px solid rgba(245, 240, 232, 0.12);
+    border: 1px solid rgba(245, 240, 232, 0.15);
     color: var(--color-warm-cream);
-    padding: var(--space-lg);
+    padding: var(--space-lg) var(--space-xl);
     font-family: var(--font-evidence);
     font-size: var(--type-evidence);
     cursor: pointer;
     transition: all var(--duration-standard) var(--ease-settle);
-    min-height: 44px;
   }
 
   .size-btn:hover,
   .size-btn--selected {
     border-color: var(--color-gold);
-    background: rgba(198, 156, 82, 0.08);
+    background: rgba(198, 156, 82, 0.1);
   }
 
-  /* Von Restorff: the one element that visually breaks the pattern */
   .btn-purchase {
     width: 100%;
-    padding: var(--space-lg);
+    padding: var(--space-xl);
     background: var(--color-gold);
-    color: var(--color-forest-deep);
+    color: var(--color-void);
     border: none;
     font-family: var(--font-display);
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.15em;
     cursor: pointer;
     transition: background var(--duration-standard) var(--ease-settle);
-    min-height: 52px;
   }
 
   .btn-purchase:hover {
     background: var(--color-warm-cream);
   }
 
-  .ledger-footer {
-    margin-top: var(--space-lg);
-    text-align: center;
-  }
-
-  .ledger-footer-note {
-    font-family: var(--font-evidence);
-    font-size: var(--type-whisper);
-    color: rgba(245, 240, 232, 0.3);
-    opacity: 0;
-    transition: opacity var(--duration-standard) var(--ease-settle);
-  }
-
-  /* Responsive */
-  @media (max-width: 1100px) {
-    .product-content-grid {
+  @media (max-width: 900px) {
+    .museum-grid {
       grid-template-columns: 1fr;
-      gap: var(--space-3xl);
     }
-
-    .product-data-panel {
-      max-width: 100%;
+    .museum-visual-container {
+      border-right: none;
+      border-bottom: 1px solid rgba(245, 240, 232, 0.05);
     }
-
-    .product-artifact-panel {
-      padding-top: 0;
+    .museum-visual {
+      height: 60vh;
+      position: relative;
     }
-
-    .product-ledger-panel {
-      max-width: 100%;
-      margin-left: 0;
+    .museum-narrative {
+      padding: var(--space-4xl) var(--space-xl);
+      gap: 10vh;
     }
-  }
-
-  @media (max-width: 768px) {
-    .product-ui {
-      padding: 6rem var(--space-lg) var(--space-2xl);
-    }
-
-    /* Thumb zone: purchase button fixed to bottom on mobile */
-    .btn-purchase {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      z-index: 100;
-      padding: var(--space-lg);
-      padding-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom, 0px));
-    }
-
-    .product-ledger-panel {
-      padding-bottom: 80px; /* Space for fixed purchase button */
+    .back-link {
+      background: rgba(5,8,4,0.5);
+      backdrop-filter: blur(4px);
+      padding: 10px;
+      border-radius: 4px;
     }
   }
 </style>
