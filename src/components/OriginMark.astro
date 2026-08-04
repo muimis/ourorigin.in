@@ -3,89 +3,116 @@ export interface Props {
   size?: number;
   variant?: 'primary' | 'reversed' | 'gold';
   id?: string;
-  animate?: boolean;
-  hideDot?: boolean;
 }
 
-const { 
-  size = 32, 
-  variant = 'gold', 
-  id = Math.random().toString(36).substring(7),
-  animate = false,
-  hideDot = false,
-} = Astro.props;
+const { size = 100, variant = 'primary', id = Math.random().toString(36).substring(7) } = Astro.props;
 
 const colorMap = {
   primary: 'var(--color-warm-cream)',
   reversed: 'var(--color-forest-deep)',
-  gold: 'var(--color-gold, #c8a04d)'
+  gold: 'var(--color-gold)'
 };
 const strokeColor = colorMap[variant];
 ---
 
-<!-- Added view-transition-name to make the mark fly globally across pages if it is the main header mark -->
 <svg 
   id={`origin-mark-${id}`}
-  class={`origin-mark variant-${variant} ${animate ? 'is-animated' : ''}`} 
+  class={`origin-mark variant-${variant}`} 
   width={size} 
   height={size} 
-  viewBox="0 0 120 120" 
-  aria-hidden="true"
-  fill="none"
+  viewBox="0 0 280 280" 
+  xmlns="http://www.w3.org/2000/svg" 
+  fill="none" 
+  aria-label="OurOrigin — Origin Mark" 
+  role="img"
 >
-  <!-- The Organic Tally (4 verticals, 1 cross) -->
-  <g transform="translate(10, 35)" stroke={strokeColor} stroke-width="6" stroke-linecap="round" fill="none">
-    <!-- Hand-drawn style paths -->
-    <path class="tally-line line-1" d="M 5 8 C 4 20, 7 35, 3 45" />
-    <path class="tally-line line-2" d="M 22 5 C 19 22, 23 38, 20 52" />
-    <path class="tally-line line-3" d="M 40 12 C 43 25, 38 35, 41 48" />
-    <path class="tally-line line-4" d="M 58 4 C 55 20, 59 40, 56 55" />
-    
-    <!-- The Cross (5th mark) -->
-    <path class="tally-line line-5" d="M -5 40 C 20 30, 45 20, 70 10" />
-    
-    {!hideDot && (
-      <!-- Organic dot -->
-      <path class="tally-dot" d="M 85 28 C 88 23, 94 25, 96 30 C 97 34, 91 38, 86 35 C 83 32, 83 31, 85 28 Z" fill={strokeColor} stroke="none" />
-    )}
+  <!-- Outer ring -->
+  <circle class="om-outer" cx="140" cy="140" r="108" stroke={strokeColor} stroke-width="1.5" opacity="0.4"/>
+  
+  <!-- Crosshairs -->
+  <g class="om-crosshairs" stroke={strokeColor} stroke-width="1.5" opacity="0.9" stroke-linecap="round">
+    <line x1="140" y1="72"  x2="140" y2="104"/>
+    <line x1="140" y1="176" x2="140" y2="208"/>
+    <line x1="72"  y1="140" x2="104" y2="140"/>
+    <line x1="176" y1="140" x2="208" y2="140"/>
   </g>
+
+  <!-- Inner ring -->
+  <circle class="om-inner" cx="140" cy="140" r="28" stroke={strokeColor} stroke-width="1.5" opacity="0.75" fill="none"/>
+  
+  <!-- Center dot -->
+  <circle class="om-dot" cx="140" cy="140" r="6" fill={strokeColor} opacity="1"/>
 </svg>
 
-<style>
-  .origin-mark {
-    overflow: visible;
-    transform-origin: center;
-  }
-  
-  .origin-mark.is-animated .tally-line {
-    stroke-dasharray: 100;
-    stroke-dashoffset: 100;
-    animation: drawOrganicTally 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-  }
-  
-  .origin-mark.is-animated .tally-dot {
-    opacity: 0;
-    transform: scale(0.5);
-    transform-origin: center;
-    animation: popDot 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  }
+<script>
+  import gsap from 'gsap';
 
-  /* Timing the hand-drawn effect */
-  .origin-mark.is-animated .line-1 { animation-delay: 0.1s; }
-  .origin-mark.is-animated .line-2 { animation-delay: 0.3s; }
-  .origin-mark.is-animated .line-3 { animation-delay: 0.5s; }
-  .origin-mark.is-animated .line-4 { animation-delay: 0.7s; }
-  .origin-mark.is-animated .line-5 { animation-delay: 0.9s; } /* The cross comes last */
-  .origin-mark.is-animated .tally-dot { animation-delay: 1.3s; }
-  
-  @keyframes drawOrganicTally {
-    to { stroke-dashoffset: 0; }
-  }
+  class OriginMarkAnimation {
+    constructor() {
+      this.init();
+      document.addEventListener('play-origin-mark-entrance', () => this.play());
+    }
 
-  @keyframes popDot {
-    to { 
-      opacity: 1; 
-      transform: scale(1);
+    init() {
+      document.querySelectorAll('.origin-mark').forEach(svg => {
+        const outer = svg.querySelector('.om-outer');
+        const lines = svg.querySelectorAll('.om-crosshairs line');
+        const inner = svg.querySelector('.om-inner');
+        const dot = svg.querySelector('.om-dot');
+
+        // Lengths for draw-on effect
+        const outerLen = 2 * Math.PI * 108; // ~678.58
+        const innerLen = 2 * Math.PI * 28;  // ~175.93
+        const lineLen = 32;
+
+        gsap.set(outer, { strokeDasharray: outerLen, strokeDashoffset: outerLen });
+        gsap.set(inner, { strokeDasharray: innerLen, strokeDashoffset: innerLen });
+        gsap.set(lines, { strokeDasharray: lineLen, strokeDashoffset: lineLen });
+        gsap.set(dot, { scale: 0, transformOrigin: "50% 50%", opacity: 0 });
+      });
+    }
+
+    play() {
+      document.querySelectorAll('.origin-mark').forEach(svg => {
+        const outer = svg.querySelector('.om-outer');
+        const lines = svg.querySelectorAll('.om-crosshairs line');
+        const inner = svg.querySelector('.om-inner');
+        const dot = svg.querySelector('.om-dot');
+
+        const outerLen = 2 * Math.PI * 108;
+        const innerLen = 2 * Math.PI * 28;
+        const lineLen = 32;
+
+        // Reset to beginning
+        gsap.set(outer, { strokeDashoffset: outerLen });
+        gsap.set(inner, { strokeDashoffset: innerLen });
+        gsap.set(lines, { strokeDashoffset: lineLen });
+        gsap.set(dot, { scale: 0, opacity: 0 });
+
+        const tl = gsap.timeline();
+        
+        // duration-deep: 700ms
+        const dur = 0.7; 
+        // ~30% overlap: start slightly before previous finishes
+        const overlap = "-=" + (dur * 0.3); 
+        
+        // Custom cubic-bezier is hard natively without CustomEase, 
+        // using power3.out as closest approximation to the ease-settle (0.22, 1, 0.36, 1)
+        const easeSettle = "power3.out";
+
+        tl.to(outer, { strokeDashoffset: 0, duration: dur, ease: easeSettle })
+          .to(lines, { strokeDashoffset: 0, duration: dur, ease: easeSettle, stagger: 0 }, overlap)
+          .to(inner, { strokeDashoffset: 0, duration: dur, ease: easeSettle }, overlap)
+          // For the dot, use a slight back.out for organic settling or just standard ease
+          .to(dot, { scale: 1, opacity: 1, duration: 0.32, ease: "back.out(1.5)" }, overlap);
+      });
     }
   }
-</style>
+
+  // Ensure it only initializes once
+  // cast to any: custom one-time-init flag on window, not in default Window type
+  if (!(window as any).originMarkAnimationInitialized) {
+    new OriginMarkAnimation();
+    (window as any).originMarkAnimationInitialized = true;
+  }
+</script>
