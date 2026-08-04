@@ -1,5 +1,6 @@
 ---
 import OriginMark from './OriginMark.astro';
+import TallyCounter from './TallyCounter.astro';
 ---
 <header class="site-header" id="site-header">
   <div class="header-inner">
@@ -16,14 +17,16 @@ import OriginMark from './OriginMark.astro';
       <a href="/observations" class="nav-link">Field Notes</a>
       <a href="/about" class="nav-link">Why</a>
       <a href="/contact" class="nav-link">Contact</a>
-      <button class="nav-link nav-link--yields" id="all-yields-trigger" type="button" aria-label="Browse all yields">
-        All Yields
+      <button class="nav-link nav-link--yields" id="all-yields-trigger" type="button" aria-label="Browse the live soil">
+        The Soil (Live)
       </button>
     </nav>
 
     <!-- Ledger Count (always visible) -->
     <button class="ledger-indicator" id="ledger-trigger" type="button" aria-label="Open your ledger">
-      <span class="ledger-count" id="ledger-count">0</span>
+      <span class="ledger-count" id="ledger-count-wrapper">
+        <TallyCounter count={0} size={24} />
+      </span>
     </button>
 
     <!-- Mobile Hamburger Toggle -->
@@ -42,7 +45,7 @@ import OriginMark from './OriginMark.astro';
     <a href="/about" class="mobile-nav-link">Why</a>
     <a href="/contact" class="mobile-nav-link">Contact</a>
     <button class="mobile-nav-link mobile-nav-link--yields" id="mobile-yields-trigger" type="button">
-      All Yields →
+      The Soil (Live) →
     </button>
   </nav>
 </header>

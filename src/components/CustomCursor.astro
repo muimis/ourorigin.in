@@ -2,17 +2,22 @@
 // src/components/CustomCursor.astro
 ---
 
-<div id="custom-cursor" class="custom-cursor"></div>
-<div id="custom-cursor-dot" class="custom-cursor-dot"></div>
+<div id="custom-cursor" class="custom-cursor">
+  <!-- Organic single tally line acting as a pointer -->
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true" class="cursor-svg">
+    <path class="cursor-mark" d="M 12 4 C 10 10, 14 18, 11 20" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+  </svg>
+</div>
+
+<!-- Container for temporary tally marks drawn on click -->
+<div id="tally-canvas" class="tally-canvas" aria-hidden="true"></div>
 
 <style>
-  /* Hide default cursor on desktop */
   @media (pointer: fine) {
     body {
       cursor: none;
     }
     
-    /* Ensure interactive elements also hide default cursor */
     a, button, input, textarea, select {
       cursor: none !important;
     }
@@ -21,56 +26,51 @@
       position: fixed;
       top: 0;
       left: 0;
-      width: 40px;
-      height: 40px;
-      border: 1px solid rgba(198, 156, 82, 0.4);
-      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      color: var(--color-gold);
       transform: translate(-50%, -50%);
       pointer-events: none;
       z-index: 999999;
-      transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1), height 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s ease, background-color 0.3s ease, mix-blend-mode 0.3s ease;
       will-change: transform;
+      mix-blend-mode: difference;
+      transition: color 0.3s ease, mix-blend-mode 0.3s ease;
     }
 
-    .custom-cursor-dot {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 6px;
-      height: 6px;
-      background-color: var(--color-gold);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-      z-index: 999999;
-      transition: opacity 0.3s ease;
-      will-change: transform;
+    .cursor-svg {
+      width: 100%;
+      height: 100%;
+      /* Subtle breathing animation */
+      animation: cursorBreathe 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes cursorBreathe {
+      0% { transform: scale(1) rotate(-5deg); }
+      100% { transform: scale(1.1) rotate(5deg); }
     }
 
     /* Hover States */
-    .custom-cursor.is-lens {
-      width: 100px;
-      height: 100px;
-      background-color: var(--color-warm-cream);
-      border-color: transparent;
-      mix-blend-mode: difference;
-    }
-
     .custom-cursor.is-magnetic {
-      width: 60px;
-      height: 60px;
-      background-color: rgba(198, 156, 82, 0.1);
-      border-color: var(--color-gold);
+      color: var(--color-warm-cream);
+      mix-blend-mode: normal;
     }
 
-    .custom-cursor-dot.is-hidden {
-      opacity: 0;
+    .custom-cursor.is-magnetic .cursor-svg {
+      animation: none;
+      transform: scale(1.5);
+      transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    
+    .tally-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999998;
     }
   }
 
-  /* Disable on touch devices */
   @media (pointer: coarse) {
-    .custom-cursor, .custom-cursor-dot {
+    .custom-cursor, .tally-canvas {
       display: none;
     }
   }
@@ -81,64 +81,66 @@
     if (window.matchMedia('(pointer: coarse)').matches) return;
 
     const cursor = document.getElementById('custom-cursor');
-    const dot = document.getElementById('custom-cursor-dot');
-    
-    if (!cursor || !dot) return;
+    const canvas = document.getElementById('tally-canvas');
+    if (!cursor || !canvas) return;
 
     let mouseX = 0;
     let mouseY = 0;
-    let cursorX = 0;
-    let cursorY = 0;
     
-    // Spring physics configuration
-    const speed = 0.15; 
-
-    // Mouse move tracking
     const onMouseMove = (e: MouseEvent) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
-      
-      // Dot instantly follows
-      dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
+      cursor.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
     };
 
     window.addEventListener('mousemove', onMouseMove);
 
-    // Animation loop for spring physics on outer ring
-    const render = () => {
-      cursorX += (mouseX - cursorX) * speed;
-      cursorY += (mouseY - cursorY) * speed;
+    // Draw tally mark on click
+    const onClick = (e: MouseEvent) => {
+      const mark = document.createElement('div');
+      mark.style.position = 'absolute';
+      mark.style.left = `${e.clientX}px`;
+      mark.style.top = `${e.clientY}px`;
+      mark.style.transform = `translate(-50%, -50%) rotate(${Math.random() * 20 - 10}deg)`;
+      mark.style.color = 'var(--color-gold)';
+      mark.style.opacity = '0.7';
+      mark.style.pointerEvents = 'none';
       
-      cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%)`;
-      requestAnimationFrame(render);
+      mark.innerHTML = `
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M 12 4 C 10 10, 14 18, 11 20" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      `;
+      
+      canvas.appendChild(mark);
+      
+      // Animate out
+      setTimeout(() => {
+        mark.style.transition = 'opacity 1s ease';
+        mark.style.opacity = '0';
+        setTimeout(() => mark.remove(), 1000);
+      }, 500);
     };
-    render();
+    
+    window.addEventListener('click', onClick);
 
     // Interaction Observers
-    const interactiveElements = document.querySelectorAll('a, button, .card-image-wrap, .hero-visual-col');
-
-    interactiveElements.forEach(el => {
-      el.addEventListener('mouseenter', () => {
-        if (el.classList.contains('card-image-wrap') || el.classList.contains('hero-visual-col')) {
-          cursor.classList.add('is-lens');
-          dot.classList.add('is-hidden');
-        } else {
-          cursor.classList.add('is-magnetic');
-        }
+    const setupInteractions = () => {
+      const interactiveElements = document.querySelectorAll('a, button');
+      interactiveElements.forEach(el => {
+        el.addEventListener('mouseenter', () => cursor.classList.add('is-magnetic'));
+        el.addEventListener('mouseleave', () => cursor.classList.remove('is-magnetic'));
       });
-
-      el.addEventListener('mouseleave', () => {
-        cursor.classList.remove('is-lens', 'is-magnetic');
-        dot.classList.remove('is-hidden');
-      });
-    });
+    };
+    
+    setupInteractions();
+    
+    // Clean up function attached to document to prevent memory leaks on SPA nav
+    document.addEventListener('astro:before-swap', () => {
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('click', onClick);
+    }, { once: true });
   }
 
-  // Handle Astro page transitions
   document.addEventListener('astro:page-load', initCursor);
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initCursor);
-  } else {
-    initCursor();
-  }
 </script>

@@ -205,13 +205,58 @@ const companionsJson = JSON.stringify(companionProductsMap);
       });
     }
     
+    function generateTallyHTML(count, size = 24) {
+      if (count === 0) return '0';
+      const fullGroups = Math.floor(count / 5);
+      const remainder = count % 5;
+      
+      let html = `<div style="display:inline-flex;align-items:center;gap:4px;height:${size}px;color:var(--color-gold)">`;
+      
+      const groupSvg = `
+        <svg style="height:100%;width:auto" viewBox="0 0 60 60" fill="none">
+          <g stroke="currentColor" stroke-width="4" stroke-linecap="round">
+            <path d="M 10 10 C 8 25, 12 40, 9 50" />
+            <path d="M 22 8 C 19 25, 23 40, 20 52" />
+            <path d="M 34 12 C 37 25, 32 35, 35 48" />
+            <path d="M 46 6 C 43 20, 47 40, 44 55" />
+            <path d="M 2 45 C 20 35, 35 20, 52 10" />
+          </g>
+        </svg>
+      `;
+      
+      for (let i = 0; i < fullGroups; i++) html += groupSvg;
+      
+      if (remainder > 0) {
+        let remainderPaths = '';
+        if (remainder >= 1) remainderPaths += '<path d="M 10 10 C 8 25, 12 40, 9 50" />';
+        if (remainder >= 2) remainderPaths += '<path d="M 22 8 C 19 25, 23 40, 20 52" />';
+        if (remainder >= 3) remainderPaths += '<path d="M 34 12 C 37 25, 32 35, 35 48" />';
+        if (remainder >= 4) remainderPaths += '<path d="M 46 6 C 43 20, 47 40, 44 55" />';
+        html += `
+          <svg style="height:100%;width:auto" viewBox="0 0 ${remainder * 15 + 15} 60" fill="none">
+            <g stroke="currentColor" stroke-width="4" stroke-linecap="round">
+              ${remainderPaths}
+            </g>
+          </svg>
+        `;
+      }
+      html += '</div>';
+      return html;
+    }
+
     function updateTrigger(count) {
       if (!trigger || !countDisplay) return;
       if (count > 0) {
-        countDisplay.textContent = count;
+        // Update the header ledger wrapper and the floating trigger
+        const countWrapper = document.getElementById('ledger-count-wrapper');
+        if (countWrapper) countWrapper.innerHTML = generateTallyHTML(count, 24);
+        
+        countDisplay.innerHTML = generateTallyHTML(count, 18);
         trigger.classList.remove('hidden');
         trigger.setAttribute('aria-label', `Open Ledger — ${count} items held`);
       } else {
+        const countWrapper = document.getElementById('ledger-count-wrapper');
+        if (countWrapper) countWrapper.innerHTML = '0';
         trigger.classList.add('hidden');
         trigger.removeAttribute('aria-label');
       }

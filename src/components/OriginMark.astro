@@ -23,6 +23,7 @@ const colorMap = {
 const strokeColor = colorMap[variant];
 ---
 
+<!-- Added view-transition-name to make the mark fly globally across pages if it is the main header mark -->
 <svg 
   id={`origin-mark-${id}`}
   class={`origin-mark variant-${variant} ${animate ? 'is-animated' : ''}`} 
@@ -32,16 +33,20 @@ const strokeColor = colorMap[variant];
   aria-hidden="true"
   fill="none"
 >
-  <!-- The Tally (The Ledger of Distance) -->
-  <g transform="translate(10, 35)" stroke={strokeColor} stroke-width="5" stroke-linecap="round" fill="none">
-    <path class="tally-line line-1" d="M 2 10 Q 4 25 1 38" />
-    <path class="tally-line line-2" d="M 18 0 Q 16 25 17 48" />
-    <path class="tally-line line-3" d="M 34 15 Q 35 25 32 33" />
-    <path class="tally-line line-4" d="M 50 5 Q 48 25 51 43" />
-    <path class="tally-line line-5" d="M 66 18 Q 65 24 67 29" />
+  <!-- The Organic Tally (4 verticals, 1 cross) -->
+  <g transform="translate(10, 35)" stroke={strokeColor} stroke-width="6" stroke-linecap="round" fill="none">
+    <!-- Hand-drawn style paths -->
+    <path class="tally-line line-1" d="M 5 8 C 4 20, 7 35, 3 45" />
+    <path class="tally-line line-2" d="M 22 5 C 19 22, 23 38, 20 52" />
+    <path class="tally-line line-3" d="M 40 12 C 43 25, 38 35, 41 48" />
+    <path class="tally-line line-4" d="M 58 4 C 55 20, 59 40, 56 55" />
+    
+    <!-- The Cross (5th mark) -->
+    <path class="tally-line line-5" d="M -5 40 C 20 30, 45 20, 70 10" />
     
     {!hideDot && (
-      <path class="tally-dot" d="M 90 22 C 93 18, 98 22, 97 26 C 96 30, 90 32, 87 27 C 84 22, 87 19, 90 22 Z" fill="var(--color-gold)" stroke="none" />
+      <!-- Organic dot -->
+      <path class="tally-dot" d="M 85 28 C 88 23, 94 25, 96 30 C 97 34, 91 38, 86 35 C 83 32, 83 31, 85 28 Z" fill={strokeColor} stroke="none" />
     )}
   </g>
 </svg>
@@ -53,26 +58,27 @@ const strokeColor = colorMap[variant];
   }
   
   .origin-mark.is-animated .tally-line {
-    stroke-dasharray: 60;
-    stroke-dashoffset: 60;
-    animation: drawTally 0.4s var(--ease-settle) forwards;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: drawOrganicTally 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
   }
   
   .origin-mark.is-animated .tally-dot {
     opacity: 0;
     transform: scale(0.5);
     transform-origin: center;
-    animation: popDot 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation: popDot 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
   }
 
+  /* Timing the hand-drawn effect */
   .origin-mark.is-animated .line-1 { animation-delay: 0.1s; }
-  .origin-mark.is-animated .line-2 { animation-delay: 0.25s; }
-  .origin-mark.is-animated .line-3 { animation-delay: 0.4s; }
-  .origin-mark.is-animated .line-4 { animation-delay: 0.55s; }
-  .origin-mark.is-animated .line-5 { animation-delay: 0.7s; }
-  .origin-mark.is-animated .tally-dot { animation-delay: 1.0s; }
+  .origin-mark.is-animated .line-2 { animation-delay: 0.3s; }
+  .origin-mark.is-animated .line-3 { animation-delay: 0.5s; }
+  .origin-mark.is-animated .line-4 { animation-delay: 0.7s; }
+  .origin-mark.is-animated .line-5 { animation-delay: 0.9s; } /* The cross comes last */
+  .origin-mark.is-animated .tally-dot { animation-delay: 1.3s; }
   
-  @keyframes drawTally {
+  @keyframes drawOrganicTally {
     to { stroke-dashoffset: 0; }
   }
 

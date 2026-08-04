@@ -73,12 +73,27 @@ const observations = [
 <style>
   .observations-page {
     min-height: 100vh;
-    background-color: var(--color-forest-deep);
+    background-color: var(--color-void);
+    background-image: radial-gradient(circle at center top, rgba(198, 156, 82, 0.05) 0%, transparent 60%);
     color: var(--color-warm-cream);
     padding: 0 var(--space-xl) var(--space-4xl);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .observations-page::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url('/noise.png') repeat;
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 0;
   }
 
   .observations-container {
+    position: relative;
+    z-index: 1;
     max-width: 1200px;
     margin: 0 auto;
     padding-top: var(--space-4xl);
@@ -114,15 +129,18 @@ const observations = [
 
   .bento-tile {
     padding: var(--space-2xl);
+    background: rgba(245, 240, 232, 0.02);
     border: 1px solid rgba(198, 156, 82, 0.1);
     display: flex;
     flex-direction: column;
     gap: var(--space-sm);
-    transition: border-color var(--duration-standard) var(--ease-settle);
+    transition: all var(--duration-standard) var(--ease-settle);
   }
 
   .bento-tile:hover {
     border-color: rgba(198, 156, 82, 0.3);
+    background: rgba(245, 240, 232, 0.04);
+    transform: translateY(-2px);
   }
 
   /* Size variations */

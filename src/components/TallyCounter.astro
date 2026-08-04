@@ -1,0 +1,54 @@
+---
+export interface Props {
+  count: number;
+  size?: number;
+  color?: string;
+}
+
+const { count, size = 30, color = "var(--color-gold)" } = Astro.props;
+
+// A tally group is 5 marks. 4 verticals, 1 diagonal.
+const fullGroups = Math.floor(count / 5);
+const remainder = count % 5;
+---
+
+<div class="tally-counter" style={`--tally-size: ${size}px; --tally-color: ${color};`} aria-label={count.toString()}>
+  {Array.from({ length: fullGroups }).map((_, i) => (
+    <svg class="tally-group" width="40" height="40" viewBox="0 0 60 60" aria-hidden="true" fill="none">
+      <g stroke="currentColor" stroke-width="4" stroke-linecap="round">
+        <path d="M 10 10 C 8 25, 12 40, 9 50" />
+        <path d="M 22 8 C 19 25, 23 40, 20 52" />
+        <path d="M 34 12 C 37 25, 32 35, 35 48" />
+        <path d="M 46 6 C 43 20, 47 40, 44 55" />
+        <!-- The Cross -->
+        <path d="M 2 45 C 20 35, 35 20, 52 10" />
+      </g>
+    </svg>
+  ))}
+  
+  {remainder > 0 && (
+    <svg class="tally-group" width={remainder * 10 + 10} height="40" viewBox={`0 0 ${remainder * 15 + 15} 60`} aria-hidden="true" fill="none">
+      <g stroke="currentColor" stroke-width="4" stroke-linecap="round">
+        {remainder >= 1 && <path d="M 10 10 C 8 25, 12 40, 9 50" />}
+        {remainder >= 2 && <path d="M 22 8 C 19 25, 23 40, 20 52" />}
+        {remainder >= 3 && <path d="M 34 12 C 37 25, 32 35, 35 48" />}
+        {remainder >= 4 && <path d="M 46 6 C 43 20, 47 40, 44 55" />}
+      </g>
+    </svg>
+  )}
+</div>
+
+<style>
+  .tally-counter {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: var(--tally-size);
+    color: var(--tally-color);
+  }
+
+  .tally-group {
+    height: 100%;
+    width: auto;
+  }
+</style>

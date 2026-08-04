@@ -58,12 +58,14 @@ const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp')
               src={product.data.images.product} 
               alt={`${product.data.name} — ${product.data.sensoryProfile?.appearance || 'product image'}`} 
               class="museum-artifact" 
+              style={`view-transition-name: yield-img-${product.id}`}
             />
           ) : product.data.images.packaging ? (
             <img 
               src={product.data.images.packaging} 
               alt={`${product.data.name} packaging`} 
               class="museum-artifact" 
+              style={`view-transition-name: yield-img-${product.id}`}
             />
           ) : (
             <div class="artifact-placeholder">
@@ -77,7 +79,7 @@ const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp')
       <div class="museum-narrative" id="museum-narrative">
         
         <div class="narrative-section narrative-header">
-          <h1 class="product-title">{product.data.name}</h1>
+          <h1 class="product-title" style={`view-transition-name: yield-title-${product.id}`}>{product.data.name}</h1>
           <div class="product-evidence-line">
             {origin.data.elevation} · {origin.data.bioregion}
             {product.data.batchRef && <span class="batch-ref"> · {product.data.batchRef}</span>}
