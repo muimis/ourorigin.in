@@ -52,7 +52,6 @@ const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp')
       <!-- Left Panel: Pinned Artifact -->
       <div class="museum-visual-container">
         <div class="museum-visual" id="museum-visual">
-          <div class="spotlight"></div>
           {product.data.images.product ? (
             <img 
               src={product.data.images.product} 
@@ -157,7 +156,7 @@ const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp')
           </div>
 
           <button class="btn-purchase" id="purchase-cta" type="button">
-            Buy Now
+            Claim Proof
           </button>
         </div>
 
@@ -321,13 +320,6 @@ const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp')
     padding: var(--space-4xl);
   }
 
-  .spotlight {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at center, rgba(198, 156, 82, 0.08) 0%, transparent 60%);
-    z-index: 0;
-  }
-
   .museum-artifact {
     position: relative;
     z-index: 1;
@@ -435,19 +427,19 @@ const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp')
 
   /* The Climax: Offering */
   .offering-section {
-    background: rgba(245, 240, 232, 0.02);
-    border: 1px solid rgba(198, 156, 82, 0.15);
+    background: transparent;
+    border: 1px solid rgba(255, 69, 0, 0.3);
     padding: var(--space-3xl);
   }
 
   .ledger-header {
-    font-family: var(--font-display);
-    font-size: 2rem;
-    letter-spacing: 0.05em;
+    font-family: var(--font-evidence);
+    font-size: 1.5rem;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     margin-bottom: var(--space-2xl);
     color: var(--color-gold);
-    border-bottom: 1px solid rgba(198, 156, 82, 0.2);
+    border-bottom: 1px solid rgba(255, 69, 0, 0.2);
     padding-bottom: var(--space-lg);
   }
 
@@ -483,7 +475,7 @@ const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp')
     background: var(--color-gold);
     color: var(--color-void);
     border: none;
-    font-family: var(--font-display);
+    font-family: var(--font-evidence);
     font-size: 1.1rem;
     font-weight: 600;
     text-transform: uppercase;
