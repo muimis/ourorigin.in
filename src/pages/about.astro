@@ -2,60 +2,61 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout 
-  title="The Ledger of Truth — OurOrigin" 
-  description="We believe there is an invisible, profound exchange of dignity between the earth and the people who truly understand it."
+<Layout
+  title="The Record — OurOrigin"
+  description="We know the person who grew this. We know the hill it came from. We know what the soil looks like in January."
   noHeaderPadding={true}
 >
   <main class="manifesto-viewport">
-    
-    <div class="manifesto-bg"></div>
 
-    <div class="manifesto-track" id="manifesto-track">
-      
+    <div class="manifesto-track">
+
       <!-- Beat 1 -->
       <section class="manifesto-beat">
         <div class="beat-content" data-cinematic="scale-down">
-          <h1 class="massive-statement">The modern world takes without asking.</h1>
+          <h1 class="massive-statement">We know the person<br/>who grew this.</h1>
         </div>
       </section>
 
       <!-- Beat 2 -->
       <section class="manifesto-beat">
         <div class="beat-content" data-cinematic="scale-down">
-          <h2 class="massive-statement">It strips the context.<br/>It erases the hands.<br/>It silences the soil.</h2>
-          <p class="qualifier-text">What remains is just inventory. Empty of memory.</p>
+          <h2 class="massive-statement">We know the hill<br/>it came from.</h2>
+          <p class="qualifier-text">11°36′N, 76°04′E — not a region. A place.</p>
         </div>
       </section>
 
       <!-- Beat 3 -->
       <section class="manifesto-beat">
         <div class="beat-content" data-cinematic="scale-down">
-          <h2 class="massive-statement">OurOrigin exists to refuse this.</h2>
+          <h2 class="massive-statement">That is not normal.</h2>
+          <p class="qualifier-text">A product usually passes through six hands before yours.<br/>Each one trims a little more of the story down to a price.</p>
         </div>
       </section>
 
       <!-- Beat 4 -->
       <section class="manifesto-beat">
         <div class="beat-content" data-cinematic="scale-down">
-          <h2 class="massive-statement">We believe there is an invisible, profound exchange of dignity...</h2>
-          <p class="qualifier-text">...between the earth and the people who truly understand it.</p>
+          <h2 class="massive-statement">By the time it reaches you,<br/>the soil is gone.</h2>
+          <p class="qualifier-text">The name is gone. The season is gone.<br/>What remains is just inventory.</p>
         </div>
       </section>
 
       <!-- Beat 5 -->
       <section class="manifesto-beat">
         <div class="beat-content" data-cinematic="scale-down">
-          <h2 class="massive-statement">When you hold one of our yields, you are holding the physical proof of that dignity.</h2>
+          <h2 class="massive-statement">First Hands.</h2>
+          <p class="qualifier-text">The person who grew this was the first person to handle it for money.<br/>No broker before them. Their count is the first count.</p>
+          <p class="qualifier-text tally-note" aria-hidden="true">That is why the mark is a tally gate.</p>
         </div>
       </section>
 
       <!-- Beat 6: Closer -->
       <section class="manifesto-beat beat-closer">
         <div class="beat-content" data-cinematic="scale-down">
-          <h2 class="massive-statement">We are not a company.</h2>
-          <p class="closer-text">We are a ledger of truth.</p>
-          <a href="/" class="return-link">← Return to the Yields</a>
+          <h2 class="massive-statement">We are not a brand.</h2>
+          <p class="closer-text">We are a ledger.</p>
+          <a href="/" class="return-link">← Return to the Archive</a>
         </div>
       </section>
 
@@ -70,46 +71,26 @@ import Layout from '../layouts/Layout.astro';
   gsap.registerPlugin(ScrollTrigger);
 
   function initManifesto() {
-    const scaleElements = document.querySelectorAll('[data-cinematic="scale-down"]');
-    
-    scaleElements.forEach((el) => {
+    document.querySelectorAll('[data-cinematic="scale-down"]').forEach((el) => {
       gsap.fromTo(el,
+        { scale: 1.12, opacity: 0, filter: 'blur(16px)' },
         {
-          scale: 1.2,
-          opacity: 0,
-          filter: 'blur(20px)'
-        },
-        {
-          scale: 1,
-          opacity: 1,
-          filter: 'blur(0px)',
-          duration: 1.5,
-          ease: "power2.out",
+          scale: 1, opacity: 1, filter: 'blur(0px)',
+          duration: 1.2, ease: 'power2.out',
           scrollTrigger: {
-            trigger: el,
-            start: "top 80%",
-            end: "center center",
-            scrub: 1,
+            trigger: el, start: 'top 80%', end: 'center center', scrub: 0.8,
           }
         }
       );
-
-      // Fade out on scroll past
       gsap.to(el, {
-        opacity: 0,
-        filter: 'blur(10px)',
-        scale: 0.9,
+        opacity: 0, filter: 'blur(8px)', scale: 0.94,
         scrollTrigger: {
-          trigger: el,
-          start: "center center",
-          end: "bottom top",
-          scrub: 1
+          trigger: el, start: 'center center', end: 'bottom top', scrub: 0.8
         }
       });
     });
   }
 
-  // Initialize on load and view transitions
   initManifesto();
   document.addEventListener('astro:after-swap', initManifesto);
 </script>
@@ -122,13 +103,6 @@ import Layout from '../layouts/Layout.astro';
     overflow: hidden;
   }
 
-  .manifesto-bg {
-    position: fixed;
-    inset: 0;
-    background: radial-gradient(circle at center, rgba(12, 21, 9, 0.4) 0%, var(--color-void) 100%);
-    z-index: 0;
-  }
-
   .manifesto-track {
     position: relative;
     z-index: 1;
@@ -137,16 +111,16 @@ import Layout from '../layouts/Layout.astro';
   }
 
   .manifesto-beat {
-    min-height: 120vh;
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: var(--space-4xl) clamp(2rem, 5vw, 4rem);
+    padding: var(--space-4xl) clamp(1.5rem, 6vw, 5rem);
     text-align: center;
   }
 
   .beat-content {
-    max-width: 1000px;
+    max-width: 900px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -156,7 +130,7 @@ import Layout from '../layouts/Layout.astro';
 
   .massive-statement {
     font-family: var(--font-display);
-    font-size: clamp(2.5rem, 6vw, 5.5rem);
+    font-size: clamp(2.2rem, 5.5vw, 5rem);
     line-height: 1.1;
     font-weight: 400;
     color: var(--color-warm-cream);
@@ -166,16 +140,26 @@ import Layout from '../layouts/Layout.astro';
 
   .qualifier-text {
     font-family: var(--font-narrative);
-    font-size: clamp(1.2rem, 2vw, 1.8rem);
-    color: rgba(245, 240, 232, 0.7);
-    line-height: 1.6;
-    max-width: 600px;
+    font-size: clamp(1rem, 1.8vw, 1.5rem);
+    color: rgba(240, 234, 214, 0.5);
+    line-height: 1.7;
+    max-width: 580px;
     margin: 0;
+    font-weight: 300;
+  }
+
+  .tally-note {
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    color: rgba(255, 69, 0, 0.45);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: var(--space-sm);
   }
 
   .closer-text {
     font-family: var(--font-narrative);
-    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
     font-style: italic;
     color: var(--color-gold);
     margin: 0;
@@ -186,17 +170,40 @@ import Layout from '../layouts/Layout.astro';
   }
 
   .return-link {
-    margin-top: 15vh;
+    margin-top: 12vh;
     font-family: var(--font-evidence);
     font-size: var(--type-evidence);
-    color: rgba(245, 240, 232, 0.4);
+    color: rgba(240, 234, 214, 0.3);
     text-decoration: none;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.12em;
     transition: color var(--duration-standard) var(--ease-settle);
+    display: inline-block;
+    min-height: 44px;
+    line-height: 44px;
   }
 
   .return-link:hover {
     color: var(--color-gold);
+  }
+
+  /* ── Mobile ── */
+  @media (max-width: 768px) {
+    .manifesto-beat {
+      min-height: 90vh;
+      padding: var(--space-3xl) var(--space-lg);
+    }
+
+    .massive-statement {
+      font-size: clamp(1.8rem, 8vw, 3.5rem);
+    }
+
+    .qualifier-text {
+      font-size: clamp(0.95rem, 4vw, 1.2rem);
+    }
+
+    .return-link {
+      margin-top: 8vh;
+    }
   }
 </style>

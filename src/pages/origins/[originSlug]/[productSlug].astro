@@ -6,138 +6,177 @@ import OriginMark from '../../../components/OriginMark.astro';
 export async function getStaticPaths() {
   const products = await getCollection('products');
   return products.map((product) => {
-    const originId = typeof product.data.originSlug === 'object' 
-      ? (product.data.originSlug as any).id 
+    const originId = typeof product.data.originSlug === 'object'
+      ? (product.data.originSlug as any).id
       : product.data.originSlug;
-      
     return {
-      params: { 
-        originSlug: originId, 
-        productSlug: product.id 
-      },
+      params: { originSlug: originId, productSlug: product.id },
       props: { product }
     };
   });
 }
 
 const { product } = Astro.props;
-const originId = typeof product.data.originSlug === 'object' 
-  ? (product.data.originSlug as any).id 
+const originId = typeof product.data.originSlug === 'object'
+  ? (product.data.originSlug as any).id
   : product.data.originSlug;
 const origin = await getEntry('origins', originId);
 
-if (!origin) {
-  throw new Error(`Origin not found for product: ${product.id}`);
-}
+if (!origin) throw new Error(`Origin not found for product: ${product.id}`);
 
-const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp') 
-  ? 'https://ourorigin.in/og-image.jpg' 
+const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp')
+  ? 'https://ourorigin.in/og-image.jpg'
   : `https://ourorigin.in${origin.data.images?.specimen || '/og-image.jpg'}`;
+
+const sp = product.data.sensoryProfile;
 ---
 
 <Layout
-  title={`${product.data.name} from ${origin.data.name} — OurOrigin`}
-  description={`${product.data.name} from ${origin.data.name} — ${origin.data.elevation}, ${origin.data.bioregion}. ${product.data.specimenCopy?.slice(0, 120) || ''}`}
+  title={`${product.data.name} — ${origin.data.name} · OurOrigin`}
+  description={`${sp?.aroma || ''} ${sp?.flavor || ''} — ${product.data.name} from ${origin.data.name}, ${origin.data.elevation}.`}
   ogImage={ogImageUrl}
   noHeaderPadding={true}
 >
-  <main class="museum-viewport">
-    <a href="/" class="back-link">
-      <OriginMark size={20} variant="gold" hideDot={true} />
-      <span>Back to Origins</span>
+  <main class="product-viewport">
+
+    <!-- Back -->
+    <a href="/" class="back-link" aria-label="Back to all yields">
+      <OriginMark size={18} variant="gold" />
     </a>
 
-    <div class="museum-grid">
-      
-      <!-- Left Panel: Pinned Artifact -->
-      <div class="museum-visual-container">
-        <div class="museum-visual" id="museum-visual">
+    <div class="product-grid">
+
+      <!-- LEFT: Product image — sticky, dominant -->
+      <div class="visual-panel">
+        <div class="visual-inner" id="visual-inner">
           {product.data.images.product ? (
-            <img 
-              src={product.data.images.product} 
-              alt={`${product.data.name} — ${product.data.sensoryProfile?.appearance || 'product image'}`} 
-              class="museum-artifact" 
+            <img
+              src={product.data.images.product}
+              alt={`${product.data.name}`}
+              class="product-artifact"
               style={`view-transition-name: yield-img-${product.id}`}
             />
           ) : product.data.images.packaging ? (
-            <img 
-              src={product.data.images.packaging} 
-              alt={`${product.data.name} packaging`} 
-              class="museum-artifact" 
+            <img
+              src={product.data.images.packaging}
+              alt={`${product.data.name} packaging`}
+              class="product-artifact"
               style={`view-transition-name: yield-img-${product.id}`}
             />
           ) : (
             <div class="artifact-placeholder">
-              <OriginMark size={60} variant="gold" />
+              <OriginMark size={48} variant="gold" />
             </div>
           )}
         </div>
       </div>
 
-      <!-- Right Panel: Scrolling Narrative -->
-      <div class="museum-narrative" id="museum-narrative">
-        
-        <div class="narrative-section narrative-header">
-          <h1 class="product-title" style={`view-transition-name: yield-title-${product.id}`}>{product.data.name}</h1>
-          <div class="product-evidence-line">
-            {origin.data.elevation} · {origin.data.bioregion}
-            {product.data.batchRef && <span class="batch-ref"> · {product.data.batchRef}</span>}
+      <!-- RIGHT: Compact narrative -->
+      <div class="narrative-panel">
+
+        <!-- Identity -->
+        <div class="narrative-block">
+          <h1 class="product-name" style={`view-transition-name: yield-title-${product.id}`}>
+            {product.data.name}
+          </h1>
+          {product.data.botanicalName && (
+            <p class="botanical">{product.data.botanicalName}</p>
+          )}
+        </div>
+
+        <!-- DIVIDER: tally -->
+        <div class="tally-divider" aria-hidden="true">
+          <svg width="40" height="16" viewBox="0 0 50 20" fill="none">
+            <path d="M 5 3 C 4 9, 6 14, 5 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M 13 2 C 12 9, 14 14, 13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M 21 3 C 22 9, 20 13, 21 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M 29 2 C 28 9, 30 14, 29 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M 2 16 C 12 11, 24 7, 38 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <!-- Sensory — what it does to you FIRST -->
+        {sp && (sp.aroma || sp.flavor || sp.appearance) && (
+          <div class="narrative-block sense-block" data-reveal>
+            <div class="sense-grid">
+              {sp.aroma && (
+                <div class="sense-cell">
+                  <span class="sense-label">Aroma</span>
+                  <span class="sense-value">{sp.aroma}</span>
+                </div>
+              )}
+              {sp.flavor && (
+                <div class="sense-cell">
+                  <span class="sense-label">Flavor</span>
+                  <span class="sense-value">{sp.flavor}</span>
+                </div>
+              )}
+              {sp.appearance && (
+                <div class="sense-cell sense-cell--wide">
+                  <span class="sense-label">Appearance</span>
+                  <span class="sense-value">{sp.appearance}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        <!-- DIVIDER: tally -->
+        <div class="tally-divider" aria-hidden="true">
+          <svg width="20" height="16" viewBox="0 0 20 20" fill="none">
+            <path d="M 5 3 C 4 9, 6 14, 5 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M 13 2 C 12 9, 14 14, 13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <!-- Origin — 3 data points, nothing more -->
+        <div class="narrative-block origin-block" data-reveal>
+          <div class="origin-grid">
+            <div class="origin-cell">
+              <span class="origin-label">Location</span>
+              <span class="origin-value">{origin.data.coordinates}</span>
+            </div>
+            <div class="origin-cell">
+              <span class="origin-label">Elevation</span>
+              <span class="origin-value">{origin.data.elevation}</span>
+            </div>
+            <div class="origin-cell">
+              <span class="origin-label">Grown by</span>
+              <span class="origin-value">{origin.data.community?.description || origin.data.name}</span>
+            </div>
+            {origin.data.soil && (
+              <div class="origin-cell">
+                <span class="origin-label">Soil</span>
+                <span class="origin-value">{origin.data.soil}</span>
+              </div>
+            )}
           </div>
         </div>
 
-        {product.data.specimenCopy && (
-          <div class="narrative-section" data-reveal="blur">
-            <div class="data-label">The Soil's Record</div>
-            <div class="data-value narrative-text">{product.data.specimenCopy}</div>
-          </div>
-        )}
-
+        <!-- Method — one sentence -->
         {product.data.methodDescription && (
-          <div class="narrative-section" data-reveal="blur">
-            <div class="data-label">The Human Touch</div>
-            <div class="data-value">{product.data.methodDescription}</div>
+          <div class="method-line" data-reveal>
+            <span class="method-text">{product.data.methodDescription}</span>
           </div>
         )}
 
-        {product.data.sensoryProfile && (
-          <div class="narrative-section" data-reveal="blur">
-            <div class="data-label">The Breath</div>
-            <div class="data-grid-small">
-              {product.data.sensoryProfile.aroma && (
-                <div class="data-cell">
-                  <span class="cell-label">Aroma</span>
-                  <span class="cell-value">{product.data.sensoryProfile.aroma}</span>
-                </div>
-              )}
-              {product.data.sensoryProfile.flavor && (
-                <div class="data-cell">
-                  <span class="cell-label">Flavor</span>
-                  <span class="cell-value">{product.data.sensoryProfile.flavor}</span>
-                </div>
-              )}
-            </div>
-          </div>
+        <!-- Field note link — if there's a deep narrative, it lives elsewhere -->
+        {product.data.specimenCopy && (
+          <a href="/observations" class="field-note-link">
+            Read the field note →
+          </a>
         )}
 
-        {(product.data.botanicalName || product.data.chemistry?.activeCompound) && (
-          <div class="narrative-section" data-reveal="blur">
-            <div class="data-label">The Living Forest</div>
-            <div class="data-value">
-              {product.data.botanicalName && <span class="botanical-name">{product.data.botanicalName}</span>}
-              {product.data.botanicalName && product.data.chemistry?.activeCompound && <br/>}
-              {product.data.chemistry?.activeCompound}
-            </div>
-          </div>
-        )}
+        <!-- THE OFFERING -->
+        <div class="offering-block" data-reveal>
+          {product.data.batchRef && (
+            <div class="batch-ref">BATCH · {product.data.batchRef}</div>
+          )}
 
-        <!-- The Climax: Offering -->
-        <div class="narrative-section offering-section" data-reveal="up">
-          <div class="ledger-header">The Offering</div>
-          
-          <div class="sizes-container">
-            {product.data.sizes.map((size, i) => (
-              <button 
-                class:list={["size-btn", "add-to-ledger-btn", { "size-btn--selected": i === 0 }]} 
+          <div class="sizes-grid">
+            {product.data.sizes.map((size: any, i: number) => (
+              <button
+                class:list={["size-option", { "size-option--active": i === 0 }]}
                 data-product={JSON.stringify({
                   id: product.id + '-' + size.label,
                   productId: product.id,
@@ -148,15 +187,16 @@ const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp')
                   price: size.priceINR,
                   quantity: 1
                 })}
+                type="button"
               >
-                <span class="size-label">{size.label}</span>
+                <span class="size-qty">{size.label}</span>
                 <span class="size-price">₹{size.priceINR}</span>
               </button>
             ))}
           </div>
 
-          <button class="btn-purchase" id="purchase-cta" type="button">
-            Claim Proof
+          <button class="claim-btn add-to-ledger-btn" id="purchase-cta" type="button">
+            Add to Ledger
           </button>
         </div>
 
@@ -171,344 +211,426 @@ const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp')
 
   gsap.registerPlugin(ScrollTrigger);
 
-  function initMuseumExperience() {
-    // Reveal animations for narrative sections
-    const reveals = document.querySelectorAll('[data-reveal="blur"]');
-    reveals.forEach(el => {
-      gsap.fromTo(el, 
-        { 
-          y: 40,
-          opacity: 0,
-          filter: 'blur(10px)'
-        },
+  function initProduct() {
+    // Reveal animations — fast, not cinematic slow
+    document.querySelectorAll('[data-reveal]').forEach(el => {
+      gsap.fromTo(el,
+        { y: 20, opacity: 0 },
         {
-          y: 0,
-          opacity: 1,
-          filter: 'blur(0px)',
-          duration: 1.2,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: el,
-            start: "top 80%",
-          }
+          y: 0, opacity: 1, duration: 0.6, ease: 'power2.out',
+          scrollTrigger: { trigger: el, start: 'top 88%' }
         }
       );
     });
 
-    const upReveals = document.querySelectorAll('[data-reveal="up"]');
-    upReveals.forEach(el => {
-      gsap.fromTo(el, 
-        { y: 30, opacity: 0 },
-        {
-          y: 0, opacity: 1, duration: 1, ease: "power2.out",
-          scrollTrigger: {
-            trigger: el,
-            start: "top 85%",
-          }
-        }
-      );
-    });
-
-    // Wire up Add to Ledger buttons
-    const btns = document.querySelectorAll('.add-to-ledger-btn');
-    btns.forEach(btn => {
-      // clone and replace to avoid duplicate listeners on SPA navigation
+    // Size selection
+    const sizeOptions = document.querySelectorAll('.size-option');
+    sizeOptions.forEach(btn => {
       const newBtn = btn.cloneNode(true) as HTMLElement;
       btn.parentNode?.replaceChild(newBtn, btn);
 
       newBtn.addEventListener('click', () => {
-        const productData = JSON.parse(newBtn.getAttribute('data-product') || '{}');
-        
+        document.querySelectorAll('.size-option').forEach(b => b.classList.remove('size-option--active'));
+        newBtn.classList.add('size-option--active');
+      });
+    });
+
+    // Wire ledger buttons
+    const addBtns = document.querySelectorAll('.size-option');
+    addBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const data = JSON.parse((btn as HTMLElement).dataset.product || '{}');
         window.dispatchEvent(new CustomEvent('add-to-ledger', { detail: {
-          id: productData.id,
-          productId: productData.productId,
-          name: productData.name,
-          origin: productData.origin,
-          originId: productData.originId,
-          size: productData.size,
-          price: productData.price,
+          id: data.id,
+          productId: data.productId,
+          name: data.name,
+          origin: data.origin,
+          originId: data.originId,
+          size: data.size,
+          price: data.price,
           quantity: 1
         }}));
-
-        // Visual feedback
-        newBtn.style.background = 'rgba(198, 156, 82, 0.2)';
-        newBtn.style.borderColor = 'var(--color-gold)';
-        
-        // Select this size
-        document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('size-btn--selected'));
-        newBtn.classList.add('size-btn--selected');
-        
-        setTimeout(() => {
-          newBtn.style.background = '';
-          newBtn.style.borderColor = '';
-        }, 800);
       });
     });
 
     // Purchase CTA
     const purchaseBtn = document.getElementById('purchase-cta');
     if (purchaseBtn) {
-      const newPurchaseBtn = purchaseBtn.cloneNode(true) as HTMLElement;
-      purchaseBtn.parentNode?.replaceChild(newPurchaseBtn, purchaseBtn);
-
-      newPurchaseBtn.addEventListener('click', () => {
-        const selectedBtn = document.querySelector('.size-btn--selected') || document.querySelector('.add-to-ledger-btn');
-        if (selectedBtn) {
-          (selectedBtn as HTMLElement).click();
-        }
+      const newBtn = purchaseBtn.cloneNode(true) as HTMLElement;
+      purchaseBtn.parentNode?.replaceChild(newBtn, purchaseBtn);
+      newBtn.addEventListener('click', () => {
+        const selected = document.querySelector('.size-option--active') || document.querySelector('.size-option');
+        if (selected) (selected as HTMLElement).click();
         setTimeout(() => {
           document.getElementById('ledger-trigger')?.click();
-        }, 200);
+        }, 150);
       });
     }
   }
 
-  // Initialize on load and view transitions
-  initMuseumExperience();
-  document.addEventListener('astro:after-swap', initMuseumExperience);
+  initProduct();
+  document.addEventListener('astro:after-swap', initProduct);
 </script>
 
 <style>
-  .museum-viewport {
-    background-color: var(--color-void);
+  .product-viewport {
+    background: var(--color-void);
     color: var(--color-warm-cream);
     min-height: 100vh;
-    position: relative;
   }
 
+  /* Back link — top-left, fixed */
   .back-link {
     position: fixed;
-    top: 30px;
-    left: 30px;
-    z-index: 100;
-    display: inline-flex;
+    top: 26px;
+    left: 24px;
+    z-index: 200;
+    display: flex;
     align-items: center;
-    gap: var(--space-md);
     color: var(--color-gold);
     text-decoration: none;
-    font-family: var(--font-evidence);
-    font-size: var(--type-evidence);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    transition: opacity var(--duration-standard) var(--ease-settle);
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
   }
+  .back-link:hover { opacity: 1; }
 
-  .back-link:hover {
-    opacity: 0.7;
-  }
-
-  .museum-grid {
+  /* ─── Two-panel grid ─── */
+  .product-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     min-height: 100vh;
   }
 
-  /* Left Panel - Sticky Visual */
-  .museum-visual-container {
+  /* LEFT: sticky image */
+  .visual-panel {
     position: relative;
-    border-right: 1px solid rgba(245, 240, 232, 0.05);
+    border-right: 1px solid rgba(255,255,255,0.04);
   }
 
-  .museum-visual {
+  .visual-inner {
     position: sticky;
     top: 0;
     height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
     padding: var(--space-4xl);
   }
 
-  .museum-artifact {
-    position: relative;
-    z-index: 1;
-    max-width: 80%;
-    max-height: 80vh;
+  .product-artifact {
+    max-width: 75%;
+    max-height: 75vh;
     object-fit: contain;
-    filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.8));
-    animation: slowFloat 8s ease-in-out infinite alternate;
+    filter: drop-shadow(0 24px 48px rgba(0,0,0,0.85));
+    animation: drift 10s ease-in-out infinite alternate;
   }
 
-  @keyframes slowFloat {
-    0% { transform: translateY(0px) scale(1); }
-    100% { transform: translateY(-15px) scale(1.02); }
+  @keyframes drift {
+    0%   { transform: translateY(0px); }
+    100% { transform: translateY(-12px); }
   }
 
   .artifact-placeholder {
-    position: relative;
-    z-index: 1;
-    opacity: 0.3;
+    opacity: 0.25;
   }
 
-  /* Right Panel - Scrolling Narrative */
-  .museum-narrative {
-    padding: 20vh 10vw 20vh 5vw;
+  /* RIGHT: compact narrative */
+  .narrative-panel {
+    padding: 14vh 5vw 10vh 4vw;
     display: flex;
     flex-direction: column;
-    gap: 15vh;
+    gap: var(--space-xl);
+    max-width: 560px;
   }
 
-  .narrative-section {
-    max-width: 600px;
-  }
+  /* Identity */
+  .narrative-block {}
 
-  .product-title {
+  .product-name {
     font-family: var(--font-display);
-    font-size: clamp(3rem, 6vw, 5rem);
-    line-height: var(--line-height-tight);
+    font-size: clamp(2rem, 4.5vw, 3.8rem);
     font-weight: 400;
-    margin: 0 0 var(--space-md) 0;
+    line-height: 1.05;
+    margin: 0 0 var(--space-sm) 0;
+    letter-spacing: 0.01em;
   }
 
-  .product-evidence-line {
+  .botanical {
+    font-family: var(--font-narrative);
+    font-style: italic;
+    font-size: var(--type-evidence);
+    color: rgba(240, 234, 214, 0.4);
+    margin: 0;
+    letter-spacing: 0.04em;
+  }
+
+  /* Tally divider */
+  .tally-divider {
+    color: var(--color-gold);
+    opacity: 0.45;
+    line-height: 0;
+    padding: 0;
+  }
+
+  /* Sensory */
+  .sense-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg) var(--space-xl);
+  }
+
+  .sense-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .sense-cell--wide {
+    grid-column: 1 / -1;
+  }
+
+  .sense-label {
+    font-family: var(--font-evidence);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--color-gold);
+    opacity: 0.7;
+  }
+
+  .sense-value {
+    font-family: var(--font-narrative);
+    font-size: clamp(0.95rem, 1.8vw, 1.15rem);
+    line-height: 1.4;
+    color: rgba(240, 234, 214, 0.85);
+  }
+
+  /* Origin data grid */
+  .origin-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md) var(--space-xl);
+  }
+
+  .origin-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .origin-label {
+    font-family: var(--font-evidence);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: rgba(240, 234, 214, 0.3);
+  }
+
+  .origin-value {
     font-family: var(--font-evidence);
     font-size: var(--type-evidence);
-    color: rgba(245, 240, 232, 0.5);
-    letter-spacing: 0.15em;
+    color: rgba(240, 234, 214, 0.65);
+    letter-spacing: 0.04em;
+  }
+
+  /* Method — one line */
+  .method-line {
+    border-left: 1px solid rgba(255, 69, 0, 0.3);
+    padding-left: var(--space-md);
+  }
+
+  .method-text {
+    font-family: var(--font-narrative);
+    font-size: clamp(0.9rem, 1.6vw, 1.05rem);
+    color: rgba(240, 234, 214, 0.5);
+    line-height: 1.5;
+    font-style: italic;
+  }
+
+  /* Field note link */
+  .field-note-link {
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    color: rgba(240, 234, 214, 0.3);
+    text-decoration: none;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
+    transition: color 0.2s ease;
+    display: inline-block;
+  }
+
+  .field-note-link:hover {
+    color: var(--color-gold);
+  }
+
+  /* Offering */
+  .offering-block {
+    border-top: 1px solid rgba(255, 69, 0, 0.18);
+    padding-top: var(--space-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
   }
 
   .batch-ref {
-    color: var(--color-gold);
-  }
-
-  .data-label {
     font-family: var(--font-evidence);
-    font-size: var(--type-whisper);
-    text-transform: uppercase;
-    color: var(--color-gold);
+    font-size: 9px;
     letter-spacing: 0.2em;
-    margin-bottom: var(--space-lg);
-  }
-
-  .data-value {
-    font-family: var(--font-narrative);
-    font-size: var(--type-statement);
-    line-height: 1.5;
-    font-weight: 300;
-    color: rgba(245, 240, 232, 0.85);
-  }
-
-  .narrative-text {
-    font-size: clamp(1.2rem, 2vw, 1.8rem);
-    line-height: 1.6;
-  }
-
-  .botanical-name {
-    font-style: italic;
-    color: var(--color-warm-cream);
-  }
-
-  .data-grid-small {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-xl);
-  }
-
-  .data-cell {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xs);
-  }
-
-  .cell-label {
-    font-family: var(--font-evidence);
-    font-size: var(--type-whisper);
+    color: rgba(240, 234, 214, 0.2);
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: rgba(245, 240, 232, 0.4);
   }
 
-  .cell-value {
-    font-family: var(--font-narrative);
-    font-size: var(--type-narrative);
-  }
-
-  /* The Climax: Offering */
-  .offering-section {
-    background: transparent;
-    border: 1px solid rgba(255, 69, 0, 0.3);
-    padding: var(--space-3xl);
-  }
-
-  .ledger-header {
-    font-family: var(--font-evidence);
-    font-size: 1.5rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: var(--space-2xl);
-    color: var(--color-gold);
-    border-bottom: 1px solid rgba(255, 69, 0, 0.2);
-    padding-bottom: var(--space-lg);
-  }
-
-  .sizes-container {
+  .sizes-grid {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+
+  .size-option {
+    display: flex;
+    align-items: center;
     gap: var(--space-md);
-    margin-bottom: var(--space-2xl);
-  }
-
-  .size-btn {
-    display: flex;
-    justify-content: space-between;
     background: transparent;
-    border: 1px solid rgba(245, 240, 232, 0.15);
+    border: 1px solid rgba(240, 234, 214, 0.12);
     color: var(--color-warm-cream);
-    padding: var(--space-lg) var(--space-xl);
+    padding: var(--space-md) var(--space-lg);
     font-family: var(--font-evidence);
     font-size: var(--type-evidence);
     cursor: pointer;
-    transition: all var(--duration-standard) var(--ease-settle);
+    transition: all 0.2s ease;
+    min-height: 44px;
   }
 
-  .size-btn:hover,
-  .size-btn--selected {
+  .size-option:hover,
+  .size-option--active {
     border-color: var(--color-gold);
-    background: rgba(198, 156, 82, 0.1);
+    background: rgba(255, 69, 0, 0.06);
+    color: var(--color-gold);
   }
 
-  .btn-purchase {
+  .size-qty {
+    letter-spacing: 0.06em;
+  }
+
+  .size-price {
+    color: rgba(240, 234, 214, 0.6);
+    font-size: var(--type-whisper);
+  }
+
+  .size-option--active .size-price,
+  .size-option:hover .size-price {
+    color: rgba(255, 69, 0, 0.7);
+  }
+
+  .claim-btn {
     width: 100%;
-    padding: var(--space-xl);
+    padding: var(--space-lg) var(--space-xl);
     background: var(--color-gold);
     color: var(--color-void);
     border: none;
     font-family: var(--font-evidence);
-    font-size: 1.1rem;
+    font-size: var(--type-evidence);
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.18em;
     cursor: pointer;
-    transition: background var(--duration-standard) var(--ease-settle);
+    transition: background 0.2s ease;
+    min-height: 52px;
   }
 
-  .btn-purchase:hover {
+  .claim-btn:hover {
     background: var(--color-warm-cream);
   }
 
+  /* ═══════════════════════════════
+     MOBILE — Perfect
+  ═══════════════════════════════ */
   @media (max-width: 900px) {
-    .museum-grid {
+    .product-grid {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr;
+    }
+
+    .visual-panel {
+      border-right: none;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .visual-inner {
+      position: relative;
+      height: 52vw;
+      min-height: 220px;
+      max-height: 360px;
+      padding: var(--space-2xl);
+    }
+
+    .product-artifact {
+      max-height: 100%;
+      max-width: 55%;
+    }
+
+    .narrative-panel {
+      padding: var(--space-2xl) var(--space-lg) var(--space-4xl);
+      gap: var(--space-lg);
+      max-width: 100%;
+    }
+
+    .product-name {
+      font-size: clamp(1.8rem, 8vw, 2.8rem);
+    }
+
+    .sense-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-md) var(--space-lg);
+    }
+
+    .origin-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-sm) var(--space-lg);
+    }
+
+    /* Back link: offset from bottom of image on mobile */
+    .back-link {
+      top: 16px;
+      left: 16px;
+    }
+
+    /* CTA — thumb zone */
+    .claim-btn {
+      padding: var(--space-xl);
+      font-size: 11px;
+    }
+
+    .offering-block {
+      /* Sticky at bottom of viewport on mobile */
+      position: sticky;
+      bottom: 0;
+      background: var(--color-void);
+      border-top: 1px solid rgba(255, 69, 0, 0.2);
+      padding: var(--space-lg);
+      margin: 0 calc(-1 * var(--space-lg));
+      width: calc(100% + 2 * var(--space-lg));
+      z-index: 50;
+      padding-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom, 0px));
+    }
+  }
+
+  @media (max-width: 480px) {
+    .sense-grid {
       grid-template-columns: 1fr;
     }
-    .museum-visual-container {
-      border-right: none;
-      border-bottom: 1px solid rgba(245, 240, 232, 0.05);
+
+    .origin-grid {
+      grid-template-columns: 1fr 1fr;
     }
-    .museum-visual {
-      height: 60vh;
-      position: relative;
+
+    .sizes-grid {
+      flex-direction: column;
     }
-    .museum-narrative {
-      padding: var(--space-4xl) var(--space-xl);
-      gap: 10vh;
-    }
-    .back-link {
-      background: rgba(5,8,4,0.5);
-      backdrop-filter: blur(4px);
-      padding: 10px;
-      border-radius: 4px;
+
+    .size-option {
+      width: 100%;
+      justify-content: space-between;
     }
   }
 </style>

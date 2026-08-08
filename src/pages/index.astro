@@ -7,69 +7,93 @@ import OriginMark from '../components/OriginMark.astro';
 const allProducts = await getCollection('products');
 const allOrigins = await getCollection('origins');
 
-// Active products
+// Active products only
 const activeProducts = allProducts.filter(p => {
   const originId = typeof p.data.originSlug === 'object' ? (p.data.originSlug as any).id : p.data.originSlug;
   return originId !== 'malabar-coast' && p.data.sizes && p.data.sizes.length > 0;
 });
+
+// Build origin lookup for coordinate display
+const originMap = Object.fromEntries(allOrigins.map(o => [o.id, o.data]));
 ---
 
-<Layout 
-  title="OurOrigin — The Proof System" 
-  description="The Western Ghats are speaking. We are just recording it."
+<Layout
+  title="OurOrigin — Single-Origin Yields from the Western Ghats"
+  description="Direct from the first hands. Single-origin spices, millets and teas from indigenous farming communities of the Western Ghats."
   noHeaderPadding={true}
 >
 
-  <!-- ACT I: The Interrogation -->
-  <section class="interrogation-hook">
-    <div class="hook-content" data-reveal="up">
-      <div class="hook-data">SYS.COORD [ 11.605° N, 76.083° E ]</div>
-      <h1 class="hook-statement">The Western Ghats are speaking. <br/>We are just recording it.</h1>
-      <p class="hook-sub">Not a brand. Not a middleman. Only the First Hands.</p>
-    </div>
-  </section>
+  <!-- Coordinate datum — updates on row hover -->
+  <div class="coord-datum" id="coord-datum" aria-live="polite">
+    <span class="coord-dot"></span>
+    <span class="coord-text" id="coord-text">WESTERN GHATS · FIRST HANDS · DIRECT</span>
+  </div>
 
-  <!-- ACT II: The Archive -->
+  <!-- THE ARCHIVE -->
   <section class="the-archive" id="the-yields" aria-label="The Registry">
-    <div class="archive-header">
-      <span class="archive-label">INDEX</span>
+
+    <div class="archive-header" aria-hidden="true">
+      <!-- Tally gate as index marker -->
+      <div class="archive-label archive-label--mark">
+        <OriginMark size={18} variant="gold" />
+      </div>
       <span class="archive-label">ORIGIN</span>
-      <span class="archive-label">SPECIMEN</span>
-      <span class="archive-label">STATUS</span>
+      <span class="archive-label">YIELD</span>
+      <span class="archive-label archive-label--right">AVAILABLE</span>
     </div>
 
     <div class="archive-list">
       {activeProducts.map((product, index) => {
         const originId = typeof product.data.originSlug === 'object' ? (product.data.originSlug as any).id : product.data.originSlug;
-        const originObj = allOrigins.find(o => o.id === originId);
-        const originName = originObj ? originObj.data.name : originId;
+        const origin = originMap[originId];
+        const originName = origin ? origin.name : originId;
         const imgUrl = product.data.images?.product || product.data.images?.packaging || '';
+        // Build coordinate string for this product
+        const coordStr = origin?.coordinates
+          ? `${origin.coordinates} · ${originName.toUpperCase()} · ${origin.elevation || ''}`
+          : `${originName.toUpperCase()}`;
 
         return (
-          <a href={`/origins/${originId}/${product.id}`} class="archive-row" data-reveal="up">
-            
-            {/* The Background Hover Reveal */}
+          <a
+            href={`/origins/${originId}/${product.id}`}
+            class="archive-row"
+            data-coord={coordStr}
+            data-img={imgUrl}
+          >
             {imgUrl && (
-              <img 
-                src={imgUrl} 
-                alt={product.data.name} 
+              <img
+                src={imgUrl}
+                alt={product.data.name}
                 class="archive-hover-img"
                 style={`view-transition-name: yield-img-${product.id}`}
+                loading="lazy"
               />
             )}
 
-            <div class="archive-cell archive-index">00{index + 1}</div>
+            <div class="archive-cell archive-index" aria-hidden="true">
+              <!-- Single tally stroke per row -->
+              <svg width="10" height="24" viewBox="0 0 10 30" fill="none" aria-hidden="true">
+                <path d="M 5 2 C 4 10, 6 20, 5 28" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+              </svg>
+              <span class="index-num">{String(index + 1).padStart(2, '0')}</span>
+            </div>
             <div class="archive-cell archive-origin">{originName}</div>
             <div class="archive-cell archive-specimen">
               <span style={`view-transition-name: yield-title-${product.id}`}>{product.data.name}</span>
             </div>
-            <div class="archive-cell archive-status">
-              <span class="status-dot"></span> ACTIVE
+            <div class="archive-cell archive-status" aria-label="Available">
+              <span class="status-tally" aria-hidden="true">
+                <!-- One live tally mark = one active harvest -->
+                <svg width="12" height="24" viewBox="0 0 12 30" fill="none">
+                  <path d="M 5 2 C 4 10, 6 20, 5 28" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                </svg>
+              </span>
             </div>
           </a>
         );
       })}
     </div>
+
   </section>
 
 </Layout>
@@ -81,78 +105,88 @@ const activeProducts = allProducts.filter(p => {
   gsap.registerPlugin(ScrollTrigger);
 
   function initArchive() {
-    // Standard reveal animations
-    const reveals = document.querySelectorAll('[data-reveal]');
-    reveals.forEach(el => {
-      gsap.fromTo(el, 
-        { y: 30, opacity: 0 },
-        {
-          y: 0, opacity: 1, duration: 0.8, ease: "power2.out",
-          scrollTrigger: {
-            trigger: el,
-            start: "top 90%",
-          }
-        }
-      );
+    const coordEl = document.getElementById('coord-text');
+    const defaultCoord = 'WESTERN GHATS · FIRST HANDS · DIRECT';
+
+    // Row coordinate & image reveal on hover
+    const rows = document.querySelectorAll<HTMLElement>('.archive-row');
+    rows.forEach(row => {
+      const coord = row.dataset.coord || defaultCoord;
+
+      row.addEventListener('mouseenter', () => {
+        if (coordEl) coordEl.textContent = coord;
+      });
+      row.addEventListener('mouseleave', () => {
+        if (coordEl) coordEl.textContent = defaultCoord;
+      });
     });
+
+    // Staggered row entrance
+    gsap.fromTo('.archive-row',
+      { y: 16, opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 0.55,
+        ease: 'power2.out',
+        stagger: 0.06,
+        scrollTrigger: {
+          trigger: '.archive-list',
+          start: 'top 88%',
+        }
+      }
+    );
+
+    // Coord datum fade in
+    gsap.fromTo('#coord-datum',
+      { opacity: 0, y: -8 },
+      { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out', delay: 0.3 }
+    );
   }
 
-  // Init on load and after view transitions
   initArchive();
   document.addEventListener('astro:after-swap', initArchive);
 </script>
 
 <style>
-  /* ════════════════════════════════════════════════════════════
-     ACT I: THE INTERROGATION
-     ════════════════════════════════════════════════════════════ */
-  .interrogation-hook {
-    width: 100%;
-    min-height: 80vh;
+  /* ─── Coordinate Datum ─── */
+  .coord-datum {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 900;
+    /* Sits just below the header */
+    padding: 72px var(--space-xl) var(--space-sm);
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    padding: var(--space-4xl) var(--space-xl);
-    background: var(--color-void);
-    border-bottom: 1px solid rgba(240, 234, 214, 0.1);
+    gap: var(--space-sm);
+    pointer-events: none;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 100%);
   }
 
-  .hook-content {
-    max-width: 900px;
-    margin-top: 10vh;
+  .coord-dot {
+    width: 5px;
+    height: 5px;
+    background: var(--color-gold);
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 0 6px var(--color-gold);
   }
 
-  .hook-data {
+  .coord-text {
     font-family: var(--font-evidence);
-    color: var(--color-gold);
-    font-size: var(--type-evidence);
-    letter-spacing: 0.1em;
-    margin-bottom: var(--space-xl);
-  }
-
-  .hook-statement {
-    font-family: var(--font-narrative);
-    font-size: clamp(2.5rem, 6vw, 5rem);
-    font-weight: 400;
-    color: var(--color-warm-cream);
-    line-height: 1.1;
-    margin: 0 0 var(--space-lg) 0;
-  }
-
-  .hook-sub {
-    font-family: var(--font-evidence);
-    font-size: var(--type-evidence);
+    font-size: var(--type-whisper);
     color: rgba(240, 234, 214, 0.5);
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    transition: opacity 0.25s ease;
   }
 
-  /* ════════════════════════════════════════════════════════════
-     ACT II: THE ARCHIVE (BRUTALIST REGISTRY)
-     ════════════════════════════════════════════════════════════ */
+  /* ─── Archive ─── */
   .the-archive {
     position: relative;
-    padding: var(--space-4xl) var(--space-xl);
+    padding: 100px var(--space-xl) var(--space-4xl);
     background-color: var(--color-void);
     min-height: 100vh;
     z-index: 10;
@@ -160,19 +194,31 @@ const activeProducts = allProducts.filter(p => {
 
   .archive-header {
     display: grid;
-    grid-template-columns: 100px 1fr 2fr 150px;
+    grid-template-columns: 56px 1fr 2fr 80px;
     padding-bottom: var(--space-md);
-    border-bottom: 1px solid rgba(240, 234, 214, 0.2);
-    margin-bottom: var(--space-xl);
+    border-bottom: 1px solid rgba(240, 234, 214, 0.12);
+    margin-bottom: var(--space-lg);
+    align-items: center;
   }
 
   .archive-label {
     font-family: var(--font-evidence);
-    font-size: 10px;
-    color: rgba(240, 234, 214, 0.4);
-    letter-spacing: 0.1em;
+    font-size: 9px;
+    color: rgba(240, 234, 214, 0.3);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
   }
 
+  .archive-label--mark {
+    display: flex;
+    align-items: center;
+  }
+
+  .archive-label--right {
+    text-align: right;
+  }
+
+  /* ─── Rows ─── */
   .archive-list {
     display: flex;
     flex-direction: column;
@@ -181,12 +227,27 @@ const activeProducts = allProducts.filter(p => {
   .archive-row {
     position: relative;
     display: grid;
-    grid-template-columns: 100px 1fr 2fr 150px;
+    grid-template-columns: 56px 1fr 2fr 80px;
     padding: var(--space-xl) 0;
-    border-bottom: 1px solid rgba(240, 234, 214, 0.1);
+    border-bottom: 1px solid rgba(240, 234, 214, 0.07);
     text-decoration: none;
     color: var(--color-warm-cream);
-    transition: color 0.2s ease;
+    transition: color 0.18s ease;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .archive-row::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 69, 0, 0.03);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .archive-row:hover::before {
+    opacity: 1;
   }
 
   .archive-cell {
@@ -195,79 +256,143 @@ const activeProducts = allProducts.filter(p => {
     font-family: var(--font-evidence);
     font-size: var(--type-evidence);
     position: relative;
-    z-index: 2; /* Sit above the hover image */
+    z-index: 2;
+  }
+
+  .archive-index {
+    gap: var(--space-sm);
+    color: rgba(240, 234, 214, 0.25);
+  }
+
+  .index-num {
+    font-size: 9px;
+    letter-spacing: 0.1em;
+  }
+
+  .archive-origin {
+    font-size: var(--type-whisper);
+    letter-spacing: 0.08em;
+    color: rgba(240, 234, 214, 0.45);
+    text-transform: uppercase;
   }
 
   .archive-specimen {
     font-family: var(--font-display);
-    font-size: 2rem;
+    font-size: clamp(1.15rem, 2.5vw, 1.8rem);
     letter-spacing: 0.02em;
+    font-weight: 400;
   }
 
   .archive-status {
-    color: rgba(240, 234, 214, 0.5);
+    justify-content: flex-end;
+    color: var(--color-gold);
+    opacity: 0.6;
   }
 
-  .status-dot {
-    width: 6px;
-    height: 6px;
-    background-color: var(--color-gold);
-    border-radius: 50%;
-    display: inline-block;
-    margin-right: var(--space-sm);
-    box-shadow: 0 0 10px var(--color-gold);
+  .status-tally {
+    display: flex;
+    align-items: center;
   }
 
-  /* The Hover Reveal Magic */
+  /* Hover reveal */
   .archive-hover-img {
     position: fixed;
     top: 50%;
     left: 50%;
-    width: 60vw;
-    height: 60vh;
-    transform: translate(-50%, -50%) scale(0.9);
+    width: 55vw;
+    max-width: 600px;
+    height: 55vh;
+    transform: translate(-50%, -50%) scale(0.92);
     object-fit: contain;
     opacity: 0;
     pointer-events: none;
-    z-index: 0;
-    transition: opacity 0.4s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-    filter: grayscale(100%);
+    z-index: 1;
+    transition: opacity 0.38s ease, transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    filter: grayscale(60%);
   }
 
   .archive-row:hover .archive-hover-img {
-    opacity: 0.3;
+    opacity: 0.25;
     transform: translate(-50%, -50%) scale(1);
     filter: grayscale(0%);
   }
 
   .archive-row:hover .archive-cell {
+    color: var(--color-warm-cream);
+  }
+
+  .archive-row:hover .archive-specimen {
     color: var(--color-gold);
+  }
+
+  .archive-row:hover .archive-origin {
+    color: rgba(240, 234, 214, 0.7);
   }
 
   .archive-row:hover .archive-status {
-    color: var(--color-gold);
+    opacity: 1;
   }
 
+  /* ═══════════════════════════════
+     MOBILE — Perfect
+  ═══════════════════════════════ */
   @media (max-width: 768px) {
+    .coord-datum {
+      padding: 64px var(--space-lg) var(--space-xs);
+    }
+
+    .coord-text {
+      font-size: 8px;
+      letter-spacing: 0.08em;
+    }
+
+    .the-archive {
+      padding: 88px var(--space-lg) var(--space-3xl);
+    }
+
+    /* Mobile: hide header row labels */
     .archive-header {
       display: none;
     }
+
     .archive-row {
-      grid-template-columns: 1fr;
-      gap: var(--space-sm);
-      padding: var(--space-2xl) 0;
+      /* Stack: full-width product name + origin below, status right */
+      display: grid;
+      grid-template-columns: 1fr auto;
+      grid-template-rows: auto auto;
+      gap: 2px var(--space-sm);
+      padding: var(--space-lg) 0;
+      align-items: start;
     }
-    .archive-cell {
-      justify-content: flex-start;
-    }
+
     .archive-index {
-      font-size: 10px;
-      color: rgba(240, 234, 214, 0.4);
+      display: none;
     }
+
+    .archive-specimen {
+      grid-column: 1;
+      grid-row: 1;
+      font-size: clamp(1.1rem, 5vw, 1.6rem);
+    }
+
+    .archive-origin {
+      grid-column: 1;
+      grid-row: 2;
+      font-size: 8px;
+      letter-spacing: 0.1em;
+      padding-bottom: 2px;
+    }
+
+    .archive-status {
+      grid-column: 2;
+      grid-row: 1 / 3;
+      align-self: center;
+      justify-content: flex-end;
+    }
+
+    /* On mobile, show a subtle image behind tapped row */
     .archive-hover-img {
-      width: 100vw;
-      height: 100vh;
-      object-fit: cover;
+      display: none;
     }
   }
 </style>

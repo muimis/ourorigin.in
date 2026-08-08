@@ -6,7 +6,8 @@ import TallyCounter from './TallyCounter.astro';
   <div class="header-inner">
     <a href="/" class="brand" aria-label="OurOrigin — Home">
       <div class="brand-lockup" style="view-transition-name: origin-mark-global;">
-        <OriginMark size={32} variant="gold" animate={false} />
+        <OriginMark size={28} variant="gold" />
+        <span class="brand-name">OurOrigin</span>
       </div>
     </a>
 
@@ -129,6 +130,19 @@ import TallyCounter from './TallyCounter.astro';
     align-items: center;
     gap: var(--space-md);
     transition: opacity 0.1s;
+  }
+
+  .brand-name {
+    font-family: var(--font-evidence);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(240, 234, 214, 0.6);
+    transition: color var(--duration-standard) var(--ease-settle);
+  }
+
+  .brand:hover .brand-name {
+    color: var(--color-gold);
   }
 
   :global(body.is-splashing) .brand-lockup {

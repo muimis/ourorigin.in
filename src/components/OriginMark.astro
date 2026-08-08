@@ -3,9 +3,10 @@ export interface Props {
   size?: number;
   variant?: 'primary' | 'reversed' | 'gold';
   id?: string;
+  hideDot?: boolean;
 }
 
-const { size = 100, variant = 'primary', id = Math.random().toString(36).substring(7) } = Astro.props;
+const { size = 100, variant = 'primary', id = Math.random().toString(36).substring(7), hideDot = false } = Astro.props;
 
 const colorMap = {
   primary: 'var(--color-warm-cream)',
@@ -15,103 +16,63 @@ const colorMap = {
 const strokeColor = colorMap[variant];
 ---
 
-<svg 
+<!--
+  The Tally Gate: ||||/
+  Four verticals + one diagonal = a completed count.
+  The oldest proof mark on earth.
+  Hand-drawn SVG — slight imperfection is intentional.
+-->
+<svg
   id={`origin-mark-${id}`}
-  class={`origin-mark variant-${variant}`} 
-  width={size} 
-  height={size} 
-  viewBox="0 0 280 280" 
-  xmlns="http://www.w3.org/2000/svg" 
-  fill="none" 
-  aria-label="OurOrigin — Origin Mark" 
+  class={`origin-mark variant-${variant}`}
+  width={size}
+  height={size}
+  viewBox="0 0 60 60"
+  xmlns="http://www.w3.org/2000/svg"
+  fill="none"
+  aria-label="OurOrigin — Tally Mark"
   role="img"
 >
-  <!-- Outer ring -->
-  <circle class="om-outer" cx="140" cy="140" r="108" stroke={strokeColor} stroke-width="1.5" opacity="0.4"/>
-  
-  <!-- Crosshairs -->
-  <g class="om-crosshairs" stroke={strokeColor} stroke-width="1.5" opacity="0.9" stroke-linecap="round">
-    <line x1="140" y1="72"  x2="140" y2="104"/>
-    <line x1="140" y1="176" x2="140" y2="208"/>
-    <line x1="72"  y1="140" x2="104" y2="140"/>
-    <line x1="176" y1="140" x2="208" y2="140"/>
+  <g stroke={strokeColor} stroke-width="4" stroke-linecap="round" class="tally-strokes">
+    <!-- Four verticals — slightly organic, not perfectly straight -->
+    <path class="om-s1" d="M 8  8 C  7 22, 10 36,  8 52" />
+    <path class="om-s2" d="M 20  6 C 18 22, 21 38, 19 54" />
+    <path class="om-s3" d="M 32  9 C 34 22, 31 36, 33 51" />
+    <path class="om-s4" d="M 44  7 C 42 21, 45 38, 43 53" />
+    <!-- The diagonal cross — closing the group -->
+    <path class="om-s5" d="M  2 48 C 18 36, 35 22, 55 10" />
   </g>
-
-  <!-- Inner ring -->
-  <circle class="om-inner" cx="140" cy="140" r="28" stroke={strokeColor} stroke-width="1.5" opacity="0.75" fill="none"/>
-  
-  <!-- Center dot -->
-  <circle class="om-dot" cx="140" cy="140" r="6" fill={strokeColor} opacity="1"/>
 </svg>
 
 <script>
   import gsap from 'gsap';
 
-  class OriginMarkAnimation {
-    constructor() {
-      this.init();
-      document.addEventListener('play-origin-mark-entrance', () => this.play());
-    }
+  function initTallyMark() {
+    document.querySelectorAll('.origin-mark').forEach(svg => {
+      const strokes = svg.querySelectorAll('.tally-strokes path');
 
-    init() {
-      document.querySelectorAll('.origin-mark').forEach(svg => {
-        const outer = svg.querySelector('.om-outer');
-        const lines = svg.querySelectorAll('.om-crosshairs line');
-        const inner = svg.querySelector('.om-inner');
-        const dot = svg.querySelector('.om-dot');
-
-        // Lengths for draw-on effect
-        const outerLen = 2 * Math.PI * 108; // ~678.58
-        const innerLen = 2 * Math.PI * 28;  // ~175.93
-        const lineLen = 32;
-
-        gsap.set(outer, { strokeDasharray: outerLen, strokeDashoffset: outerLen });
-        gsap.set(inner, { strokeDasharray: innerLen, strokeDashoffset: innerLen });
-        gsap.set(lines, { strokeDasharray: lineLen, strokeDashoffset: lineLen });
-        gsap.set(dot, { scale: 0, transformOrigin: "50% 50%", opacity: 0 });
+      strokes.forEach(s => {
+        const len = (s as SVGPathElement).getTotalLength?.() || 60;
+        gsap.set(s, { strokeDasharray: len, strokeDashoffset: len });
       });
-    }
 
-    play() {
-      document.querySelectorAll('.origin-mark').forEach(svg => {
-        const outer = svg.querySelector('.om-outer');
-        const lines = svg.querySelectorAll('.om-crosshairs line');
-        const inner = svg.querySelector('.om-inner');
-        const dot = svg.querySelector('.om-dot');
-
-        const outerLen = 2 * Math.PI * 108;
-        const innerLen = 2 * Math.PI * 28;
-        const lineLen = 32;
-
-        // Reset to beginning
-        gsap.set(outer, { strokeDashoffset: outerLen });
-        gsap.set(inner, { strokeDashoffset: innerLen });
-        gsap.set(lines, { strokeDashoffset: lineLen });
-        gsap.set(dot, { scale: 0, opacity: 0 });
-
-        const tl = gsap.timeline();
-        
-        // duration-deep: 700ms
-        const dur = 0.7; 
-        // ~30% overlap: start slightly before previous finishes
-        const overlap = "-=" + (dur * 0.3); 
-        
-        // Custom cubic-bezier is hard natively without CustomEase, 
-        // using power3.out as closest approximation to the ease-settle (0.22, 1, 0.36, 1)
-        const easeSettle = "power3.out";
-
-        tl.to(outer, { strokeDashoffset: 0, duration: dur, ease: easeSettle })
-          .to(lines, { strokeDashoffset: 0, duration: dur, ease: easeSettle, stagger: 0 }, overlap)
-          .to(inner, { strokeDashoffset: 0, duration: dur, ease: easeSettle }, overlap)
-          // For the dot, use a slight back.out for organic settling or just standard ease
-          .to(dot, { scale: 1, opacity: 1, duration: 0.32, ease: "back.out(1.5)" }, overlap);
+      // Draw in sequence on first load
+      const tl = gsap.timeline({ delay: 0.1 });
+      strokes.forEach((s, i) => {
+        const len = (s as SVGPathElement).getTotalLength?.() || 60;
+        tl.to(s, {
+          strokeDashoffset: 0,
+          duration: 0.28,
+          ease: 'power2.out',
+        }, i * 0.08);
       });
-    }
+    });
   }
 
-  // Ensure it only initializes once
-  if (!window['originMarkAnimationInitialized']) {
-    new OriginMarkAnimation();
-    window['originMarkAnimationInitialized'] = true;
+  // Play entrance on load
+  if (!window['originMarkTallyInit']) {
+    window['originMarkTallyInit'] = true;
+    document.addEventListener('DOMContentLoaded', initTallyMark);
+    document.addEventListener('astro:page-load', initTallyMark);
   }
 </script>
