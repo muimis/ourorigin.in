@@ -16,7 +16,7 @@
 
   // Particle System (Dust / Soil)
   const particlesGeometry = new THREE.BufferGeometry();
-  const count = 3000;
+  const count = 4500;
   const positions = new Float32Array(count * 3);
   const colors = new Float32Array(count * 3);
 
@@ -50,10 +50,11 @@
   const texture = new THREE.CanvasTexture(circleCanvas);
 
   const particlesMaterial = new THREE.PointsMaterial({
-    size: 0.1,
+    size: 0.14,
     sizeAttenuation: true,
     vertexColors: true,
     transparent: true,
+    opacity: 0.55,
     alphaMap: texture,
     alphaTest: 0.001,
     depthWrite: false,
@@ -79,9 +80,9 @@
   function tick() {
     const elapsedTime = clock.getElapsedTime();
 
-    // Gentle floating
-    particleSystem.rotation.y = elapsedTime * 0.05;
-    particleSystem.rotation.x = elapsedTime * 0.02;
+    // Gentle floating — like forest dust
+    particleSystem.rotation.y = elapsedTime * 0.03;
+    particleSystem.rotation.x = elapsedTime * 0.012;
 
     // Mouse parallax
     targetX = mouseX * 0.001;

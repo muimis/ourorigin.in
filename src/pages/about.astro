@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import SoilCanvas from '../components/SoilCanvas.astro';
 ---
 
 <Layout
@@ -8,6 +9,9 @@ import Layout from '../layouts/Layout.astro';
   noHeaderPadding={true}
 >
   <main class="manifesto-viewport">
+
+    <!-- Living atmosphere beneath the words -->
+    <SoilCanvas />
 
     <div class="manifesto-track">
 
@@ -46,7 +50,7 @@ import Layout from '../layouts/Layout.astro';
       <section class="manifesto-beat">
         <div class="beat-content" data-cinematic="scale-down">
           <h2 class="massive-statement">First Hands.</h2>
-          <p class="qualifier-text">The person who grew this was the first person to handle it for money.<br/>No broker before them. Their count is the first count.</p>
+          <p class="qualifier-text">The person who grew this knew when to cut it.<br/>No one closer to the source exists. Their knowledge is the credential. Their hands were first.</p>
           <p class="qualifier-text tally-note" aria-hidden="true">That is why the mark is a tally gate.</p>
         </div>
       </section>
@@ -97,10 +101,9 @@ import Layout from '../layouts/Layout.astro';
 
 <style>
   .manifesto-viewport {
-    background-color: var(--color-void);
+    background-color: transparent;
     color: var(--color-warm-cream);
     position: relative;
-    overflow: hidden;
   }
 
   .manifesto-track {

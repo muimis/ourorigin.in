@@ -6,6 +6,7 @@ import HeroSection from '../components/home/HeroSection.astro';
 import HandSection from '../components/home/HandSection.astro';
 import SustainabilitySection from '../components/home/SustainabilitySection.astro';
 import TestimoniesSection from '../components/home/TestimoniesSection.astro';
+import SoilCanvas from '../components/SoilCanvas.astro';
 
 // Load content
 const allProducts = await getCollection('products');
@@ -26,6 +27,9 @@ const originMap = Object.fromEntries(allOrigins.map(o => [o.id, o.data]));
   description="A provenance record for what the land gives. Every yield carries its coordinate, its community, its batch reference. Currently sourcing from the Western Ghats."
   noHeaderPadding={true}
 >
+
+  <!-- ═══ ATMOSPHERE: soil particles fixed beneath everything ═══ -->
+  <SoilCanvas />
 
   <!-- ═══ ACT I: THE LAND ═══ -->
   <HeroSection />
