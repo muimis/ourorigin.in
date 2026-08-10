@@ -1,230 +1,307 @@
 ---
-const testimonies = [
-  {
-    quote: "\"I've cooked with spices my whole life. This ragi — it's different. You can taste where it came from.\"",
-    name: "Chef Arjun S.",
-    title: "Head Chef, Kochi",
-    rating: 5
-  },
-  {
-    quote: "\"My grandmother used to grow this in Wayanad. I thought it was gone forever. OurOrigin found it.\"",
-    name: "Meena R.",
-    title: "Home cook, Thrissur",
-    rating: 4.5
-  },
-  {
-    quote: "\"I source for three restaurants. OurOrigin is the only brand I don't have to verify myself.\"",
-    name: "Riyaz M.",
-    title: "F&B Procurement, Bangalore",
-    rating: 5
-  },
-  {
-    quote: "\"The foxtail millet cooks in half the time and smells like the Nilgiris themselves.\"",
-    name: "Ananya K.",
-    title: "Nutrition consultant, Chennai",
-    rating: 5
-  }
-];
-
-// Helper to render stars based on rating
-const renderStars = (rating: number) => {
-  const stars = [];
-  for(let i=1; i<=5; i++) {
-    if(rating >= i) {
-      stars.push('★');
-    } else if (rating === i - 0.5) {
-      stars.push('☆'); // Simplified half-star
-    } else {
-      stars.push('☆');
-    }
-  }
-  return stars.join('');
+// One testimony, framed as a field note — not a review aggregator.
+// The rating surface belongs on the product page. Here: the human voice.
+const featured = {
+  quote: "My grandmother used to grow this in Wayanad. I thought it was gone forever. OurOrigin found it.",
+  name: "Meena R.",
+  location: "Thrissur",
+  context: "Home cook",
 };
+
+const strip = [
+  {
+    quote: "I've cooked with spices my whole life. This ragi — it's different. You can taste where it came from.",
+    name: "Chef Arjun S.",
+    location: "Kochi",
+  },
+  {
+    quote: "I source for three restaurants. OurOrigin is the only brand I don't have to verify myself.",
+    name: "Riyaz M.",
+    location: "Bangalore",
+  },
+  {
+    quote: "The foxtail millet cooks in half the time and smells like the Nilgiris themselves.",
+    name: "Ananya K.",
+    location: "Chennai",
+  },
+];
 ---
-<section class="testimonies-section" data-reveal="up">
-  <div class="testimonies-container">
-    
-    <div class="testimonies-header">
-      <h2 class="title">Chefs and farmers across Kerala trust OurOrigin</h2>
-      <p class="desc">Do not take our word for it — see what people say after tasting the real difference.</p>
-    </div>
 
-    <div class="testimonies-table">
-      <div class="table-header">
-        <div class="header-left">Rating & Reviews</div>
-        <div class="header-center">
-          <span>Verified reviews [ 127 ]</span>
-          <span class="global-rating">★★★★★ [ 4.9/5 ]</span>
-        </div>
-        <div class="header-right">OURORIGIN in use</div>
-      </div>
-      
-      <div class="divider"></div>
+<section class="voice-section" aria-label="Voices from the field">
 
-      {testimonies.map((item) => (
-        <div class="testimony-item">
-          <div class="testimony-content">
-            <div class="testimony-rating">
-              <span class="stars">{renderStars(item.rating)}</span>
-              <span class="rating-text">[ {item.rating}/5 ]</span>
-            </div>
-            
-            <h3 class="quote">{item.quote}</h3>
-            
-            <div class="author-info">
-              <span class="author-name">{item.name}</span>
-              <span class="author-title">{item.title}</span>
-            </div>
-          </div>
-          
-          <!-- Image placeholder for user/usage image -->
-          <div class="testimony-image raw-panel"></div>
-        </div>
-        <div class="divider"></div>
-      ))}
-    </div>
-
+  <!-- Field note label -->
+  <div class="voice-label" data-reveal="fade">
+    <span class="label-line" aria-hidden="true"></span>
+    <span class="label-text">FIELD NOTES · VERIFIED VOICES</span>
+    <span class="label-line" aria-hidden="true"></span>
   </div>
+
+  <!-- Featured testimony — large, pulled quote, like a field journal entry -->
+  <div class="featured-voice" id="featured-voice" data-reveal>
+    <div class="featured-quote-mark" aria-hidden="true">"</div>
+    <blockquote class="featured-quote">
+      <p class="featured-text">{featured.quote}</p>
+      <footer class="featured-attribution">
+        <span class="attr-name">{featured.name}</span>
+        <span class="attr-separator" aria-hidden="true">·</span>
+        <span class="attr-context">{featured.context}, {featured.location}</span>
+      </footer>
+    </blockquote>
+  </div>
+
+  <!-- Horizontal strip — secondary voices, scroll on mobile -->
+  <div class="voice-strip" aria-label="More voices">
+    {strip.map((item) => (
+      <div class="voice-card">
+        <p class="voice-card-text">{item.quote}</p>
+        <div class="voice-card-attr">
+          <span class="card-name">{item.name}</span>
+          <span class="card-location">{item.location}</span>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <!-- Closing count — earned trust, not vanity metrics -->
+  <div class="voice-count" data-reveal="fade">
+    <span class="count-num">127</span>
+    <span class="count-label">verified voices · and counting</span>
+  </div>
+
 </section>
 
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initVoices() {
+    // Featured quote rises like a statement
+    gsap.fromTo('#featured-voice',
+      { opacity: 0, y: 30, filter: 'blur(6px)' },
+      {
+        opacity: 1, y: 0, filter: 'blur(0px)',
+        duration: 1.2, ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '#featured-voice',
+          start: 'top 78%',
+        }
+      }
+    );
+
+    // Strip cards stagger in
+    gsap.fromTo('.voice-card',
+      { opacity: 0, y: 20 },
+      {
+        opacity: 1, y: 0,
+        duration: 0.8, ease: 'power2.out',
+        stagger: 0.15,
+        scrollTrigger: {
+          trigger: '.voice-strip',
+          start: 'top 82%',
+        }
+      }
+    );
+
+    // Count number rises
+    gsap.fromTo('.count-num',
+      { opacity: 0, y: 10 },
+      {
+        opacity: 1, y: 0,
+        duration: 0.8, ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.voice-count',
+          start: 'top 88%',
+        }
+      }
+    );
+  }
+
+  initVoices();
+  document.addEventListener('astro:after-swap', initVoices);
+</script>
+
 <style>
-  .testimonies-section {
-    padding: var(--space-4xl) var(--space-xl);
+  .voice-section {
+    padding: clamp(5rem, 10vh, 8rem) clamp(1.5rem, 6vw, 5rem);
+    background-color: var(--color-void);
     position: relative;
     z-index: 2;
+    border-top: 1px solid rgba(240, 234, 214, 0.05);
   }
 
-  .testimonies-container {
-    max-width: 1000px;
-    margin: 0 auto;
-  }
-
-  .testimonies-header {
-    text-align: center;
-    margin-bottom: var(--space-4xl);
-  }
-
-  .title {
-    font-family: var(--font-display);
-    font-size: var(--text-title);
-    font-weight: 300;
-    line-height: var(--line-height-tight);
-    margin: 0 0 var(--space-md) 0;
-    color: var(--color-warm-cream);
-  }
-
-  .desc {
-    font-family: var(--font-sans);
-    font-size: var(--text-lead);
-    color: rgba(235, 229, 217, 0.7);
-    margin: 0;
-  }
-
-  .testimonies-table {
+  /* ─── Field note label ─── */
+  .voice-label {
     display: flex;
-    flex-direction: column;
-  }
-
-  .table-header {
-    display: flex;
-    justify-content: space-between;
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: rgba(235, 229, 217, 0.5);
-    padding-bottom: var(--space-xl);
-  }
-
-  .header-center {
-    display: flex;
-    gap: var(--space-xl);
-  }
-
-  .global-rating {
-    color: var(--color-gold);
-  }
-
-  .divider {
-    height: 0;
-    border-top: 1px dashed rgba(198, 156, 82, 0.4);
-    width: 100%;
-  }
-
-  .testimony-item {
-    display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: var(--space-2xl) 0;
-    gap: var(--space-2xl);
+    gap: clamp(0.75rem, 2vw, 1.5rem);
+    margin-bottom: clamp(3rem, 6vh, 5rem);
   }
 
-  .testimony-content {
+  .label-line {
     flex: 1;
+    height: 1px;
+    background: rgba(240, 234, 214, 0.08);
+  }
+
+  .label-text {
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    color: rgba(240, 234, 214, 0.25);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* ─── Featured testimony — the journal entry ─── */
+  .featured-voice {
+    position: relative;
+    max-width: 820px;
+    margin: 0 auto clamp(4rem, 8vh, 6rem);
+    padding-left: clamp(1rem, 3vw, 2rem);
+    opacity: 0; /* GSAP reveals */
+  }
+
+  .featured-quote-mark {
+    position: absolute;
+    top: -0.3em;
+    left: -0.1em;
+    font-family: var(--font-narrative);
+    font-size: clamp(5rem, 12vw, 10rem);
+    color: rgba(255, 69, 0, 0.08);
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+    font-weight: 300;
+  }
+
+  .featured-quote {
+    margin: 0;
+    padding: 0;
+    border: none;
+    position: relative;
+    z-index: 1;
+  }
+
+  .featured-text {
+    font-family: var(--font-narrative);
+    font-size: clamp(1.5rem, 3.5vw, 2.8rem);
+    font-style: italic;
+    font-weight: 300;
+    color: var(--color-warm-cream);
+    line-height: 1.45;
+    margin: 0 0 clamp(1.2rem, 2.5vh, 2rem);
+  }
+
+  .featured-attribution {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  .attr-name {
+    color: var(--color-gold);
+  }
+
+  .attr-separator {
+    color: rgba(240, 234, 214, 0.2);
+  }
+
+  .attr-context {
+    color: rgba(240, 234, 214, 0.35);
+  }
+
+  /* ─── Secondary strip ─── */
+  .voice-strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    margin-bottom: clamp(3rem, 6vh, 4rem);
+  }
+
+  .voice-card {
+    border-top: 1px solid rgba(240, 234, 214, 0.07);
+    padding-top: clamp(1rem, 2.5vh, 1.5rem);
     display: flex;
     flex-direction: column;
-    gap: var(--space-md);
+    gap: 0.8rem;
+    opacity: 0; /* GSAP reveals */
   }
 
-  .testimony-rating {
-    display: flex;
-    gap: var(--space-md);
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-  }
-
-  .stars {
-    color: var(--color-gold);
-    letter-spacing: 2px;
-  }
-
-  .rating-text {
-    color: rgba(235, 229, 217, 0.5);
-  }
-
-  .quote {
-    font-family: var(--font-display);
-    font-size: var(--text-lead);
-    font-weight: 400;
-    line-height: 1.4;
+  .voice-card-text {
     margin: 0;
-    color: var(--color-warm-cream);
+    font-family: var(--font-narrative);
+    font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+    font-style: italic;
+    color: rgba(240, 234, 214, 0.5);
+    line-height: 1.65;
+    font-weight: 300;
   }
 
-  .author-info {
+  .voice-card-attr {
     display: flex;
-    gap: var(--space-md);
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.05em;
+    flex-direction: column;
+    gap: 0.1rem;
+    font-family: var(--font-evidence);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
   }
 
-  .author-name {
-    color: var(--color-gold);
+  .card-name {
+    color: rgba(240, 234, 214, 0.45);
   }
 
-  .author-title {
-    color: rgba(235, 229, 217, 0.5);
+  .card-location {
+    color: rgba(240, 234, 214, 0.22);
   }
 
-  .testimony-image {
-    width: 80px;
-    height: 80px;
-    border-radius: 4px;
-    flex-shrink: 0;
-    background: rgba(198, 156, 82, 0.1);
+  /* ─── Count line ─── */
+  .voice-count {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-top: clamp(1rem, 2vh, 1.5rem);
+    padding-top: clamp(2rem, 4vh, 3rem);
+    border-top: 1px solid rgba(240, 234, 214, 0.05);
   }
 
-  @media (max-width: 768px) {
-    .table-header {
-      flex-direction: column;
-      gap: var(--space-md);
-      align-items: flex-start;
+  .count-num {
+    font-family: var(--font-evidence);
+    font-size: clamp(1.8rem, 3.5vw, 3rem);
+    color: rgba(255, 69, 0, 0.45);
+    font-weight: 300;
+    line-height: 1;
+    opacity: 0; /* GSAP reveals */
+  }
+
+  .count-label {
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    color: rgba(240, 234, 214, 0.2);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  /* ─── Mobile ─── */
+  @media (max-width: 860px) {
+    .voice-strip {
+      grid-template-columns: 1fr;
+      gap: clamp(2rem, 5vw, 2.5rem);
     }
-    
-    .testimony-item {
-      flex-direction: column-reverse;
-      align-items: flex-start;
+
+    .featured-text {
+      font-size: clamp(1.3rem, 6vw, 2rem);
+    }
+
+    .featured-voice {
+      padding-left: 0.5rem;
     }
   }
 </style>

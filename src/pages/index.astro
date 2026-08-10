@@ -2,6 +2,10 @@
 import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import OriginMark from '../components/OriginMark.astro';
+import HeroSection from '../components/home/HeroSection.astro';
+import HandSection from '../components/home/HandSection.astro';
+import SustainabilitySection from '../components/home/SustainabilitySection.astro';
+import TestimoniesSection from '../components/home/TestimoniesSection.astro';
 
 // Load content
 const allProducts = await getCollection('products');
@@ -23,23 +27,34 @@ const originMap = Object.fromEntries(allOrigins.map(o => [o.id, o.data]));
   noHeaderPadding={true}
 >
 
-  <!-- Coordinate datum — updates on row hover -->
-  <div class="coord-datum" id="coord-datum" aria-live="polite">
-    <span class="coord-dot"></span>
-    <span class="coord-text" id="coord-text">WESTERN GHATS · THE ARCHIVE IS OPEN</span>
-  </div>
+  <!-- ═══ ACT I: THE LAND ═══ -->
+  <HeroSection />
 
-  <!-- THE ARCHIVE -->
-  <section class="the-archive" id="the-yields" aria-label="The Registry">
+  <!-- ═══ ACT II: THE HAND ═══ -->
+  <HandSection />
 
-    <div class="archive-header" aria-hidden="true">
-      <!-- Tally gate as index marker -->
-      <div class="archive-label archive-label--mark">
-        <OriginMark size={18} variant="gold" />
+  <!-- ═══ ACT III: THE ARCHIVE — now earned ═══ -->
+  <section class="the-archive" id="the-yields" aria-label="What the forest gave this season">
+
+    <!-- Archive orientation — story-framed, not column headers -->
+    <div class="archive-orientation" data-reveal="fade">
+      <div class="orientation-mark">
+        <OriginMark size={16} variant="gold" />
       </div>
-      <span class="archive-label">ORIGIN</span>
-      <span class="archive-label">YIELD</span>
-      <span class="archive-label archive-label--right">AVAILABLE</span>
+      <div class="orientation-copy">
+        <p class="orientation-statement">What the forest gave this season</p>
+        <p class="orientation-note">Each yield carries its coordinate, its community, its batch reference.</p>
+      </div>
+      <div class="archive-meta" aria-label="Active harvests">
+        <span class="meta-count">{activeProducts.length}</span>
+        <span class="meta-label">active<br>harvests</span>
+      </div>
+    </div>
+
+    <!-- The coordinate datum — updates on row hover -->
+    <div class="coord-datum" id="coord-datum" aria-live="polite">
+      <span class="coord-dot"></span>
+      <span class="coord-text" id="coord-text">WESTERN GHATS · FIRST HANDS · DIRECT</span>
     </div>
 
     <div class="archive-list">
@@ -48,10 +63,11 @@ const originMap = Object.fromEntries(allOrigins.map(o => [o.id, o.data]));
         const origin = originMap[originId];
         const originName = origin ? origin.name : originId;
         const imgUrl = product.data.images?.product || product.data.images?.packaging || '';
-        // Build coordinate string for this product
         const coordStr = origin?.coordinates
           ? `${origin.coordinates} · ${originName.toUpperCase()} · ${origin.elevation || ''}`
           : `${originName.toUpperCase()}`;
+        // specimenCopy — already written, now finally shown on hover
+        const specimenCopy = (product.data as any).specimenCopy || '';
 
         return (
           <a
@@ -59,6 +75,7 @@ const originMap = Object.fromEntries(allOrigins.map(o => [o.id, o.data]));
             class="archive-row"
             data-coord={coordStr}
             data-img={imgUrl}
+            data-specimen={specimenCopy}
           >
             {imgUrl && (
               <img
@@ -71,19 +88,27 @@ const originMap = Object.fromEntries(allOrigins.map(o => [o.id, o.data]));
             )}
 
             <div class="archive-cell archive-index" aria-hidden="true">
-              <!-- Single tally stroke per row -->
               <svg width="10" height="24" viewBox="0 0 10 30" fill="none" aria-hidden="true">
                 <path d="M 5 2 C 4 10, 6 20, 5 28" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
               </svg>
               <span class="index-num">{String(index + 1).padStart(2, '0')}</span>
             </div>
+
             <div class="archive-cell archive-origin">{originName}</div>
+
             <div class="archive-cell archive-specimen">
               <span style={`view-transition-name: yield-title-${product.id}`}>{product.data.name}</span>
             </div>
+
+            {/* Micro-narrative: the specimenCopy, shown on hover desktop only */}
+            {specimenCopy && (
+              <div class="archive-micro" aria-hidden="true">
+                <p class="micro-text">{specimenCopy}</p>
+              </div>
+            )}
+
             <div class="archive-cell archive-status" aria-label="Available">
               <span class="status-tally" aria-hidden="true">
-                <!-- One live tally mark = one active harvest -->
                 <svg width="12" height="24" viewBox="0 0 12 30" fill="none">
                   <path d="M 5 2 C 4 10, 6 20, 5 28" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
                 </svg>
@@ -94,7 +119,19 @@ const originMap = Object.fromEntries(allOrigins.map(o => [o.id, o.data]));
       })}
     </div>
 
+    <!-- Archive closer — bridge to the why -->
+    <div class="archive-closer" data-reveal="fade">
+      <a href="/about" class="closer-link">
+        <span>Why these hands? Why this record?</span>
+        <span class="closer-arrow">→</span>
+      </a>
+    </div>
+
   </section>
+
+  <!-- ═══ ACT IV: THE WHY ═══ -->
+  <SustainabilitySection />
+  <TestimoniesSection />
 
 </Layout>
 
@@ -112,18 +149,38 @@ const originMap = Object.fromEntries(allOrigins.map(o => [o.id, o.data]));
     const rows = document.querySelectorAll<HTMLElement>('.archive-row');
     rows.forEach(row => {
       const coord = row.dataset.coord || defaultCoord;
+      const micro = row.querySelector<HTMLElement>('.archive-micro');
 
       row.addEventListener('mouseenter', () => {
         if (coordEl) coordEl.textContent = coord;
+        if (micro) {
+          gsap.to(micro, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' });
+        }
       });
       row.addEventListener('mouseleave', () => {
         if (coordEl) coordEl.textContent = defaultCoord;
+        if (micro) {
+          gsap.to(micro, { opacity: 0, y: 8, duration: 0.3, ease: 'power2.in' });
+        }
       });
     });
 
+    // Orientation block reveals
+    gsap.fromTo('.archive-orientation',
+      { opacity: 0, y: 16 },
+      {
+        opacity: 1, y: 0,
+        duration: 0.9, ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.the-archive',
+          start: 'top 82%',
+        }
+      }
+    );
+
     // Staggered row entrance
     gsap.fromTo('.archive-row',
-      { y: 16, opacity: 0 },
+      { y: 18, opacity: 0 },
       {
         y: 0,
         opacity: 1,
@@ -139,8 +196,10 @@ const originMap = Object.fromEntries(allOrigins.map(o => [o.id, o.data]));
 
     // Coord datum fade in
     gsap.fromTo('#coord-datum',
-      { opacity: 0, y: -8 },
-      { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out', delay: 0.3 }
+      { opacity: 0 },
+      { opacity: 1, duration: 0.6, ease: 'power2.out', delay: 0.2,
+        scrollTrigger: { trigger: '.archive-list', start: 'top 90%' }
+      }
     );
   }
 
@@ -149,20 +208,91 @@ const originMap = Object.fromEntries(allOrigins.map(o => [o.id, o.data]));
 </script>
 
 <style>
-  /* ─── Coordinate Datum ─── */
+  /* ═══════════════════════════
+     ACT III — THE ARCHIVE
+  ═══════════════════════════ */
+
+  .the-archive {
+    position: relative;
+    padding: clamp(4rem, 8vh, 7rem) clamp(1.5rem, 6vw, 5rem) clamp(4rem, 8vh, 6rem);
+    background-color: var(--color-void);
+    min-height: 60vh;
+    z-index: 10;
+    border-top: 1px solid rgba(240, 234, 214, 0.05);
+  }
+
+  /* ─── Archive orientation ─── */
+  .archive-orientation {
+    display: flex;
+    align-items: flex-start;
+    gap: clamp(1rem, 3vw, 2rem);
+    margin-bottom: clamp(2.5rem, 5vh, 4rem);
+    padding-bottom: clamp(1.5rem, 3vh, 2.5rem);
+    border-bottom: 1px solid rgba(240, 234, 214, 0.08);
+    opacity: 0; /* GSAP reveals */
+  }
+
+  .orientation-mark {
+    padding-top: 3px;
+    flex-shrink: 0;
+  }
+
+  .orientation-copy {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .orientation-statement {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+    color: var(--color-warm-cream);
+    font-weight: 400;
+    line-height: 1.2;
+  }
+
+  .orientation-note {
+    margin: 0;
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    color: rgba(240, 234, 214, 0.28);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .archive-meta {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    flex-shrink: 0;
+    text-align: right;
+  }
+
+  .meta-count {
+    font-family: var(--font-evidence);
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    color: rgba(255, 69, 0, 0.4);
+    line-height: 1;
+  }
+
+  .meta-label {
+    font-family: var(--font-evidence);
+    font-size: 8px;
+    color: rgba(240, 234, 214, 0.2);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    line-height: 1.4;
+  }
+
+  /* ─── Coordinate datum ─── */
   .coord-datum {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 900;
-    /* Sits just below the header */
-    padding: 72px var(--space-xl) var(--space-sm);
     display: flex;
     align-items: center;
     gap: var(--space-sm);
-    pointer-events: none;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 100%);
+    margin-bottom: clamp(1rem, 2vh, 1.5rem);
+    opacity: 0; /* GSAP reveals */
   }
 
   .coord-dot {
@@ -177,45 +307,10 @@ const originMap = Object.fromEntries(allOrigins.map(o => [o.id, o.data]));
   .coord-text {
     font-family: var(--font-evidence);
     font-size: var(--type-whisper);
-    color: rgba(240, 234, 214, 0.5);
+    color: rgba(240, 234, 214, 0.35);
     letter-spacing: 0.12em;
     text-transform: uppercase;
     transition: opacity 0.25s ease;
-  }
-
-  /* ─── Archive ─── */
-  .the-archive {
-    position: relative;
-    padding: 100px var(--space-xl) var(--space-4xl);
-    background-color: var(--color-void);
-    min-height: 100vh;
-    z-index: 10;
-  }
-
-  .archive-header {
-    display: grid;
-    grid-template-columns: 56px 1fr 2fr 80px;
-    padding-bottom: var(--space-md);
-    border-bottom: 1px solid rgba(240, 234, 214, 0.12);
-    margin-bottom: var(--space-lg);
-    align-items: center;
-  }
-
-  .archive-label {
-    font-family: var(--font-evidence);
-    font-size: 9px;
-    color: rgba(240, 234, 214, 0.3);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-  }
-
-  .archive-label--mark {
-    display: flex;
-    align-items: center;
-  }
-
-  .archive-label--right {
-    text-align: right;
   }
 
   /* ─── Rows ─── */
@@ -227,23 +322,30 @@ const originMap = Object.fromEntries(allOrigins.map(o => [o.id, o.data]));
   .archive-row {
     position: relative;
     display: grid;
-    grid-template-columns: 56px 1fr 2fr 80px;
+    grid-template-columns: 48px 1fr 2fr 1fr 72px;
     padding: var(--space-xl) 0;
-    border-bottom: 1px solid rgba(240, 234, 214, 0.07);
+    border-bottom: 1px solid rgba(240, 234, 214, 0.06);
     text-decoration: none;
     color: var(--color-warm-cream);
     transition: color 0.18s ease;
     align-items: center;
     overflow: hidden;
+    min-height: 72px;
   }
 
+  /* Warm ground-level sweep on hover */
   .archive-row::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: rgba(255, 69, 0, 0.03);
+    background: linear-gradient(
+      to right,
+      rgba(255, 69, 0, 0.04) 0%,
+      rgba(255, 69, 0, 0.02) 60%,
+      transparent 100%
+    );
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.35s ease;
   }
 
   .archive-row:hover::before {
@@ -261,7 +363,7 @@ const originMap = Object.fromEntries(allOrigins.map(o => [o.id, o.data]));
 
   .archive-index {
     gap: var(--space-sm);
-    color: rgba(240, 234, 214, 0.25);
+    color: rgba(240, 234, 214, 0.18);
   }
 
   .index-num {
@@ -272,21 +374,48 @@ const originMap = Object.fromEntries(allOrigins.map(o => [o.id, o.data]));
   .archive-origin {
     font-size: var(--type-whisper);
     letter-spacing: 0.08em;
-    color: rgba(240, 234, 214, 0.45);
+    color: rgba(240, 234, 214, 0.35);
     text-transform: uppercase;
   }
 
   .archive-specimen {
     font-family: var(--font-display);
-    font-size: clamp(1.15rem, 2.5vw, 1.8rem);
+    font-size: clamp(1.1rem, 2.2vw, 1.7rem);
     letter-spacing: 0.02em;
     font-weight: 400;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ─── Micro-narrative (the specimenCopy, revealed on hover) ─── */
+  .archive-micro {
+    position: relative;
+    z-index: 2;
+    padding: 0 clamp(0.5rem, 1.5vw, 1.5rem);
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+  }
+
+  .micro-text {
+    margin: 0;
+    font-family: var(--font-narrative);
+    font-size: clamp(0.78rem, 1.2vw, 0.9rem);
+    font-style: italic;
+    color: rgba(240, 234, 214, 0.38);
+    line-height: 1.55;
+    font-weight: 300;
+    /* Clamp to two lines */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .archive-status {
     justify-content: flex-end;
     color: var(--color-gold);
-    opacity: 0.6;
+    opacity: 0.5;
   }
 
   .status-tally {
@@ -294,29 +423,7 @@ const originMap = Object.fromEntries(allOrigins.map(o => [o.id, o.data]));
     align-items: center;
   }
 
-  /* Hover reveal */
-  .archive-hover-img {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    width: 55vw;
-    max-width: 600px;
-    height: 55vh;
-    transform: translate(-50%, -50%) scale(0.92);
-    object-fit: contain;
-    opacity: 0;
-    pointer-events: none;
-    z-index: 1;
-    transition: opacity 0.38s ease, transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-    filter: grayscale(60%);
-  }
-
-  .archive-row:hover .archive-hover-img {
-    opacity: 0.25;
-    transform: translate(-50%, -50%) scale(1);
-    filter: grayscale(0%);
-  }
-
+  /* Hover states */
   .archive-row:hover .archive-cell {
     color: var(--color-warm-cream);
   }
@@ -326,43 +433,93 @@ const originMap = Object.fromEntries(allOrigins.map(o => [o.id, o.data]));
   }
 
   .archive-row:hover .archive-origin {
-    color: rgba(240, 234, 214, 0.7);
+    color: rgba(240, 234, 214, 0.6);
   }
 
   .archive-row:hover .archive-status {
     opacity: 1;
   }
 
-  /* ═══════════════════════════════
-     MOBILE — Perfect
-  ═══════════════════════════════ */
+  .archive-row:hover .archive-index {
+    color: rgba(240, 234, 214, 0.35);
+  }
+
+  /* Hover image — more theatrical now */
+  .archive-hover-img {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 52vw;
+    max-width: 560px;
+    height: 52vh;
+    transform: translate(-50%, -50%) scale(0.9);
+    object-fit: contain;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+    transition: opacity 0.45s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.45s ease;
+    filter: grayscale(80%) brightness(0.7);
+  }
+
+  .archive-row:hover .archive-hover-img {
+    opacity: 0.45;
+    transform: translate(-50%, -50%) scale(1);
+    filter: grayscale(20%) brightness(0.95);
+  }
+
+  /* ─── Archive closer ─── */
+  .archive-closer {
+    margin-top: clamp(2.5rem, 5vh, 4rem);
+    padding-top: clamp(1.5rem, 3vh, 2rem);
+    border-top: 1px solid rgba(240, 234, 214, 0.05);
+  }
+
+  .closer-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    color: rgba(240, 234, 214, 0.25);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.25s ease;
+    min-height: 44px;
+  }
+
+  .closer-link:hover {
+    color: var(--color-gold);
+  }
+
+  .closer-arrow {
+    transition: transform 0.25s ease;
+  }
+
+  .closer-link:hover .closer-arrow {
+    transform: translateX(4px);
+  }
+
+  /* ═══════════════════════════
+     MOBILE
+  ═══════════════════════════ */
   @media (max-width: 768px) {
-    .coord-datum {
-      padding: 64px var(--space-lg) var(--space-xs);
-    }
-
-    .coord-text {
-      font-size: 8px;
-      letter-spacing: 0.08em;
-    }
-
     .the-archive {
-      padding: 88px var(--space-lg) var(--space-3xl);
+      padding: clamp(3rem, 6vh, 5rem) 1.5rem clamp(3rem, 6vh, 4rem);
     }
 
-    /* Mobile: hide header row labels */
-    .archive-header {
-      display: none;
+    .archive-orientation {
+      flex-wrap: wrap;
     }
 
     .archive-row {
-      /* Stack: full-width product name + origin below, status right */
       display: grid;
       grid-template-columns: 1fr auto;
-      grid-template-rows: auto auto;
+      grid-template-rows: auto auto auto;
       gap: 2px var(--space-sm);
       padding: var(--space-lg) 0;
       align-items: start;
+      min-height: auto;
     }
 
     .archive-index {
@@ -372,7 +529,7 @@ const originMap = Object.fromEntries(allOrigins.map(o => [o.id, o.data]));
     .archive-specimen {
       grid-column: 1;
       grid-row: 1;
-      font-size: clamp(1.1rem, 5vw, 1.6rem);
+      font-size: clamp(1.05rem, 5vw, 1.5rem);
     }
 
     .archive-origin {
@@ -380,7 +537,13 @@ const originMap = Object.fromEntries(allOrigins.map(o => [o.id, o.data]));
       grid-row: 2;
       font-size: 8px;
       letter-spacing: 0.1em;
-      padding-bottom: 2px;
+    }
+
+    .archive-micro {
+      grid-column: 1 / -1;
+      grid-row: 3;
+      padding: 0;
+      display: none; /* Hidden on mobile — tap to navigate */
     }
 
     .archive-status {
@@ -390,8 +553,11 @@ const originMap = Object.fromEntries(allOrigins.map(o => [o.id, o.data]));
       justify-content: flex-end;
     }
 
-    /* On mobile, show a subtle image behind tapped row */
     .archive-hover-img {
+      display: none;
+    }
+
+    .coord-datum {
       display: none;
     }
   }

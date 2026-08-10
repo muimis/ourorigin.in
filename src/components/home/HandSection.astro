@@ -1,0 +1,327 @@
+---
+// Act II — The Hand
+// Copy from wayanad.json narrative.hand — already written, never shown on homepage.
+// Image: /assets/origins/wayanad-hand.webp — already in public/assets/.
+---
+
+<section class="hand-section" id="the-hand" aria-label="Who grows this">
+
+  <!-- Left: the image — 55% of the screen -->
+  <div class="hand-image-frame" id="hand-image-frame">
+    <img
+      src="/assets/origins/wayanad-hand.webp"
+      alt="A harvester's hands among pepper vines in Wayanad, Western Ghats"
+      class="hand-img"
+      loading="lazy"
+      decoding="async"
+    />
+    <!-- Vignette overlay -->
+    <div class="hand-img-vignette" aria-hidden="true"></div>
+  </div>
+
+  <!-- Right: the narrative — 45% of the screen -->
+  <div class="hand-narrative" id="hand-narrative">
+
+    <!-- Whisper label — like a field caption -->
+    <div class="hand-label" data-reveal="fade">
+      <span class="label-pulse" aria-hidden="true"></span>
+      <span>FIRST HANDS · WAYANAD · JANUARY HARVEST</span>
+    </div>
+
+    <!-- The narrative — from wayanad.json, verbatim -->
+    <blockquote class="hand-text" data-reveal>
+      <p class="hand-para hand-para--lead">
+        The vines climb living trees — the older way, before plantations introduced a tidier geometry.
+      </p>
+      <p class="hand-para">
+        Harvest comes once a year, in January. The picker carries back only what the forest gave willingly that morning: what was ripe, what was reachable, what was left after the forest took its share.
+      </p>
+      <p class="hand-para hand-para--quiet">
+        There is no process document for this. The knowledge of which berry, which vine, which morning — this was accumulated over time, in this specific forest, and belongs to the person who has it.
+      </p>
+    </blockquote>
+
+    <!-- The bridge — what this means for the visitor -->
+    <div class="hand-bridge" data-reveal="fade">
+      <p class="bridge-text">When you order from us, the first hands that touched this for money were theirs.</p>
+      <div class="bridge-rule" aria-hidden="true"></div>
+      <a href="#the-yields" class="bridge-link">
+        <span>See what the forest gave this season</span>
+        <span class="bridge-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+
+  </div>
+
+  <!-- Section separator — a tally line, not a generic divider -->
+  <div class="hand-tally" aria-hidden="true">
+    <svg width="2" height="120" viewBox="0 0 2 120" fill="none">
+      <line x1="1" y1="0" x2="1" y2="120" stroke="rgba(255,69,0,0.18)" stroke-width="1" stroke-dasharray="4 6"/>
+    </svg>
+  </div>
+
+</section>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initHand() {
+    // Parallax on the image — forest drifts as you scroll
+    gsap.to('.hand-img', {
+      yPercent: -12,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '.hand-section',
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: 1.2,
+      }
+    });
+
+    // Image frame slides in from left
+    gsap.fromTo('#hand-image-frame',
+      { opacity: 0, x: -40 },
+      {
+        opacity: 1, x: 0,
+        duration: 1.4, ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '#hand-image-frame',
+          start: 'top 82%',
+        }
+      }
+    );
+
+    // Narrative lines stagger in
+    gsap.fromTo('.hand-para',
+      { opacity: 0, y: 22 },
+      {
+        opacity: 1, y: 0,
+        duration: 1.0, ease: 'power2.out',
+        stagger: 0.22,
+        scrollTrigger: {
+          trigger: '.hand-narrative',
+          start: 'top 76%',
+        }
+      }
+    );
+
+    // Label pulses
+    gsap.to('.label-pulse', {
+      scale: 2.0,
+      opacity: 0,
+      duration: 1.6,
+      ease: 'power1.out',
+      repeat: -1,
+      repeatDelay: 1.2,
+    });
+  }
+
+  initHand();
+  document.addEventListener('astro:after-swap', initHand);
+</script>
+
+<style>
+  /* ─── Hand Section: Side-by-side image + narrative ─── */
+  .hand-section {
+    position: relative;
+    min-height: 90vh;
+    display: grid;
+    grid-template-columns: 55fr 45fr;
+    align-items: stretch;
+    overflow: hidden;
+    background-color: var(--color-void);
+    z-index: 2;
+  }
+
+  /* ─── Image frame ─── */
+  .hand-image-frame {
+    position: relative;
+    overflow: hidden;
+    min-height: 70vh;
+  }
+
+  .hand-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+    display: block;
+    will-change: transform;
+    filter: saturate(0.75) contrast(1.08);
+    transition: filter 0.6s ease;
+  }
+
+  .hand-section:hover .hand-img {
+    filter: saturate(0.9) contrast(1.05);
+  }
+
+  .hand-img-vignette {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to right, transparent 60%, var(--color-void) 100%),
+      linear-gradient(to bottom, var(--color-void) 0%, transparent 15%, transparent 85%, var(--color-void) 100%);
+    pointer-events: none;
+  }
+
+  /* ─── Narrative column ─── */
+  .hand-narrative {
+    padding: clamp(3rem, 6vh, 5rem) clamp(2rem, 5vw, 4.5rem) clamp(3rem, 6vh, 5rem) clamp(1.5rem, 3vw, 3rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(1.5rem, 3vh, 2.5rem);
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ─── Label ─── */
+  .hand-label {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    color: var(--color-gold);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  .label-pulse {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--color-gold);
+    flex-shrink: 0;
+    transform-origin: center;
+  }
+
+  /* ─── Narrative text ─── */
+  .hand-text {
+    margin: 0;
+    padding: 0;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1rem, 2vh, 1.6rem);
+  }
+
+  .hand-para {
+    margin: 0;
+    font-family: var(--font-narrative);
+    font-size: clamp(1rem, 1.8vw, 1.35rem);
+    font-weight: 300;
+    line-height: 1.75;
+    color: rgba(240, 234, 214, 0.72);
+    opacity: 0; /* GSAP reveals */
+  }
+
+  .hand-para--lead {
+    font-size: clamp(1.15rem, 2.2vw, 1.65rem);
+    color: var(--color-warm-cream);
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .hand-para--quiet {
+    font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+    color: rgba(240, 234, 214, 0.38);
+    font-style: italic;
+  }
+
+  /* ─── Bridge to the Archive ─── */
+  .hand-bridge {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  .bridge-text {
+    margin: 0;
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    color: rgba(240, 234, 214, 0.35);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1.6;
+  }
+
+  .bridge-rule {
+    height: 1px;
+    width: 48px;
+    background: rgba(255, 69, 0, 0.25);
+  }
+
+  .bridge-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    font-family: var(--font-evidence);
+    font-size: var(--type-evidence);
+    color: rgba(240, 234, 214, 0.45);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.25s ease;
+    min-height: 44px;
+    align-self: flex-start;
+  }
+
+  .bridge-link:hover {
+    color: var(--color-gold);
+  }
+
+  .bridge-arrow {
+    transition: transform 0.25s ease;
+  }
+
+  .bridge-link:hover .bridge-arrow {
+    transform: translateX(4px);
+  }
+
+  /* ─── Tally dashes — vertical rhythm marker ─── */
+  .hand-tally {
+    position: absolute;
+    left: 55%;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+    z-index: 3;
+    transform: translateX(-50%);
+  }
+
+  /* ─── Mobile: Stack vertically ─── */
+  @media (max-width: 860px) {
+    .hand-section {
+      grid-template-columns: 1fr;
+      grid-template-rows: 55vw auto;
+      min-height: auto;
+    }
+
+    .hand-image-frame {
+      min-height: 55vw;
+      max-height: 70vw;
+    }
+
+    .hand-img-vignette {
+      background:
+        linear-gradient(to bottom, transparent 60%, var(--color-void) 100%);
+    }
+
+    .hand-narrative {
+      padding: clamp(2rem, 5vw, 3rem) clamp(1.5rem, 5vw, 2rem);
+    }
+
+    .hand-tally {
+      display: none;
+    }
+  }
+</style>

@@ -1,128 +1,246 @@
 ---
 ---
-<section class="sustainability-section">
-  <div class="sustainability-container">
-    
-    <div class="sustainability-header">
-      <div class="tagline">100% Indigenous</div>
-      <h2 class="title">Soil-first authenticity</h2>
-      <p class="desc">
-        Pure yields sourced ethically.<br/>
-        Completely indigenous — no shortcuts taken,<br/>
-        and zero synthetic interference. Ever.
-      </p>
+<section class="truth-section" aria-label="The truth of this soil">
+
+  <!-- Opening cinematic statement — replaces the flat centered header -->
+  <div class="truth-statement" data-reveal>
+    <p class="truth-line truth-line--age">25 million years of soil.</p>
+    <p class="truth-line truth-line--zero">Zero synthetic interference.</p>
+    <p class="truth-line truth-line--ever">Ever.</p>
+  </div>
+
+  <!-- Three truths — animate in sequentially, not simultaneously -->
+  <div class="truths-grid">
+
+    <div class="truth-item" data-truth="0">
+      <div class="truth-glyph" aria-hidden="true">
+        <!-- Geological strata SVG — age of the earth -->
+        <svg width="32" height="48" viewBox="0 0 32 48" fill="none">
+          <line x1="0" y1="8"  x2="32" y2="8"  stroke="currentColor" stroke-width="1" opacity="0.8"/>
+          <line x1="4" y1="16" x2="28" y2="16" stroke="currentColor" stroke-width="1" opacity="0.55"/>
+          <line x1="0" y1="24" x2="32" y2="24" stroke="currentColor" stroke-width="1" opacity="0.35"/>
+          <line x1="6" y1="32" x2="26" y2="32" stroke="currentColor" stroke-width="1" opacity="0.2"/>
+          <line x1="0" y1="40" x2="32" y2="40" stroke="currentColor" stroke-width="1" opacity="0.1"/>
+        </svg>
+      </div>
+      <div class="truth-value">25M</div>
+      <div class="truth-label">Average age<br>of soil · years</div>
+      <p class="truth-desc">The Western Ghats are older than the Himalayas — older than most mountain ranges on earth. The soil holds memory.</p>
     </div>
 
-    <div class="stats-grid">
-      <div class="stat-item">
-        <h3 class="stat-title">Average<br>age of<br>soil</h3>
-        <p class="stat-desc">The Western Ghats are older than the Himalayas — older than most mountain ranges on earth. The soil holds memory.</p>
-        <div class="stat-value">25M</div>
+    <div class="truth-item" data-truth="1">
+      <div class="truth-glyph" aria-hidden="true">
+        <!-- Rain / monsoon lines -->
+        <svg width="32" height="48" viewBox="0 0 32 48" fill="none">
+          <line x1="6"  y1="0" x2="2"  y2="48" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+          <line x1="16" y1="0" x2="12" y2="48" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+          <line x1="26" y1="0" x2="22" y2="48" stroke="currentColor" stroke-width="1" opacity="0.25"/>
+        </svg>
       </div>
+      <div class="truth-value">100%</div>
+      <div class="truth-label">Harvest cycles<br>monsoon-aligned</div>
+      <p class="truth-desc">Each harvest follows the natural monsoon rhythm — no forcing, no accelerating. The season decides.</p>
+    </div>
 
-      <div class="stat-item">
-        <h3 class="stat-title">Harvest<br>cycles</h3>
-        <p class="stat-desc">Each harvest follows the natural monsoon rhythm — no forcing, no accelerating. The season decides.</p>
-        <div class="stat-value">100%</div>
+    <div class="truth-item" data-truth="2">
+      <div class="truth-glyph" aria-hidden="true">
+        <!-- Empty circle — zero, the void, the refusal -->
+        <svg width="32" height="48" viewBox="0 0 32 48" fill="none">
+          <circle cx="16" cy="24" r="13" stroke="currentColor" stroke-width="1" opacity="0.5"/>
+        </svg>
       </div>
-
-      <div class="stat-item">
-        <h3 class="stat-title">Pesticides<br>used</h3>
-        <p class="stat-desc">Zero synthetic chemicals. No exceptions. What goes into the soil comes back to you — we take that seriously.</p>
-        <div class="stat-value">0%</div>
-      </div>
+      <div class="truth-value">0%</div>
+      <div class="truth-label">Pesticides<br>used</div>
+      <p class="truth-desc">Zero synthetic chemicals. No exceptions. What goes into the soil comes back to you — we take that seriously.</p>
     </div>
 
   </div>
+
 </section>
 
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initTruths() {
+    // Opening statement — each line drops in sequentially
+    gsap.fromTo('.truth-line',
+      { opacity: 0, y: 24, filter: 'blur(4px)' },
+      {
+        opacity: 1, y: 0, filter: 'blur(0px)',
+        duration: 1.1, ease: 'power2.out',
+        stagger: 0.35,
+        scrollTrigger: {
+          trigger: '.truth-statement',
+          start: 'top 80%',
+        }
+      }
+    );
+
+    // Each truth item rises in sequence — not all at once
+    document.querySelectorAll('.truth-item').forEach((item, i) => {
+      gsap.fromTo(item,
+        { opacity: 0, y: 36 },
+        {
+          opacity: 1, y: 0,
+          duration: 0.9, ease: 'power2.out',
+          delay: i * 0.22,
+          scrollTrigger: {
+            trigger: '.truths-grid',
+            start: 'top 78%',
+          }
+        }
+      );
+
+      // Count-up animation for the value
+      const valueEl = item.querySelector('.truth-value');
+      if (!valueEl) return;
+      const rawText = valueEl.textContent?.trim() || '';
+      const numMatch = rawText.match(/[\d.]+/);
+      if (!numMatch) return;
+      const target = parseFloat(numMatch[0]);
+      const suffix = rawText.replace(numMatch[0], '');
+
+      ScrollTrigger.create({
+        trigger: item,
+        start: 'top 80%',
+        once: true,
+        onEnter: () => {
+          gsap.fromTo({ val: 0 },
+            { val: target },
+            {
+              val: target,
+              duration: 1.4,
+              ease: 'power1.out',
+              delay: i * 0.22,
+              onUpdate: function() {
+                const v = this.targets()[0].val;
+                valueEl.textContent = (target >= 1000000
+                  ? Math.round(v / 1000000) + 'M'
+                  : Math.round(v)) + suffix;
+              }
+            }
+          );
+        }
+      });
+    });
+  }
+
+  initTruths();
+  document.addEventListener('astro:after-swap', initTruths);
+</script>
+
 <style>
-  .sustainability-section {
-    padding: var(--space-4xl) var(--space-xl);
+  .truth-section {
+    padding: clamp(5rem, 10vh, 8rem) clamp(1.5rem, 6vw, 5rem);
+    background-color: var(--color-void);
     position: relative;
     z-index: 2;
+    border-top: 1px solid rgba(240, 234, 214, 0.06);
   }
 
-  .sustainability-container {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .sustainability-header {
-    text-align: center;
-    margin-bottom: var(--space-4xl);
-  }
-
-  .tagline {
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--color-gold);
-    margin-bottom: var(--space-lg);
-  }
-
-  .title {
-    font-family: var(--font-display);
-    font-size: var(--text-title);
-    font-weight: 300;
-    line-height: var(--line-height-tight);
-    margin: 0 0 var(--space-lg) 0;
-    color: var(--color-warm-cream);
-  }
-
-  .desc {
-    font-family: var(--font-sans);
-    font-size: var(--text-lead);
-    color: rgba(235, 229, 217, 0.7);
-    line-height: 1.6;
-    margin: 0 auto;
-    max-width: 600px;
-  }
-
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-3xl);
-  }
-
-  .stat-item {
-    border-top: 1px solid rgba(198, 156, 82, 0.3);
-    padding-top: var(--space-xl);
+  /* ─── Opening cinematic statement ─── */
+  .truth-statement {
+    max-width: 800px;
+    margin: 0 0 clamp(4rem, 8vh, 6rem) 0;
     display: flex;
     flex-direction: column;
+    gap: 0.2em;
   }
 
-  .stat-title {
+  .truth-line {
+    margin: 0;
     font-family: var(--font-display);
-    font-size: var(--text-title);
     font-weight: 400;
-    line-height: 1.1;
-    margin: 0 0 var(--space-lg) 0;
+    line-height: 1.05;
+    opacity: 0; /* GSAP reveals */
+  }
+
+  .truth-line--age {
+    font-size: clamp(2rem, 5vw, 4.2rem);
     color: var(--color-warm-cream);
   }
 
-  .stat-desc {
-    font-family: var(--font-sans);
-    font-size: 0.95rem;
-    line-height: 1.6;
-    color: rgba(235, 229, 217, 0.6);
-    margin: 0 0 var(--space-2xl) 0;
-    flex-grow: 1;
+  .truth-line--zero {
+    font-size: clamp(1.6rem, 4vw, 3.4rem);
+    color: rgba(240, 234, 214, 0.5);
+    font-style: italic;
+    font-family: var(--font-narrative);
   }
 
-  .stat-value {
-    font-family: var(--font-mono);
-    font-size: clamp(3rem, 5vw, 5rem);
+  .truth-line--ever {
+    font-size: clamp(1.2rem, 2.5vw, 2rem);
+    color: var(--color-gold);
+    opacity: 0;
+    padding-left: 0.15em;
+    letter-spacing: 0.04em;
+  }
+
+  /* ─── Truths grid ─── */
+  .truths-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(2rem, 4vw, 4rem);
+    align-items: start;
+  }
+
+  .truth-item {
+    border-top: 1px solid rgba(255, 69, 0, 0.18);
+    padding-top: clamp(1.5rem, 3vh, 2rem);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    opacity: 0; /* GSAP reveals */
+  }
+
+  .truth-glyph {
+    color: var(--color-gold);
+    opacity: 0.4;
+    margin-bottom: 0.5rem;
+    height: 48px;
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .truth-value {
+    font-family: var(--font-evidence);
+    font-size: clamp(2.8rem, 5vw, 4.5rem);
     font-weight: 300;
     color: var(--color-gold);
     line-height: 1;
+    letter-spacing: -0.01em;
   }
 
-  @media (max-width: 900px) {
-    .stats-grid {
+  .truth-label {
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    color: rgba(240, 234, 214, 0.35);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    line-height: 1.6;
+    margin-bottom: 0.25rem;
+  }
+
+  .truth-desc {
+    font-family: var(--font-narrative);
+    font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+    color: rgba(240, 234, 214, 0.45);
+    line-height: 1.7;
+    margin: 0;
+    font-weight: 300;
+  }
+
+  /* ─── Mobile ─── */
+  @media (max-width: 860px) {
+    .truths-grid {
       grid-template-columns: 1fr;
-      gap: var(--space-4xl);
+      gap: clamp(2.5rem, 6vw, 3.5rem);
+    }
+
+    .truth-statement {
+      margin-bottom: clamp(3rem, 6vh, 4rem);
     }
   }
 </style>
