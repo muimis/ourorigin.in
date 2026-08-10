@@ -1,15 +1,17 @@
 ---
+// SustainabilitySection.astro — Act V: The Primitive Earth Truths
 ---
-<section class="truth-section" aria-label="The truth of this soil">
+<section class="truth-section" id="primitive-truths" aria-label="The Truth of this Soil">
 
-  <!-- Opening cinematic statement — replaces the flat centered header -->
+  <!-- Opening cinematic statement -->
   <div class="truth-statement" data-reveal>
+    <span class="truth-act-tag">[ ACT V · THE SACRED INTEGRITY ]</span>
     <p class="truth-line truth-line--age">25 million years of soil.</p>
     <p class="truth-line truth-line--zero">Zero synthetic interference.</p>
     <p class="truth-line truth-line--ever">Ever.</p>
   </div>
 
-  <!-- Three truths — animate in sequentially, not simultaneously -->
+  <!-- Three truths -->
   <div class="truths-grid">
 
     <div class="truth-item" data-truth="0">
@@ -24,8 +26,8 @@
         </svg>
       </div>
       <div class="truth-value">25M</div>
-      <div class="truth-label">Average age<br>of soil · years</div>
-      <p class="truth-desc">The Western Ghats are older than the Himalayas — older than most mountain ranges on earth. The soil holds memory.</p>
+      <div class="truth-label">Age of volcanic<br/>soil · years</div>
+      <p class="truth-desc">The Western Ghats are older than the Himalayas. The volcanic loam holds millennia of unhurried memory.</p>
     </div>
 
     <div class="truth-item" data-truth="1">
@@ -38,20 +40,20 @@
         </svg>
       </div>
       <div class="truth-value">100%</div>
-      <div class="truth-label">Harvest cycles<br>monsoon-aligned</div>
-      <p class="truth-desc">Each harvest follows the natural monsoon rhythm — no forcing, no accelerating. The season decides.</p>
+      <div class="truth-label">Harvest cycles<br/>monsoon-aligned</div>
+      <p class="truth-desc">Each harvest follows the seasonal monsoon rhythm. No artificial forcing, no greenhouse acceleration. The sky decides.</p>
     </div>
 
     <div class="truth-item" data-truth="2">
       <div class="truth-glyph" aria-hidden="true">
-        <!-- Empty circle — zero, the void, the refusal -->
+        <!-- Empty circle — zero synthetic chemicals -->
         <svg width="32" height="48" viewBox="0 0 32 48" fill="none">
           <circle cx="16" cy="24" r="13" stroke="currentColor" stroke-width="1" opacity="0.5"/>
         </svg>
       </div>
       <div class="truth-value">0%</div>
-      <div class="truth-label">Pesticides<br>used</div>
-      <p class="truth-desc">Zero synthetic chemicals. No exceptions. What goes into the soil comes back to you — we take that seriously.</p>
+      <div class="truth-label">Synthetic chemicals<br/>or pesticides</div>
+      <p class="truth-desc">Zero chemical sprays, preservatives, or artificial drying. What enters the soil returns to your hand unadulterated.</p>
     </div>
 
   </div>
@@ -65,7 +67,6 @@
   gsap.registerPlugin(ScrollTrigger);
 
   function initTruths() {
-    // Opening statement — each line drops in sequentially
     gsap.fromTo('.truth-line',
       { opacity: 0, y: 24, filter: 'blur(4px)' },
       {
@@ -79,14 +80,13 @@
       }
     );
 
-    // Each truth item rises in sequence — not all at once
     document.querySelectorAll('.truth-item').forEach((item, i) => {
       gsap.fromTo(item,
         { opacity: 0, y: 36 },
         {
           opacity: 1, y: 0,
           duration: 0.9, ease: 'power2.out',
-          delay: i * 0.22,
+          delay: i * 0.2,
           scrollTrigger: {
             trigger: '.truths-grid',
             start: 'top 78%',
@@ -94,7 +94,6 @@
         }
       );
 
-      // Count-up animation for the value
       const valueEl = item.querySelector('.truth-value');
       if (!valueEl) return;
       const rawText = valueEl.textContent?.trim() || '';
@@ -114,7 +113,7 @@
               val: target,
               duration: 1.4,
               ease: 'power1.out',
-              delay: i * 0.22,
+              delay: i * 0.2,
               onUpdate: function() {
                 const v = this.targets()[0].val;
                 valueEl.textContent = (target >= 1000000
@@ -130,24 +129,33 @@
 
   initTruths();
   document.addEventListener('astro:after-swap', initTruths);
+  document.addEventListener('astro:page-load', initTruths);
 </script>
 
 <style>
   .truth-section {
-    padding: clamp(5rem, 10vh, 8rem) clamp(1.5rem, 6vw, 5rem);
+    padding: clamp(5rem, 10vh, 8rem) clamp(1.5rem, 6vw, 6rem);
     background-color: var(--color-void);
     position: relative;
     z-index: 2;
-    border-top: 1px solid rgba(240, 234, 214, 0.06);
+    border-top: 1px solid var(--color-border-subtle);
   }
 
-  /* ─── Opening cinematic statement ─── */
   .truth-statement {
     max-width: 800px;
-    margin: 0 0 clamp(4rem, 8vh, 6rem) 0;
+    margin: 0 0 clamp(4rem, 8vh, 5.5rem) 0;
     display: flex;
     flex-direction: column;
-    gap: 0.2em;
+    gap: 0.3em;
+  }
+
+  .truth-act-tag {
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    color: var(--color-gold);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
   }
 
   .truth-line {
@@ -155,30 +163,27 @@
     font-family: var(--font-display);
     font-weight: 400;
     line-height: 1.05;
-    opacity: 0; /* GSAP reveals */
+    opacity: 0;
   }
 
   .truth-line--age {
-    font-size: clamp(2rem, 5vw, 4.2rem);
+    font-size: clamp(2.2rem, 5vw, 4.2rem);
     color: var(--color-warm-cream);
   }
 
   .truth-line--zero {
-    font-size: clamp(1.6rem, 4vw, 3.4rem);
-    color: rgba(240, 234, 214, 0.5);
+    font-size: clamp(1.8rem, 4vw, 3.4rem);
+    color: var(--color-cream-muted);
     font-style: italic;
     font-family: var(--font-narrative);
   }
 
   .truth-line--ever {
-    font-size: clamp(1.2rem, 2.5vw, 2rem);
-    color: var(--color-gold);
-    opacity: 0;
-    padding-left: 0.15em;
+    font-size: clamp(1.4rem, 2.5vw, 2.2rem);
+    color: var(--color-gold-bright);
     letter-spacing: 0.04em;
   }
 
-  /* ─── Truths grid ─── */
   .truths-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -187,17 +192,17 @@
   }
 
   .truth-item {
-    border-top: 1px solid rgba(255, 69, 0, 0.18);
+    border-top: 1px solid var(--color-border-accent);
     padding-top: clamp(1.5rem, 3vh, 2rem);
     display: flex;
     flex-direction: column;
     gap: 0.6rem;
-    opacity: 0; /* GSAP reveals */
+    opacity: 0;
   }
 
   .truth-glyph {
     color: var(--color-gold);
-    opacity: 0.4;
+    opacity: 0.6;
     margin-bottom: 0.5rem;
     height: 48px;
     display: flex;
@@ -208,7 +213,7 @@
     font-family: var(--font-evidence);
     font-size: clamp(2.8rem, 5vw, 4.5rem);
     font-weight: 300;
-    color: var(--color-gold);
+    color: var(--color-gold-bright);
     line-height: 1;
     letter-spacing: -0.01em;
   }
@@ -216,31 +221,26 @@
   .truth-label {
     font-family: var(--font-evidence);
     font-size: var(--type-whisper);
-    color: rgba(240, 234, 214, 0.35);
+    color: var(--color-cream-whisper);
     text-transform: uppercase;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.14em;
     line-height: 1.6;
     margin-bottom: 0.25rem;
   }
 
   .truth-desc {
     font-family: var(--font-narrative);
-    font-size: clamp(0.9rem, 1.5vw, 1.05rem);
-    color: rgba(240, 234, 214, 0.45);
-    line-height: 1.7;
+    font-size: clamp(0.95rem, 1.4vw, 1.1rem);
+    color: var(--color-cream-muted);
+    line-height: 1.65;
     margin: 0;
     font-weight: 300;
   }
 
-  /* ─── Mobile ─── */
   @media (max-width: 860px) {
     .truths-grid {
       grid-template-columns: 1fr;
       gap: clamp(2.5rem, 6vw, 3.5rem);
-    }
-
-    .truth-statement {
-      margin-bottom: clamp(3rem, 6vh, 4rem);
     }
   }
 </style>

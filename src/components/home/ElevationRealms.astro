@@ -1,0 +1,690 @@
+---
+// ElevationRealms.astro — Act II: The 4 Mountain Elevation Realms
+import { getCollection } from 'astro:content';
+
+const allOrigins = await getCollection('origins');
+const allProducts = await getCollection('products');
+
+function parseElevation(elevStr: string) {
+  const match = String(elevStr || '').match(/[\d,]+/);
+  return match ? parseInt(match[0].replace(/,/g, ''), 10) : 0;
+}
+
+// Sort: highest elevation first (2600m -> 1200m -> 900m -> 60m)
+const sortedOrigins = [...allOrigins].sort((a, b) => {
+  return parseElevation(b.data.elevation) - parseElevation(a.data.elevation);
+});
+
+// Group products by origin
+const productsByOrigin: Record<string, typeof allProducts> = {};
+sortedOrigins.forEach(origin => {
+  const originSlug = origin.data.slug;
+  productsByOrigin[originSlug] = allProducts.filter(p => {
+    const originId = typeof p.data.originSlug === 'object' ? (p.data.originSlug as any)?.id : p.data.originSlug;
+    return originId === originSlug && p.data.sizes && p.data.sizes.length > 0;
+  });
+});
+---
+
+<section class="elevation-realms" id="elevation-realms" aria-label="The 4 Mountain Elevation Realms">
+
+  <!-- Section Header -->
+  <div class="realms-header" data-reveal>
+    <span class="realms-tag">[ ACT II · THE SACRED DESCENT ]</span>
+    <h2 class="realms-title">The Four Elevation Realms</h2>
+    <p class="realms-desc">
+      An origin is not a flat territory—it is an ecosystem shaped by altitude, monsoon depth, and millions of years of leaf litter.
+    </p>
+  </div>
+
+  <!-- The 4 Mountain Nodes -->
+  <div class="realms-container">
+    {sortedOrigins.map((origin, index) => {
+      const originProducts = productsByOrigin[origin.data.slug] || [];
+      const canopyImg = origin.data.images?.canopy || '';
+      const isFirst = index === 0;
+
+      return (
+        <div class="realm-node" data-realm={origin.data.slug} data-reveal>
+          
+          <!-- Realm Card Header / Interactive Trigger -->
+          <button 
+            type="button"
+            class="realm-card" 
+            aria-expanded={isFirst ? "true" : "false"}
+            aria-controls={`realm-yields-${origin.data.slug}`}
+          >
+            {canopyImg && (
+              <div 
+                class="realm-bg-image" 
+                style={`background-image: url('${canopyImg}');`}
+                aria-hidden="true"
+              />
+            )}
+            <div class="realm-wash" aria-hidden="true"></div>
+
+            <!-- Card Top Metadata -->
+            <div class="realm-meta-top">
+              <span class="realm-elevation-badge">
+                <span class="elevation-icon" aria-hidden="true">▲</span>
+                {origin.data.elevation}
+              </span>
+              <span class="realm-coords">{origin.data.coordinates}</span>
+            </div>
+
+            <!-- Card Core Identity -->
+            <div class="realm-identity">
+              <span class="realm-index">0{index + 1}</span>
+              <h3 class="realm-name">{origin.data.name}</h3>
+              <p class="realm-soil">{origin.data.soil}</p>
+            </div>
+
+            <!-- Card Bottom Telemetry -->
+            <div class="realm-meta-bottom">
+              <div class="realm-harvest-count">
+                <span class="count-num">{originProducts.length}</span>
+                <span class="count-label">ACTIVE HARVESTS</span>
+              </div>
+
+              <div class="realm-expand-prompt">
+                <span class="prompt-text">EXPLORE REALM</span>
+                <span class="prompt-symbol" aria-hidden="true">+</span>
+              </div>
+            </div>
+          </button>
+
+          <!-- In-Place Yields Drawer -->
+          <div 
+            id={`realm-yields-${origin.data.slug}`} 
+            class:list={["realm-yields-panel", { "is-active": isFirst }]}
+            aria-hidden={isFirst ? "false" : "true"}
+          >
+            <div class="yields-panel-inner">
+              
+              <!-- Realm Soil & Method Truth -->
+              <div class="realm-truth-bar">
+                <div class="truth-pill">
+                  <span class="pill-label">ECOLOGY:</span>
+                  <span class="pill-val">{origin.data.bioregion || 'Western Ghats'}</span>
+                </div>
+                <div class="truth-pill">
+                  <span class="pill-label">RAINFALL:</span>
+                  <span class="pill-val">{origin.data.rainfall || 'Monsoon-fed'}</span>
+                </div>
+                <div class="truth-pill">
+                  <span class="pill-label">HARVEST METHOD:</span>
+                  <span class="pill-val">{origin.data.method || 'Traditional Hand Harvest'}</span>
+                </div>
+              </div>
+
+              <!-- Product Specimen Stream -->
+              <div class="realm-products-grid">
+                {originProducts.length === 0 ? (
+                  <div class="no-yields-notice">
+                    <p>This mountain realm is currently resting between seasons. New harvest will be recorded following the monsoon.</p>
+                  </div>
+                ) : (
+                  originProducts.map((product) => {
+                    const firstSize = product.data.sizes[0];
+                    const prodImg = product.data.images?.product || product.data.images?.packaging || '';
+                    const priceDisplay = product.data.sizes.length > 1
+                      ? `₹${Math.min(...product.data.sizes.map(s => s.priceINR))} - ₹${Math.max(...product.data.sizes.map(s => s.priceINR))}`
+                      : `₹${firstSize.priceINR}`;
+
+                    const itemPayload = JSON.stringify({
+                      id: `${product.id}-${firstSize.label}`,
+                      productId: product.id,
+                      name: product.data.name,
+                      origin: origin.data.name,
+                      originId: origin.id,
+                      price: firstSize.priceINR,
+                      size: firstSize.label,
+                      weight: firstSize.label,
+                      quantity: 1,
+                      batchRef: product.data.batchRef || 'WYD-BP-001'
+                    });
+
+                    return (
+                      <div class="realm-product-card">
+                        <a href={`/origins/${origin.data.slug}/${product.id}`} class="prod-img-link">
+                          {prodImg && (
+                            <img 
+                              src={prodImg} 
+                              alt={product.data.name} 
+                              class="prod-card-img" 
+                              loading="lazy"
+                            />
+                          )}
+                        </a>
+
+                        <div class="prod-card-body">
+                          <span class="prod-botanical">{product.data.botanicalName || 'Indigenous Cultivar'}</span>
+                          <h4 class="prod-name">
+                            <a href={`/origins/${origin.data.slug}/${product.id}`}>{product.data.name}</a>
+                          </h4>
+                          <span class="prod-batch">BATCH: {product.data.batchRef || 'RECORDED'}</span>
+                          
+                          <div class="prod-card-footer">
+                            <span class="prod-price">{priceDisplay}</span>
+                            
+                            <div class="prod-actions">
+                              <button 
+                                type="button"
+                                class="btn-quick-add" 
+                                data-product-json={itemPayload}
+                                aria-label={`Add ${product.data.name} to Harvest Bundle`}
+                              >
+                                + GATHER
+                              </button>
+                              
+                              <a 
+                                href={`/origins/${origin.data.slug}/${product.id}`} 
+                                class="btn-deep-descend"
+                              >
+                                STRATA →
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      );
+    })}
+  </div>
+
+</section>
+
+<script>
+  // Robust global event delegation for Realm Accordions
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement | null;
+    if (!target) return;
+
+    // Check if clicked a realm-card toggle button
+    const cardBtn = target.closest('.realm-card') as HTMLButtonElement | null;
+    if (cardBtn) {
+      e.preventDefault();
+      const node = cardBtn.closest('.realm-node');
+      if (!node) return;
+      const panel = node.querySelector('.realm-yields-panel');
+      if (!panel) return;
+
+      const isCurrentlyExpanded = cardBtn.getAttribute('aria-expanded') === 'true';
+      const allNodes = document.querySelectorAll('.realm-node');
+
+      // Collapse all
+      allNodes.forEach((otherNode) => {
+        const otherBtn = otherNode.querySelector('.realm-card');
+        const otherPanel = otherNode.querySelector('.realm-yields-panel');
+        if (otherBtn && otherPanel) {
+          otherBtn.setAttribute('aria-expanded', 'false');
+          otherPanel.classList.remove('is-active');
+          otherPanel.setAttribute('aria-hidden', 'true');
+        }
+      });
+
+      // Toggle current if it wasn't open
+      if (!isCurrentlyExpanded) {
+        cardBtn.setAttribute('aria-expanded', 'true');
+        panel.classList.add('is-active');
+        panel.setAttribute('aria-hidden', 'false');
+      }
+      return;
+    }
+
+    // Check if clicked a quick-add button
+    const addBtn = target.closest('.btn-quick-add') as HTMLElement | null;
+    if (addBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const jsonStr = addBtn.dataset.productJson;
+      if (!jsonStr) return;
+
+      try {
+        const item = JSON.parse(jsonStr);
+        window.dispatchEvent(new CustomEvent('add-to-cart', { detail: item }));
+        
+        const originalText = addBtn.textContent;
+        addBtn.textContent = '✓ GATHERED';
+        addBtn.classList.add('is-added');
+        setTimeout(() => {
+          addBtn.textContent = originalText;
+          addBtn.classList.remove('is-added');
+        }, 1400);
+      } catch (err) {
+        console.error('Error adding to harvest bundle:', err);
+      }
+    }
+  });
+</script>
+
+<style>
+  .elevation-realms {
+    position: relative;
+    z-index: 2;
+    padding: clamp(5rem, 10vh, 8rem) clamp(1.5rem, 6vw, 6rem);
+    border-top: 1px solid var(--color-border-subtle);
+  }
+
+  .realms-header {
+    max-width: 800px;
+    margin-bottom: clamp(3rem, 6vh, 4.5rem);
+  }
+
+  .realms-tag {
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    letter-spacing: 0.25em;
+    color: var(--color-gold);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.75rem;
+  }
+
+  .realms-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--type-display);
+    line-height: 1.1;
+    color: var(--color-warm-cream);
+    font-weight: 400;
+  }
+
+  .realms-desc {
+    margin: 1rem 0 0;
+    font-family: var(--font-narrative);
+    font-size: var(--type-narrative);
+    color: var(--color-cream-muted);
+    line-height: 1.6;
+    max-width: 600px;
+  }
+
+  /* Realms Container */
+  .realms-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .realm-node {
+    border: 1px solid var(--color-border-subtle);
+    background: var(--color-forest-surface);
+    transition: border-color var(--duration-standard) ease;
+  }
+
+  .realm-node:hover {
+    border-color: rgba(212, 139, 22, 0.4);
+  }
+
+  /* Realm Card Trigger */
+  .realm-card {
+    position: relative;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: none;
+    padding: clamp(1.5rem, 3.5vw, 2.5rem);
+    cursor: pointer;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    color: var(--color-warm-cream);
+    min-height: 180px;
+  }
+
+  .realm-bg-image {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.22;
+    transition: opacity var(--duration-slow) var(--ease-settle), transform var(--duration-slow) var(--ease-settle);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .realm-card:hover .realm-bg-image,
+  .realm-card[aria-expanded="true"] .realm-bg-image {
+    opacity: 0.38;
+    transform: scale(1.03);
+  }
+
+  .realm-wash {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(8, 13, 6, 0.92) 0%, rgba(8, 13, 6, 0.7) 100%);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .realm-meta-top,
+  .realm-identity,
+  .realm-meta-bottom {
+    position: relative;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .realm-meta-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-evidence);
+    font-size: var(--type-evidence);
+  }
+
+  .realm-elevation-badge {
+    color: var(--color-gold-bright);
+    letter-spacing: 0.15em;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .elevation-icon {
+    font-size: 9px;
+  }
+
+  .realm-coords {
+    color: var(--color-cream-whisper);
+    letter-spacing: 0.1em;
+  }
+
+  .realm-identity {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .realm-index {
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    color: var(--color-gold);
+    letter-spacing: 0.2em;
+  }
+
+  .realm-name {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    color: var(--color-warm-cream);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+  .realm-soil {
+    margin: 0;
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    color: var(--color-cream-muted);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .realm-meta-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(240, 234, 214, 0.08);
+  }
+
+  .realm-harvest-count {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    font-family: var(--font-evidence);
+  }
+
+  .count-num {
+    font-size: 1.2rem;
+    color: var(--color-gold);
+    font-weight: 500;
+  }
+
+  .count-label {
+    font-size: 10px;
+    color: var(--color-cream-whisper);
+    letter-spacing: 0.15em;
+  }
+
+  .realm-expand-prompt {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    color: var(--color-warm-cream);
+    letter-spacing: 0.15em;
+  }
+
+  .prompt-symbol {
+    font-size: 1.2rem;
+    color: var(--color-gold);
+    transition: transform var(--duration-standard) var(--ease-settle);
+  }
+
+  .realm-card[aria-expanded="true"] .prompt-symbol {
+    transform: rotate(45deg);
+  }
+
+  /* Drawer Panel */
+  .realm-yields-panel {
+    display: none;
+    border-top: 1px solid var(--color-border-subtle);
+    background: rgba(6, 9, 5, 0.95);
+  }
+
+  .realm-yields-panel.is-active {
+    display: block;
+    animation: fadeInDrawer 0.4s var(--ease-settle);
+  }
+
+  @keyframes fadeInDrawer {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .yields-panel-inner {
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  .realm-truth-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.8rem;
+    border-bottom: 1px solid var(--color-border-subtle);
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+  }
+
+  .truth-pill {
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .pill-label {
+    color: var(--color-gold);
+    letter-spacing: 0.1em;
+  }
+
+  .pill-val {
+    color: var(--color-warm-cream);
+    letter-spacing: 0.08em;
+  }
+
+  /* Products Grid */
+  .realm-products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .realm-product-card {
+    background: var(--color-forest-surface);
+    border: 1px solid var(--color-border-subtle);
+    display: flex;
+    flex-direction: column;
+    transition: all var(--duration-standard) var(--ease-settle);
+  }
+
+  .realm-product-card:hover {
+    border-color: rgba(212, 139, 22, 0.4);
+    transform: translateY(-2px);
+  }
+
+  .prod-img-link {
+    display: block;
+    height: 190px;
+    background: #040603;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .prod-card-img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+    transition: transform var(--duration-slow) var(--ease-settle);
+  }
+
+  .realm-product-card:hover .prod-card-img {
+    transform: scale(1.08);
+  }
+
+  .prod-card-body {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .prod-botanical {
+    font-family: var(--font-narrative);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--color-gold);
+    margin-bottom: 0.25rem;
+  }
+
+  .prod-name {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 400;
+    line-height: 1.25;
+  }
+
+  .prod-name a {
+    color: var(--color-warm-cream);
+    text-decoration: none;
+  }
+
+  .prod-name a:hover {
+    color: var(--color-gold-bright);
+  }
+
+  .prod-batch {
+    font-family: var(--font-evidence);
+    font-size: 10px;
+    color: var(--color-cream-whisper);
+    letter-spacing: 0.15em;
+    margin-top: 0.5rem;
+  }
+
+  .prod-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.25rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(240, 234, 214, 0.08);
+  }
+
+  .prod-price {
+    font-family: var(--font-evidence);
+    font-size: var(--type-evidence);
+    color: var(--color-warm-cream);
+    font-weight: 500;
+  }
+
+  .prod-actions {
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .btn-quick-add,
+  .btn-deep-descend {
+    font-family: var(--font-evidence);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    padding: 0.45rem 0.75rem;
+    text-decoration: none;
+    border: 1px solid var(--color-border-subtle);
+    cursor: pointer;
+    transition: all var(--duration-quick) ease;
+  }
+
+  .btn-quick-add {
+    background: rgba(212, 139, 22, 0.15);
+    border-color: var(--color-gold);
+    color: var(--color-warm-cream);
+  }
+
+  .btn-quick-add:hover {
+    background: var(--color-gold);
+    color: var(--color-forest-deep);
+  }
+
+  .btn-quick-add.is-added {
+    background: var(--color-laterite);
+    border-color: var(--color-laterite);
+    color: #fff;
+  }
+
+  .btn-deep-descend {
+    background: transparent;
+    color: var(--color-cream-muted);
+  }
+
+  .btn-deep-descend:hover {
+    color: var(--color-warm-cream);
+    border-color: var(--color-warm-cream);
+  }
+
+  .no-yields-notice {
+    padding: 2rem;
+    font-family: var(--font-narrative);
+    color: var(--color-cream-muted);
+    font-style: italic;
+  }
+
+  @media (max-width: 768px) {
+    .elevation-realms {
+      padding: 4rem 1.25rem;
+    }
+    .realm-products-grid {
+      grid-template-columns: 1fr;
+    }
+    .realm-truth-bar {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  }
+</style>

@@ -1,25 +1,40 @@
 /* ═══════════════════════════════════════════════════════════
-   OurOrigin — Design Tokens (Locked)
+   OurOrigin — Design Tokens (Primitive & Indigenous Art)
    Source of truth for every visual decision.
-   No component should redeclare these values.
+   Rooted in the ancient soil of the Western Ghats.
    ═══════════════════════════════════════════════════════════ */
 
 :root {
-  /* ── Brand Colors ── */
-  --color-void: #000000;
-  --color-forest-deep: #000000;       /* Primary background. Locked to true black. */
-  --color-warm-cream: #F0EAD6;        /* Bone White */
-  --color-gold: #FF4500;              /* Surveyor's Orange (action/highlight) */
-  --color-gold-muted: rgba(255, 69, 0, 0.2);
-  --color-ruby: #8a2a2b;
-  --color-copper: #b87333;
-  --color-silver: #c0c0c0;
+  /* ── Brand Colors: Ancient Soil, Forest Mist & Volcanic Earth ── */
+  --color-void: #060905;
+  --color-forest-deep: #080D06;        /* Primary background — deep ancient rainforest earth */
+  --color-forest-surface: #0E150B;     /* Slightly lifted surface for cards */
+  --color-forest-hover: #141E10;       /* Interactive hover state */
+  --color-warm-cream: #F0EAD6;         /* Bone White / Chalk */
+  --color-cream-muted: rgba(240, 234, 214, 0.65);
+  --color-cream-whisper: rgba(240, 234, 214, 0.35);
+  
+  /* Primary Action & Sacred Signals */
+  --color-gold: #D48B16;               /* Earth Amber / Turmeric warmth */
+  --color-gold-bright: #F5A623;        /* Bright highlight */
+  --color-gold-muted: rgba(212, 139, 22, 0.2);
+  --color-orange-surveyor: #FF4500;    /* Surveyor's signal */
+  
+  /* Indigenous Earth Accents */
+  --color-laterite: #8B2500;           /* Red Laterite volcanic soil */
+  --color-laterite-glow: rgba(139, 37, 0, 0.35);
+  --color-moss-deep: #1A2E16;          /* Ancient canopy moss */
+  --color-bark: #2C1B10;               /* Aged timber bark */
+  --color-mist: rgba(220, 235, 225, 0.08);
 
-  /* ── Typography — Two Densities ──
-     A section either breathes or it reports. Never both in the same block.
-     WIDE  = Cormorant Garamond (narratives, statements, manifesto)
-     DENSE = DM Mono (coordinates, batch codes, timestamps, labels)
-     Display = Cinzel (section headers, wordmark) */
+  /* Subtle Borders & Dividers */
+  --color-border-subtle: rgba(240, 234, 214, 0.09);
+  --color-border-accent: rgba(212, 139, 22, 0.35);
+
+  /* ── Typography — Three Disciplined Registers ──
+     1. Display / Inscriptions = Cinzel (ancient, monumental, carved)
+     2. Narrative / Human Voice = Cormorant Garamond (warm, poetic, living)
+     3. Evidence & Telemetry = DM Mono (coordinates, elevation, batches) */
   --font-display: 'Cinzel', serif;
   --font-institutional: 'Cinzel', serif;
   --font-narrative: 'Cormorant Garamond', serif;
@@ -28,24 +43,19 @@
   --font-sans: 'Inter', -apple-system, sans-serif;
 
   /* ── Fluid Type Scale ── */
-  --type-display:   clamp(28px, 8vw, 64px);   /* Origin/product name, rare */
-  --type-statement: clamp(22px, 6vw, 40px);   /* Cipher lines, section titles */
-  --type-narrative: clamp(16px, 4vw, 20px);   /* Body copy */
-  --type-evidence:  clamp(12px, 2.8vw, 13px); /* Coordinates, labels */
-  --type-whisper:   clamp(10px, 2.2vw, 11px); /* Micro captions, batch codes */
+  --type-monumental: clamp(34px, 7.5vw, 76px);
+  --type-display:   clamp(26px, 5.5vw, 48px);
+  --type-statement: clamp(20px, 4vw, 32px);
+  --type-narrative: clamp(16px, 2.2vw, 20px);
+  --type-evidence:  clamp(12px, 1.4vw, 13px);
+  --type-whisper:   clamp(10px, 1.1vw, 11px);
 
-  /* Legacy aliases (used in existing components — migrate gradually) */
-  --text-base: clamp(1rem, 1.2vw, 1.25rem);
-  --text-lead: clamp(1.25rem, 1.5vw, 1.5rem);
-  --text-title: clamp(2rem, 4vw, 3.5rem);
-  --text-massive: clamp(4rem, 12vw, 10rem);
-  --text-hero: clamp(3rem, 8vw, 6rem);
+  /* Line Heights */
+  --line-height-tight: 1.08;
+  --line-height-base: 1.5;
+  --line-height-loose: 1.85;
 
-  --line-height-tight: 1.1;
-  --line-height-base: 1.4;
-  --line-height-loose: 1.8;
-
-  /* ── Spacing ── */
+  /* ── Spacing Scale ── */
   --space-xs: 0.25rem;   /* 4px */
   --space-sm: 0.5rem;    /* 8px */
   --space-md: 0.75rem;   /* 12px */
@@ -53,17 +63,18 @@
   --space-xl: 1.5rem;    /* 24px */
   --space-2xl: 2rem;     /* 32px */
   --space-3xl: 3rem;     /* 48px */
-  --space-4xl: 4rem;     /* 64px */
+  --space-4xl: 4.5rem;   /* 72px */
+  --space-5xl: 6rem;     /* 96px */
 
-  /* ── Motion ── */
-  --ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
-  --duration-quick: 120ms;
-  --duration-standard: 320ms;
+  /* ── Motion & Easing ── */
+  --ease-settle: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-organic: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --duration-quick: 150ms;
+  --duration-standard: 350ms;
   --duration-slow: 700ms;
-  --duration-cinematic: 1000ms;
+  --duration-cinematic: 1200ms;
 
-  /* ── Layout ──
-     Border radius is 0 everywhere. Deliberate. Brutalist. Locked. */
+  /* ── Brutalist Layout: Zero Corner Radii ── */
   --radius: 0;
 }
 
@@ -73,6 +84,10 @@
 
 *, *::before, *::after {
   box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 html, body {
@@ -88,7 +103,7 @@ html, body {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   Cinematic Grain — subliminal texture
+   Cinematic Soil & Organic Grain
    ═══════════════════════════════════════════════════════════ */
 
 body::after {
@@ -98,8 +113,8 @@ body::after {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.035;
   pointer-events: none;
   z-index: 9999;
 }
@@ -114,13 +129,13 @@ body::after {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   Scroll Reveal Animations
+   Scroll Reveal System
    ═══════════════════════════════════════════════════════════ */
 
 [data-reveal] {
   opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.8s var(--ease-settle), transform 0.8s var(--ease-settle);
+  transform: translateY(24px);
+  transition: opacity 0.9s var(--ease-settle), transform 0.9s var(--ease-settle);
   will-change: opacity, transform;
 }
 
@@ -136,12 +151,12 @@ body::after {
 
 [data-reveal="stagger"] > * {
   opacity: 0;
-  transform: translateY(30px);
+  transform: translateY(20px);
   transition: opacity 0.8s var(--ease-settle), transform 0.8s var(--ease-settle);
 }
 
 /* ═══════════════════════════════════════════════════════════
-   Reduced Motion — respected globally
+   Reduced Motion
    ═══════════════════════════════════════════════════════════ */
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,52 +1,72 @@
 ---
-// Act I — The Land Speaks
-// Copy speaks to the act of growing and recording — not to any single origin.
-// The specific yield in view right now is from the Western Ghats.
+// HeroSection.astro — Act I: The Ancient Soil & Forest Atmosphere
 ---
 
-<section class="hero" id="hero" aria-label="The land">
+<section class="hero" id="hero" aria-label="The Ancient Land">
 
-  <!-- Coordinate pulse: arrives first, anchors the place -->
-  <div class="hero-coord" id="hero-coord" aria-label="Geographic coordinates">
-    <span class="coord-pulse" aria-hidden="true"></span>
-    <span class="coord-string">11°36′N, 76°04′E</span>
-    <span class="coord-label">· WESTERN GHATS · ELEVATION 900–1,100M</span>
+  <!-- Coordinate & Geological Datum -->
+  <div class="hero-telemetry" id="hero-telemetry" data-reveal="fade">
+    <span class="telemetry-pulse" aria-hidden="true"></span>
+    <span class="telemetry-coord">11°36′N, 76°04′E</span>
+    <span class="telemetry-sep">·</span>
+    <span class="telemetry-soil">25 MILLION YEARS OF VOLCANIC SOIL</span>
+    <span class="telemetry-sep">·</span>
+    <span class="telemetry-status">LIVE RECORD</span>
   </div>
 
-  <!-- The opening breath — from wayanad.json narrative.canopy -->
-  <div class="hero-statement" id="hero-statement">
-    <p class="hero-line hero-line--1" aria-label="The monsoon doesn't simply fall here.">
-      The monsoon doesn't<br class="hero-break"> simply fall here.
-    </p>
-    <p class="hero-line hero-line--2">
-      It moves through in layers —<br class="hero-break">
-      <em>canopy first,</em><br class="hero-break">
-      then the vine,<br class="hero-break">
-      then the soil.
-    </p>
-    <p class="hero-line hero-line--3">
-      In a sequence that repeats<br class="hero-break"> for months.
-    </p>
-  </div>
+  <!-- Monumental Primeval Truth -->
+  <div class="hero-core-statement">
+    <span class="hero-ancient-tag" data-reveal="fade">THE WESTERN GHATS</span>
+    
+    <h1 class="hero-title" data-reveal>
+      Before plantations.<br/>
+      Before borders.<br/>
+      <span class="hero-title-accent">Before trade routes.</span>
+    </h1>
 
-  <!-- The consequence — what that moisture becomes -->
-  <div class="hero-consequence" id="hero-consequence">
-    <p class="consequence-text">
-      The humidity that results is not incidental<br> to what pepper becomes.<br>
-      <span class="consequence-emphasis">It is, partly, what pepper <em>is.</em></span>
+    <p class="hero-subtitle" data-reveal>
+      The ancient rainforest gave this. We record the truth of the soil, the rhythm of the monsoon, and the dignity of the hands that gathered it.
     </p>
   </div>
 
-  <!-- Descent invitation -->
-  <div class="hero-descent" id="hero-descent">
-    <a href="#the-hand" class="descent-link" aria-label="Continue — meet the hands">
-      <span class="descent-label">First Hands · Western Ghats</span>
-      <span class="descent-arrow" aria-hidden="true">↓</span>
+  <!-- Dual Action Matrix: Descend or Instant Harvest -->
+  <div class="hero-actions" data-reveal>
+    <a href="#elevation-realms" class="btn-hero btn-hero--descend">
+      <span class="btn-text">Descend Through the 4 Realms</span>
+      <span class="btn-arrow" aria-hidden="true">↓</span>
+    </a>
+
+    <a href="#specimen-vault" class="btn-hero btn-hero--vault">
+      <span class="btn-text">Explore Seasonal Yields</span>
+      <span class="btn-arrow" aria-hidden="true">→</span>
     </a>
   </div>
 
-  <!-- Topographic/grain texture overlay — pure CSS, no asset needed -->
-  <div class="hero-terrain" aria-hidden="true"></div>
+  <!-- Elevation Gauge Indicator on Hero Bottom -->
+  <div class="hero-gauge" data-reveal="fade">
+    <div class="gauge-item">
+      <span class="gauge-num">2,600M</span>
+      <span class="gauge-label">NILGIRIS</span>
+    </div>
+    <div class="gauge-divider"></div>
+    <div class="gauge-item">
+      <span class="gauge-num">1,200M</span>
+      <span class="gauge-label">IDUKKI</span>
+    </div>
+    <div class="gauge-divider"></div>
+    <div class="gauge-item">
+      <span class="gauge-num">900M</span>
+      <span class="gauge-label">WAYANAD</span>
+    </div>
+    <div class="gauge-divider"></div>
+    <div class="gauge-item">
+      <span class="gauge-num">60M</span>
+      <span class="gauge-label">COASTAL BASIN</span>
+    </div>
+  </div>
+
+  <!-- Atmospheric Soil & Mist Overlay -->
+  <div class="hero-atmosphere" aria-hidden="true"></div>
 
 </section>
 
@@ -54,83 +74,44 @@
   import { gsap } from 'gsap';
 
   function initHero() {
-    // Kill previous instances if navigating back
-    gsap.killTweensOf([
-      '#hero-coord',
-      '.hero-line',
-      '#hero-consequence',
-      '#hero-descent',
-    ]);
+    const tl = gsap.timeline({ delay: 0.1 });
 
-    const tl = gsap.timeline({ delay: 0.15 });
-
-    // 1. Coordinates arrive — place is established
-    tl.fromTo('#hero-coord',
-      { opacity: 0, y: -12 },
-      { opacity: 1, y: 0, duration: 1.1, ease: 'power3.out' }
+    tl.fromTo('#hero-telemetry',
+      { opacity: 0, y: -16 },
+      { opacity: 1, y: 0, duration: 1.0, ease: 'power3.out' }
     );
 
-    // 2. First line drops in — the land's opening word
-    tl.fromTo('.hero-line--1',
-      { opacity: 0, y: 28, filter: 'blur(8px)' },
-      { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.3, ease: 'power2.out' },
-      '-=0.4'
+    tl.fromTo('.hero-title',
+      { opacity: 0, y: 32, filter: 'blur(6px)' },
+      { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.2, ease: 'power2.out' },
+      '-=0.6'
     );
 
-    // 3. Second line — the layered movement
-    tl.fromTo('.hero-line--2',
-      { opacity: 0, y: 20, filter: 'blur(6px)' },
-      { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.4, ease: 'power2.out' },
+    tl.fromTo('.hero-subtitle',
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 1.0, ease: 'power2.out' },
       '-=0.7'
     );
 
-    // 4. Third line — the repetition, the permanence
-    tl.fromTo('.hero-line--3',
-      { opacity: 0, y: 14 },
-      { opacity: 1, y: 0, duration: 1.0, ease: 'power2.out' },
+    tl.fromTo('.hero-actions',
+      { opacity: 0, y: 16 },
+      { opacity: 1, y: 0, duration: 0.9, ease: 'power2.out' },
       '-=0.5'
     );
 
-    // 5. Consequence rises
-    tl.fromTo('#hero-consequence',
-      { opacity: 0, y: 18 },
-      { opacity: 1, y: 0, duration: 1.1, ease: 'power2.out' },
-      '-=0.3'
-    );
-
-    // 6. Descent link — last, unhurried
-    tl.fromTo('#hero-descent',
+    tl.fromTo('.hero-gauge',
       { opacity: 0 },
-      { opacity: 1, duration: 1.0, ease: 'power1.out' },
-      '-=0.2'
+      { opacity: 1, duration: 1.2, ease: 'power1.out' },
+      '-=0.4'
     );
-
-    // Breathing pulse on coord dot
-    gsap.to('.coord-pulse', {
-      scale: 1.8,
-      opacity: 0,
-      duration: 1.6,
-      ease: 'power1.out',
-      repeat: -1,
-      repeatDelay: 0.8,
-    });
-
-    // Slow drift on the descent arrow
-    gsap.to('.descent-arrow', {
-      y: 5,
-      duration: 1.4,
-      ease: 'sine.inOut',
-      yoyo: true,
-      repeat: -1,
-    });
   }
 
   initHero();
   document.addEventListener('astro:after-swap', initHero);
+  document.addEventListener('astro:page-load', initHero);
 </script>
 
 <style>
-  /* ─── Hero: Full viewport, pure atmosphere ─── */
   .hero {
     position: relative;
     min-height: 100vh;
@@ -138,219 +119,241 @@
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    padding: clamp(6rem, 12vh, 9rem) clamp(1.5rem, 6vw, 5rem) clamp(5rem, 10vh, 8rem);
+    padding: clamp(6.5rem, 14vh, 10rem) clamp(1.5rem, 6vw, 6rem) clamp(4rem, 8vh, 6rem);
     overflow: hidden;
-    background-color: transparent;
+    background: transparent;
     z-index: 1;
   }
 
-  /* ─── Topographic texture: radial grain from centre ─── */
-  .hero-terrain {
+  /* Atmospheric Radial Soil Glow */
+  .hero-atmosphere {
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(ellipse 80% 60% at 70% 50%,
-        rgba(255, 69, 0, 0.04) 0%,
-        transparent 70%),
-      radial-gradient(ellipse 50% 80% at 30% 60%,
-        rgba(240, 234, 214, 0.025) 0%,
-        transparent 60%);
+      radial-gradient(ellipse 65% 55% at 20% 40%, rgba(139, 37, 0, 0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 70% 60% at 85% 65%, rgba(212, 139, 22, 0.06) 0%, transparent 65%),
+      radial-gradient(circle at 50% 50%, rgba(26, 46, 22, 0.15) 0%, transparent 80%);
     pointer-events: none;
     z-index: 0;
   }
 
-  /* Subtle horizontal rule — like a surveyor's horizon line */
-  .hero::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(
-      to right,
-      transparent 0%,
-      rgba(255, 69, 0, 0.2) 30%,
-      rgba(255, 69, 0, 0.08) 70%,
-      transparent 100%
-    );
-  }
-
-  /* ─── Coordinate datum ─── */
-  .hero-coord {
+  /* Telemetry Datum */
+  .hero-telemetry {
     position: relative;
     z-index: 2;
     display: flex;
     align-items: center;
-    gap: 0.6rem;
-    margin-bottom: clamp(3rem, 6vh, 5rem);
-    opacity: 0; /* GSAP reveals */
-  }
-
-  .coord-pulse {
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--color-gold);
-    box-shadow: 0 0 8px var(--color-gold);
-    flex-shrink: 0;
-    transform-origin: center;
-  }
-
-  .coord-string {
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    margin-bottom: clamp(1.8rem, 4vh, 3rem);
     font-family: var(--font-evidence);
     font-size: var(--type-evidence);
-    color: var(--color-gold);
-    letter-spacing: 0.18em;
+    color: var(--color-warm-cream);
   }
 
-  .coord-label {
+  .telemetry-pulse {
+    width: 7px;
+    height: 7px;
+    background: var(--color-gold);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--color-gold);
+    animation: pulseGlow 2s ease-in-out infinite;
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.4); opacity: 0.6; }
+  }
+
+  .telemetry-coord {
+    color: var(--color-gold);
+    letter-spacing: 0.15em;
+    font-weight: 500;
+  }
+
+  .telemetry-sep {
+    color: var(--color-cream-whisper);
+  }
+
+  .telemetry-soil {
+    color: var(--color-cream-muted);
+    letter-spacing: 0.12em;
+    font-size: var(--type-whisper);
+  }
+
+  .telemetry-status {
+    color: var(--color-laterite);
+    border: 1px solid rgba(139, 37, 0, 0.4);
+    padding: 2px 6px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    background: rgba(139, 37, 0, 0.1);
+  }
+
+  /* Hero Statement */
+  .hero-core-statement {
+    position: relative;
+    z-index: 2;
+    max-width: 960px;
+  }
+
+  .hero-ancient-tag {
+    display: inline-block;
     font-family: var(--font-evidence);
     font-size: var(--type-whisper);
-    color: rgba(240, 234, 214, 0.28);
-    letter-spacing: 0.12em;
+    letter-spacing: 0.3em;
+    color: var(--color-gold);
+    margin-bottom: 0.75rem;
     text-transform: uppercase;
   }
 
-  /* ─── Main statement block ─── */
-  .hero-statement {
+  .hero-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--type-monumental);
+    line-height: 1.05;
+    font-weight: 400;
+    color: var(--color-warm-cream);
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .hero-title-accent {
+    color: var(--color-gold-bright);
+    font-style: italic;
+    font-family: var(--font-narrative);
+    font-weight: 300;
+    letter-spacing: 0;
+  }
+
+  .hero-subtitle {
+    margin: clamp(1.2rem, 3vh, 2rem) 0 0;
+    font-family: var(--font-narrative);
+    font-size: var(--type-narrative);
+    line-height: 1.65;
+    color: var(--color-cream-muted);
+    max-width: 640px;
+    font-weight: 300;
+  }
+
+  /* Actions */
+  .hero-actions {
     position: relative;
     z-index: 2;
     display: flex;
-    flex-direction: column;
-    gap: clamp(1rem, 2.5vh, 2rem);
-    max-width: 860px;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+    margin-top: clamp(2rem, 5vh, 3.5rem);
   }
 
-  .hero-line {
-    margin: 0;
-    font-family: var(--font-display);
-    line-height: 1.08;
-    font-weight: 400;
-    color: var(--color-warm-cream);
-    opacity: 0; /* GSAP reveals */
-  }
-
-  .hero-line--1 {
-    font-size: clamp(2.4rem, 6.5vw, 5.8rem);
-    letter-spacing: -0.01em;
-  }
-
-  .hero-line--2 {
-    font-size: clamp(1.6rem, 3.8vw, 3.4rem);
-    color: rgba(240, 234, 214, 0.55);
-    font-weight: 300;
-    letter-spacing: 0.01em;
-    padding-left: clamp(0.5rem, 2vw, 2rem); /* Slight indent — a breath inward */
-  }
-
-  .hero-line--2 em {
-    font-style: italic;
-    color: var(--color-gold);
-    opacity: 0.8;
-  }
-
-  .hero-line--3 {
-    font-size: clamp(1.2rem, 2.8vw, 2.4rem);
-    color: rgba(240, 234, 214, 0.3);
-    font-weight: 300;
-    font-style: italic;
-    font-family: var(--font-narrative);
-  }
-
-  .hero-break {
-    display: block; /* Forced breaks are intentional rhythm */
-  }
-
-  /* ─── Consequence text ─── */
-  .hero-consequence {
-    position: relative;
-    z-index: 2;
-    margin-top: clamp(2.5rem, 5vh, 4rem);
-    max-width: 560px;
-    opacity: 0; /* GSAP reveals */
-  }
-
-  .consequence-text {
-    margin: 0;
-    font-family: var(--font-narrative);
-    font-size: clamp(0.95rem, 1.8vw, 1.3rem);
-    font-weight: 300;
-    color: rgba(240, 234, 214, 0.42);
-    line-height: 1.75;
-  }
-
-  .consequence-emphasis {
-    display: block;
-    margin-top: 0.5em;
-    color: rgba(240, 234, 214, 0.65);
-    font-style: italic;
-  }
-
-  .consequence-emphasis em {
-    color: var(--color-warm-cream);
-    font-style: italic;
-  }
-
-  /* ─── Descent invitation ─── */
-  .hero-descent {
-    position: relative;
-    z-index: 2;
-    margin-top: clamp(3rem, 7vh, 6rem);
-    opacity: 0; /* GSAP reveals */
-  }
-
-  .descent-link {
+  .btn-hero {
     display: inline-flex;
-    flex-direction: column;
-    gap: 0.4rem;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.9rem 1.6rem;
+    font-family: var(--font-evidence);
+    font-size: var(--type-evidence);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
     text-decoration: none;
-    color: rgba(240, 234, 214, 0.35);
-    transition: color 0.3s ease;
+    border: 1px solid var(--color-border-subtle);
+    transition: all var(--duration-standard) var(--ease-settle);
     cursor: pointer;
   }
 
-  .descent-link:hover {
-    color: var(--color-gold);
+  .btn-hero--descend {
+    background: rgba(212, 139, 22, 0.12);
+    border-color: var(--color-gold);
+    color: var(--color-warm-cream);
   }
 
-  .descent-label {
+  .btn-hero--descend:hover {
+    background: var(--color-gold);
+    color: var(--color-forest-deep);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(212, 139, 22, 0.25);
+  }
+
+  .btn-hero--vault {
+    background: rgba(240, 234, 214, 0.03);
+    border-color: var(--color-border-subtle);
+    color: var(--color-cream-muted);
+  }
+
+  .btn-hero--vault:hover {
+    border-color: var(--color-warm-cream);
+    color: var(--color-warm-cream);
+    background: rgba(240, 234, 214, 0.08);
+    transform: translateY(-2px);
+  }
+
+  .btn-arrow {
+    transition: transform var(--duration-quick) ease;
+  }
+
+  .btn-hero:hover .btn-arrow {
+    transform: translateX(4px);
+  }
+
+  .btn-hero--descend:hover .btn-arrow {
+    transform: translateY(4px);
+  }
+
+  /* Elevation Gauge */
+  .hero-gauge {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: clamp(3rem, 7vh, 5.5rem);
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border-subtle);
+    width: 100%;
+    max-width: 800px;
+  }
+
+  .gauge-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .gauge-num {
     font-family: var(--font-evidence);
-    font-size: var(--type-whisper);
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    display: block;
+    font-size: var(--type-evidence);
+    color: var(--color-gold);
+    font-weight: 500;
+    letter-spacing: 0.1em;
   }
 
-  .descent-arrow {
-    font-size: 1.3rem;
-    display: block;
-    line-height: 1;
-    transform-origin: center;
+  .gauge-label {
+    font-family: var(--font-evidence);
+    font-size: 10px;
+    color: var(--color-cream-whisper);
+    letter-spacing: 0.15em;
   }
 
-  /* ─── Mobile ─── */
+  .gauge-divider {
+    height: 24px;
+    width: 1px;
+    background: var(--color-border-subtle);
+  }
+
   @media (max-width: 768px) {
     .hero {
-      padding: 7rem 1.5rem 5rem;
-      align-items: flex-start;
+      padding: 6rem 1.25rem 4rem;
     }
-
-    .coord-label {
+    .hero-telemetry .telemetry-soil,
+    .hero-telemetry .telemetry-sep:nth-of-type(2) {
       display: none;
     }
-
-    .hero-line--2 {
-      padding-left: 0;
+    .hero-gauge {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
     }
-
-    .hero-break {
-      display: inline; /* Let text flow naturally on small screens */
-    }
-
-    .hero-line--2 br,
-    .hero-line--3 br {
+    .gauge-divider {
       display: none;
     }
   }
