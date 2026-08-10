@@ -6,7 +6,7 @@ import HeroSection from '../components/home/HeroSection.astro';
 import HandSection from '../components/home/HandSection.astro';
 import SustainabilitySection from '../components/home/SustainabilitySection.astro';
 import TestimoniesSection from '../components/home/TestimoniesSection.astro';
-import SoilCanvas from '../components/SoilCanvas.astro';
+import TerrainCanvas from '../components/TerrainCanvas.astro';
 
 // Load content
 const allProducts = await getCollection('products');
@@ -28,8 +28,8 @@ const originMap = Object.fromEntries(allOrigins.map(o => [o.id, o.data]));
   noHeaderPadding={true}
 >
 
-  <!-- ═══ ATMOSPHERE: soil particles fixed beneath everything ═══ -->
-  <SoilCanvas />
+  <!-- ═══ ATMOSPHERE: topographic terrain of the origin land ═══ -->
+  <TerrainCanvas />
 
   <!-- ═══ ACT I: THE LAND ═══ -->
   <HeroSection />
