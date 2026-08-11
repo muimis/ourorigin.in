@@ -4,14 +4,12 @@
 
 <section class="hero" id="hero" aria-label="The Ancient Land">
 
-  <!-- Coordinate & Geological Datum -->
+  <!-- Coordinate & Geological Datum - Whispered Bottom Right -->
   <div class="hero-telemetry" id="hero-telemetry" data-reveal="fade">
     <span class="telemetry-pulse" aria-hidden="true"></span>
     <span class="telemetry-coord">11°36′N, 76°04′E</span>
     <span class="telemetry-sep">·</span>
     <span class="telemetry-soil">25 MILLION YEARS OF VOLCANIC SOIL</span>
-    <span class="telemetry-sep">·</span>
-    <span class="telemetry-status">LIVE RECORD</span>
   </div>
 
   <!-- Monumental Primeval Truth -->
@@ -32,37 +30,9 @@
   <!-- Dual Action Matrix: Descend or Instant Harvest -->
   <div class="hero-actions" data-reveal>
     <a href="#elevation-realms" class="btn-hero btn-hero--descend">
-      <span class="btn-text">Descend Through the 4 Realms</span>
+      <span class="btn-text">Explore The Archive</span>
       <span class="btn-arrow" aria-hidden="true">↓</span>
     </a>
-
-    <a href="#specimen-vault" class="btn-hero btn-hero--vault">
-      <span class="btn-text">Explore Seasonal Yields</span>
-      <span class="btn-arrow" aria-hidden="true">→</span>
-    </a>
-  </div>
-
-  <!-- Elevation Gauge Indicator on Hero Bottom -->
-  <div class="hero-gauge" data-reveal="fade">
-    <div class="gauge-item">
-      <span class="gauge-num">2,600M</span>
-      <span class="gauge-label">NILGIRIS</span>
-    </div>
-    <div class="gauge-divider"></div>
-    <div class="gauge-item">
-      <span class="gauge-num">1,200M</span>
-      <span class="gauge-label">IDUKKI</span>
-    </div>
-    <div class="gauge-divider"></div>
-    <div class="gauge-item">
-      <span class="gauge-num">900M</span>
-      <span class="gauge-label">WAYANAD</span>
-    </div>
-    <div class="gauge-divider"></div>
-    <div class="gauge-item">
-      <span class="gauge-num">60M</span>
-      <span class="gauge-label">COASTAL BASIN</span>
-    </div>
   </div>
 
   <!-- Atmospheric Soil & Mist Overlay -->
@@ -97,12 +67,6 @@
       { opacity: 0, y: 16 },
       { opacity: 1, y: 0, duration: 0.9, ease: 'power2.out' },
       '-=0.5'
-    );
-
-    tl.fromTo('.hero-gauge',
-      { opacity: 0 },
-      { opacity: 1, duration: 1.2, ease: 'power1.out' },
-      '-=0.4'
     );
   }
 
@@ -139,16 +103,18 @@
 
   /* Telemetry Datum */
   .hero-telemetry {
-    position: relative;
+    position: absolute;
+    bottom: clamp(1.5rem, 4vh, 2.5rem);
+    right: clamp(1.5rem, 6vw, 3.5rem);
     z-index: 2;
     display: flex;
     align-items: center;
     flex-wrap: wrap;
     gap: 0.65rem;
-    margin-bottom: clamp(1.8rem, 4vh, 3rem);
     font-family: var(--font-evidence);
     font-size: var(--type-evidence);
     color: var(--color-warm-cream);
+    opacity: 0.8;
   }
 
   .telemetry-pulse {
@@ -299,61 +265,22 @@
     transform: translateY(4px);
   }
 
-  /* Elevation Gauge */
-  .hero-gauge {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    margin-top: clamp(3rem, 7vh, 5.5rem);
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--color-border-subtle);
-    width: 100%;
-    max-width: 800px;
-  }
-
-  .gauge-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-  }
-
-  .gauge-num {
-    font-family: var(--font-evidence);
-    font-size: var(--type-evidence);
-    color: var(--color-gold);
-    font-weight: 500;
-    letter-spacing: 0.1em;
-  }
-
-  .gauge-label {
-    font-family: var(--font-evidence);
-    font-size: 10px;
-    color: var(--color-cream-whisper);
-    letter-spacing: 0.15em;
-  }
-
-  .gauge-divider {
-    height: 24px;
-    width: 1px;
-    background: var(--color-border-subtle);
+  .btn-hero--descend:hover .btn-arrow {
+    transform: translateY(4px);
   }
 
   @media (max-width: 768px) {
     .hero {
       padding: 6rem 1.25rem 4rem;
     }
+    .hero-telemetry {
+      bottom: 2rem;
+      right: 1.5rem;
+      left: 1.5rem;
+      justify-content: flex-end;
+    }
     .hero-telemetry .telemetry-soil,
     .hero-telemetry .telemetry-sep:nth-of-type(2) {
-      display: none;
-    }
-    .hero-gauge {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
-    .gauge-divider {
       display: none;
     }
   }

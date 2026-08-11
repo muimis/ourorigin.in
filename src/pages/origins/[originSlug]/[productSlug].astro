@@ -29,6 +29,33 @@ const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp')
   : `https://ourorigin.in${origin.data.images?.specimen || '/og-image.jpg'}`;
 
 const sp = product.data.sensoryProfile;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": `${product.data.name} — ${origin.data.name}`,
+  "image": ogImageUrl,
+  "description": `${product.data.botanicalName ? product.data.botanicalName + '. ' : ''}${origin.data.elevation}. ${product.data.batchRef ? 'Batch ' + product.data.batchRef + '.' : ''}`,
+  "brand": {
+    "@type": "Brand",
+    "name": "OurOrigin"
+  },
+  "offers": {
+    "@type": "Offer",
+    "priceCurrency": "INR",
+    "price": product.data.sizes?.[0]?.priceINR || "0",
+    "availability": "https://schema.org/InStock",
+    "seller": {
+      "@type": "Organization",
+      "name": "OurOrigin"
+    }
+  },
+  "additionalProperty": [
+    ...(product.data.botanicalName ? [{ "@type": "PropertyValue", "name": "Botanical Name", "value": product.data.botanicalName }] : []),
+    ...(origin.data.elevation ? [{ "@type": "PropertyValue", "name": "Elevation", "value": origin.data.elevation }] : []),
+    ...(product.data.batchRef ? [{ "@type": "PropertyValue", "name": "Batch", "value": product.data.batchRef }] : [])
+  ]
+};
 ---
 
 <Layout
@@ -203,6 +230,7 @@ const sp = product.data.sensoryProfile;
       </div>
     </div>
   </main>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 </Layout>
 
 <script>
