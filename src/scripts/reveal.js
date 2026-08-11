@@ -66,6 +66,11 @@ function doInitReveal() {
 
 // Auto-init on DOM ready and on Astro page transitions
 if (typeof document !== 'undefined') {
-  document.addEventListener('DOMContentLoaded', initReveal);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initReveal);
+  } else {
+    // DOM already loaded, run immediately
+    initReveal();
+  }
   document.addEventListener('astro:page-load', initReveal);
 }
