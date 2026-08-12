@@ -29,7 +29,7 @@ sortedOrigins.forEach(origin => {
 <section class="elevation-realms" id="elevation-realms" aria-label="The 4 Mountain Elevation Realms">
 
   <!-- Section Header -->
-  <div class="realms-header" data-reveal>
+  <div class="realms-header">
     <span class="realms-tag">[ ACT II · THE SACRED DESCENT ]</span>
     <h2 class="realms-title">The Four Elevation Realms</h2>
     <p class="realms-desc">
@@ -38,7 +38,7 @@ sortedOrigins.forEach(origin => {
   </div>
 
   <!-- Elevation Gauge Indicator -->
-  <div class="realms-gauge" data-reveal>
+  <div class="realms-gauge">
     <div class="gauge-item">
       <span class="gauge-num">2,600M</span>
       <span class="gauge-label">NILGIRIS</span>
@@ -68,7 +68,7 @@ sortedOrigins.forEach(origin => {
       const isFirst = index === 0;
 
       return (
-        <div class="realm-node" data-realm={origin.data.slug} data-reveal>
+        <div class="realm-node" data-realm={origin.data.slug}>
           
           <!-- Realm Card Header / Interactive Trigger -->
           <button 

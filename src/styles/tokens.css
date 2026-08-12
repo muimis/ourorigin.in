@@ -128,32 +128,7 @@ body::after {
   color: var(--color-forest-deep);
 }
 
-/* ═══════════════════════════════════════════════════════════
-   Scroll Reveal System
-   ═══════════════════════════════════════════════════════════ */
 
-[data-reveal] {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.9s var(--ease-settle), transform 0.9s var(--ease-settle);
-  will-change: opacity, transform;
-}
-
-[data-reveal="fade"] {
-  transform: none;
-}
-
-[data-reveal].is-revealed,
-[data-reveal="stagger"].is-revealed > * {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-[data-reveal="stagger"] > * {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.8s var(--ease-settle), transform 0.8s var(--ease-settle);
-}
 
 /* ═══════════════════════════════════════════════════════════
    Reduced Motion
