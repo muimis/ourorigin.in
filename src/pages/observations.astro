@@ -49,14 +49,14 @@ const observations = [
   <main class="observations-page">
     <div class="observations-container">
       
-      <div class="page-header">
+      <div class="page-header" data-reveal="fade">
         <h1 class="page-title">Field Notes</h1>
         <p class="page-subtitle">
           Observations from the forest, the ledger, and the changing seasons. Not marketing. Documentation.
         </p>
       </div>
 
-      <div class="bento-grid">
+      <div class="bento-grid" data-reveal="stagger">
         {observations.map((entry) => (
           <div class={`bento-tile bento-tile--${entry.size}`}>
             <span class="tile-date">{entry.date}</span>

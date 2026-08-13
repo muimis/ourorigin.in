@@ -5,7 +5,7 @@
 <section class="hero" id="hero" aria-label="The Ancient Land">
 
   <!-- Coordinate & Geological Datum - Whispered Bottom Right -->
-  <div class="hero-telemetry" id="hero-telemetry">
+  <div class="hero-telemetry" id="hero-telemetry" data-reveal="fade">
     <span class="telemetry-pulse" aria-hidden="true"></span>
     <span class="telemetry-coord">11°36′N, 76°04′E</span>
     <span class="telemetry-sep">·</span>
@@ -14,21 +14,21 @@
 
   <!-- Monumental Primeval Truth -->
   <div class="hero-core-statement">
-    <span class="hero-ancient-tag">THE WESTERN GHATS</span>
+    <span class="hero-ancient-tag" data-reveal="fade">THE WESTERN GHATS</span>
     
-    <h1 class="hero-title">
+    <h1 class="hero-title" data-reveal>
       Before plantations.<br/>
       Before borders.<br/>
       <span class="hero-title-accent">Before trade routes.</span>
     </h1>
 
-    <p class="hero-subtitle">
+    <p class="hero-subtitle" data-reveal>
       The ancient rainforest gave this. We record the truth of the soil, the rhythm of the monsoon, and the dignity of the hands that gathered it.
     </p>
   </div>
 
   <!-- Dual Action Matrix: Descend or Instant Harvest -->
-  <div class="hero-actions">
+  <div class="hero-actions" data-reveal>
     <a href="#elevation-realms" class="btn-hero btn-hero--descend">
       <span class="btn-text">Explore The Archive</span>
       <span class="btn-arrow" aria-hidden="true">↓</span>
@@ -40,6 +40,40 @@
 
 </section>
 
+<script>
+  import { gsap } from 'gsap';
+
+  function initHero() {
+    const tl = gsap.timeline({ delay: 0.1 });
+
+    tl.fromTo('#hero-telemetry',
+      { opacity: 0, y: -16 },
+      { opacity: 1, y: 0, duration: 1.0, ease: 'power3.out' }
+    );
+
+    tl.fromTo('.hero-title',
+      { opacity: 0, y: 32, filter: 'blur(6px)' },
+      { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.2, ease: 'power2.out' },
+      '-=0.6'
+    );
+
+    tl.fromTo('.hero-subtitle',
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 1.0, ease: 'power2.out' },
+      '-=0.7'
+    );
+
+    tl.fromTo('.hero-actions',
+      { opacity: 0, y: 16 },
+      { opacity: 1, y: 0, duration: 0.9, ease: 'power2.out' },
+      '-=0.5'
+    );
+  }
+
+  initHero();
+  document.addEventListener('astro:after-swap', initHero);
+  document.addEventListener('astro:page-load', initHero);
+</script>
 
 <style>
   .hero {

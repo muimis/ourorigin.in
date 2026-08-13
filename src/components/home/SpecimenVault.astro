@@ -17,7 +17,7 @@ const activeProducts = allProducts.filter(p => {
 <section class="specimen-vault" id="specimen-vault" aria-label="The Sacred Specimen Vault">
 
   <!-- Vault Header -->
-  <div class="vault-header">
+  <div class="vault-header" data-reveal>
     <div class="vault-meta-tag">
       <span class="vault-glyph">𐌐</span>
       <span>[ ACT III · THE HARVEST REGISTRY ]</span>
@@ -78,7 +78,7 @@ const activeProducts = allProducts.filter(p => {
       });
 
       return (
-        <article class="specimen-card" data-origin={originId}>
+        <article class="specimen-card" data-origin={originId} data-reveal>
           
           <!-- Card Artifact Display -->
           <div class="specimen-display">

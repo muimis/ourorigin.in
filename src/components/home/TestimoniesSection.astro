@@ -30,14 +30,14 @@ const strip = [
 <section class="voice-section" aria-label="Voices from the field">
 
   <!-- Field note label -->
-  <div class="voice-label">
+  <div class="voice-label" data-reveal="fade">
     <span class="label-line" aria-hidden="true"></span>
     <span class="label-text">FIELD NOTES · VERIFIED VOICES</span>
     <span class="label-line" aria-hidden="true"></span>
   </div>
 
   <!-- Featured testimony — large, pulled quote, like a field journal entry -->
-  <div class="featured-voice" id="featured-voice">
+  <div class="featured-voice" id="featured-voice" data-reveal>
     <div class="featured-quote-mark" aria-hidden="true">"</div>
     <blockquote class="featured-quote">
       <p class="featured-text">{featured.quote}</p>
@@ -63,7 +63,7 @@ const strip = [
   </div>
 
   <!-- Closing count — earned trust, not vanity metrics -->
-  <div class="voice-count">
+  <div class="voice-count" data-reveal="fade">
     <span class="count-num">127</span>
     <span class="count-label">verified voices · and counting</span>
   </div>

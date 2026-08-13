@@ -1,0 +1,141 @@
+---
+// TerrainCanvas.astro — Living Mountain & Forest Atmosphere Engine
+---
+<canvas id="terrain-canvas" aria-hidden="true"></canvas>
+
+<script>
+(function() {
+  const canvas = document.getElementById('terrain-canvas') as HTMLCanvasElement | null;
+  if (!canvas) return;
+
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  let W = 0, H = 0, animFrame: number;
+  let mouseX = 0.5, mouseY = 0.5;
+  let targetMouseX = 0.5, targetMouseY = 0.5;
+  let time = 0;
+
+  const NUM_CONTOURS = 32;
+
+  function resize() {
+    if (!canvas || !ctx) return;
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  // Multi-harmonic natural elevation wave
+  function getElevationY(x: number, lineIndex: number, t: number) {
+    const norm = lineIndex / (NUM_CONTOURS - 1); // 0 (top/canopy) -> 1 (bottom/deep soil)
+    const baseY = norm * H * 1.05 - (H * 0.05);
+
+    // Natural harmonics reflecting rugged mountain ridges
+    const f1 = 0.0022;
+    const f2 = 0.0054;
+    const f3 = 0.0125;
+    const f4 = 0.024;
+
+    const phase = lineIndex * 0.72;
+    const amplitude = Math.sin(norm * Math.PI) * 0.85 + 0.18;
+
+    const w1 = Math.sin(x * f1 + t * 0.18 + phase * 0.6) * 44 * amplitude;
+    const w2 = Math.sin(x * f2 - t * 0.14 + phase * 1.2) * 22 * amplitude;
+    const w3 = Math.sin(x * f3 + t * 0.09 + phase * 1.8) * 10 * amplitude;
+    const w4 = Math.sin(x * f4 - t * 0.05 + phase * 2.4) * 4 * amplitude;
+
+    // Organic touch/mouse parallax
+    const pStrength = 32;
+    const pX = (mouseX - 0.5) * pStrength * (norm * 0.7 + 0.3);
+    const pY = (mouseY - 0.5) * pStrength * 0.5 * norm;
+
+    return baseY + w1 + w2 + w3 + w4 + pX + pY;
+  }
+
+  // Indigenous earth & forest contour colors
+  function getContourStyle(lineIndex: number) {
+    const norm = lineIndex / (NUM_CONTOURS - 1);
+    const isMajor = lineIndex % 6 === 0;
+    const isIndex = lineIndex % 3 === 0;
+
+    let r, g, b, opacity;
+
+    if (norm < 0.28) {
+      // High Canopy / Mist / Cloud realm (Gold / Amber / Pale mist)
+      r = 212; g = 139; b = 22;
+      opacity = isMajor ? 0.22 : isIndex ? 0.12 : 0.05;
+    } else if (norm < 0.62) {
+      // Dense Rainforest / Moss / Vine realm (Moss Green / Forest)
+      r = 92; g = 125; b = 80;
+      opacity = isMajor ? 0.25 : isIndex ? 0.14 : 0.06;
+    } else {
+      // Ancient Volcanic Soil / Laterite / Deep Earth (Rich Terracotta & Bark)
+      r = 158; g = 50; b = 18;
+      opacity = isMajor ? 0.30 : isIndex ? 0.16 : 0.07;
+    }
+
+    const lineWidth = isMajor ? 1.2 : isIndex ? 0.75 : 0.45;
+    return { r, g, b, opacity, lineWidth };
+  }
+
+  function draw() {
+    if (!ctx) return;
+    ctx.clearRect(0, 0, W, H);
+
+    // Smooth easing on mouse movement
+    mouseX += (targetMouseX - mouseX) * 0.04;
+    mouseY += (targetMouseY - mouseY) * 0.04;
+
+    for (let li = 0; li < NUM_CONTOURS; li++) {
+      const style = getContourStyle(li);
+      ctx.strokeStyle = `rgba(${style.r},${style.g},${style.b},${style.opacity})`;
+      ctx.lineWidth = style.lineWidth;
+      ctx.lineJoin = 'round';
+
+      ctx.beginPath();
+      const step = 6;
+      for (let x = 0; x <= W; x += step) {
+        const y = getElevationY(x, li, time);
+        if (x === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      }
+      ctx.stroke();
+    }
+
+    time += 0.007;
+    animFrame = requestAnimationFrame(draw);
+  }
+
+  function init() {
+    resize();
+    if (animFrame) cancelAnimationFrame(animFrame);
+    draw();
+  }
+
+  window.addEventListener('mousemove', (e) => {
+    targetMouseX = e.clientX / (window.innerWidth || 1);
+    targetMouseY = e.clientY / (window.innerHeight || 1);
+  }, { passive: true });
+
+  window.addEventListener('resize', resize, { passive: true });
+
+  init();
+  document.addEventListener('astro:after-swap', init);
+  document.addEventListener('astro:page-load', init);
+})();
+</script>
+
+<style>
+  #terrain-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.9;
+  }
+</style>

@@ -124,7 +124,7 @@ const jsonLd = {
 
         <!-- Sensory — what it does to you FIRST -->
         {sp && (sp.aroma || sp.flavor || sp.appearance) && (
-          <div class="narrative-block sense-block">
+          <div class="narrative-block sense-block" data-reveal>
             <div class="sense-grid">
               {sp.aroma && (
                 <div class="sense-cell">
@@ -157,7 +157,7 @@ const jsonLd = {
         </div>
 
         <!-- Origin — 3 data points, nothing more -->
-        <div class="narrative-block origin-block">
+        <div class="narrative-block origin-block" data-reveal>
           <div class="origin-grid">
             <div class="origin-cell">
               <span class="origin-label">Location</span>
@@ -182,7 +182,7 @@ const jsonLd = {
 
         <!-- Method — one sentence -->
         {product.data.methodDescription && (
-          <div class="method-line">
+          <div class="method-line" data-reveal>
             <span class="method-text">{product.data.methodDescription}</span>
           </div>
         )}
@@ -195,7 +195,7 @@ const jsonLd = {
         )}
 
         <!-- THE OFFERING -->
-        <div class="offering-block">
+        <div class="offering-block" data-reveal>
           {product.data.batchRef && (
             <div class="batch-ref">BATCH · {product.data.batchRef}</div>
           )}
@@ -240,6 +240,17 @@ const jsonLd = {
   gsap.registerPlugin(ScrollTrigger);
 
   function initProduct() {
+    // Reveal animations — fast, not cinematic slow
+    document.querySelectorAll('[data-reveal]').forEach(el => {
+      gsap.fromTo(el,
+        { y: 20, opacity: 0 },
+        {
+          y: 0, opacity: 1, duration: 0.6, ease: 'power2.out',
+          scrollTrigger: { trigger: el, start: 'top 88%' }
+        }
+      );
+    });
+
     // Size selection
     const sizeOptions = document.querySelectorAll('.size-option');
     sizeOptions.forEach(btn => {
