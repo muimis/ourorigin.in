@@ -74,8 +74,8 @@
   --duration-slow: 700ms;
   --duration-cinematic: 1200ms;
 
-  /* ── Brutalist Layout: Zero Corner Radii ── */
-  --radius: 0;
+  /* ── Organic Layout: Subtle, Natural Corners ── */
+  --radius: 8px;
 }
 
 /* ═══════════════════════════════════════════════════════════
