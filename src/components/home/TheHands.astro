@@ -1,0 +1,222 @@
+---
+// TheHands.astro
+---
+
+<section class="hands-section" id="the-hands" aria-label="Harvested by Hand">
+
+  <div class="hands-image-frame" id="hands-image-frame">
+    <img
+      src="/assets/origins/wayanad-hand.webp"
+      alt="A harvester's hands among pepper vines in Wayanad, Western Ghats"
+      class="hands-img"
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+
+  <div class="hands-narrative" id="hands-narrative">
+    <div class="hands-label" data-reveal="fade">
+      By Hand
+    </div>
+
+    <blockquote class="hands-text" data-reveal>
+      <p class="hands-lead">
+        The vines climb living trees in the rainforest. We harvest them the ancient way.
+      </p>
+      <p class="hands-para">
+        Harvest comes once a year, in January. The picker carries back only what the forest gives willingly that morning: what is ripe, what is reachable, what is left after the birds take their share.
+      </p>
+      <p class="hands-para hands-quiet">
+        There is no corporate manual for this. Knowing which berry, which vine, and which morning to pick is an instinct passed down through generations.
+      </p>
+    </blockquote>
+
+    <div class="hands-bridge" data-reveal="fade">
+      <p class="bridge-text">When you receive this, no hands have touched it before theirs.<br/>Their count is the first count.</p>
+      <a href="#harvest" class="bridge-link">
+        See the Harvest →
+      </a>
+    </div>
+  </div>
+
+</section>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initHands() {
+    gsap.to('.hands-img', {
+      yPercent: -8,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '.hands-section',
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: 1,
+      }
+    });
+
+    gsap.fromTo('#hands-image-frame',
+      { opacity: 0, scale: 0.95 },
+      {
+        opacity: 1, scale: 1,
+        duration: 1.2, ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '#hands-image-frame',
+          start: 'top 80%',
+        }
+      }
+    );
+
+    gsap.fromTo('.hands-para, .hands-lead, .hands-label, .hands-bridge',
+      { opacity: 0, y: 20 },
+      {
+        opacity: 1, y: 0,
+        duration: 1.0, ease: 'power2.out',
+        stagger: 0.15,
+        scrollTrigger: {
+          trigger: '.hands-narrative',
+          start: 'top 75%',
+        }
+      }
+    );
+  }
+
+  initHands();
+  document.addEventListener('astro:after-swap', initHands);
+  document.addEventListener('astro:page-load', initHands);
+</script>
+
+<style>
+  .hands-section {
+    position: relative;
+    min-height: 90vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 4rem;
+    padding: clamp(4rem, 8vh, 6rem) clamp(2rem, 5vw, 6rem);
+    background-color: var(--color-void);
+    z-index: 2;
+  }
+
+  .hands-image-frame {
+    position: relative;
+    overflow: hidden;
+    height: 70vh;
+    width: 100%;
+    background: #040603;
+    /* Organic curving shape matching the logo */
+    border-radius: 200px 8px 200px 8px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  }
+
+  .hands-img {
+    width: 100%;
+    height: 110%;
+    object-fit: cover;
+    display: block;
+    filter: saturate(0.85) contrast(1.1);
+    transition: filter 0.6s ease;
+  }
+
+  .hands-section:hover .hands-img {
+    filter: saturate(1) contrast(1.05);
+  }
+
+  .hands-narrative {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2.5rem;
+    max-width: 550px;
+  }
+
+  .hands-label {
+    font-family: var(--font-evidence);
+    font-size: 14px;
+    color: var(--color-gold);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .hands-text {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .hands-lead {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3.5vw, 2.5rem);
+    color: var(--color-warm-cream);
+    font-weight: 300;
+    line-height: 1.3;
+  }
+
+  .hands-para {
+    margin: 0;
+    font-family: var(--font-narrative);
+    font-size: 1.1rem;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--color-cream-muted);
+  }
+
+  .hands-quiet {
+    font-style: italic;
+    color: var(--color-cream-whisper);
+  }
+
+  .hands-bridge {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(198, 156, 82, 0.3);
+  }
+
+  .bridge-text {
+    margin: 0;
+    font-family: var(--font-evidence);
+    font-size: 12px;
+    color: var(--color-gold);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    line-height: 1.6;
+  }
+
+  .bridge-link {
+    display: inline-block;
+    font-family: var(--font-evidence);
+    font-size: 14px;
+    color: var(--color-warm-cream);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    transition: color 0.3s ease, transform 0.3s ease;
+  }
+
+  .bridge-link:hover {
+    color: var(--color-gold);
+    transform: translateX(5px);
+  }
+
+  @media (max-width: 900px) {
+    .hands-section {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+      padding: 4rem 1.5rem;
+    }
+    .hands-image-frame {
+      height: 50vh;
+      border-radius: 100px 8px 100px 8px;
+    }
+  }
+</style>

@@ -1,0 +1,370 @@
+---
+// Harvest.astro
+import { getCollection } from 'astro:content';
+
+const allProducts = await getCollection('products');
+const allOrigins = await getCollection('origins');
+
+const originMap = Object.fromEntries(allOrigins.map(o => [o.id, o.data]));
+
+// Active products only
+const activeProducts = allProducts.filter(p => {
+  const originId = typeof p.data.originSlug === 'object' ? (p.data.originSlug as any).id : p.data.originSlug;
+  return originId !== 'malabar-coast' && p.data.sizes && p.data.sizes.length > 0;
+});
+---
+
+<section class="harvest-section" id="harvest" aria-label="Current Harvest">
+
+  <div class="harvest-header" data-reveal>
+    <h2 class="harvest-title">Current Yields</h2>
+    <p class="harvest-subtitle">
+      What the forest gave this season. We don't blend or standardize our harvests—each reflects its exact mountain coordinate and the hands that gathered it.
+    </p>
+
+    <div class="harvest-filters" role="tablist">
+      <button class="filter-btn is-active" data-filter="all" role="tab" aria-selected="true">
+        All Harvests
+      </button>
+      <button class="filter-btn" data-filter="nilgiris" role="tab" aria-selected="false">
+        Nilgiris
+      </button>
+      <button class="filter-btn" data-filter="idukki" role="tab" aria-selected="false">
+        Idukki
+      </button>
+      <button class="filter-btn" data-filter="wayanad" role="tab" aria-selected="false">
+        Wayanad
+      </button>
+      <button class="filter-btn" data-filter="thiruvananthapuram" role="tab" aria-selected="false">
+        Coastal
+      </button>
+    </div>
+  </div>
+
+  <div class="harvest-grid">
+    {activeProducts.map((product) => {
+      const originId = typeof product.data.originSlug === 'object' ? (product.data.originSlug as any).id : product.data.originSlug;
+      const origin = originMap[originId];
+      const originName = origin ? origin.name : originId;
+      const firstSize = product.data.sizes[0];
+      const prodImg = product.data.images?.product || product.data.images?.packaging || '';
+      
+      const priceDisplay = product.data.sizes.length > 1
+        ? `₹${Math.min(...product.data.sizes.map(s => s.priceINR))} - ₹${Math.max(...product.data.sizes.map(s => s.priceINR))}`
+        : `₹${firstSize.priceINR}`;
+
+      const itemPayload = JSON.stringify({
+        id: `${product.id}-${firstSize.label}`,
+        productId: product.id,
+        name: product.data.name,
+        origin: originName,
+        originId: originId,
+        price: firstSize.priceINR,
+        size: firstSize.label,
+        weight: firstSize.label,
+        quantity: 1
+      });
+
+      return (
+        <article class="harvest-card" data-origin={originId} data-reveal>
+          <div class="harvest-display">
+            {prodImg ? (
+              <a href={`/origins/${originId}/${product.id}`} class="img-wrap">
+                <img src={prodImg} alt={product.data.name} class="product-img" loading="lazy" />
+              </a>
+            ) : (
+              <div class="img-placeholder"></div>
+            )}
+            
+            <div class="origin-tag">
+              {originName}
+            </div>
+          </div>
+
+          <div class="harvest-info">
+            <h3 class="product-name">
+              <a href={`/origins/${originId}/${product.id}`}>{product.data.name}</a>
+            </h3>
+            
+            <p class="product-desc">
+              {product.data.botanicalName}
+            </p>
+
+            <div class="harvest-footer">
+              <span class="price">{priceDisplay}</span>
+              <button 
+                type="button" 
+                class="btn-gather"
+                data-product-json={itemPayload}
+              >
+                Add to Basket
+              </button>
+            </div>
+          </div>
+        </article>
+      );
+    })}
+  </div>
+
+</section>
+
+<script>
+  function initHarvest() {
+    const filterBtns = document.querySelectorAll('.harvest-filters .filter-btn');
+    const cards = document.querySelectorAll('.harvest-card');
+
+    filterBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const filter = (btn as HTMLElement).dataset.filter;
+        
+        filterBtns.forEach(b => {
+          b.classList.remove('is-active');
+          b.setAttribute('aria-selected', 'false');
+        });
+        btn.classList.add('is-active');
+        btn.setAttribute('aria-selected', 'true');
+
+        cards.forEach((card) => {
+          const origin = (card as HTMLElement).dataset.origin;
+          if (filter === 'all' || origin === filter) {
+            (card as HTMLElement).style.display = 'flex';
+          } else {
+            (card as HTMLElement).style.display = 'none';
+          }
+        });
+      });
+    });
+
+    document.querySelectorAll('.btn-gather').forEach((addBtn) => {
+      addBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const jsonStr = (addBtn as HTMLElement).dataset.productJson;
+        if (!jsonStr) return;
+
+        try {
+          const item = JSON.parse(jsonStr);
+          window.dispatchEvent(new CustomEvent('add-to-cart', { detail: item }));
+          
+          const orig = addBtn.textContent;
+          addBtn.textContent = 'Added';
+          addBtn.classList.add('is-added');
+          setTimeout(() => {
+            addBtn.textContent = orig;
+            addBtn.classList.remove('is-added');
+          }, 1400);
+        } catch (err) {
+          console.error(err);
+        }
+      });
+    });
+  }
+
+  initHarvest();
+  document.addEventListener('astro:after-swap', initHarvest);
+  document.addEventListener('astro:page-load', initHarvest);
+</script>
+
+<style>
+  .harvest-section {
+    position: relative;
+    z-index: 2;
+    padding: clamp(5rem, 10vh, 8rem) clamp(1.5rem, 6vw, 6rem);
+    background: var(--color-void);
+  }
+
+  .harvest-header {
+    max-width: 700px;
+    margin: 0 auto clamp(3rem, 6vh, 4rem);
+    text-align: center;
+  }
+
+  .harvest-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    color: var(--color-warm-cream);
+    font-weight: 300;
+  }
+
+  .harvest-subtitle {
+    margin: 1.5rem 0 0;
+    font-family: var(--font-narrative);
+    font-size: 1.1rem;
+    color: var(--color-cream-muted);
+    line-height: 1.6;
+  }
+
+  .harvest-filters {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 2.5rem;
+  }
+
+  .filter-btn {
+    background: transparent;
+    border: 1px solid rgba(240, 234, 214, 0.2);
+    color: var(--color-cream-muted);
+    font-family: var(--font-evidence);
+    font-size: 12px;
+    border-radius: 20px;
+    padding: 0.5rem 1.25rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .filter-btn:hover {
+    color: var(--color-warm-cream);
+    border-color: var(--color-gold);
+  }
+
+  .filter-btn.is-active {
+    background: var(--color-gold);
+    border-color: var(--color-gold);
+    color: var(--color-void);
+  }
+
+  .harvest-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .harvest-card {
+    background: var(--color-forest-surface);
+    border: 1px solid rgba(198, 156, 82, 0.1);
+    /* Organic Leaf-like Border Radius */
+    border-radius: 8px 40px 8px 40px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: all 0.4s ease;
+  }
+
+  .harvest-card:hover {
+    border-color: rgba(198, 156, 82, 0.5);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  }
+
+  .harvest-display {
+    position: relative;
+    height: 260px;
+    background: #030502;
+    padding: 1.5rem;
+  }
+
+  .img-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+  }
+
+  .product-img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+    transition: transform 0.6s ease;
+  }
+
+  .harvest-card:hover .product-img {
+    transform: scale(1.06);
+  }
+
+  .origin-tag {
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+    font-family: var(--font-evidence);
+    font-size: 10px;
+    color: var(--color-gold);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .harvest-info {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .product-name {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 300;
+  }
+
+  .product-name a {
+    color: var(--color-warm-cream);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .product-name a:hover {
+    color: var(--color-gold);
+  }
+
+  .product-desc {
+    margin: 0.5rem 0 0;
+    font-family: var(--font-narrative);
+    font-size: 14px;
+    color: var(--color-cream-muted);
+    font-style: italic;
+    flex: 1;
+  }
+
+  .harvest-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(240, 234, 214, 0.1);
+  }
+
+  .price {
+    font-family: var(--font-evidence);
+    font-size: 15px;
+    color: var(--color-warm-cream);
+  }
+
+  .btn-gather {
+    background: transparent;
+    color: var(--color-gold);
+    border: 1px solid var(--color-gold);
+    border-radius: 20px;
+    padding: 0.5rem 1.25rem;
+    font-family: var(--font-evidence);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .btn-gather:hover {
+    background: var(--color-gold);
+    color: var(--color-void);
+  }
+
+  .btn-gather.is-added {
+    background: var(--color-warm-cream);
+    border-color: var(--color-warm-cream);
+    color: var(--color-void);
+  }
+
+  @media (max-width: 768px) {
+    .harvest-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

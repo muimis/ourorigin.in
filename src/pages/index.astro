@@ -2,34 +2,22 @@
 import Layout from '../layouts/Layout.astro';
 
 import HeroSection from '../components/home/HeroSection.astro';
-import ElevationRealms from '../components/home/ElevationRealms.astro';
-import SpecimenVault from '../components/home/SpecimenVault.astro';
-import HandSection from '../components/home/HandSection.astro';
-import SustainabilitySection from '../components/home/SustainabilitySection.astro';
+import Origins from '../components/home/Origins.astro';
+import Harvest from '../components/home/Harvest.astro';
+import TheHands from '../components/home/TheHands.astro';
+import Standards from '../components/home/Standards.astro';
 ---
 
 <Layout
   title="OurOrigin — The Living Proof of the Soil"
-  description="An indigenous provenance record for what the ancient Western Ghats rainforest gives. Every yield carries its elevation, its coordinate, and the dignity of the first hands."
+  description="Indigenous harvests from the ancient Western Ghats rainforest. Harvested by hand, straight from the mountain."
   noHeaderPadding={true}
 >
 
-  <!-- ═══ ATMOSPHERE: Living Mountain & Forest Terrain ═══ -->
-
-
-  <!-- ═══ ACT I: THE ANCIENT SOIL & FOREST ═══ -->
   <HeroSection />
-
-  <!-- ═══ ACT II: THE FOUR ELEVATION REALMS (Nilgiris · Idukki · Wayanad · Coast) ═══ -->
-  <ElevationRealms />
-
-  <!-- ═══ ACT III: THE SACRED SPECIMEN VAULT (Tactile Relic Yields) ═══ -->
-  <SpecimenVault />
-
-  <!-- ═══ ACT IV: THE FIRST HANDS & ANCESTRAL INSTINCT ═══ -->
-  <HandSection />
-
-  <!-- ═══ ACT V: THE PRIMITIVE EARTH TRUTHS ═══ -->
-  <SustainabilitySection />
+  <Origins />
+  <Harvest />
+  <TheHands />
+  <Standards />
 
 </Layout>

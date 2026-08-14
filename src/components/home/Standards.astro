@@ -1,0 +1,169 @@
+---
+// Standards.astro
+---
+<section class="standards-section" id="standards" aria-label="How We Grow">
+
+  <div class="standards-header" data-reveal>
+    <h2 class="section-title">How We Grow</h2>
+    <p class="section-desc">
+      Our relationship with the soil is simple. We don't force it, we don't rush it, and we never add chemicals. The mountain decides the yield.
+    </p>
+  </div>
+
+  <div class="standards-grid">
+
+    <div class="standard-item" data-reveal>
+      <div class="standard-glyph" aria-hidden="true">
+        <!-- Organic curve mimicking the logo's soil form -->
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <path d="M 4,40 C 20,40 32,28 32,12" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+          <path d="M 12,44 C 28,44 40,32 40,16" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.3"/>
+        </svg>
+      </div>
+      <h3 class="standard-title">Ancient Volcanic Soil</h3>
+      <p class="standard-desc">The Western Ghats are older than the Himalayas. Our crops grow in loamy, nutrient-rich earth that has been untouched by plows for millennia.</p>
+    </div>
+
+    <div class="standard-item" data-reveal>
+      <div class="standard-glyph" aria-hidden="true">
+        <!-- Organic curve mimicking the rain/monsoon cycle -->
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <path d="M 24,4 C 24,20 12,32 4,32" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+          <path d="M 36,16 C 36,32 24,44 16,44" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.3"/>
+        </svg>
+      </div>
+      <h3 class="standard-title">Monsoon Aligned</h3>
+      <p class="standard-desc">We follow the natural rhythm of the seasons. There are no greenhouses or artificial lighting. We harvest only when the sky says it's time.</p>
+    </div>
+
+    <div class="standard-item" data-reveal>
+      <div class="standard-glyph" aria-hidden="true">
+        <!-- Open organic loop mimicking purity -->
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <path d="M 24,4 C 35,4 44,13 44,24 C 44,35 35,44 24,44 C 13,44 4,35 4,24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="6 8" opacity="0.8"/>
+        </svg>
+      </div>
+      <h3 class="standard-title">Zero Chemicals</h3>
+      <p class="standard-desc">No synthetic fertilizers, no pesticides, no chemical drying. What grows in the forest is exactly what arrives in your hands.</p>
+    </div>
+
+  </div>
+
+</section>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initStandards() {
+    gsap.fromTo('.standards-header, .standard-item',
+      { opacity: 0, y: 30 },
+      {
+        opacity: 1, y: 0,
+        duration: 1.0, ease: 'power2.out',
+        stagger: 0.2,
+        scrollTrigger: {
+          trigger: '.standards-section',
+          start: 'top 75%',
+        }
+      }
+    );
+  }
+
+  initStandards();
+  document.addEventListener('astro:after-swap', initStandards);
+  document.addEventListener('astro:page-load', initStandards);
+</script>
+
+<style>
+  .standards-section {
+    padding: clamp(5rem, 10vh, 8rem) clamp(1.5rem, 6vw, 6rem);
+    background-color: var(--color-void);
+    position: relative;
+    z-index: 2;
+  }
+
+  .standards-header {
+    max-width: 650px;
+    margin: 0 auto clamp(4rem, 8vh, 6rem);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .section-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    color: var(--color-warm-cream);
+    font-weight: 300;
+  }
+
+  .section-desc {
+    margin: 0;
+    font-family: var(--font-narrative);
+    font-size: 1.1rem;
+    color: var(--color-cream-muted);
+    line-height: 1.7;
+  }
+
+  .standards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(3rem, 5vw, 5rem);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .standard-item {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 2rem;
+    background: var(--color-forest-surface);
+    /* Organic curving shape */
+    border-radius: 8px 40px 8px 40px;
+    border: 1px solid rgba(198, 156, 82, 0.15);
+    transition: transform 0.4s ease, border-color 0.4s ease;
+  }
+
+  .standard-item:hover {
+    transform: translateY(-5px);
+    border-color: rgba(198, 156, 82, 0.4);
+  }
+
+  .standard-glyph {
+    color: var(--color-gold);
+    height: 48px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .standard-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    color: var(--color-warm-cream);
+    font-weight: 300;
+  }
+
+  .standard-desc {
+    font-family: var(--font-narrative);
+    font-size: 1.05rem;
+    color: var(--color-cream-muted);
+    line-height: 1.6;
+    margin: 0;
+    font-weight: 300;
+  }
+
+  @media (max-width: 900px) {
+    .standards-grid {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+  }
+</style>
