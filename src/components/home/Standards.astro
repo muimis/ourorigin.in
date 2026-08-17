@@ -79,7 +79,7 @@
 
 <style>
   .standards-section {
-    padding: clamp(5rem, 10vh, 8rem) clamp(1.5rem, 6vw, 6rem);
+    padding: clamp(3rem, 6vh, 4.5rem) clamp(1rem, 4vw, 4rem);
     background-color: var(--color-void);
     position: relative;
     z-index: 2;
@@ -87,17 +87,17 @@
 
   .standards-header {
     max-width: 650px;
-    margin: 0 auto clamp(4rem, 8vh, 6rem);
+    margin: 0 auto clamp(2rem, 4vh, 3rem);
     text-align: center;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 0.75rem;
   }
 
   .section-title {
     margin: 0;
     font-family: var(--font-display);
-    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-size: clamp(2rem, 4vw, 3rem);
     color: var(--color-warm-cream);
     font-weight: 300;
   }
@@ -105,15 +105,15 @@
   .section-desc {
     margin: 0;
     font-family: var(--font-narrative);
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     color: var(--color-cream-muted);
-    line-height: 1.7;
+    line-height: 1.5;
   }
 
   .standards-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: clamp(3rem, 5vw, 5rem);
+    gap: 1.25rem;
     max-width: 1200px;
     margin: 0 auto;
   }
@@ -121,41 +121,39 @@
   .standard-item {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-    padding: 2rem;
+    gap: 1rem;
+    padding: 1.5rem;
     background: var(--color-forest-surface);
-    /* Organic curving shape */
-    border-radius: 8px 40px 8px 40px;
-    border: 1px solid rgba(198, 156, 82, 0.15);
-    transition: transform 0.4s ease, border-color 0.4s ease;
+    border-radius: var(--radius, 8px);
+    border: 1px solid rgba(240, 234, 214, 0.08);
+    transition: transform 0.3s ease, border-color 0.3s ease;
   }
 
   .standard-item:hover {
-    transform: translateY(-5px);
-    border-color: rgba(198, 156, 82, 0.4);
+    transform: translateY(-3px);
+    border-color: rgba(212, 139, 22, 0.4);
   }
 
   .standard-glyph {
     color: var(--color-gold);
-    height: 48px;
+    height: 40px;
     display: flex;
     align-items: center;
-    margin-bottom: 0.5rem;
   }
 
   .standard-title {
     margin: 0;
     font-family: var(--font-display);
-    font-size: 1.6rem;
+    font-size: 1.3rem;
     color: var(--color-warm-cream);
-    font-weight: 300;
+    font-weight: 400;
   }
 
   .standard-desc {
     font-family: var(--font-narrative);
-    font-size: 1.05rem;
+    font-size: 1rem;
     color: var(--color-cream-muted);
-    line-height: 1.6;
+    line-height: 1.55;
     margin: 0;
     font-weight: 300;
   }
@@ -163,7 +161,11 @@
   @media (max-width: 900px) {
     .standards-grid {
       grid-template-columns: 1fr;
-      gap: 2.5rem;
+      gap: 1.25rem;
+    }
+
+    .standard-item {
+      padding: 1.25rem;
     }
   }
 </style>

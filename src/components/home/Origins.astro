@@ -1,6 +1,7 @@
 ---
 // Origins.astro
 import { getCollection } from 'astro:content';
+import OriginMark from '../OriginMark.astro';
 
 const allOrigins = await getCollection('origins');
 const allProducts = await getCollection('products');
@@ -106,11 +107,16 @@ sortedOrigins.forEach(origin => {
 
                     return (
                       <div class="yield-card">
-                        <a href={`/origins/${origin.data.slug}/${product.id}`} class="yield-img-link">
-                          {prodImg && (
-                            <img src={prodImg} alt={product.data.name} class="yield-img" loading="lazy" />
-                          )}
-                        </a>
+                        <div class="yield-img-box">
+                          <div class="card-origin-seal">
+                            <OriginMark size={14} variant="gold" />
+                          </div>
+                          <a href={`/origins/${origin.data.slug}/${product.id}`} class="yield-img-link" aria-label={`View ${product.data.name}`}>
+                            {prodImg && (
+                              <img src={prodImg} alt={product.data.name} class="yield-img" loading="lazy" />
+                            )}
+                          </a>
+                        </div>
                         <div class="yield-body">
                           <span class="yield-botanical">{product.data.botanicalName}</span>
                           <h4 class="yield-name">
@@ -122,8 +128,9 @@ sortedOrigins.forEach(origin => {
                               type="button"
                               class="btn-gather" 
                               data-product-json={itemPayload}
+                              aria-label={`Add ${product.data.name} to basket`}
                             >
-                              Add to Basket
+                              + Add
                             </button>
                           </div>
                         </div>
@@ -204,13 +211,13 @@ sortedOrigins.forEach(origin => {
   .origins-section {
     position: relative;
     z-index: 2;
-    padding: clamp(5rem, 10vh, 8rem) clamp(1.5rem, 6vw, 6rem);
+    padding: clamp(3rem, 6vh, 4.5rem) clamp(1rem, 4vw, 4rem);
     background: var(--color-void);
   }
 
   .origins-header {
     max-width: 600px;
-    margin-bottom: clamp(3rem, 6vh, 4.5rem);
+    margin-bottom: clamp(2rem, 4vh, 3rem);
     text-align: center;
     margin-left: auto;
     margin-right: auto;
@@ -219,24 +226,24 @@ sortedOrigins.forEach(origin => {
   .section-title {
     margin: 0;
     font-family: var(--font-display);
-    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-size: clamp(2rem, 4vw, 3rem);
     line-height: 1.1;
     color: var(--color-warm-cream);
     font-weight: 300;
   }
 
   .section-desc {
-    margin: 1.5rem 0 0;
+    margin: 1rem 0 0;
     font-family: var(--font-narrative);
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     color: var(--color-cream-muted);
-    line-height: 1.7;
+    line-height: 1.5;
   }
 
   .origins-container {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1.25rem;
     max-width: 1000px;
     margin: 0 auto;
   }
@@ -245,28 +252,27 @@ sortedOrigins.forEach(origin => {
     background: transparent;
   }
 
-  /* Organic Card Shape */
+  /* Compact Clean Origin Card */
   .origin-card {
     position: relative;
     width: 100%;
     text-align: left;
     background: var(--color-forest-surface);
-    border: 1px solid rgba(198, 156, 82, 0.2);
-    /* Organic curving shape matching the logo's soft corners */
-    border-radius: 40px 8px 40px 8px;
-    padding: clamp(2rem, 4vw, 3.5rem);
+    border: 1px solid rgba(240, 234, 214, 0.1);
+    border-radius: var(--radius, 8px);
+    padding: clamp(1.25rem, 2.5vw, 2rem);
     cursor: pointer;
     overflow: hidden;
     display: flex;
     justify-content: space-between;
     align-items: center;
     color: var(--color-warm-cream);
-    min-height: 200px;
+    min-height: 120px;
     transition: all var(--duration-standard) ease;
   }
 
   .origin-card:hover {
-    border-color: var(--color-gold);
+    border-color: rgba(212, 139, 22, 0.4);
     transform: translateY(-2px);
   }
 
@@ -275,7 +281,7 @@ sortedOrigins.forEach(origin => {
     inset: 0;
     background-size: cover;
     background-position: center;
-    opacity: 0.15;
+    opacity: 0.18;
     transition: opacity var(--duration-slow) ease, transform var(--duration-slow) ease;
     z-index: 0;
     pointer-events: none;
@@ -283,14 +289,14 @@ sortedOrigins.forEach(origin => {
 
   .origin-card:hover .origin-bg-image,
   .origin-card[aria-expanded="true"] .origin-bg-image {
-    opacity: 0.3;
+    opacity: 0.35;
     transform: scale(1.03);
   }
 
   .origin-wash {
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(8, 13, 6, 0.9) 0%, rgba(8, 13, 6, 0.5) 100%);
+    background: linear-gradient(135deg, rgba(8, 13, 6, 0.9) 0%, rgba(8, 13, 6, 0.6) 100%);
     z-index: 1;
     pointer-events: none;
   }
@@ -300,27 +306,27 @@ sortedOrigins.forEach(origin => {
     z-index: 2;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.35rem;
   }
 
   .origin-elevation {
     color: var(--color-gold);
     font-family: var(--font-evidence);
-    font-size: 13px;
+    font-size: 12px;
     letter-spacing: 0.15em;
     display: flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.35rem;
   }
 
   .elevation-icon {
-    font-size: 10px;
+    font-size: 9px;
   }
 
   .origin-name {
     margin: 0;
     font-family: var(--font-display);
-    font-size: clamp(2rem, 4vw, 3rem);
+    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
     color: var(--color-warm-cream);
     font-weight: 300;
   }
@@ -328,7 +334,7 @@ sortedOrigins.forEach(origin => {
   .origin-soil {
     margin: 0;
     font-family: var(--font-narrative);
-    font-size: 15px;
+    font-size: 13px;
     color: var(--color-cream-muted);
     font-style: italic;
   }
@@ -338,16 +344,16 @@ sortedOrigins.forEach(origin => {
     z-index: 2;
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
     font-family: var(--font-evidence);
-    font-size: 12px;
+    font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: var(--color-gold);
   }
 
   .toggle-icon {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: 300;
     transition: transform 0.3s ease;
   }
@@ -359,58 +365,78 @@ sortedOrigins.forEach(origin => {
   /* Drawer */
   .origin-yields {
     display: none;
-    margin-top: 1rem;
+    margin-top: 0.75rem;
   }
 
   .origin-yields.is-active {
     display: block;
-    animation: fadeIn 0.4s ease;
+    animation: fadeIn 0.3s ease;
   }
 
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
+    from { opacity: 0; transform: translateY(-8px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
   .yields-inner {
-    padding: 1rem 0 2rem;
+    padding: 0.5rem 0 1.5rem;
   }
 
   .yields-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
   }
 
-  /* Soft Organic Product Cards */
+  /* Compact Clean Product Cards */
   .yield-card {
-    background: transparent;
-    border: 1px solid rgba(240, 234, 214, 0.1);
-    border-radius: 8px 30px 8px 30px;
+    background: var(--color-forest-surface);
+    border: 1px solid rgba(240, 234, 214, 0.08);
+    border-radius: var(--radius, 8px);
     display: flex;
     flex-direction: column;
     overflow: hidden;
     transition: all var(--duration-standard) ease;
+    position: relative;
   }
 
   .yield-card:hover {
-    border-color: rgba(198, 156, 82, 0.4);
-    background: rgba(198, 156, 82, 0.02);
+    border-color: rgba(212, 139, 22, 0.4);
+    transform: translateY(-2px);
   }
 
-  .yield-img-link {
-    height: 220px;
-    background: #040603;
+  .yield-img-box {
+    position: relative;
+    height: 160px;
+    background: #080605;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2rem;
+    padding: 1rem;
+    border-bottom: 1px solid rgba(240, 234, 214, 0.05);
+  }
+
+  .card-origin-seal {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 2;
+    opacity: 0.85;
+  }
+
+  .yield-img-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
   }
 
   .yield-img {
-    max-height: 100%;
-    max-width: 100%;
+    max-height: 85%;
+    max-width: 85%;
     object-fit: contain;
+    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
     transition: transform var(--duration-slow) ease;
   }
 
@@ -419,7 +445,7 @@ sortedOrigins.forEach(origin => {
   }
 
   .yield-body {
-    padding: 1.5rem;
+    padding: 1rem;
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -429,15 +455,16 @@ sortedOrigins.forEach(origin => {
     font-family: var(--font-narrative);
     font-style: italic;
     color: var(--color-gold);
-    font-size: 13px;
-    margin-bottom: 0.5rem;
+    font-size: 12px;
+    margin-bottom: 0.25rem;
   }
 
   .yield-name {
     margin: 0;
     font-family: var(--font-display);
-    font-size: 1.4rem;
-    font-weight: 300;
+    font-size: 1.15rem;
+    font-weight: 400;
+    line-height: 1.25;
   }
 
   .yield-name a {
@@ -445,33 +472,38 @@ sortedOrigins.forEach(origin => {
     text-decoration: none;
   }
 
+  .yield-name a:hover {
+    color: var(--color-gold);
+  }
+
   .yield-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 1.5rem;
-    padding-top: 1rem;
-    border-top: 1px solid rgba(240, 234, 214, 0.1);
+    margin-top: 1rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(240, 234, 214, 0.08);
   }
 
   .yield-price {
     font-family: var(--font-evidence);
-    font-size: 14px;
+    font-size: 13px;
     color: var(--color-warm-cream);
+    font-weight: 500;
   }
 
   .btn-gather {
     background: transparent;
     color: var(--color-gold);
     border: 1px solid var(--color-gold);
-    border-radius: 20px;
-    padding: 0.4rem 1rem;
+    border-radius: 4px;
+    padding: 0.35rem 0.75rem;
     font-family: var(--font-evidence);
-    font-size: 11px;
+    font-size: 10px;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
   }
 
   .btn-gather:hover {
@@ -489,14 +521,50 @@ sortedOrigins.forEach(origin => {
     color: var(--color-cream-muted);
     font-family: var(--font-narrative);
     font-style: italic;
-    padding: 2rem;
+    padding: 1.5rem;
+    font-size: 14px;
   }
 
   @media (max-width: 768px) {
     .origin-card {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 2rem;
+      padding: 1.25rem 1rem;
+      min-height: 90px;
+    }
+
+    .origin-name {
+      font-size: 1.4rem;
+    }
+
+    .yields-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.65rem;
+    }
+
+    .yield-img-box {
+      height: 120px;
+      padding: 0.5rem;
+    }
+
+    .yield-body {
+      padding: 0.65rem;
+    }
+
+    .yield-name {
+      font-size: 0.95rem;
+    }
+
+    .yield-botanical {
+      display: none;
+    }
+
+    .yield-price {
+      font-size: 12px;
+    }
+
+    .btn-gather {
+      padding: 0.3rem 0.5rem;
+      font-size: 9px;
+      min-height: 28px;
     }
   }
 </style>

@@ -91,11 +91,8 @@ class CartState {
 
 // Listen for global events from UI to add items to the cart
 if (typeof window !== 'undefined') {
-  window.addEventListener('cart-add', (e) => {
-    cartState.addItem(e.detail);
-  });
-  
-  window.addEventListener('add-to-ledger', (e) => {
+  const handleAdd = (e) => {
+    if (!e.detail) return;
     cartState.addItem({
       id: e.detail.id || e.detail.productId,
       productId: e.detail.productId || e.detail.id,
@@ -107,7 +104,11 @@ if (typeof window !== 'undefined') {
       size: e.detail.size || e.detail.weight,
       quantity: e.detail.quantity || 1
     });
-  });
+  };
+
+  window.addEventListener('add-to-cart', handleAdd);
+  window.addEventListener('cart-add', handleAdd);
+  window.addEventListener('add-to-ledger', handleAdd);
 }
 
 // Export a singleton instance

@@ -1,5 +1,6 @@
 ---
 import { WHATSAPP_NUMBER, EMAIL_ADDRESS, FSSAI_NUMBER } from '../utils/constants';
+import OriginMark from './OriginMark.astro';
 
 const currentYear = new Date().getFullYear();
 const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}`;
@@ -8,12 +9,15 @@ const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}`;
   <div class="footer-inner">
 
     <!-- The line that earns its place after the products -->  
-    <p class="footer-manifesto">Every place that grows with intention is speaking. We are just recording it.</p>
+    <p class="footer-manifesto">Real food from wild earth. Picked by hand. Shipped fresh.</p>
 
     <div class="footer-top">
       <div class="footer-brand">
-        <span class="wordmark">OurOrigin</span>
-        <p class="tagline">The first hands. The exact place. The record of what they gave.</p>
+        <div class="footer-brand-lockup" style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.75rem;">
+          <OriginMark size={24} variant="gold" />
+          <span class="wordmark" style="margin-bottom:0;">OurOrigin</span>
+        </div>
+        <p class="tagline">The first hands. The exact place. Honest harvests straight to your kitchen.</p>
       </div>
 
       <nav class="footer-nav" aria-label="Footer navigation">
