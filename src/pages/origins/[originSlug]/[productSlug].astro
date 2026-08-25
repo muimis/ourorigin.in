@@ -57,7 +57,6 @@ const jsonLd = {
   ]
 };
 ---
-
 <Layout
   title={`${product.data.name} — ${origin.data.name} · OurOrigin`}
   description={`${sp?.aroma || ''} ${sp?.flavor || ''} — ${product.data.name} from ${origin.data.name}, ${origin.data.elevation}.`}
@@ -71,164 +70,145 @@ const jsonLd = {
       <OriginMark size={18} variant="gold" />
     </a>
 
-    <div class="product-grid">
-
-      <!-- LEFT: Product image — sticky, dominant -->
-      <div class="visual-panel">
-        <div class="visual-inner" id="visual-inner">
-          {product.data.images.product ? (
-            <img
-              src={product.data.images.product}
-              alt={`${product.data.name}`}
-              class="product-artifact"
-              style={`view-transition-name: yield-img-${product.id}`}
-            />
-          ) : product.data.images.packaging ? (
-            <img
-              src={product.data.images.packaging}
-              alt={`${product.data.name} packaging`}
-              class="product-artifact"
-              style={`view-transition-name: yield-img-${product.id}`}
-            />
-          ) : (
-            <div class="artifact-placeholder">
-              <OriginMark size={48} variant="gold" />
-            </div>
-          )}
-        </div>
-      </div>
-
-      <!-- RIGHT: Compact narrative -->
-      <div class="narrative-panel">
-
-        <!-- Identity -->
-        <div class="narrative-block">
-          <h1 class="product-name" style={`view-transition-name: yield-title-${product.id}`}>
-            {product.data.name}
-          </h1>
-          {product.data.botanicalName && (
-            <p class="botanical">{product.data.botanicalName}</p>
-          )}
-        </div>
-
-        <!-- DIVIDER: tally -->
-        <div class="tally-divider" aria-hidden="true">
-          <svg width="40" height="16" viewBox="0 0 50 20" fill="none">
-            <path d="M 5 3 C 4 9, 6 14, 5 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M 13 2 C 12 9, 14 14, 13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M 21 3 C 22 9, 20 13, 21 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M 29 2 C 28 9, 30 14, 29 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M 2 16 C 12 11, 24 7, 38 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </div>
-
-        <!-- Sensory — what it does to you FIRST -->
-        {sp && (sp.aroma || sp.flavor || sp.appearance) && (
-          <div class="narrative-block sense-block" data-reveal>
-            <div class="sense-grid">
-              {sp.aroma && (
-                <div class="sense-cell">
-                  <span class="sense-label">Aroma</span>
-                  <span class="sense-value">{sp.aroma}</span>
-                </div>
-              )}
-              {sp.flavor && (
-                <div class="sense-cell">
-                  <span class="sense-label">Flavor</span>
-                  <span class="sense-value">{sp.flavor}</span>
-                </div>
-              )}
-              {sp.appearance && (
-                <div class="sense-cell sense-cell--wide">
-                  <span class="sense-label">Appearance</span>
-                  <span class="sense-value">{sp.appearance}</span>
-                </div>
-              )}
-            </div>
+    <!-- ══ HERO: Full-bleed image takes over the screen ══ -->
+    <section class="product-hero" aria-label={product.data.name}>
+      <div class="hero-img-wrap" id="hero-img-wrap">
+        {product.data.images.product ? (
+          <img
+            src={product.data.images.product}
+            alt={`${product.data.name}`}
+            class="hero-img"
+            style={`view-transition-name: yield-img-${product.id}`}
+          />
+        ) : product.data.images.packaging ? (
+          <img
+            src={product.data.images.packaging}
+            alt={`${product.data.name} packaging`}
+            class="hero-img"
+            style={`view-transition-name: yield-img-${product.id}`}
+          />
+        ) : (
+          <div class="hero-img-placeholder">
+            <OriginMark size={64} variant="gold" />
           </div>
         )}
+        <!-- Dark gradient overlay so text is legible -->
+        <div class="hero-veil" aria-hidden="true"></div>
+      </div>
 
-        <!-- DIVIDER: tally -->
-        <div class="tally-divider" aria-hidden="true">
-          <svg width="20" height="16" viewBox="0 0 20 20" fill="none">
-            <path d="M 5 3 C 4 9, 6 14, 5 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M 13 2 C 12 9, 14 14, 13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
+      <!-- Product name overlaps bottom of image -->
+      <div class="hero-identity">
+        <div class="hero-origin-tag">
+          <OriginMark size={14} variant="gold" />
+          <span class="hero-origin-name">{origin.data.name}</span>
+          <span class="hero-origin-elev">{origin.data.elevation}</span>
         </div>
+        <h1 class="hero-product-name" style={`view-transition-name: yield-title-${product.id}`}>
+          {product.data.name}
+        </h1>
+        {product.data.botanicalName && (
+          <p class="hero-botanical">{product.data.botanicalName}</p>
+        )}
+      </div>
+    </section>
 
-        <!-- Origin — 3 data points, nothing more -->
-        <div class="narrative-block origin-block" data-reveal>
-          <div class="origin-grid">
-            <div class="origin-cell">
-              <span class="origin-label">Location</span>
-              <span class="origin-value">{origin.data.coordinates}</span>
+    <!-- ══ SENSORY: First thing after the image — what does it taste like? ══ -->
+    {sp && (sp.aroma || sp.flavor || sp.appearance) && (
+      <section class="sense-section" data-reveal>
+        <div class="sense-inner">
+          {sp.aroma && (
+            <div class="sense-item">
+              <span class="field-label">Aroma</span>
+              <p class="field-body">{sp.aroma}</p>
             </div>
-            <div class="origin-cell">
-              <span class="origin-label">Elevation</span>
-              <span class="origin-value">{origin.data.elevation}</span>
+          )}
+          {sp.flavor && (
+            <div class="sense-item">
+              <span class="field-label">Flavor</span>
+              <p class="field-body">{sp.flavor}</p>
             </div>
-            <div class="origin-cell">
-              <span class="origin-label">Grown by</span>
-              <span class="origin-value">{origin.data.community?.description || origin.data.name}</span>
+          )}
+          {sp.appearance && (
+            <div class="sense-item sense-item--wide">
+              <span class="field-label">Appearance</span>
+              <p class="field-body">{sp.appearance}</p>
             </div>
-            {origin.data.soil && (
-              <div class="origin-cell">
-                <span class="origin-label">Soil</span>
-                <span class="origin-value">{origin.data.soil}</span>
-              </div>
-            )}
+          )}
+        </div>
+      </section>
+    )}
+
+    <!-- ══ PROVENANCE: The exact place ══ -->
+    <section class="provenance-section" data-reveal>
+      <div class="provenance-inner">
+        <div class="provenance-grid">
+          <div class="prov-cell">
+            <span class="field-label">Location</span>
+            <span class="prov-val">{origin.data.coordinates}</span>
           </div>
+          <div class="prov-cell">
+            <span class="field-label">Elevation</span>
+            <span class="prov-val">{origin.data.elevation}</span>
+          </div>
+          <div class="prov-cell">
+            <span class="field-label">Grown by</span>
+            <span class="prov-val">{origin.data.community?.description || origin.data.name}</span>
+          </div>
+          {origin.data.soil && (
+            <div class="prov-cell">
+              <span class="field-label">Soil</span>
+              <span class="prov-val">{origin.data.soil}</span>
+            </div>
+          )}
         </div>
 
-        <!-- Method — one sentence -->
         {product.data.methodDescription && (
-          <div class="method-line" data-reveal>
-            <span class="method-text">{product.data.methodDescription}</span>
+          <div class="method-stripe">
+            <p class="method-text">{product.data.methodDescription}</p>
           </div>
         )}
 
-        <!-- Field note link — if there's a deep narrative, it lives elsewhere -->
         {product.data.specimenCopy && (
-          <a href="/observations" class="field-note-link">
-            Read the field note →
-          </a>
+          <a href="/observations" class="field-note-link">Read the field note →</a>
+        )}
+      </div>
+    </section>
+
+    <!-- ══ THE OFFERING: Size picker + giant CTA ══ -->
+    <section class="offering-section" data-reveal>
+      <div class="offering-inner">
+        {product.data.batchRef && (
+          <div class="batch-ref">BATCH · {product.data.batchRef}</div>
         )}
 
-        <!-- THE OFFERING -->
-        <div class="offering-block" data-reveal>
-          {product.data.batchRef && (
-            <div class="batch-ref">BATCH · {product.data.batchRef}</div>
-          )}
-
-          <div class="sizes-grid">
-            {product.data.sizes.map((size: any, i: number) => (
-              <button
-                class:list={["size-option", { "size-option--active": i === 0 }]}
-                data-product={JSON.stringify({
-                  id: product.id + '-' + size.label,
-                  productId: product.id,
-                  name: product.data.name,
-                  origin: origin.data.name,
-                  originId: origin.id,
-                  size: size.label,
-                  price: size.priceINR,
-                  quantity: 1
-                })}
-                type="button"
-              >
-                <span class="size-qty">{size.label}</span>
-                <span class="size-price">₹{size.priceINR}</span>
-              </button>
-            ))}
-          </div>
-
-          <button class="claim-btn add-to-ledger-btn" id="purchase-cta" type="button">
-            Add to Ledger
-          </button>
+        <div class="sizes-row">
+          {product.data.sizes.map((size: any, i: number) => (
+            <button
+              class:list={["size-pill", { "size-pill--active": i === 0 }]}
+              data-product={JSON.stringify({
+                id: product.id + '-' + size.label,
+                productId: product.id,
+                name: product.data.name,
+                origin: origin.data.name,
+                originId: origin.id,
+                size: size.label,
+                price: size.priceINR,
+                quantity: 1
+              })}
+              type="button"
+            >
+              <span class="size-qty">{size.label}</span>
+              <span class="size-price">₹{size.priceINR}</span>
+            </button>
+          ))}
         </div>
 
+        <button class="ledger-cta" id="purchase-cta" type="button">
+          Add to Ledger
+        </button>
       </div>
-    </div>
+    </section>
+
   </main>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 </Layout>
@@ -240,43 +220,58 @@ const jsonLd = {
   gsap.registerPlugin(ScrollTrigger);
 
   function initProduct() {
-    // Reveal animations — fast, not cinematic slow
-    document.querySelectorAll('[data-reveal]').forEach(el => {
+    // Scroll reveal
+    document.querySelectorAll('[data-reveal]').forEach((el, i) => {
       gsap.fromTo(el,
-        { y: 20, opacity: 0 },
+        { y: 32, opacity: 0 },
         {
-          y: 0, opacity: 1, duration: 0.6, ease: 'power2.out',
-          scrollTrigger: { trigger: el, start: 'top 88%' }
+          y: 0, opacity: 1, duration: 0.75, ease: 'power2.out',
+          delay: i * 0.05,
+          scrollTrigger: { trigger: el, start: 'top 90%' }
         }
       );
     });
 
+    // Hero image parallax — image drifts upward as you scroll
+    const heroImg = document.querySelector('.hero-img') as HTMLElement;
+    if (heroImg) {
+      gsap.to(heroImg, {
+        yPercent: -18,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.product-hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true
+        }
+      });
+    }
+
+    // Hero identity slides up on load
+    gsap.fromTo('.hero-identity',
+      { y: 40, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1.1, ease: 'power3.out', delay: 0.3 }
+    );
+    gsap.fromTo('.hero-origin-tag',
+      { y: 20, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.8, ease: 'power2.out', delay: 0.15 }
+    );
+
     // Size selection
-    const sizeOptions = document.querySelectorAll('.size-option');
-    sizeOptions.forEach(btn => {
+    const sizePills = document.querySelectorAll('.size-pill');
+    sizePills.forEach(btn => {
       const newBtn = btn.cloneNode(true) as HTMLElement;
       btn.parentNode?.replaceChild(newBtn, btn);
 
       newBtn.addEventListener('click', () => {
-        document.querySelectorAll('.size-option').forEach(b => b.classList.remove('size-option--active'));
-        newBtn.classList.add('size-option--active');
-      });
-    });
-
-    // Wire ledger buttons
-    const addBtns = document.querySelectorAll('.size-option');
-    addBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const data = JSON.parse((btn as HTMLElement).dataset.product || '{}');
+        document.querySelectorAll('.size-pill').forEach(b => b.classList.remove('size-pill--active'));
+        newBtn.classList.add('size-pill--active');
+        // Also dispatch cart event on size select
+        const data = JSON.parse(newBtn.dataset.product || '{}');
         window.dispatchEvent(new CustomEvent('add-to-ledger', { detail: {
-          id: data.id,
-          productId: data.productId,
-          name: data.name,
-          origin: data.origin,
-          originId: data.originId,
-          size: data.size,
-          price: data.price,
-          quantity: 1
+          id: data.id, productId: data.productId, name: data.name,
+          origin: data.origin, originId: data.originId,
+          size: data.size, price: data.price, quantity: 1
         }}));
       });
     });
@@ -287,8 +282,9 @@ const jsonLd = {
       const newBtn = purchaseBtn.cloneNode(true) as HTMLElement;
       purchaseBtn.parentNode?.replaceChild(newBtn, purchaseBtn);
       newBtn.addEventListener('click', () => {
-        const selected = document.querySelector('.size-option--active') || document.querySelector('.size-option');
-        if (selected) (selected as HTMLElement).click();
+        const selected = document.querySelector('.size-pill--active') as HTMLElement
+          || document.querySelector('.size-pill') as HTMLElement;
+        if (selected) selected.click();
         setTimeout(() => {
           document.getElementById('ledger-trigger')?.click();
         }, 150);
@@ -304,178 +300,216 @@ const jsonLd = {
   .product-viewport {
     background: var(--color-void);
     color: var(--color-warm-cream);
-    min-height: 100vh;
   }
 
-  /* Back link — top-left, fixed */
+  /* ── Back link ── */
   .back-link {
     position: fixed;
-    top: 26px;
+    top: 24px;
     left: 24px;
     z-index: 200;
-    display: flex;
-    align-items: center;
     color: var(--color-gold);
     text-decoration: none;
-    opacity: 0.8;
-    transition: opacity 0.2s ease;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+    mix-blend-mode: screen;
   }
   .back-link:hover { opacity: 1; }
 
-  /* ─── Two-panel grid ─── */
-  .product-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    min-height: 100vh;
-  }
-
-  /* LEFT: sticky image */
-  .visual-panel {
+  /* ══════════════════════════════
+     HERO — full bleed, 85vh tall
+  ══════════════════════════════ */
+  .product-hero {
     position: relative;
-    border-right: 1px solid rgba(255,255,255,0.04);
+    height: 85vh;
+    min-height: 500px;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
   }
 
-  .visual-inner {
-    position: sticky;
-    top: 0;
-    height: 100vh;
+  .hero-img-wrap {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .hero-img {
+    width: 100%;
+    height: 115%; /* Extra height for parallax travel */
+    object-fit: cover;
+    object-position: center;
+    transform-origin: center top;
+    will-change: transform;
+    filter: saturate(0.88) contrast(1.08);
+  }
+
+  .hero-img-placeholder {
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: var(--space-4xl);
+    background: var(--color-forest-surface);
+    opacity: 0.3;
   }
 
-  .product-artifact {
-    max-width: 75%;
-    max-height: 75vh;
-    object-fit: contain;
-    filter: drop-shadow(0 24px 48px rgba(0,0,0,0.85));
-    animation: drift 10s ease-in-out infinite alternate;
+  /* Gradient: transparent top → deep bottom so text is readable */
+  .hero-veil {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(6,4,3,0.1) 0%,
+      rgba(6,4,3,0.15) 40%,
+      rgba(6,4,3,0.75) 72%,
+      rgba(6,4,3,0.97) 100%
+    );
   }
 
-  @keyframes drift {
-    0%   { transform: translateY(0px); }
-    100% { transform: translateY(-12px); }
+  /* Product identity: anchored to the bottom of the hero */
+  .hero-identity {
+    position: relative;
+    z-index: 2;
+    padding: 0 clamp(1.5rem, 5vw, 5rem) clamp(2rem, 5vh, 3.5rem);
+    width: 100%;
+    max-width: 900px;
   }
 
-  .artifact-placeholder {
-    opacity: 0.25;
-  }
-
-  /* RIGHT: compact narrative */
-  .narrative-panel {
-    padding: 14vh 5vw 10vh 4vw;
+  .hero-origin-tag {
     display: flex;
-    flex-direction: column;
-    gap: var(--space-xl);
-    max-width: 560px;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.75rem;
   }
 
-  /* Identity */
-  .narrative-block {}
+  .hero-origin-name {
+    font-family: var(--font-evidence);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+  }
 
-  .product-name {
+  .hero-origin-elev {
+    font-family: var(--font-evidence);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: rgba(240, 234, 214, 0.35);
+  }
+
+  .hero-product-name {
     font-family: var(--font-display);
-    font-size: clamp(2rem, 4.5vw, 3.8rem);
+    font-size: clamp(2.4rem, 6.5vw, 6rem);
     font-weight: 400;
-    line-height: 1.05;
-    margin: 0 0 var(--space-sm) 0;
+    line-height: 1.0;
+    margin: 0 0 0.4rem 0;
     letter-spacing: 0.01em;
+    color: var(--color-warm-cream);
+    opacity: 0; /* animated in by JS */
   }
 
-  .botanical {
+  .hero-botanical {
     font-family: var(--font-narrative);
     font-style: italic;
-    font-size: var(--type-evidence);
-    color: rgba(240, 234, 214, 0.4);
+    font-size: clamp(0.9rem, 1.6vw, 1.1rem);
+    color: rgba(240, 234, 214, 0.45);
     margin: 0;
-    letter-spacing: 0.04em;
   }
 
-  /* Tally divider */
-  .tally-divider {
-    color: var(--color-gold);
-    opacity: 0.45;
-    line-height: 0;
-    padding: 0;
+  /* ══════════════════════════════
+     SENSORY SECTION
+  ══════════════════════════════ */
+  .sense-section {
+    padding: clamp(3rem, 6vh, 5rem) clamp(1.5rem, 5vw, 5rem);
+    border-bottom: 1px solid rgba(240, 234, 214, 0.05);
   }
 
-  /* Sensory */
-  .sense-grid {
+  .sense-inner {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-lg) var(--space-xl);
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: clamp(1.5rem, 4vw, 3rem);
+    max-width: 900px;
   }
 
-  .sense-cell {
+  .sense-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .sense-item--wide {
+    grid-column: 1 / -1;
+  }
+
+  /* ══════════════════════════════
+     PROVENANCE SECTION
+  ══════════════════════════════ */
+  .provenance-section {
+    padding: clamp(3rem, 6vh, 5rem) clamp(1.5rem, 5vw, 5rem);
+    border-bottom: 1px solid rgba(240, 234, 214, 0.05);
+  }
+
+  .provenance-inner {
+    max-width: 900px;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.5rem, 3vh, 2.5rem);
+  }
+
+  .provenance-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem 2.5rem;
+  }
+
+  .prov-cell {
     display: flex;
     flex-direction: column;
     gap: 4px;
   }
 
-  .sense-cell--wide {
-    grid-column: 1 / -1;
-  }
-
-  .sense-label {
-    font-family: var(--font-evidence);
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: var(--color-gold);
-    opacity: 0.7;
-  }
-
-  .sense-value {
-    font-family: var(--font-narrative);
-    font-size: clamp(0.95rem, 1.8vw, 1.15rem);
-    line-height: 1.4;
-    color: rgba(240, 234, 214, 0.85);
-  }
-
-  /* Origin data grid */
-  .origin-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-md) var(--space-xl);
-  }
-
-  .origin-cell {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-
-  .origin-label {
-    font-family: var(--font-evidence);
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: rgba(240, 234, 214, 0.3);
-  }
-
-  .origin-value {
+  .prov-val {
     font-family: var(--font-evidence);
     font-size: var(--type-evidence);
     color: rgba(240, 234, 214, 0.65);
     letter-spacing: 0.04em;
   }
 
-  /* Method — one line */
-  .method-line {
-    border-left: 1px solid rgba(255, 69, 0, 0.3);
-    padding-left: var(--space-md);
+  .method-stripe {
+    border-left: 2px solid rgba(255, 69, 0, 0.3);
+    padding-left: 1.25rem;
   }
 
   .method-text {
     font-family: var(--font-narrative);
-    font-size: clamp(0.9rem, 1.6vw, 1.05rem);
-    color: rgba(240, 234, 214, 0.5);
-    line-height: 1.5;
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    color: rgba(240, 234, 214, 0.55);
+    line-height: 1.6;
     font-style: italic;
+    margin: 0;
   }
 
-  /* Field note link */
+  /* ══════════════════════════════
+     SHARED FIELD LABELS
+  ══════════════════════════════ */
+  .field-label {
+    font-family: var(--font-evidence);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--color-gold);
+    opacity: 0.6;
+  }
+
+  .field-body {
+    font-family: var(--font-narrative);
+    font-size: clamp(1rem, 1.9vw, 1.2rem);
+    line-height: 1.5;
+    color: rgba(240, 234, 214, 0.85);
+    margin: 0;
+  }
+
   .field-note-link {
     font-family: var(--font-evidence);
     font-size: var(--type-whisper);
@@ -483,176 +517,138 @@ const jsonLd = {
     text-decoration: none;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    transition: color 0.2s ease;
+    transition: color 0.2s;
     display: inline-block;
+    align-self: flex-start;
+  }
+  .field-note-link:hover { color: var(--color-gold); }
+
+  /* ══════════════════════════════
+     OFFERING / BUY SECTION
+  ══════════════════════════════ */
+  .offering-section {
+    padding: clamp(3rem, 6vh, 5rem) clamp(1.5rem, 5vw, 5rem) clamp(4rem, 10vh, 7rem);
   }
 
-  .field-note-link:hover {
-    color: var(--color-gold);
-  }
-
-  /* Offering */
-  .offering-block {
-    border-top: 1px solid rgba(255, 69, 0, 0.18);
-    padding-top: var(--space-xl);
+  .offering-inner {
+    max-width: 600px;
     display: flex;
     flex-direction: column;
-    gap: var(--space-lg);
+    gap: 1.25rem;
   }
 
   .batch-ref {
     font-family: var(--font-evidence);
     font-size: 9px;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.22em;
     color: rgba(240, 234, 214, 0.2);
     text-transform: uppercase;
   }
 
-  .sizes-grid {
+  .sizes-row {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-sm);
+    gap: 0.5rem;
   }
 
-  .size-option {
+  .size-pill {
     display: flex;
     align-items: center;
-    gap: var(--space-md);
+    gap: 0.75rem;
     background: transparent;
     border: 1px solid rgba(240, 234, 214, 0.12);
     color: var(--color-warm-cream);
-    padding: var(--space-md) var(--space-lg);
+    padding: 0.75rem 1.25rem;
     font-family: var(--font-evidence);
     font-size: var(--type-evidence);
     cursor: pointer;
     transition: all 0.2s ease;
-    min-height: 44px;
+    min-height: 46px;
   }
 
-  .size-option:hover,
-  .size-option--active {
+  .size-pill:hover,
+  .size-pill--active {
     border-color: var(--color-gold);
-    background: rgba(255, 69, 0, 0.06);
+    background: rgba(212, 139, 22, 0.08);
     color: var(--color-gold);
   }
 
-  .size-qty {
-    letter-spacing: 0.06em;
-  }
+  .size-qty { letter-spacing: 0.06em; }
 
   .size-price {
-    color: rgba(240, 234, 214, 0.6);
+    color: rgba(240, 234, 214, 0.45);
     font-size: var(--type-whisper);
+    transition: color 0.2s;
   }
 
-  .size-option--active .size-price,
-  .size-option:hover .size-price {
-    color: rgba(255, 69, 0, 0.7);
-  }
+  .size-pill--active .size-price,
+  .size-pill:hover .size-price { color: var(--color-gold-bright); }
 
-  .claim-btn {
+  /* THE GOLD BUTTON — unmissable */
+  .ledger-cta {
     width: 100%;
-    padding: var(--space-lg) var(--space-xl);
+    padding: 1.1rem 2rem;
     background: var(--color-gold);
     color: var(--color-void);
     border: none;
     font-family: var(--font-evidence);
-    font-size: var(--type-evidence);
+    font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.22em;
     cursor: pointer;
-    transition: background 0.2s ease;
-    min-height: 52px;
+    transition: background 0.25s, transform 0.12s;
+    min-height: 56px;
   }
 
-  .claim-btn:hover {
+  .ledger-cta:hover {
     background: var(--color-warm-cream);
+    transform: translateY(-2px);
   }
 
-  /* ═══════════════════════════════
-     MOBILE — Perfect
-  ═══════════════════════════════ */
-  @media (max-width: 900px) {
-    .product-grid {
-      grid-template-columns: 1fr;
-      grid-template-rows: auto 1fr;
+  .ledger-cta:active { transform: translateY(0); }
+
+  /* ══════════════════════════════
+     MOBILE
+  ══════════════════════════════ */
+  @media (max-width: 768px) {
+    .product-hero {
+      height: 65vh;
+      min-height: 360px;
     }
 
-    .visual-panel {
-      border-right: none;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
+    .hero-product-name {
+      font-size: clamp(2rem, 9vw, 3.5rem);
     }
 
-    .visual-inner {
-      position: relative;
-      height: 52vw;
-      min-height: 220px;
-      max-height: 360px;
-      padding: var(--space-2xl);
-    }
-
-    .product-artifact {
-      max-height: 100%;
-      max-width: 55%;
-    }
-
-    .narrative-panel {
-      padding: var(--space-2xl) var(--space-lg) var(--space-4xl);
-      gap: var(--space-lg);
-      max-width: 100%;
-    }
-
-    .product-name {
-      font-size: clamp(1.8rem, 8vw, 2.8rem);
-    }
-
-    .sense-grid {
+    .sense-inner {
       grid-template-columns: 1fr 1fr;
-      gap: var(--space-md) var(--space-lg);
     }
 
-    .origin-grid {
+    .sense-item--wide {
+      grid-column: 1 / -1;
+    }
+
+    .provenance-grid {
       grid-template-columns: 1fr 1fr;
-      gap: var(--space-sm) var(--space-lg);
     }
 
-    /* Back link: offset from bottom of image on mobile */
     .back-link {
       top: 16px;
       left: 16px;
     }
 
-    /* CTA — thumb zone */
-    .claim-btn {
-      padding: var(--space-xl);
-      font-size: 11px;
-    }
-
-    .offering-block {
-      /* Sticky at bottom of viewport on mobile */
-      position: sticky;
-      bottom: 0;
-      background: var(--color-void);
-      border-top: 1px solid rgba(255, 69, 0, 0.2);
-      padding: var(--space-lg);
-      margin: 0 calc(-1 * var(--space-lg));
-      width: calc(100% + 2 * var(--space-lg));
-      z-index: 50;
-      padding-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom, 0px));
+    .offering-section {
+      padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
     }
   }
 
   @media (max-width: 480px) {
-    .sense-grid {
+    .sense-inner {
       grid-template-columns: 1fr;
     }
 
-    .origin-grid {
-      grid-template-columns: 1fr 1fr;
-    }
-
-    .sizes-grid {
+    .sizes-row {
       flex-direction: column;
     }
 
