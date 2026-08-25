@@ -94,7 +94,7 @@ import OriginMark from '../OriginMark.astro';
     min-height: 100vh;
     display: flex;
     align-items: center;
-    padding: clamp(6.5rem, 14vh, 10rem) clamp(4rem, 8vw, 10rem) clamp(4rem, 8vh, 6rem);
+    padding: clamp(5rem, 10vh, 8rem) clamp(4rem, 8vw, 10rem) clamp(2rem, 4vh, 4rem);
     overflow: hidden;
     background: transparent;
     z-index: 1;
@@ -180,7 +180,7 @@ import OriginMark from '../OriginMark.astro';
   .hero-title {
     margin: 0;
     font-family: var(--font-display);
-    font-size: clamp(3rem, 7.5vw, 6.5rem); /* Massive typography */
+    font-size: clamp(2.6rem, 5.5vw, 5.2rem); /* Calibrated so CTA stays in first viewport */
     line-height: 1.05;
     font-weight: 400;
     color: var(--color-warm-cream);
@@ -198,19 +198,19 @@ import OriginMark from '../OriginMark.astro';
   }
 
   .hero-subtitle {
-    margin: clamp(2rem, 4vh, 2.5rem) 0 0;
+    margin: clamp(1rem, 2vh, 1.5rem) 0 0;
     font-family: var(--font-narrative);
-    font-size: clamp(1.2rem, 2.2vw, 1.6rem); /* Larger, editorial size */
+    font-size: clamp(1rem, 1.8vw, 1.35rem);
     line-height: 1.6;
     color: rgba(240, 234, 214, 0.85);
-    max-width: 580px;
+    max-width: 520px;
     font-weight: 300;
     text-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   }
 
   /* Actions */
   .hero-actions {
-    margin-top: clamp(2.5rem, 5vh, 4rem);
+    margin-top: clamp(1.25rem, 2.5vh, 2rem);
   }
 
   .btn-hero {
