@@ -25,5 +25,12 @@
   "chemistry": {
     "activeCompound": "Protein: 12.3g/100g",
     "moistureContent": "Moisture: 10%"
+  },
+  "proofSystem": {
+    "firstHands": "Devi",
+    "directPricePaid": "₹552/kg (60% above local rate)",
+    "naturesShare": "Sun-dried and packed at origin.",
+    "proofCert": "/assets/certs/fssai-sample.pdf",
+    "proofPhoto": "/assets/products/yield-proof.jpg"
   }
 }

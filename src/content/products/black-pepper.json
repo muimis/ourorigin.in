@@ -25,5 +25,12 @@
   "chemistry": {
     "activeCompound": "Piperine: 5.8%",
     "moistureContent": "Moisture: 10.2%"
+  },
+  "proofSystem": {
+    "firstHands": "Raman & Family",
+    "directPricePaid": "₹528/kg (60% above local rate)",
+    "naturesShare": "Sun-dried and packed at origin.",
+    "proofCert": "/assets/certs/fssai-sample.pdf",
+    "proofPhoto": "/assets/products/yield-proof.jpg"
   }
 }

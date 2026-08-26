@@ -25,5 +25,12 @@
   "chemistry": {
     "activeCompound": "Calcium: 344mg/100g",
     "moistureContent": "Moisture: 10%"
+  },
+  "proofSystem": {
+    "firstHands": "Devi",
+    "directPricePaid": "₹512/kg (60% above local rate)",
+    "naturesShare": "30% left on the vine for forest birds.",
+    "proofCert": "/assets/certs/fssai-sample.pdf",
+    "proofPhoto": "/assets/products/yield-proof.jpg"
   }
 }

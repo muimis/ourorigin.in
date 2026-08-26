@@ -25,5 +25,12 @@
   "chemistry": {
     "activeCompound": "Cinnamaldehyde: 1.8%",
     "moistureContent": "Moisture: 11.5%"
+  },
+  "proofSystem": {
+    "firstHands": "Gowda Community",
+    "directPricePaid": "₹287/kg (60% above local rate)",
+    "naturesShare": "No chemical fertilizers.",
+    "proofCert": "/assets/certs/fssai-sample.pdf",
+    "proofPhoto": "/assets/products/yield-proof.jpg"
   }
 }

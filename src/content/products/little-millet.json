@@ -25,5 +25,12 @@
   "chemistry": {
     "activeCompound": "Iron: 9.3mg/100g",
     "moistureContent": "Moisture: 9%"
+  },
+  "proofSystem": {
+    "firstHands": "Raman & Family",
+    "directPricePaid": "₹549/kg (60% above local rate)",
+    "naturesShare": "No chemical fertilizers.",
+    "proofCert": "/assets/certs/fssai-sample.pdf",
+    "proofPhoto": "/assets/products/yield-proof.jpg"
   }
 }

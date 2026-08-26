@@ -138,39 +138,35 @@ const jsonLd = {
       </section>
     )}
 
-    <!-- ══ PROVENANCE: The exact place ══ -->
-    <section class="provenance-section" data-reveal>
-      <div class="provenance-inner">
-        <div class="provenance-grid">
-          <div class="prov-cell">
-            <span class="field-label">Location</span>
-            <span class="prov-val">{origin.data.coordinates}</span>
+    <!-- ══ THE PROOF SYSTEM: Transfer Ledger ══ -->
+    <section class="proof-section" data-reveal>
+      <div class="proof-inner">
+        <div class="proof-ledger">
+          <div class="proof-row">
+            <span class="proof-label">Crop:</span>
+            <span class="proof-value">{product.data.name}</span>
           </div>
-          <div class="prov-cell">
-            <span class="field-label">Elevation</span>
-            <span class="prov-val">{origin.data.elevation}</span>
+          <div class="proof-row">
+            <span class="proof-label">First Hands:</span>
+            <span class="proof-value">{product.data.proofSystem?.firstHands || '---'}</span>
           </div>
-          <div class="prov-cell">
-            <span class="field-label">Grown by</span>
-            <span class="prov-val">{origin.data.community?.description || origin.data.name}</span>
+          <div class="proof-row">
+            <span class="proof-label">Direct Price Paid:</span>
+            <span class="proof-value">{product.data.proofSystem?.directPricePaid || '---'}</span>
           </div>
-          {origin.data.soil && (
-            <div class="prov-cell">
-              <span class="field-label">Soil</span>
-              <span class="prov-val">{origin.data.soil}</span>
-            </div>
-          )}
+          <div class="proof-row">
+            <span class="proof-label">Nature's Share:</span>
+            <span class="proof-value">{product.data.proofSystem?.naturesShare || '---'}</span>
+          </div>
+          <div class="proof-row">
+            <span class="proof-label">Proof:</span>
+            <span class="proof-value proof-links">
+              {product.data.proofSystem?.proofCert ? <a href={product.data.proofSystem.proofCert} target="_blank" rel="noreferrer">[FSSAI Cert]</a> : '---'}
+              <span class="proof-dot">·</span>
+              {product.data.proofSystem?.proofPhoto ? <a href={product.data.proofSystem.proofPhoto} target="_blank" rel="noreferrer">[Batch Photo]</a> : '---'}
+            </span>
+          </div>
         </div>
-
-        {product.data.methodDescription && (
-          <div class="method-stripe">
-            <p class="method-text">{product.data.methodDescription}</p>
-          </div>
-        )}
-
-        {product.data.specimenCopy && (
-          <a href="/observations" class="field-note-link">Read the field note →</a>
-        )}
       </div>
     </section>
 
@@ -443,51 +439,69 @@ const jsonLd = {
   }
 
   /* ══════════════════════════════
-     PROVENANCE SECTION
+     PROOF SYSTEM SECTION
   ══════════════════════════════ */
-  .provenance-section {
+  .proof-section {
     padding: clamp(3rem, 6vh, 5rem) clamp(1.5rem, 5vw, 5rem);
     border-bottom: 1px solid rgba(240, 234, 214, 0.05);
   }
 
-  .provenance-inner {
+  .proof-inner {
     max-width: 900px;
+    background: rgba(240, 234, 214, 0.03);
+    padding: clamp(1.5rem, 4vw, 3rem);
+    border-left: 2px solid var(--color-gold);
+  }
+
+  .proof-ledger {
     display: flex;
     flex-direction: column;
-    gap: clamp(1.5rem, 3vh, 2.5rem);
-  }
-
-  .provenance-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1.5rem 2.5rem;
-  }
-
-  .prov-cell {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .prov-val {
-    font-family: var(--font-evidence);
-    font-size: var(--type-evidence);
-    color: rgba(240, 234, 214, 0.65);
-    letter-spacing: 0.04em;
-  }
-
-  .method-stripe {
-    border-left: 2px solid rgba(255, 69, 0, 0.3);
-    padding-left: 1.25rem;
-  }
-
-  .method-text {
-    font-family: var(--font-narrative);
-    font-size: clamp(1rem, 2vw, 1.2rem);
-    color: rgba(240, 234, 214, 0.55);
+    gap: 1.25rem;
+    font-family: var(--font-evidence); /* JetBrains Mono */
+    font-size: clamp(0.8rem, 1.5vw, 0.95rem);
     line-height: 1.6;
-    font-style: italic;
-    margin: 0;
+    color: var(--color-warm-cream);
+  }
+
+  .proof-row {
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media (min-width: 768px) {
+    .proof-row {
+      flex-direction: row;
+      gap: 2rem;
+    }
+  }
+
+  .proof-label {
+    width: 220px;
+    flex-shrink: 0;
+    color: var(--color-gold);
+    opacity: 0.8;
+  }
+
+  .proof-value {
+    flex: 1;
+    color: rgba(239, 230, 211, 0.9); /* bone color */
+  }
+
+  .proof-links a {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(239, 230, 211, 0.3);
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .proof-links a:hover {
+    color: var(--color-gold);
+    border-color: var(--color-gold);
+  }
+
+  .proof-dot {
+    margin: 0 0.75rem;
+    opacity: 0.4;
   }
 
   /* ══════════════════════════════
@@ -627,10 +641,6 @@ const jsonLd = {
 
     .sense-item--wide {
       grid-column: 1 / -1;
-    }
-
-    .provenance-grid {
-      grid-template-columns: 1fr 1fr;
     }
 
     .back-link {

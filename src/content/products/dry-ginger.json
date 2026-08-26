@@ -24,5 +24,12 @@
   "chemistry": {
     "activeCompound": "Gingerol: 2.1%",
     "moistureContent": "Moisture: 9.8%"
+  },
+  "proofSystem": {
+    "firstHands": "Gowda Community",
+    "directPricePaid": "₹384/kg (60% above local rate)",
+    "naturesShare": "30% left on the vine for forest birds.",
+    "proofCert": "/assets/certs/fssai-sample.pdf",
+    "proofPhoto": "/assets/products/yield-proof.jpg"
   }
 }

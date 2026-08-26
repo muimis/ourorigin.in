@@ -24,5 +24,12 @@
   "chemistry": {
     "activeCompound": "Myristicin: 1.4%",
     "moistureContent": "Moisture: 10.0%"
+  },
+  "proofSystem": {
+    "firstHands": "Gowda Community",
+    "directPricePaid": "₹356/kg (60% above local rate)",
+    "naturesShare": "Sun-dried and packed at origin.",
+    "proofCert": "/assets/certs/fssai-sample.pdf",
+    "proofPhoto": "/assets/products/yield-proof.jpg"
   }
 }
