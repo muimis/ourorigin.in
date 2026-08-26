@@ -14,7 +14,8 @@
   "methodDescription": "Picked before the bud opens. Dried until the stem snaps clean.",
   "specimenCopy": "A flower bud, picked before it opened. Too early and the oils aren't ready; too late and they're already leaving. The window is roughly a week. Communities across Idukki, Kottayam, Pathanamthitta know when it is by the look of the tree, not a calendar.",
   "images": {
-    "packaging": "/assets/products/clove-packaging.png"
+    "packaging": "/assets/products/minimal-packaging-pouch.jpg",
+    "product": "/assets/products/clove.png"
   },
   "sensoryProfile": {
     "aroma": "Sharp camphor, warm wood, spicy eugenol core",

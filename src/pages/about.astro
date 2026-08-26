@@ -10,8 +10,11 @@ import OriginMark from '../components/OriginMark.astro';
 >
   <main class="manifesto-viewport">
 
-    <!-- Living terrain beneath the words -->
-
+    <!-- Atmospheric terrain beneath the words -->
+    <div class="manifesto-bg" aria-hidden="true">
+      <img src="/assets/origins/wayanad-canopy.webp" alt="" class="manifesto-bg-img" />
+      <div class="manifesto-bg-veil"></div>
+    </div>
 
     <div class="manifesto-track">
 
@@ -104,9 +107,31 @@ import OriginMark from '../components/OriginMark.astro';
 
 <style>
   .manifesto-viewport {
-    background-color: transparent;
+    background-color: var(--color-void);
     color: var(--color-warm-cream);
     position: relative;
+    overflow: hidden;
+  }
+
+  .manifesto-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .manifesto-bg-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.18;
+    filter: saturate(0.8) contrast(1.1);
+  }
+
+  .manifesto-bg-veil {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(13,9,7,0.5) 0%, rgba(13,9,7,0.95) 100%);
   }
 
   .manifesto-track {

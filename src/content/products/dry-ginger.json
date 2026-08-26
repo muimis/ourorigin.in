@@ -14,7 +14,8 @@
   "methodDescription": "Lifted from the soil. Boiled briefly. Sun-dried until it loses four-fifths of its weight.",
   "specimenCopy": "What enters the ground as a wet root leaves as something different. The drying doesn't just remove water — it concentrates and transforms the resins that give ginger its heat. Dry ginger is not fresh ginger aged. It's a separate material.",
   "images": {
-    "packaging": "/assets/products/dry-ginger-packaging.png"
+    "packaging": "/assets/products/minimal-packaging-pouch.jpg",
+    "product": "/assets/products/dry-ginger-product.jpg"
   },
   "sensoryProfile": {
     "aroma": "Earthy, warm ginger oil, pungent citrus zest",

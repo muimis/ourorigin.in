@@ -1,171 +1,140 @@
 ---
-// Standards.astro
+// Standards.astro — Proof bar. One line. No lecture.
 ---
-<section class="standards-section" id="standards" aria-label="How We Grow">
 
-  <div class="standards-header" data-reveal>
-    <h2 class="section-title">Our 3 Rules</h2>
-    <p class="section-desc">
-      How we grow and harvest is simple. No shortcuts, no compromises, and zero chemicals.
-    </p>
-  </div>
+<section class="proof-bar" aria-label="Our Standards">
 
-  <div class="standards-grid">
+  <div class="proof-inner">
 
-    <div class="standard-item" data-reveal>
-      <div class="standard-glyph" aria-hidden="true">
-        <!-- Organic curve mimicking the logo's soil form -->
-        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-          <path d="M 4,40 C 20,40 32,28 32,12" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
-          <path d="M 12,44 C 28,44 40,32 40,16" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.3"/>
-        </svg>
-      </div>
-      <h3 class="standard-title">Natural Forest Soil</h3>
-      <p class="standard-desc">Grown in rich, untouched earth nourished by natural forest leaf litter. Never sprayed with chemical fertilizers or artificial pesticides.</p>
+    <div class="proof-item">
+      <span class="proof-num">0</span>
+      <span class="proof-label">Chemical<br/>inputs</span>
     </div>
 
-    <div class="standard-item" data-reveal>
-      <div class="standard-glyph" aria-hidden="true">
-        <!-- Organic curve mimicking the rain/monsoon cycle -->
-        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-          <path d="M 24,4 C 24,20 12,32 4,32" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
-          <path d="M 36,16 C 36,32 24,44 16,44" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.3"/>
-        </svg>
-      </div>
-      <h3 class="standard-title">Sun & Rain Only</h3>
-      <p class="standard-desc">We follow the natural rhythm of the seasons. There are no greenhouses or artificial forced growing. We harvest only when nature says it is time.</p>
+    <div class="proof-divider" aria-hidden="true">—</div>
+
+    <div class="proof-item">
+      <span class="proof-num">1st</span>
+      <span class="proof-label">Hand.<br/>Direct from grower.</span>
     </div>
 
-    <div class="standard-item" data-reveal>
-      <div class="standard-glyph" aria-hidden="true">
-        <!-- Open organic loop mimicking purity -->
-        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-          <path d="M 24,4 C 35,4 44,13 44,24 C 44,35 35,44 24,44 C 13,44 4,35 4,24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="6 8" opacity="0.8"/>
-        </svg>
-      </div>
-      <h3 class="standard-title">Never Blended</h3>
-      <p class="standard-desc">100% single-origin harvest. What comes off the trees and fields is packed at source. We never mix fresh crop with old warehouse stock.</p>
+    <div class="proof-divider" aria-hidden="true">—</div>
+
+    <div class="proof-item">
+      <span class="proof-num">100%</span>
+      <span class="proof-label">Single<br/>origin, never blended</span>
+    </div>
+
+    <div class="proof-divider" aria-hidden="true">—</div>
+
+    <div class="proof-item">
+      <span class="proof-num">48h</span>
+      <span class="proof-label">Farm to<br/>packaging</span>
+    </div>
+
+    <div class="proof-divider" aria-hidden="true">—</div>
+
+    <div class="proof-item proof-item--cta">
+      <a href="/about" class="proof-cta-link">
+        Why this<br/>exists →
+      </a>
     </div>
 
   </div>
 
 </section>
 
-<script>
-  import { gsap } from 'gsap';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-  gsap.registerPlugin(ScrollTrigger);
-
-  function initStandards() {
-    gsap.fromTo('.standards-header, .standard-item',
-      { opacity: 0, y: 30 },
-      {
-        opacity: 1, y: 0,
-        duration: 1.0, ease: 'power2.out',
-        stagger: 0.2,
-        scrollTrigger: {
-          trigger: '.standards-section',
-          start: 'top 75%',
-        }
-      }
-    );
-  }
-
-  initStandards();
-  document.addEventListener('astro:after-swap', initStandards);
-  document.addEventListener('astro:page-load', initStandards);
-</script>
-
 <style>
-  .standards-section {
-    padding: clamp(3rem, 6vh, 4.5rem) clamp(1rem, 4vw, 4rem);
-    background-color: var(--color-void);
-    position: relative;
-    z-index: 2;
+  .proof-bar {
+    background: var(--color-forest-surface);
+    border-top: 1px solid rgba(240, 234, 214, 0.05);
+    border-bottom: 1px solid rgba(240, 234, 214, 0.05);
+    padding: clamp(2.5rem, 5vw, 4rem) clamp(1.5rem, 5vw, 4rem);
   }
 
-  .standards-header {
-    max-width: 650px;
-    margin: 0 auto clamp(2rem, 4vh, 3rem);
-    text-align: center;
+  .proof-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(1.5rem, 3vw, 3rem);
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+  }
+
+  .proof-item {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.35rem;
+    flex: 1;
+    min-width: 100px;
   }
 
-  .section-title {
-    margin: 0;
+  .proof-num {
     font-family: var(--font-display);
-    font-size: clamp(2rem, 4vw, 3rem);
-    color: var(--color-warm-cream);
-    font-weight: 300;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 400;
+    color: var(--color-gold);
+    line-height: 1.0;
+    letter-spacing: -0.01em;
   }
 
-  .section-desc {
-    margin: 0;
-    font-family: var(--font-narrative);
-    font-size: 1.05rem;
-    color: var(--color-cream-muted);
+  .proof-label {
+    font-family: var(--font-evidence);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(240, 234, 214, 0.45);
     line-height: 1.5;
   }
 
-  .standards-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.25rem;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .standard-item {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1.5rem;
-    background: var(--color-forest-surface);
-    border-radius: var(--radius, 8px);
-    border: 1px solid rgba(240, 234, 214, 0.08);
-    transition: transform 0.3s ease, border-color 0.3s ease;
-  }
-
-  .standard-item:hover {
-    transform: translateY(-3px);
-    border-color: rgba(212, 139, 22, 0.4);
-  }
-
-  .standard-glyph {
-    color: var(--color-gold);
-    height: 40px;
+  .proof-divider {
+    color: rgba(240, 234, 214, 0.08);
+    font-size: 1.5rem;
+    font-family: var(--font-evidence);
+    flex-shrink: 0;
+    align-self: stretch;
     display: flex;
     align-items: center;
   }
 
-  .standard-title {
-    margin: 0;
-    font-family: var(--font-display);
-    font-size: 1.3rem;
-    color: var(--color-warm-cream);
-    font-weight: 400;
+  .proof-item--cta {
+    align-items: flex-start;
   }
 
-  .standard-desc {
+  .proof-cta-link {
     font-family: var(--font-narrative);
-    font-size: 1rem;
-    color: var(--color-cream-muted);
-    line-height: 1.55;
-    margin: 0;
-    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(1rem, 1.8vw, 1.3rem);
+    color: rgba(240, 234, 214, 0.5);
+    text-decoration: none;
+    line-height: 1.4;
+    transition: color 0.2s;
+    border-bottom: 1px solid rgba(240, 234, 214, 0.1);
+    padding-bottom: 2px;
   }
 
-  @media (max-width: 900px) {
-    .standards-grid {
-      grid-template-columns: 1fr;
-      gap: 1.25rem;
+  .proof-cta-link:hover {
+    color: var(--color-gold);
+    border-color: var(--color-gold);
+  }
+
+  @media (max-width: 768px) {
+    .proof-divider { display: none; }
+
+    .proof-inner {
+      gap: 1.5rem 2rem;
     }
 
-    .standard-item {
-      padding: 1.25rem;
+    .proof-item {
+      min-width: 120px;
+      flex: 0 0 calc(50% - 1rem);
+    }
+
+    .proof-item--cta {
+      flex: 0 0 100%;
+      border-top: 1px solid rgba(240, 234, 214, 0.06);
+      padding-top: 1rem;
     }
   }
 </style>
