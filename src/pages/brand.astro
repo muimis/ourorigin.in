@@ -1,0 +1,791 @@
+---
+// Standalone Brand Guideline Document
+// No layout wrapper needed as this is a self-contained, vanilla HTML/CSS reference document.
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OurOrigin — Brand Guideline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --forest:#0C1509;
+    --gold:#C99A5B;
+    --bone:#EFE6D3;
+    --proof:#4A7A4E;
+    --bone-dim: #e4d9c2;
+    --forest-60: rgba(12,21,9,0.6);
+    --forest-35: rgba(12,21,9,0.35);
+    --gold-15: rgba(201,154,91,0.15);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bone);
+    color:var(--forest);
+    font-family:'Inter', sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--gold); color:var(--forest); }
+
+  a{color:inherit;}
+
+  .layout{
+    display:grid;
+    grid-template-columns: 260px 1fr;
+    max-width:1280px;
+    margin:0 auto;
+  }
+
+  /* ---------- NAV ---------- */
+  nav.toc{
+    position:sticky;
+    top:0;
+    align-self:start;
+    height:100vh;
+    overflow-y:auto;
+    padding:48px 28px 48px 40px;
+    border-right:1px solid var(--forest-35);
+  }
+  .toc-mark{ width:34px; height:34px; margin-bottom:14px; }
+  .toc-mark svg{ width:100%; height:100%; }
+  .toc-brand{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:1.15rem;
+    letter-spacing:0.01em;
+  }
+  .toc-tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.62rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--forest-60);
+    margin-top:4px;
+    margin-bottom:40px;
+    display:block;
+  }
+  .toc-list{ list-style:none; }
+  .toc-list li{ margin-bottom:2px; }
+  .toc-list a{
+    display:block;
+    text-decoration:none;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.03em;
+    padding:8px 10px;
+    border-radius:2px;
+    color:var(--forest-60);
+    transition:all .15s ease;
+    border-left:2px solid transparent;
+  }
+  .toc-list a:hover{ color:var(--forest); background:var(--gold-15); }
+  .toc-list a.active{
+    color:var(--forest);
+    border-left:2px solid var(--gold);
+    background:var(--gold-15);
+    font-weight:500;
+  }
+  .toc-num{ opacity:0.55; margin-right:8px; }
+
+  /* ---------- MAIN ---------- */
+  main{ padding:0 64px 120px 64px; }
+
+  .cover{
+    min-height:92vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    border-bottom:1px solid var(--forest-35);
+    position:relative;
+  }
+  .cover-eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin-bottom:24px;
+  }
+  .cover h1{
+    font-family:'Fraunces', serif;
+    font-weight:400;
+    font-size:clamp(3rem, 7vw, 6rem);
+    line-height:0.98;
+    letter-spacing:-0.01em;
+    max-width:14ch;
+  }
+  .cover-tagline{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:400;
+    font-size:1.35rem;
+    color:var(--forest-60);
+    max-width:38ch;
+    margin-top:28px;
+  }
+  .cover-mark{
+    position:absolute;
+    right:0;
+    top:50%;
+    transform:translateY(-50%);
+    width:180px;
+    opacity:0.9;
+  }
+  .cover-meta{
+    margin-top:64px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.68rem;
+    color:var(--forest-60);
+    letter-spacing:0.04em;
+  }
+
+  section{
+    padding:100px 0;
+    border-bottom:1px solid var(--forest-35);
+    scroll-margin-top:32px;
+  }
+  section:last-of-type{ border-bottom:none; }
+
+  .section-eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.68rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin-bottom:16px;
+  }
+  h2{
+    font-family:'Fraunces', serif;
+    font-weight:400;
+    font-size:2.4rem;
+    letter-spacing:-0.01em;
+    margin-bottom:28px;
+    max-width:20ch;
+  }
+  h3{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:1.25rem;
+    margin-bottom:12px;
+  }
+  p{ max-width:62ch; margin-bottom:16px; font-size:1rem; }
+  .lede{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-size:1.3rem;
+    color:var(--forest-60);
+    max-width:52ch;
+    margin-bottom:40px;
+  }
+
+  /* ---------- PHILOSOPHY / FIVE ORIGINS ---------- */
+  .origins-loop{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:1px;
+    background:var(--forest-35);
+    margin-top:48px;
+    border:1px solid var(--forest-35);
+  }
+  .origin-cell{
+    background:var(--bone);
+    padding:28px 20px;
+    min-height:210px;
+    display:flex;
+    flex-direction:column;
+  }
+  .origin-num{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.68rem;
+    color:var(--gold);
+    margin-bottom:14px;
+  }
+  .origin-cell h4{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:1.05rem;
+    margin-bottom:10px;
+  }
+  .origin-cell p{ font-size:0.85rem; margin:0; max-width:none; color:var(--forest-60); }
+
+  /* ---------- VOICE / VOCAB ---------- */
+  .vocab-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:0;
+    margin-top:40px;
+    border-top:1px solid var(--forest-35);
+  }
+  .vocab-item{
+    padding:22px 24px 22px 0;
+    border-bottom:1px solid var(--forest-35);
+  }
+  .vocab-item:nth-child(odd){ padding-right:40px; border-right:1px solid var(--forest-35); }
+  .vocab-term{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.85rem;
+    font-weight:600;
+    color:var(--forest);
+    margin-bottom:6px;
+  }
+  .vocab-term .check{ color:var(--proof); }
+  .vocab-def{ font-size:0.88rem; color:var(--forest-60); }
+
+  /* ---------- COPY LAW ---------- */
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:32px;
+    font-size:0.88rem;
+  }
+  th{
+    text-align:left;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.65rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--forest-60);
+    padding-bottom:14px;
+    border-bottom:1px solid var(--forest);
+  }
+  td{
+    padding:18px 24px 18px 0;
+    border-bottom:1px solid var(--forest-35);
+    vertical-align:top;
+  }
+  td.banned{ color:var(--forest-60); font-style:italic; }
+  td.required{ font-family:'JetBrains Mono', monospace; font-size:0.82rem; }
+  .banned-words{
+    display:flex; flex-wrap:wrap; gap:8px; margin-top:24px;
+  }
+  .banned-words span{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.72rem;
+    padding:6px 12px;
+    border:1px solid var(--forest-35);
+    border-radius:20px;
+    color:var(--forest-60);
+    text-decoration:line-through;
+  }
+
+  /* ---------- COLOR ---------- */
+  .swatch-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:24px;
+    margin-top:40px;
+  }
+  .swatch{ border:1px solid var(--forest-35); }
+  .swatch-color{ height:120px; }
+  .swatch-info{ padding:16px; }
+  .swatch-name{ font-family:'Fraunces', serif; font-size:1rem; margin-bottom:4px; }
+  .swatch-hex{ font-family:'JetBrains Mono', monospace; font-size:0.78rem; color:var(--forest-60); }
+  .swatch-use{ font-size:0.78rem; color:var(--forest-60); margin-top:8px; }
+
+  /* ---------- TYPE ---------- */
+  .type-sample{ padding:36px 0; border-bottom:1px solid var(--forest-35); }
+  .type-sample:last-child{ border-bottom:none; }
+  .type-role{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.68rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin-bottom:14px;
+  }
+  .type-fraunces{ font-family:'Fraunces', serif; font-weight:400; font-size:2.6rem; letter-spacing:-0.01em; }
+  .type-mono{ font-family:'JetBrains Mono', monospace; font-size:1.3rem; }
+  .type-inter{ font-family:'Inter', sans-serif; font-size:1.15rem; max-width:60ch; }
+  .type-meta{ font-family:'JetBrains Mono', monospace; font-size:0.72rem; color:var(--forest-60); margin-top:12px; }
+
+  /* ---------- MARK ---------- */
+  .mark-showcase{
+    display:grid;
+    grid-template-columns:280px 1fr;
+    gap:56px;
+    align-items:center;
+    margin-top:40px;
+  }
+  .mark-large{ width:100%; }
+  .mark-large svg{ width:100%; height:auto; }
+  .mark-rules{ }
+  .mark-rule{ margin-bottom:22px; }
+  .mark-rule-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.68rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--forest-60);
+    margin-bottom:6px;
+  }
+  .clearspace-demo{
+    display:flex; align-items:center; gap:16px; margin-top:40px;
+  }
+  .clearspace-box{
+    border:1px dashed var(--forest-35);
+    padding:24px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .clearspace-box svg{ width:60px; height:60px; }
+  .rejected-list{
+    display:flex; flex-wrap:wrap; gap:10px; margin-top:16px;
+  }
+  .rejected-list span{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.72rem;
+    padding:6px 12px;
+    background:var(--gold-15);
+    color:var(--forest-60);
+    border-radius:2px;
+  }
+
+  /* ---------- PROOF SYSTEM ---------- */
+  .ledger-card{
+    background:var(--forest);
+    color:var(--bone);
+    padding:36px 40px;
+    margin-top:36px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.85rem;
+    line-height:2;
+  }
+  .ledger-card .field{ color:var(--gold); display:inline-block; width:170px; }
+  .ledger-card .placeholder{ color:var(--bone-dim); }
+  .proof-assets{ margin-top:32px; }
+  .proof-asset{
+    display:flex; gap:16px; padding:16px 0;
+    border-bottom:1px solid var(--forest-35);
+  }
+  .proof-asset:last-child{ border-bottom:none; }
+  .proof-asset-num{ font-family:'JetBrains Mono', monospace; color:var(--gold); font-size:0.85rem; }
+
+  /* ---------- PACKAGING ---------- */
+  .packaging-note{
+    border-left:2px solid var(--gold);
+    padding:20px 28px;
+    margin-top:32px;
+    background:var(--gold-15);
+  }
+  .batch-line{
+    font-family:'JetBrains Mono', monospace;
+    font-size:1.1rem;
+    margin-top:20px;
+    padding:16px 20px;
+    border:1px dashed var(--forest-35);
+    display:inline-block;
+  }
+
+  /* ---------- DO / DONT ---------- */
+  .dodont{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:40px;
+    margin-top:40px;
+  }
+  .dodont-col h4{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    margin-bottom:20px;
+  }
+  .dodont-col.do h4{ color:var(--proof); }
+  .dodont-col.dont h4{ color:#8B2500; }
+  .dodont-col ul{ list-style:none; }
+  .dodont-col li{
+    font-size:0.9rem;
+    padding:10px 0;
+    border-bottom:1px solid var(--forest-35);
+  }
+
+  footer{
+    padding:48px 0 0 0;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.68rem;
+    color:var(--forest-60);
+    letter-spacing:0.03em;
+  }
+
+  @media (max-width: 900px){
+    .layout{ grid-template-columns:1fr; }
+    nav.toc{ display:none; }
+    main{ padding:0 24px 80px 24px; }
+    .origins-loop{ grid-template-columns:1fr; }
+    .vocab-grid{ grid-template-columns:1fr; }
+    .vocab-item:nth-child(odd){ border-right:none; padding-right:0; }
+    .swatch-grid{ grid-template-columns:repeat(2,1fr); }
+    .mark-showcase{ grid-template-columns:1fr; }
+    .dodont{ grid-template-columns:1fr; }
+    .cover-mark{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <nav class="toc">
+    <div class="toc-mark" id="nav-mark"></div>
+    <div class="toc-brand">OurOrigin</div>
+    <span class="toc-tag">Brand Guideline</span>
+    <ul class="toc-list">
+      <li><a href="#philosophy"><span class="toc-num">01</span>Philosophy</a></li>
+      <li><a href="#voice"><span class="toc-num">02</span>Voice &amp; Vocabulary</a></li>
+      <li><a href="#copy-law"><span class="toc-num">03</span>The Copy Law</a></li>
+      <li><a href="#color"><span class="toc-num">04</span>Color</a></li>
+      <li><a href="#type"><span class="toc-num">05</span>Typography</a></li>
+      <li><a href="#mark"><span class="toc-num">06</span>The Mark</a></li>
+      <li><a href="#proof"><span class="toc-num">07</span>The Proof System</a></li>
+      <li><a href="#packaging"><span class="toc-num">08</span>Packaging</a></li>
+      <li><a href="#dodont"><span class="toc-num">09</span>Do / Don't</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <div class="cover">
+      <div class="cover-eyebrow">Brand Guideline — v1</div>
+      <h1>Where ethics<br>meet, we partner.</h1>
+      <p class="cover-tagline">A direct-origin house built on person-to-person transfer — the dignity and effort exchanged between harvester and buyer. Spices, grains, whole-leaf tea: one covenant, whatever the crop.</p>
+      <div class="cover-meta">OURORIGIN.IN — WESTERN GHATS — SINGLE ORIGIN</div>
+      <div class="cover-mark" id="cover-mark"></div>
+    </div>
+
+    <!-- 01 PHILOSOPHY -->
+    <section id="philosophy">
+      <div class="section-eyebrow">01 — Foundation</div>
+      <h2>The transfer, and who's in the room when it happens.</h2>
+      <p class="lede">OurOrigin is not a supply chain. It's a direct transfer of effort and dignity from one pair of hands to another — everything else is just how that transfer gets honored.</p>
+      <p>Every decision — copy, packaging, pricing display, even which photos we don't take — is tested against one question: does this honor the transfer, or does it dress it up? The Five Origins keep that question grounded in who's actually party to it.</p>
+
+      <div class="origins-loop">
+        <div class="origin-cell">
+          <div class="origin-num">1 / 5</div>
+          <h4>The Farmer</h4>
+          <p>Not a story, not a face for the packaging. A craftsman whose dignity is the baseline assumption, not the thing being proven.</p>
+        </div>
+        <div class="origin-cell">
+          <div class="origin-num">2 / 5</div>
+          <h4>The Place</h4>
+          <p>Wayanad, the Nilgiris, the Western Ghats. A living sanctuary, never reduced to a coordinate pin.</p>
+        </div>
+        <div class="origin-cell">
+          <div class="origin-num">3 / 5</div>
+          <h4>Nature</h4>
+          <p>A party to the transaction with its own share. The harvest always leaves something behind.</p>
+        </div>
+        <div class="origin-cell">
+          <div class="origin-num">4 / 5</div>
+          <h4>The Product</h4>
+          <p>Spice, grain, or leaf — unblended, untampered, exactly what it is. No processing story required to justify the price.</p>
+        </div>
+        <div class="origin-cell">
+          <div class="origin-num">5 / 5</div>
+          <h4>The Consumer</h4>
+          <p>The one who completes the transfer — not the one being sold to.</p>
+        </div>
+      </div>
+      <p style="margin-top:28px; font-size:0.85rem; color:var(--forest-60);">Internal frame only — use for decks, investor language, and About copy. It does not appear as customer-facing terminology.</p>
+    </section>
+
+    <!-- 02 VOICE -->
+    <section id="voice">
+      <div class="section-eyebrow">02 — Language</div>
+      <h2>The locked vocabulary.</h2>
+      <p class="lede">These terms are the brand's proper nouns. They are never rephrased, translated for "clarity," or swapped for synonyms — consistency is what makes them feel like a system instead of a slogan.</p>
+      <div class="vocab-grid">
+        <div class="vocab-item">
+          <div class="vocab-term">Transfer Ledger</div>
+          <div class="vocab-def">The record of what moved from harvester to buyer — price, place, pact. Not a "product catalog."</div>
+        </div>
+        <div class="vocab-item">
+          <div class="vocab-term">Honor the Decision</div>
+          <div class="vocab-def">What the buyer does at checkout. Not "complete your purchase."</div>
+        </div>
+        <div class="vocab-item">
+          <div class="vocab-term">Honored <span class="check">✓</span></div>
+          <div class="vocab-def">The confirmation state. Not "order confirmed."</div>
+        </div>
+        <div class="vocab-item">
+          <div class="vocab-term">Complete the Transfer</div>
+          <div class="vocab-def">The final checkout action. Not "place order" or "pay now."</div>
+        </div>
+        <div class="vocab-item">
+          <div class="vocab-term">The Proof System</div>
+          <div class="vocab-def">The full body of evidence behind a batch — certificates, photos, price paid. See section 07.</div>
+        </div>
+        <div class="vocab-item">
+          <div class="vocab-term">First Hands</div>
+          <div class="vocab-def">The named grower credited on a batch. Not "farmer partner" or "supplier."</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 COPY LAW -->
+    <section id="copy-law">
+      <div class="section-eyebrow">03 — Copywriting</div>
+      <h2>Zero-adjective rule.</h2>
+      <p class="lede">Strip the descriptive adjective. Replace it with an operational fact — a price, a place, a technique, a quantity. If a sentence can't be rewritten as a fact, it doesn't ship.</p>
+      <table>
+        <thead>
+          <tr><th style="width:44%">Banned instinct</th><th>Required instead</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="banned">"Our exquisite, premium, hand-picked green tea."</td>
+            <td class="required">High-altitude Nilgiris green tea. Pan-fired, whole-leaf, harvested at 1,800m.</td>
+          </tr>
+          <tr>
+            <td class="banned">"Sustainably sourced by traditional farming communities."</td>
+            <td class="required">Grown by [First Hands name]. Direct farmgate price: ₹[X]/kg. No chemical fertilizers.</td>
+          </tr>
+          <tr>
+            <td class="banned">"Packed with rich, aromatic wild spices."</td>
+            <td class="required">Harvested from mature, wild forest vines. 30% left on the vine for forest birds.</td>
+          </tr>
+          <tr>
+            <td class="banned">"Experience our magical, authentic heritage."</td>
+            <td class="required">Unblended heritage millets. Sun-dried and packed at origin.</td>
+          </tr>
+        </tbody>
+      </table>
+      <h3 style="margin-top:48px; font-size:0.95rem;">Banned, permanently</h3>
+      <div class="banned-words">
+        <span>exquisite</span><span>artisanal</span><span>premium</span><span>sustainable</span>
+        <span>hand-plucked</span><span>organic</span><span>authentic</span><span>magical</span><span>heritage (as adjective)</span>
+      </div>
+    </section>
+
+    <!-- 04 COLOR -->
+    <section id="color">
+      <div class="section-eyebrow">04 — Palette</div>
+      <h2>Four colors. No exceptions.</h2>
+      <p class="lede">Nothing else enters the system. If a new surface needs a color, it's one of these four at a different weight — never a fifth color.</p>
+      <div class="swatch-grid">
+        <div class="swatch">
+          <div class="swatch-color" style="background:#0C1509;"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Deep Forest</div>
+            <div class="swatch-hex">#0C1509</div>
+            <div class="swatch-use">Ink. Body text, structure, dark grounds.</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#C99A5B;"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Mark Gold</div>
+            <div class="swatch-hex">#C99A5B</div>
+            <div class="swatch-use">The mark, eyebrows, accents. Used sparingly — it's a signature, not a background.</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#EFE6D3;"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Bone</div>
+            <div class="swatch-hex">#EFE6D3</div>
+            <div class="swatch-use">Canvas. The default background, everywhere.</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#4A7A4E;"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Proof Green</div>
+            <div class="swatch-hex">#4A7A4E</div>
+            <div class="swatch-use">Confirmation only — "Honored ✓" and verified states. Never decorative.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 TYPE -->
+    <section id="type">
+      <div class="section-eyebrow">05 — Typography</div>
+      <h2>Three faces, three jobs.</h2>
+      <p class="lede">Each face has exactly one register. Never borrow one face for another's job — that's what keeps the ledger feeling like a ledger and the philosophy feeling like a letter.</p>
+
+      <div class="type-sample">
+        <div class="type-role">Philosophical register</div>
+        <div class="type-fraunces">Fraunces</div>
+        <p class="type-inter" style="margin-top:16px;">Used for headlines, the brand's voice, anything written to be felt rather than scanned. Set in regular or medium weight — the italic is reserved for the quiet aside, never the headline itself.</p>
+        <div class="type-meta">Weights in use: 300 / 400 / 500 / 600 · Italic for asides only</div>
+      </div>
+
+      <div class="type-sample">
+        <div class="type-role">Ledger &amp; proof register</div>
+        <div class="type-mono">Batch 42 of 150 — ₹480/kg</div>
+        <p class="type-inter" style="margin-top:16px;">JetBrains Mono. Used for anything that is evidence: prices, coordinates, batch numbers, vocabulary labels, checkout fields. If it's a fact, it's set in mono.</p>
+        <div class="type-meta">Weights in use: 400 / 500 / 600</div>
+      </div>
+
+      <div class="type-sample">
+        <div class="type-role">Body register</div>
+        <p class="type-inter">Inter carries everything else — descriptions, interface copy, navigation. It stays out of the way so Fraunces and JetBrains Mono can do the talking.</p>
+        <div class="type-meta">Weights in use: 400 / 500 / 600</div>
+      </div>
+    </section>
+
+    <!-- 06 MARK -->
+    <section id="mark">
+      <div class="section-eyebrow">06 — Symbol</div>
+      <h2>The mark: four counted, one crossing.</h2>
+      <p class="lede">Four organic verticals, counted by hand rather than ruled by a grid — closed by a diagonal stroke, the way a tally is crossed off in fives. It's a count of hands, not a logo built from a shape library.</p>
+
+      <div class="mark-showcase">
+        <div class="mark-large" id="mark-large"></div>
+        <div class="mark-rules">
+          <div class="mark-rule">
+            <div class="mark-rule-label">Why irregular</div>
+            <div>The four verticals curve rather than run straight, and the closing diagonal cuts across at an uneven angle — a tally made by a real hand counting a real harvest never lines up perfectly. Precision here would read as corporate, not honest.</div>
+          </div>
+          <div class="mark-rule">
+            <div class="mark-rule-label">Color</div>
+            <div>Mark Gold on Bone or Deep Forest. Never rendered in Proof Green, and never in more than one color at once.</div>
+          </div>
+          <div class="mark-rule">
+            <div class="mark-rule-label">What it's not</div>
+            <div class="rejected-list">
+              <span>vesica piscis</span>
+              <span>leaf-seed weave</span>
+              <span>spinner ring</span>
+              <span>cinnamon quill curl</span>
+              <span>split tally stick</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="clearspace-demo">
+        <div class="clearspace-box" id="clearspace-mark"></div>
+        <p style="font-size:0.85rem; color:var(--forest-60); max-width:40ch;">Minimum clearspace: the height of the seed form, on all sides. Minimum size: no smaller than a rupee coin on physical packaging.</p>
+      </div>
+    </section>
+
+    <!-- 07 PROOF SYSTEM -->
+    <section id="proof">
+      <div class="section-eyebrow">07 — Evidence</div>
+      <h2>Every batch carries its own proof.</h2>
+      <p class="lede">The Proof System is the antidote to trust-me marketing. Every Transfer Ledger entry renders this exact shape — and every field comes from the real harvest record. An empty field stays empty; it never gets a plausible-sounding number.</p>
+
+      <div class="ledger-card">
+        <div><span class="field">Crop:</span><span class="placeholder">[crop name]</span></div>
+        <div><span class="field">First Hands:</span><span class="placeholder">[grower name, as they want it credited]</span></div>
+        <div><span class="field">Direct Price Paid:</span><span class="placeholder">[₹/kg] ([% above local rate, if known])</span></div>
+        <div><span class="field">Nature's Share:</span><span class="placeholder">[harvesting pact — % left, season limit, method]</span></div>
+        <div><span class="field">Proof:</span><span class="placeholder">[FSSAI cert link] · [batch photo, daylight, no filter]</span></div>
+      </div>
+
+      <div class="proof-assets">
+        <div class="proof-asset"><div class="proof-asset-num">01</div><div>The harvest log scan — weight and grower signature.</div></div>
+        <div class="proof-asset"><div class="proof-asset-num">02</div><div>The compliance certificate — raw PDF, FSSAI or equivalent, unedited.</div></div>
+        <div class="proof-asset"><div class="proof-asset-num">03</div><div>The yield photo — smartphone, daylight, plain surface, no studio lighting.</div></div>
+      </div>
+      <p style="margin-top:24px; font-size:0.85rem; color:var(--forest-60);">No photos of homes, families, or hardship. The craft speaks; the person's private life doesn't have to.</p>
+    </section>
+
+    <!-- 08 PACKAGING -->
+    <section id="packaging">
+      <div class="section-eyebrow">08 — Physical</div>
+      <h2>The jar is the last word.</h2>
+      <p class="lede">With no retail floor, packaging is the only physical moment a buyer has with the brand. It carries the mark, and — pending sign-off from whoever owns final mark production — a batch signature.</p>
+      <div class="packaging-note">
+        <strong style="font-family:'JetBrains Mono', monospace; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em;">Pending confirmation</strong>
+        <p style="margin-top:10px; margin-bottom:0; font-size:0.9rem;">The batch line below is a proposed packaging detail, not a design-system change. Confirm with the mark's production owner before treating it as final — it sits close enough to the logo to need that check.</p>
+      </div>
+      <div class="batch-line">[Jar N of Total] — [Grower name]</div>
+      <p style="margin-top:24px;">Vessel: reusable amber glass with a wooden lid, or unbleached kraft pouch. Label: textured bone-colored recycled paper, Deep Forest type only — no gold on the label itself, gold is reserved for the mark.</p>
+    </section>
+
+    <!-- 09 DO/DONT -->
+    <section id="dodont">
+      <div class="section-eyebrow">09 — Quick reference</div>
+      <h2>Do this. Not that.</h2>
+      <div class="dodont">
+        <div class="dodont-col do">
+          <h4>Do</h4>
+          <ul>
+            <li>Name the grower and the price paid, every time.</li>
+            <li>Let an empty proof field stay empty until it's real.</li>
+            <li>Use JetBrains Mono for anything that's a fact.</li>
+            <li>Leave something for nature in every harvest note.</li>
+            <li>Keep Mark Gold rare enough that it still reads as a signature.</li>
+          </ul>
+        </div>
+        <div class="dodont-col dont">
+          <h4>Don't</h4>
+          <ul>
+            <li>Use "artisanal," "premium," or any word from the banned list.</li>
+            <li>Photograph a grower's home, family, or hardship.</li>
+            <li>Invent a number to fill a proof field.</li>
+            <li>Redraw the mark with even, ruled strokes.</li>
+            <li>Introduce a fifth color to the palette.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      OURORIGIN — BRAND GUIDELINE V1 — WESTERN GHATS, INDIA
+    </footer>
+  </main>
+</div>
+
+<script is:inline>
+// ---- The mark: production SVG, four organic verticals + diagonal cross ----
+function tallyMarkSVG(animate){
+  const paths = [
+    "M 8  8 C  7 22, 10 36,  8 52",
+    "M 20  6 C 18 22, 21 38, 19 54",
+    "M 32  9 C 34 22, 31 36, 33 51",
+    "M 44  7 C 42 21, 45 38, 43 53",
+    "M  2 48 C 18 36, 35 22, 55 10"
+  ];
+  const strokeEls = paths.map((d,i)=>`<path d="${d}" class="stroke-${i}"/>`).join('');
+  return `<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" fill="none" aria-label="OurOrigin — Tally Mark" role="img">
+    <g stroke="var(--gold)" stroke-width="4" stroke-linecap="round">
+      ${strokeEls}
+    </g>
+  </svg>`;
+}
+
+function mountMark(elId, animate){
+  const el = document.getElementById(elId);
+  if (!el) return;
+  el.innerHTML = tallyMarkSVG();
+  if(animate){
+    const strokes = el.querySelectorAll('path');
+    strokes.forEach((s,i)=>{
+      const len = s.getTotalLength();
+      s.style.strokeDasharray = len;
+      s.style.strokeDashoffset = len;
+      s.style.transition = `stroke-dashoffset 0.5s ease ${0.15*i}s`;
+      requestAnimationFrame(()=> requestAnimationFrame(()=>{ s.style.strokeDashoffset = 0; }));
+    });
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  mountMark('cover-mark', true);
+  mountMark('nav-mark', false);
+  mountMark('mark-large', false);
+  mountMark('clearspace-mark', false);
+
+  // ---- Scrollspy ----
+  const links = document.querySelectorAll('.toc-list a');
+  const sections = document.querySelectorAll('main section');
+  const observer = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        links.forEach(l=>l.classList.remove('active'));
+        const active = document.querySelector(`.toc-list a[href="#${entry.target.id}"]`);
+        if(active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s=>observer.observe(s));
+});
+</script>
+</body>
+</html>
