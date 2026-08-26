@@ -14,7 +14,8 @@
   "methodDescription": "Picked by hand, fully oxidized.",
   "specimenCopy": "The same plant makes green tea and black tea both. The difference is entirely in what happens after picking. One leaf was allowed to oxidize until it darkened. The other was stopped first.",
   "images": {
-    "packaging": "/assets/products/tea-packaging.png"
+    "packaging": "/assets/products/minimal-packaging-pouch.jpg",
+    "product": "/assets/products/tea.png"
   },
   "sensoryProfile": {
     "aroma": "Damp malt, forest honey, eucalyptus tree bark",

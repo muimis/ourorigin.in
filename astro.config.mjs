@@ -2,9 +2,12 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
+import tailwindcss from '@tailwindcss/vite';
+
 export default defineConfig({
   site: 'https://ourorigin.in',
   output: 'static',
+
   integrations: [
     sitemap({
       serialize(item) {
@@ -29,5 +32,9 @@ export default defineConfig({
         return item;
       }
     })
-  ]
+  ],
+
+  vite: {
+    plugins: [tailwindcss()]
+  }
 });

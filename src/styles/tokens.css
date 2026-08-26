@@ -1,81 +1,50 @@
 /* ═══════════════════════════════════════════════════════════
-   OurOrigin — Design Tokens (Primitive & Indigenous Art)
+   OurOrigin 2.0 — Design Tokens (Warm Humanist Minimalism)
    Source of truth for every visual decision.
-   Rooted in the ancient soil of the Western Ghats.
    ═══════════════════════════════════════════════════════════ */
 
-:root {
-  /* ── Brand Colors: Ancient Soil, Forest Mist & Volcanic Earth ── */
-  --color-void: #0D0907;
-  --color-forest-deep: #120E0B;        /* Primary background — deep ancient loam */
-  --color-forest-surface: #1A1511;     /* Slightly lifted surface for cards */
-  --color-forest-hover: #241D18;       /* Interactive hover state */
-  --color-warm-cream: #F0EAD6;         /* Bone White / Chalk */
-  --color-cream-muted: rgba(240, 234, 214, 0.65);
-  --color-cream-whisper: rgba(240, 234, 214, 0.35);
-  
-  /* Primary Action & Sacred Signals */
-  --color-gold: #D48B16;               /* Earth Amber / Turmeric warmth */
-  --color-gold-bright: #F5A623;        /* Bright highlight */
-  --color-gold-muted: rgba(212, 139, 22, 0.2);
-  --color-orange-surveyor: #FF4500;    /* Surveyor's signal */
-  
-  /* Indigenous Earth Accents */
-  --color-laterite: #8B2500;           /* Red Laterite volcanic soil */
-  --color-laterite-glow: rgba(139, 37, 0, 0.35);
-  --color-moss-deep: #1A2E16;          /* Ancient canopy moss */
-  --color-bark: #2C1B10;               /* Aged timber bark */
-  --color-mist: rgba(220, 235, 225, 0.08);
+@import "tailwindcss";
 
+:root {
+  /* ── Brand Colors: Tactile Paper, Deep Loam & Amber ── */
+  --color-warm-cream: #F0EAD6;         /* Primary surface — bone white / chalk paper */
+  --color-cream-muted: rgba(240, 234, 214, 0.65);
+  
+  --color-forest-deep: #0c1509;        /* Primary text — deep ancient loam */
+  --color-forest-surface: #1A1511;     
+  --color-forest-hover: #241D18;       
+  
+  /* Primary Action */
+  --color-gold: #D48B16;               /* Earth Amber / Turmeric warmth */
+  --color-gold-muted: rgba(212, 139, 22, 0.2);
+  
   /* Subtle Borders & Dividers */
-  --color-border-subtle: rgba(240, 234, 214, 0.09);
+  --color-border-subtle: rgba(12, 21, 9, 0.1);
   --color-border-accent: rgba(212, 139, 22, 0.35);
 
-  /* ── Typography — Three Disciplined Registers ──
-     1. Display / Inscriptions = Cinzel (ancient, monumental, carved)
-     2. Narrative / Human Voice = Cormorant Garamond (warm, poetic, living)
-     3. Evidence & Telemetry = DM Mono (coordinates, elevation, batches) */
-  --font-display: 'Cinzel', serif;
-  --font-institutional: 'Cinzel', serif;
+  /* ── Typography — Two Registers ──
+     1. Narrative / Human Voice = Cormorant Garamond (warm, poetic, living)
+     2. Evidence & Telemetry = DM Mono (coordinates, elevation, batches) */
   --font-narrative: 'Cormorant Garamond', serif;
   --font-evidence: 'DM Mono', monospace;
   --font-mono: 'DM Mono', monospace;
-  --font-sans: 'Inter', -apple-system, sans-serif;
 
   /* ── Fluid Type Scale ── */
-  --type-monumental: clamp(34px, 7.5vw, 76px);
-  --type-display:   clamp(26px, 5.5vw, 48px);
-  --type-statement: clamp(20px, 4vw, 32px);
-  --type-narrative: clamp(16px, 2.2vw, 20px);
-  --type-evidence:  clamp(12px, 1.4vw, 13px);
-  --type-whisper:   clamp(10px, 1.1vw, 11px);
+  --type-display:   clamp(32px, 6vw, 56px);
+  --type-statement: clamp(24px, 4.5vw, 40px);
+  --type-narrative: clamp(18px, 2.5vw, 24px);
+  --type-evidence:  clamp(12px, 1.4vw, 14px);
+  --type-whisper:   clamp(10px, 1.1vw, 12px);
 
   /* Line Heights */
-  --line-height-tight: 1.08;
-  --line-height-base: 1.5;
+  --line-height-tight: 1.1;
+  --line-height-base: 1.6;
   --line-height-loose: 1.85;
 
-  /* ── Spacing Scale ── */
-  --space-xs: 0.25rem;   /* 4px */
-  --space-sm: 0.5rem;    /* 8px */
-  --space-md: 0.75rem;   /* 12px */
-  --space-lg: 1rem;      /* 16px */
-  --space-xl: 1.5rem;    /* 24px */
-  --space-2xl: 2rem;     /* 32px */
-  --space-3xl: 3rem;     /* 48px */
-  --space-4xl: 4.5rem;   /* 72px */
-  --space-5xl: 6rem;     /* 96px */
-
-  /* ── Motion & Easing ── */
-  --ease-settle: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-organic: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  --duration-quick: 150ms;
-  --duration-standard: 350ms;
-  --duration-slow: 700ms;
-  --duration-cinematic: 1200ms;
-
-  /* ── Organic Layout: Subtle, Natural Corners ── */
-  --radius: 8px;
+  /* ── Organic Layout: Soft, Natural Corners ── */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -93,8 +62,8 @@ html {
 html, body {
   margin: 0;
   padding: 0;
-  background-color: var(--color-forest-deep);
-  color: var(--color-warm-cream);
+  background-color: var(--color-warm-cream); /* REVERSED: Light mode */
+  color: var(--color-forest-deep);           /* REVERSED: Dark text */
   font-family: var(--font-narrative);
   line-height: var(--line-height-base);
   -webkit-font-smoothing: antialiased;
@@ -103,7 +72,7 @@ html, body {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   Cinematic Soil & Organic Grain
+   Tactile Paper Texture (Organic Grain)
    ═══════════════════════════════════════════════════════════ */
 
 body::after {
@@ -113,8 +82,9 @@ body::after {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: 0.05;
+  /* Soft, warm noise filter to mimic paper texture */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.4'/%3E%3C/svg%3E");
+  opacity: 0.15;
   pointer-events: none;
   z-index: 9999;
 }
@@ -125,51 +95,5 @@ body::after {
 
 ::selection {
   background-color: var(--color-gold);
-  color: var(--color-forest-deep);
-}
-
-/* ═══════════════════════════════════════════════════════════
-   Scroll Reveal System
-   ═══════════════════════════════════════════════════════════ */
-
-[data-reveal] {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.9s var(--ease-settle), transform 0.9s var(--ease-settle);
-  will-change: opacity, transform;
-}
-
-[data-reveal="fade"] {
-  transform: none;
-}
-
-[data-reveal].is-revealed,
-[data-reveal="stagger"].is-revealed > * {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-[data-reveal="stagger"] > * {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.8s var(--ease-settle), transform 0.8s var(--ease-settle);
-}
-
-/* ═══════════════════════════════════════════════════════════
-   Reduced Motion
-   ═══════════════════════════════════════════════════════════ */
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-
-  [data-reveal] {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
+  color: var(--color-warm-cream);
 }

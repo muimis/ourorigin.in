@@ -243,16 +243,6 @@ const jsonLd = {
       });
     }
 
-    // Hero identity slides up on load
-    gsap.fromTo('.hero-identity',
-      { y: 40, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1.1, ease: 'power3.out', delay: 0.3 }
-    );
-    gsap.fromTo('.hero-origin-tag',
-      { y: 20, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.8, ease: 'power2.out', delay: 0.15 }
-    );
-
     // Size selection
     const sizePills = document.querySelectorAll('.size-pill');
     sizePills.forEach(btn => {
@@ -402,7 +392,7 @@ const jsonLd = {
     margin: 0 0 0.4rem 0;
     letter-spacing: 0.01em;
     color: var(--color-warm-cream);
-    opacity: 0; /* animated in by JS */
+    opacity: 1;
   }
 
   .hero-botanical {

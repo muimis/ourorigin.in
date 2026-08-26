@@ -14,7 +14,8 @@
   "methodDescription": "Fully ripened, outer skin removed.",
   "specimenCopy": "Piper nigrum, ripened fully, then soaked until the outer skin loosens and can be removed. The pale, sharper seed underneath. Three products from one vine. None need a different plant.",
   "images": {
-    "packaging": "/assets/products/white-pepper-packaging.png"
+    "packaging": "/assets/products/minimal-packaging-pouch.jpg",
+    "product": "/assets/products/white-pepper-product.jpg"
   },
   "sensoryProfile": {
     "aroma": "Fermented straw, white floral, dry hay",
