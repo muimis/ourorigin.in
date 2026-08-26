@@ -1,17 +1,22 @@
 ---
 export interface Props {
   size?: number;
-  variant?: 'primary' | 'reversed' | 'gold';
+  variant?: "primary" | "reversed" | "gold";
   id?: string;
   hideDot?: boolean;
 }
 
-const { size = 100, variant = 'primary', id = Math.random().toString(36).substring(7), hideDot = false } = Astro.props;
+const {
+  size = 100,
+  variant = "primary",
+  id = Math.random().toString(36).substring(7),
+  hideDot = false,
+} = Astro.props;
 
 const colorMap = {
-  primary: 'var(--color-warm-cream)',
-  reversed: 'var(--color-forest-deep)',
-  gold: 'var(--color-gold)'
+  primary: "var(--color-warm-cream)",
+  reversed: "var(--color-forest-deep)",
+  gold: "var(--color-gold)",
 };
 const strokeColor = colorMap[variant];
 ---
@@ -33,25 +38,30 @@ const strokeColor = colorMap[variant];
   aria-label="OurOrigin — Tally Mark"
   role="img"
 >
-  <g stroke={strokeColor} stroke-width="4" stroke-linecap="round" class="tally-strokes">
+  <g
+    stroke={strokeColor}
+    stroke-width="4"
+    stroke-linecap="round"
+    class="tally-strokes"
+  >
     <!-- Four verticals — slightly organic, not perfectly straight -->
-    <path class="om-s1" d="M 8  8 C  7 22, 10 36,  8 52" />
-    <path class="om-s2" d="M 20  6 C 18 22, 21 38, 19 54" />
-    <path class="om-s3" d="M 32  9 C 34 22, 31 36, 33 51" />
-    <path class="om-s4" d="M 44  7 C 42 21, 45 38, 43 53" />
+    <path class="om-s1" d="M 8  8 C  7 22, 10 36,  8 52"></path>
+    <path class="om-s2" d="M 20  6 C 18 22, 21 38, 19 54"></path>
+    <path class="om-s3" d="M 32  9 C 34 22, 31 36, 33 51"></path>
+    <path class="om-s4" d="M 44  7 C 42 21, 45 38, 43 53"></path>
     <!-- The diagonal cross — closing the group -->
-    <path class="om-s5" d="M  2 48 C 18 36, 35 22, 55 10" />
+    <path class="om-s5" d="M  2 48 C 18 36, 35 22, 55 10"></path>
   </g>
 </svg>
 
 <script>
-  import gsap from 'gsap';
+  import gsap from "gsap";
 
   function initTallyMark() {
-    document.querySelectorAll('.origin-mark').forEach(svg => {
-      const strokes = svg.querySelectorAll('.tally-strokes path');
+    document.querySelectorAll(".origin-mark").forEach((svg) => {
+      const strokes = svg.querySelectorAll(".tally-strokes path");
 
-      strokes.forEach(s => {
+      strokes.forEach((s) => {
         const len = (s as SVGPathElement).getTotalLength?.() || 60;
         gsap.set(s, { strokeDasharray: len, strokeDashoffset: len });
       });
@@ -60,19 +70,23 @@ const strokeColor = colorMap[variant];
       const tl = gsap.timeline({ delay: 0.1 });
       strokes.forEach((s, i) => {
         const len = (s as SVGPathElement).getTotalLength?.() || 60;
-        tl.to(s, {
-          strokeDashoffset: 0,
-          duration: 0.28,
-          ease: 'power2.out',
-        }, i * 0.08);
+        tl.to(
+          s,
+          {
+            strokeDashoffset: 0,
+            duration: 0.28,
+            ease: "power2.out",
+          },
+          i * 0.08,
+        );
       });
     });
   }
 
   // Play entrance on load
-  if (!window['originMarkTallyInit']) {
-    window['originMarkTallyInit'] = true;
-    document.addEventListener('DOMContentLoaded', initTallyMark);
-    document.addEventListener('astro:page-load', initTallyMark);
+  if (!window["originMarkTallyInit"]) {
+    window["originMarkTallyInit"] = true;
+    document.addEventListener("DOMContentLoaded", initTallyMark);
+    document.addEventListener("astro:page-load", initTallyMark);
   }
 </script>
