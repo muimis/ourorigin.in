@@ -1,12 +1,18 @@
 ---
 import { getCollection } from 'astro:content';
-import { WHATSAPP_NUMBER, FSSAI_NUMBER } from '../utils/constants';
+import { WHATSAPP_NUMBER, FSSAI_NUMBER, GOOGLE_SHEET_API_URL } from '../utils/constants';
+import OriginMark from './OriginMark.astro';
 
 const products = await getCollection('products');
 
 // Build a map of originId -> companion product names
 const companionProductsMap = {};
+const proofMap = {};
+
 products.forEach(product => {
+  if (product.data.proofSystem) {
+    proofMap[product.id] = product.data.proofSystem;
+  }
   if (!product.data.isAnchorProduct) {
     const originId = typeof product.data.originSlug === 'object' ? product.data.originSlug.id : product.data.originSlug;
     if (!companionProductsMap[originId]) {
@@ -20,12 +26,10 @@ products.forEach(product => {
 });
 
 const companionsJson = JSON.stringify(companionProductsMap);
+const proofsJson = JSON.stringify(proofMap);
 ---
 
-<!-- Global Toast -->
-<div id="basket-toast" class="basket-toast hidden" role="status" aria-live="polite" aria-atomic="true">
-  Honored &#x2713;
-</div>
+<!-- Global Toast Removed -->
 
 <!-- Persistent Trigger -->
 <div id="basket-trigger" class="basket-trigger hidden" aria-live="polite" role="button" tabindex="0">
@@ -33,7 +37,7 @@ const companionsJson = JSON.stringify(companionProductsMap);
 </div>
 
 <!-- Slide-up Panel -->
-<div id="basket-overlay" class="basket-overlay hidden" data-whatsapp={WHATSAPP_NUMBER} data-companions={companionsJson}>
+<div id="basket-overlay" class="basket-overlay hidden" data-whatsapp={WHATSAPP_NUMBER} data-api-url={GOOGLE_SHEET_API_URL} data-companions={companionsJson} data-proofs={proofsJson}>
   <div class="basket-backdrop" id="basket-close-backdrop"></div>
   <div class="basket-panel" role="complementary" aria-label="Your Basket">
     <div class="basket-header">
@@ -120,14 +124,17 @@ const companionsJson = JSON.stringify(companionProductsMap);
           <p class="upi-note human-note-small">Paid via UPI? Include your payment reference in the message and we'll confirm immediately.</p>
         </div>
 
-        <button id="basket-connect-btn" class="basket-connect" aria-label="Transmit manifest via WhatsApp">Transmit Manifest</button>
+        <button id="basket-connect-btn" class="basket-connect" aria-label="Transmit manifest via WhatsApp">Complete the Transfer</button>
         
         <div class="basket-fssai">FSSAI Reg. No. {FSSAI_NUMBER}</div>
       </div>
       
       <!-- Post-checkout state (Gap 4) -->
       <div id="basket-post-checkout" class="basket-post-checkout hidden">
-        <p class="post-title">Your order is on its way to us.</p>
+        <div class="post-mark-container" style="margin-bottom: 2rem;">
+          <OriginMark id="post-checkout-mark" variant="gold" size={80} hideDot={true} />
+        </div>
+        <p class="post-title">Honored &#x2713;</p>
         <p class="post-subtitle">We'll reply on WhatsApp.</p>
         <div class="post-copy-fallback">
           <p class="fallback-note">If WhatsApp did not open, you can copy the order details manually to paste:</p>
@@ -146,13 +153,16 @@ const companionsJson = JSON.stringify(companionProductsMap);
 
 <script>
   import { cartState } from '../scripts/cart.js';
+  import gsap from 'gsap';
 
   document.addEventListener('DOMContentLoaded', () => {
     const overlay = document.getElementById('basket-overlay');
     if (!overlay) return;
 
     const whatsappNumber = overlay.getAttribute('data-whatsapp') || '';
+    const googleSheetUrl = overlay.getAttribute('data-api-url') || '';
     const companionsMap = JSON.parse(overlay.getAttribute('data-companions') || '{}');
+    const proofsMap = JSON.parse(overlay.getAttribute('data-proofs') || '{}');
 
     const trigger = document.getElementById('basket-trigger');
     const countDisplay = document.getElementById('basket-count');
@@ -459,14 +469,72 @@ const companionsJson = JSON.stringify(companionProductsMap);
         }
         
         const encodedMessage = encodeURIComponent(currentOrderMessage);
+        
+        // POST to Google Sheets API (if configured)
+        if (googleSheetUrl) {
+          const orderPayload = {
+            name: data.name,
+            phone: data.phone,
+            address: `${data.house}, ${data.street}, ${data.city}, ${data.state} - ${data.pin}`,
+            items: cartState.items.map(i => `${i.name} (${i.size || i.weight}) x ${i.quantity}`).join(', '),
+            totalPrice: `₹${orderTotal}`,
+            shippingCost: shippingText
+          };
+
+          fetch(googleSheetUrl, {
+            method: 'POST',
+            mode: 'no-cors', // Apps Script web apps often require no-cors for simple posts
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(orderPayload)
+          }).catch(console.error); // Fire and forget
+        }
+
         window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, '_blank');
         
         if (itemsContainer) itemsContainer.classList.add('hidden');
         if (footer) footer.classList.add('hidden');
         if (discoverySection) discoverySection.classList.add('hidden');
         const postCheckout = document.getElementById('basket-post-checkout');
-        if (postCheckout) postCheckout.classList.remove('hidden');
+        if (postCheckout) {
+          postCheckout.classList.remove('hidden');
+          const svg = postCheckout.querySelector('.origin-mark');
+          if (svg) {
+            const strokes = svg.querySelectorAll('.tally-strokes path');
+            strokes.forEach(s => {
+              const len = (s as SVGPathElement).getTotalLength?.() || 60;
+              gsap.set(s, { strokeDashoffset: len });
+            });
+            const tl = gsap.timeline({ delay: 0.1 });
+            strokes.forEach((s, i) => {
+              tl.to(s, { strokeDashoffset: 0, duration: 0.28, ease: 'power2.out' }, i * 0.08);
+            });
+          }
+        }
         
+        // Save to Ledger
+        try {
+          const ledgerRaw = localStorage.getItem('ourorigin_ledger_v1');
+          const ledger = ledgerRaw ? JSON.parse(ledgerRaw) : [];
+          const now = new Date().toISOString();
+          cartState.items.forEach(item => {
+            const proof = proofsMap[item.id] || {};
+            ledger.push({
+              date: now,
+              name: item.name,
+              size: item.size || item.weight,
+              price: item.price,
+              quantity: item.quantity,
+              origin: item.origin,
+              firstHands: proof.firstHands || 'The Farmers',
+              directPricePaid: proof.directPricePaid || `₹${item.price}/kg`,
+              naturesShare: proof.naturesShare || 'Harvested responsibly.',
+              proofLink: proof.fssaiCertLink || '#',
+              proofImage: proof.yieldPhoto || ''
+            });
+          });
+          localStorage.setItem('ourorigin_ledger_v1', JSON.stringify(ledger));
+        } catch (e) {}
+
         setTimeout(() => {
           const reinvite = document.getElementById('post-reinvite');
           if (reinvite) reinvite.classList.remove('hidden');
@@ -515,18 +583,8 @@ const companionsJson = JSON.stringify(companionProductsMap);
         }, 500);
       }
 
-      // Show toast if an item was added (we detect if totalItems increased)
-      const prevTotal = parseInt(trigger?.getAttribute('data-prev-total') || '0', 10);
-      if (totalItems > prevTotal && prevTotal >= 0) {
-        if (toast) {
-          toast.classList.remove('hidden');
-          toast.classList.add('visible');
-          setTimeout(() => {
-            toast.classList.remove('visible');
-            setTimeout(() => toast.classList.add('hidden'), 300);
-          }, 2500);
-        }
-      }
+      // Removed global toast firing logic
+
       trigger?.setAttribute('data-prev-total', totalItems.toString());
     });
     
