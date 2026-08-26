@@ -284,8 +284,8 @@ const jsonLd = {
 
 <style>
   .product-viewport {
-    background: var(--color-void);
-    color: var(--color-warm-cream);
+    background: var(--color-deep-forest);
+    color: var(--color-bone);
   }
 
   /* ── Back link ── */
@@ -294,7 +294,7 @@ const jsonLd = {
     top: 24px;
     left: 24px;
     z-index: 200;
-    color: var(--color-gold);
+    color: var(--color-mark-gold);
     text-decoration: none;
     opacity: 0.7;
     transition: opacity 0.2s;
@@ -374,14 +374,14 @@ const jsonLd = {
     font-size: 11px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--color-gold);
+    color: var(--color-mark-gold);
   }
 
   .hero-origin-elev {
     font-family: var(--font-evidence);
     font-size: 11px;
     letter-spacing: 0.1em;
-    color: rgba(240, 234, 214, 0.35);
+    color: var(--color-bone-whisper);
   }
 
   .hero-product-name {
@@ -391,7 +391,7 @@ const jsonLd = {
     line-height: 1.0;
     margin: 0 0 0.4rem 0;
     letter-spacing: 0.01em;
-    color: var(--color-warm-cream);
+    color: var(--color-bone);
     opacity: 1;
   }
 
@@ -399,7 +399,7 @@ const jsonLd = {
     font-family: var(--font-narrative);
     font-style: italic;
     font-size: clamp(0.9rem, 1.6vw, 1.1rem);
-    color: rgba(240, 234, 214, 0.45);
+    color: var(--color-bone-muted);
     margin: 0;
   }
 
@@ -408,7 +408,7 @@ const jsonLd = {
   ══════════════════════════════ */
   .sense-section {
     padding: clamp(3rem, 6vh, 5rem) clamp(1.5rem, 5vw, 5rem);
-    border-bottom: 1px solid rgba(240, 234, 214, 0.05);
+    border-bottom: 1px solid var(--color-border-subtle);
   }
 
   .sense-inner {
@@ -433,14 +433,14 @@ const jsonLd = {
   ══════════════════════════════ */
   .proof-section {
     padding: clamp(3rem, 6vh, 5rem) clamp(1.5rem, 5vw, 5rem);
-    border-bottom: 1px solid rgba(240, 234, 214, 0.05);
+    border-bottom: 1px solid var(--color-border-subtle);
   }
 
   .proof-inner {
     max-width: 900px;
     background: rgba(240, 234, 214, 0.03);
     padding: clamp(1.5rem, 4vw, 3rem);
-    border-left: 2px solid var(--color-gold);
+    border-left: 2px solid var(--color-mark-gold);
   }
 
   .proof-ledger {
@@ -450,7 +450,7 @@ const jsonLd = {
     font-family: var(--font-evidence); /* JetBrains Mono */
     font-size: clamp(0.8rem, 1.5vw, 0.95rem);
     line-height: 1.6;
-    color: var(--color-warm-cream);
+    color: var(--color-bone);
   }
 
   .proof-row {
@@ -468,7 +468,7 @@ const jsonLd = {
   .proof-label {
     width: 220px;
     flex-shrink: 0;
-    color: var(--color-gold);
+    color: var(--color-mark-gold);
     opacity: 0.8;
   }
 
@@ -485,8 +485,8 @@ const jsonLd = {
   }
 
   .proof-links a:hover {
-    color: var(--color-gold);
-    border-color: var(--color-gold);
+    color: var(--color-mark-gold);
+    border-color: var(--color-mark-gold);
   }
 
   .proof-dot {
@@ -502,7 +502,7 @@ const jsonLd = {
     font-size: 9px;
     text-transform: uppercase;
     letter-spacing: 0.2em;
-    color: var(--color-gold);
+    color: var(--color-mark-gold);
     opacity: 0.6;
   }
 
@@ -510,14 +510,14 @@ const jsonLd = {
     font-family: var(--font-narrative);
     font-size: clamp(1rem, 1.9vw, 1.2rem);
     line-height: 1.5;
-    color: rgba(240, 234, 214, 0.85);
+    color: var(--color-bone-muted);
     margin: 0;
   }
 
   .field-note-link {
     font-family: var(--font-evidence);
     font-size: var(--type-whisper);
-    color: rgba(240, 234, 214, 0.3);
+    color: var(--color-bone-whisper);
     text-decoration: none;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -525,7 +525,7 @@ const jsonLd = {
     display: inline-block;
     align-self: flex-start;
   }
-  .field-note-link:hover { color: var(--color-gold); }
+  .field-note-link:hover { color: var(--color-mark-gold); }
 
   /* ══════════════════════════════
      OFFERING / BUY SECTION
@@ -545,7 +545,7 @@ const jsonLd = {
     font-family: var(--font-evidence);
     font-size: 9px;
     letter-spacing: 0.22em;
-    color: rgba(240, 234, 214, 0.2);
+    color: var(--color-bone-whisper);
     text-transform: uppercase;
   }
 
@@ -561,7 +561,7 @@ const jsonLd = {
     gap: 0.75rem;
     background: transparent;
     border: 1px solid rgba(240, 234, 214, 0.12);
-    color: var(--color-warm-cream);
+    color: var(--color-bone);
     padding: 0.75rem 1.25rem;
     font-family: var(--font-evidence);
     font-size: var(--type-evidence);
@@ -572,28 +572,28 @@ const jsonLd = {
 
   .size-pill:hover,
   .size-pill--active {
-    border-color: var(--color-gold);
+    border-color: var(--color-mark-gold);
     background: rgba(212, 139, 22, 0.08);
-    color: var(--color-gold);
+    color: var(--color-mark-gold);
   }
 
   .size-qty { letter-spacing: 0.06em; }
 
   .size-price {
-    color: rgba(240, 234, 214, 0.45);
+    color: var(--color-bone-muted);
     font-size: var(--type-whisper);
     transition: color 0.2s;
   }
 
   .size-pill--active .size-price,
-  .size-pill:hover .size-price { color: var(--color-gold-bright); }
+  .size-pill:hover .size-price { color: var(--color-mark-gold); }
 
   /* THE GOLD BUTTON — unmissable */
   .ledger-cta {
     width: 100%;
     padding: 1.1rem 2rem;
-    background: var(--color-gold);
-    color: var(--color-void);
+    background: var(--color-mark-gold);
+    color: var(--color-deep-forest);
     border: none;
     font-family: var(--font-evidence);
     font-size: 11px;
@@ -606,7 +606,7 @@ const jsonLd = {
   }
 
   .ledger-cta:hover {
-    background: var(--color-warm-cream);
+    background: var(--color-bone);
     transform: translateY(-2px);
   }
 

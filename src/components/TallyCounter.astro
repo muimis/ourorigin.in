@@ -5,7 +5,7 @@ export interface Props {
   color?: string;
 }
 
-const { count, size = 30, color = "var(--color-gold)" } = Astro.props;
+const { count, size = 30, color = "var(--color-mark-gold)" } = Astro.props;
 
 // A tally group is 5 marks. 4 verticals, 1 diagonal.
 const fullGroups = Math.floor(count / 5);

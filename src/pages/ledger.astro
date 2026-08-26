@@ -92,8 +92,8 @@ import Footer from '../components/Footer.astro';
   .ledger-page {
     min-height: 100vh;
     padding: 120px 5vw 4rem;
-    background-color: var(--color-forest-deep);
-    color: var(--color-warm-cream);
+    background-color: var(--color-deep-forest);
+    color: var(--color-bone);
   }
 
   .ledger-container {
@@ -104,7 +104,7 @@ import Footer from '../components/Footer.astro';
   .ledger-header {
     margin-bottom: 4rem;
     text-align: center;
-    border-bottom: 1px dashed rgba(245, 240, 232, 0.2);
+    border-bottom: 1px dashed var(--color-border-subtle);
     padding-bottom: 2rem;
   }
 
@@ -118,7 +118,7 @@ import Footer from '../components/Footer.astro';
     font-family: var(--font-narrative);
     font-style: italic;
     font-size: var(--type-narrative);
-    color: rgba(245, 240, 232, 0.6);
+    color: var(--color-bone-muted);
     margin: 0;
   }
 
@@ -130,7 +130,7 @@ import Footer from '../components/Footer.astro';
 
   .ledger-card {
     background: rgba(12, 21, 9, 0.3);
-    border: 1px solid rgba(74, 122, 78, 0.3); /* Proof Green tint */
+    border: 1px solid var(--color-proof-green);
     border-radius: 4px;
     padding: 2rem;
     transition: border-color var(--duration-standard) var(--ease-settle);
@@ -147,10 +147,10 @@ import Footer from '../components/Footer.astro';
     margin-bottom: 1.5rem;
     font-family: var(--font-evidence);
     font-size: var(--type-whisper);
-    color: rgba(245, 240, 232, 0.5);
+    color: var(--color-bone-muted);
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    border-bottom: 1px dashed rgba(245, 240, 232, 0.1);
+    border-bottom: 1px dashed var(--color-border-subtle);
     padding-bottom: 1rem;
   }
 
@@ -167,7 +167,7 @@ import Footer from '../components/Footer.astro';
   .product-size {
     font-family: var(--font-evidence);
     font-size: var(--type-evidence);
-    color: var(--color-gold);
+    color: var(--color-mark-gold);
     margin: 0;
   }
 
@@ -175,7 +175,7 @@ import Footer from '../components/Footer.astro';
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    background: rgba(245, 240, 232, 0.02);
+    background: var(--color-forest-surface);
     padding: 1.5rem;
   }
 
@@ -183,7 +183,7 @@ import Footer from '../components/Footer.astro';
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    border-bottom: 1px dashed rgba(245, 240, 232, 0.1);
+    border-bottom: 1px dashed var(--color-border-subtle);
     padding-bottom: 0.8rem;
   }
 
@@ -195,7 +195,7 @@ import Footer from '../components/Footer.astro';
   .proof-label {
     font-family: var(--font-evidence);
     font-size: var(--type-whisper);
-    color: rgba(245, 240, 232, 0.4);
+    color: var(--color-bone-whisper);
     text-transform: uppercase;
     letter-spacing: 0.1em;
     width: 35%;
@@ -204,7 +204,7 @@ import Footer from '../components/Footer.astro';
   .proof-value {
     font-family: var(--font-evidence);
     font-size: var(--type-evidence);
-    color: var(--color-warm-cream);
+    color: var(--color-proof-green);
     width: 60%;
     text-align: right;
   }
@@ -218,7 +218,7 @@ import Footer from '../components/Footer.astro';
     font-family: var(--font-narrative);
     font-style: italic;
     font-size: var(--type-statement);
-    color: rgba(245, 240, 232, 0.5);
+    color: var(--color-bone-muted);
     margin-bottom: 2rem;
   }
 
@@ -226,8 +226,8 @@ import Footer from '../components/Footer.astro';
     display: inline-block;
     font-family: var(--font-evidence);
     font-size: var(--type-evidence);
-    color: var(--color-forest-deep);
-    background: var(--color-warm-cream);
+    color: var(--color-deep-forest);
+    background: var(--color-bone);
     padding: 1rem 2rem;
     text-decoration: none;
     text-transform: uppercase;
@@ -237,7 +237,7 @@ import Footer from '../components/Footer.astro';
   }
 
   .btn-return:hover {
-    background: var(--color-gold);
+    background: var(--color-mark-gold);
   }
 
   .hidden {

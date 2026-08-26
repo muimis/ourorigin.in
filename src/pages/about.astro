@@ -56,7 +56,7 @@ import OriginMark from '../components/OriginMark.astro';
           <p class="qualifier-text">The person who grew this knew when to cut it.<br/>No one closer to the source exists. Their knowledge is the credential. Their hands were first.</p>
           <div class="tally-stamp-wrap" style="display:flex;align-items:center;justify-content:center;gap:0.75rem;margin-top:1.5rem;">
             <OriginMark size={32} variant="gold" />
-            <span style="font-family:var(--font-evidence);font-size:12px;color:var(--color-gold);letter-spacing:0.1em;">THE TALLY GATE · PROOF OF COUNT</span>
+            <span style="font-family:var(--font-evidence);font-size:12px;color:var(--color-mark-gold);letter-spacing:0.1em;">THE TALLY GATE · PROOF OF COUNT</span>
           </div>
         </div>
       </section>
@@ -107,8 +107,8 @@ import OriginMark from '../components/OriginMark.astro';
 
 <style>
   .manifesto-viewport {
-    background-color: var(--color-void);
-    color: var(--color-warm-cream);
+    background-color: var(--color-deep-forest);
+    color: var(--color-bone);
     position: relative;
     overflow: hidden;
   }
@@ -164,7 +164,7 @@ import OriginMark from '../components/OriginMark.astro';
     font-size: clamp(2.2rem, 5.5vw, 5rem);
     line-height: 1.1;
     font-weight: 400;
-    color: var(--color-warm-cream);
+    color: var(--color-bone);
     margin: 0;
     letter-spacing: -0.01em;
   }
@@ -172,7 +172,7 @@ import OriginMark from '../components/OriginMark.astro';
   .qualifier-text {
     font-family: var(--font-narrative);
     font-size: clamp(1rem, 1.8vw, 1.5rem);
-    color: rgba(240, 234, 214, 0.5);
+    color: var(--color-bone-muted);
     line-height: 1.7;
     max-width: 580px;
     margin: 0;
@@ -192,7 +192,7 @@ import OriginMark from '../components/OriginMark.astro';
     font-family: var(--font-narrative);
     font-size: clamp(1.4rem, 3vw, 2.2rem);
     font-style: italic;
-    color: var(--color-gold);
+    color: var(--color-mark-gold);
     margin: 0;
   }
 
@@ -204,7 +204,7 @@ import OriginMark from '../components/OriginMark.astro';
     margin-top: 12vh;
     font-family: var(--font-evidence);
     font-size: var(--type-evidence);
-    color: rgba(240, 234, 214, 0.3);
+    color: var(--color-bone-whisper);
     text-decoration: none;
     text-transform: uppercase;
     letter-spacing: 0.12em;
@@ -215,7 +215,7 @@ import OriginMark from '../components/OriginMark.astro';
   }
 
   .return-link:hover {
-    color: var(--color-gold);
+    color: var(--color-mark-gold);
   }
 
   /* ── Mobile ── */

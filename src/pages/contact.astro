@@ -60,7 +60,7 @@ const formattedPhone = '+91 96455 55668';
     transform: translateX(-50%);
     width: 1px;
     height: 100%;
-    background-color: var(--color-gold);
+    background-color: var(--color-mark-gold);
     opacity: 0.04;
     pointer-events: none;
   }
@@ -68,7 +68,7 @@ const formattedPhone = '+91 96455 55668';
   .contact-bg {
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at center, rgba(198, 156, 82, 0.08) 0%, transparent 70%);
+    background: radial-gradient(circle at center, var(--color-gold-muted) 0%, transparent 70%);
     animation: slowPulse 12s ease-in-out infinite alternate;
     pointer-events: none;
   }
@@ -88,7 +88,7 @@ const formattedPhone = '+91 96455 55668';
     font-size: var(--type-display);
     font-weight: 400;
     margin: 0 0 var(--space-2xl) 0;
-    color: var(--color-warm-cream);
+    color: var(--color-bone);
     text-transform: uppercase;
     letter-spacing: 0.03em;
     line-height: var(--line-height-tight);
@@ -99,7 +99,7 @@ const formattedPhone = '+91 96455 55668';
     font-size: var(--type-narrative);
     line-height: var(--line-height-loose);
     margin: 0 0 var(--space-3xl) 0;
-    color: rgba(245, 240, 232, 0.85);
+    color: var(--color-bone-muted);
   }
 
   .contact-links {
@@ -128,19 +128,19 @@ const formattedPhone = '+91 96455 55668';
     font-size: var(--type-whisper);
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: var(--color-gold);
+    color: var(--color-mark-gold);
   }
 
   .link-value {
     font-family: var(--font-evidence);
     font-size: var(--type-evidence);
-    color: var(--color-warm-cream);
+    color: var(--color-bone);
   }
 
   .contact-bulk {
     font-family: var(--font-evidence);
     font-size: var(--type-whisper);
-    color: rgba(245, 240, 232, 0.35);
+    color: var(--color-bone-whisper);
     letter-spacing: 0.05em;
     line-height: var(--line-height-base);
     margin: 0 0 var(--space-3xl) 0;
@@ -149,13 +149,13 @@ const formattedPhone = '+91 96455 55668';
   .back-link {
     font-family: var(--font-evidence);
     font-size: var(--type-evidence);
-    color: rgba(245, 240, 232, 0.4);
+    color: var(--color-bone-whisper);
     text-decoration: none;
     letter-spacing: 0.05em;
     transition: color var(--duration-standard) var(--ease-settle);
   }
 
   .back-link:hover {
-    color: var(--color-warm-cream);
+    color: var(--color-bone);
   }
 </style>

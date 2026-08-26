@@ -123,7 +123,7 @@ import OriginMark from '../OriginMark.astro';
   .hero-image-gradient {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to right, var(--color-forest-deep) 0%, rgba(18, 14, 11, 0.4) 40%, rgba(18, 14, 11, 0) 100%);
+    background: linear-gradient(to right, var(--color-deep-forest) 0%, var(--color-forest-hover) 40%, rgba(12, 21, 9, 0) 100%);
   }
 
   /* Vertical Telemetry */
@@ -139,18 +139,18 @@ import OriginMark from '../OriginMark.astro';
     gap: 1rem;
     font-family: var(--font-evidence);
     font-size: var(--type-whisper);
-    color: var(--color-cream-muted);
+    color: var(--color-bone-muted);
     letter-spacing: 0.2em;
     white-space: nowrap;
   }
 
   .telemetry-coord {
-    color: var(--color-gold);
+    color: var(--color-mark-gold);
     font-weight: 500;
   }
 
   .telemetry-sep {
-    color: var(--color-cream-whisper);
+    color: var(--color-bone-whisper);
   }
 
   /* Hero Content Overlap */
@@ -173,7 +173,7 @@ import OriginMark from '../OriginMark.astro';
     font-family: var(--font-evidence);
     font-size: var(--type-whisper);
     letter-spacing: 0.3em;
-    color: var(--color-gold);
+    color: var(--color-mark-gold);
     text-transform: uppercase;
   }
 
@@ -183,14 +183,14 @@ import OriginMark from '../OriginMark.astro';
     font-size: clamp(2.6rem, 5.5vw, 5.2rem); /* Calibrated so CTA stays in first viewport */
     line-height: 1.05;
     font-weight: 400;
-    color: var(--color-warm-cream);
+    color: var(--color-bone);
     letter-spacing: -0.02em;
     text-wrap: balance;
     text-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); /* Lift off the image */
   }
 
   .hero-title-accent {
-    color: var(--color-gold-bright);
+    color: var(--color-mark-gold);
     font-style: italic;
     font-family: var(--font-narrative);
     font-weight: 300;
@@ -202,7 +202,7 @@ import OriginMark from '../OriginMark.astro';
     font-family: var(--font-narrative);
     font-size: clamp(1rem, 1.8vw, 1.35rem);
     line-height: 1.6;
-    color: rgba(240, 234, 214, 0.85);
+    color: var(--color-bone-muted);
     max-width: 520px;
     font-weight: 300;
     text-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
@@ -223,9 +223,9 @@ import OriginMark from '../OriginMark.astro';
     letter-spacing: 0.15em;
     text-transform: uppercase;
     text-decoration: none;
-    border: 1px solid var(--color-gold);
-    color: var(--color-warm-cream);
-    background: rgba(212, 139, 22, 0.05);
+    border: 1px solid var(--color-mark-gold);
+    color: var(--color-bone);
+    background: var(--color-gold-muted);
     border-radius: var(--radius);
     transition: all var(--duration-slow) var(--ease-organic);
     cursor: pointer;
@@ -233,9 +233,9 @@ import OriginMark from '../OriginMark.astro';
   }
 
   .btn-hero:hover {
-    background: rgba(212, 139, 22, 0.15);
+    background: rgba(201, 154, 91, 0.15);
     transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(212, 139, 22, 0.15);
+    box-shadow: 0 10px 30px rgba(201, 154, 91, 0.15);
   }
 
   .btn-arrow {
@@ -252,7 +252,7 @@ import OriginMark from '../OriginMark.astro';
       opacity: 0.4;
     }
     .hero-image-gradient {
-      background: linear-gradient(to top, var(--color-forest-deep) 0%, rgba(18, 14, 11, 0.6) 50%, rgba(18, 14, 11, 0.2) 100%);
+      background: linear-gradient(to top, var(--color-deep-forest) 0%, var(--color-forest-surface) 50%, rgba(12, 21, 9, 0.2) 100%);
     }
     .hero-content {
       margin-left: 0;

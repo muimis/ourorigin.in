@@ -1,33 +1,39 @@
 /* ═══════════════════════════════════════════════════════════
-   OurOrigin 2.0 — Design Tokens (Warm Humanist Minimalism)
-   Source of truth for every visual decision.
+   OurOrigin — Authoritative Design Tokens
    ═══════════════════════════════════════════════════════════ */
 
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=Inter:wght@300;400&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
 :root {
-  /* ── Brand Colors: Tactile Paper, Deep Loam & Amber ── */
-  --color-warm-cream: #F0EAD6;         /* Primary surface — bone white / chalk paper */
-  --color-cream-muted: rgba(240, 234, 214, 0.65);
+  /* ── Authoritative Brand Palette ── */
+  --color-deep-forest: #0C1509;        /* Primary background */
+  --color-bone: #EFE6D3;               /* Primary text */
+  --color-mark-gold: #C99A5B;          /* The Mark, accents */
+  --color-proof-green: #4A7A4E;        /* Ledger confirmations */
   
-  --color-forest-deep: #0c1509;        /* Primary text — deep ancient loam */
-  --color-forest-surface: #1A1511;     
-  --color-forest-hover: #241D18;       
+  /* UI Surface Variants */
+  --color-forest-surface: #142010;     
+  --color-forest-hover: #1c2a17;       
   
-  /* Primary Action */
-  --color-gold: #D48B16;               /* Earth Amber / Turmeric warmth */
-  --color-gold-muted: rgba(212, 139, 22, 0.2);
+  --color-bone-muted: rgba(239, 230, 211, 0.65);
+  --color-bone-whisper: rgba(239, 230, 211, 0.3);
   
-  /* Subtle Borders & Dividers */
-  --color-border-subtle: rgba(12, 21, 9, 0.1);
-  --color-border-accent: rgba(212, 139, 22, 0.35);
+  --color-gold-muted: rgba(201, 154, 91, 0.2);
 
-  /* ── Typography — Two Registers ──
-     1. Narrative / Human Voice = Cormorant Garamond (warm, poetic, living)
-     2. Evidence & Telemetry = DM Mono (coordinates, elevation, batches) */
-  --font-narrative: 'Cormorant Garamond', serif;
-  --font-evidence: 'DM Mono', monospace;
-  --font-mono: 'DM Mono', monospace;
+  /* ── Borders & Dividers ── */
+  --color-border-subtle: rgba(239, 230, 211, 0.1);
+  --color-border-accent: rgba(201, 154, 91, 0.35);
+
+  /* ── Typography — Three Registers ──
+     1. Fraunces (philosophical register)
+     2. JetBrains Mono (ledger/proof)
+     3. Inter (body) */
+  --font-narrative: 'Fraunces', serif;
+  --font-evidence: 'JetBrains Mono', monospace;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-body: 'Inter', sans-serif;
+  --font-display: 'Fraunces', serif;
 
   /* ── Fluid Type Scale ── */
   --type-display:   clamp(32px, 6vw, 56px);
@@ -41,10 +47,10 @@
   --line-height-base: 1.6;
   --line-height-loose: 1.85;
 
-  /* ── Organic Layout: Soft, Natural Corners ── */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
+  /* ── Layout ── */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -62,13 +68,18 @@ html {
 html, body {
   margin: 0;
   padding: 0;
-  background-color: var(--color-warm-cream); /* REVERSED: Light mode */
-  color: var(--color-forest-deep);           /* REVERSED: Dark text */
-  font-family: var(--font-narrative);
+  background-color: var(--color-deep-forest);
+  color: var(--color-bone);
+  font-family: var(--font-body);
   line-height: var(--line-height-base);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-narrative);
+  font-weight: 300;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -82,9 +93,8 @@ body::after {
   left: 0;
   width: 100vw;
   height: 100vh;
-  /* Soft, warm noise filter to mimic paper texture */
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.4'/%3E%3C/svg%3E");
-  opacity: 0.15;
+  opacity: 0.12;
   pointer-events: none;
   z-index: 9999;
 }
@@ -94,6 +104,6 @@ body::after {
    ═══════════════════════════════════════════════════════════ */
 
 ::selection {
-  background-color: var(--color-gold);
-  color: var(--color-warm-cream);
+  background-color: var(--color-mark-gold);
+  color: var(--color-deep-forest);
 }

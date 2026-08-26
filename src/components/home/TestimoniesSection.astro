@@ -125,10 +125,10 @@ const strip = [
 <style>
   .voice-section {
     padding: clamp(5rem, 10vh, 8rem) clamp(1.5rem, 6vw, 5rem);
-    background-color: var(--color-void);
+    background-color: var(--color-deep-forest);
     position: relative;
     z-index: 2;
-    border-top: 1px solid rgba(240, 234, 214, 0.05);
+    border-top: 1px solid var(--color-border-subtle);
   }
 
   /* ─── Field note label ─── */
@@ -189,7 +189,7 @@ const strip = [
     font-size: clamp(1.5rem, 3.5vw, 2.8rem);
     font-style: italic;
     font-weight: 300;
-    color: var(--color-warm-cream);
+    color: var(--color-bone);
     line-height: 1.45;
     margin: 0 0 clamp(1.2rem, 2.5vh, 2rem);
   }
@@ -205,15 +205,15 @@ const strip = [
   }
 
   .attr-name {
-    color: var(--color-gold);
+    color: var(--color-mark-gold);
   }
 
   .attr-separator {
-    color: rgba(240, 234, 214, 0.2);
+    color: var(--color-bone-whisper);
   }
 
   .attr-context {
-    color: rgba(240, 234, 214, 0.35);
+    color: var(--color-bone-whisper);
   }
 
   /* ─── Secondary strip ─── */
@@ -238,7 +238,7 @@ const strip = [
     font-family: var(--font-narrative);
     font-size: clamp(0.9rem, 1.5vw, 1.1rem);
     font-style: italic;
-    color: rgba(240, 234, 214, 0.5);
+    color: var(--color-bone-muted);
     line-height: 1.65;
     font-weight: 300;
   }
@@ -254,7 +254,7 @@ const strip = [
   }
 
   .card-name {
-    color: rgba(240, 234, 214, 0.45);
+    color: var(--color-bone-muted);
   }
 
   .card-location {
@@ -269,7 +269,7 @@ const strip = [
     justify-content: center;
     margin-top: clamp(1rem, 2vh, 1.5rem);
     padding-top: clamp(2rem, 4vh, 3rem);
-    border-top: 1px solid rgba(240, 234, 214, 0.05);
+    border-top: 1px solid var(--color-border-subtle);
   }
 
   .count-num {
@@ -284,7 +284,7 @@ const strip = [
   .count-label {
     font-family: var(--font-evidence);
     font-size: var(--type-whisper);
-    color: rgba(240, 234, 214, 0.2);
+    color: var(--color-bone-whisper);
     text-transform: uppercase;
     letter-spacing: 0.12em;
   }

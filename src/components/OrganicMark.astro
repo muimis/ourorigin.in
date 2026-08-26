@@ -3,7 +3,7 @@ export interface Props {
   size?: number;
   color?: string;
 }
-const { size = 100, color = 'var(--color-gold)' } = Astro.props;
+const { size = 100, color = 'var(--color-mark-gold)' } = Astro.props;
 ---
 <svg class="organic-mark" width={size} height={size} viewBox="0 0 60 60" aria-hidden="true" fill="none" style={`color: ${color};`}>
   <g stroke="currentColor" stroke-width="4" stroke-linecap="round">

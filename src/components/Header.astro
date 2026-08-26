@@ -54,11 +54,11 @@ import TallyCounter from './TallyCounter.astro';
 <script>
   function renderTallySvg(count: number) {
     if (count <= 0) {
-      return `<span class="tally-zero" style="font-family:var(--font-evidence);font-size:12px;color:var(--color-cream-muted);">0</span>`;
+      return `<span class="tally-zero" style="font-family:var(--font-evidence);font-size:12px;color:var(--color-bone-muted);">0</span>`;
     }
     const fullGroups = Math.floor(count / 5);
     const remainder = count % 5;
-    let html = `<div class="tally-counter-live" style="display:inline-flex;align-items:center;gap:3px;height:18px;color:var(--color-gold);">`;
+    let html = `<div class="tally-counter-live" style="display:inline-flex;align-items:center;gap:3px;height:18px;color:var(--color-mark-gold);">`;
     
     for (let i = 0; i < fullGroups; i++) {
       html += `<svg width="26" height="18" viewBox="0 0 60 40" fill="none" style="display:inline-block;">
@@ -179,7 +179,7 @@ import TallyCounter from './TallyCounter.astro';
 
   .brand {
     text-decoration: none;
-    color: var(--color-warm-cream);
+    color: var(--color-bone);
   }
 
   .brand-lockup {
@@ -199,7 +199,7 @@ import TallyCounter from './TallyCounter.astro';
   }
 
   .brand:hover .brand-name {
-    color: var(--color-gold);
+    color: var(--color-mark-gold);
   }
 
   :global(body.is-splashing) .brand-lockup {
@@ -217,7 +217,7 @@ import TallyCounter from './TallyCounter.astro';
     font-size: var(--type-whisper);
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: rgba(245, 240, 232, 0.6);
+    color: var(--color-bone-muted);
     text-decoration: none;
     background: none;
     border: none;
@@ -227,12 +227,12 @@ import TallyCounter from './TallyCounter.astro';
   }
 
   .nav-link:hover {
-    color: var(--color-gold);
+    color: var(--color-mark-gold);
   }
 
   .nav-link--yields {
-    color: var(--color-gold);
-    border: 1px solid rgba(198, 156, 82, 0.3);
+    color: var(--color-mark-gold);
+    border: 1px solid var(--color-gold-muted);
     padding: var(--space-xs) var(--space-lg);
     min-height: 44px;
     display: flex;
@@ -240,16 +240,16 @@ import TallyCounter from './TallyCounter.astro';
   }
 
   .nav-link--yields:hover {
-    border-color: var(--color-gold);
-    background: rgba(198, 156, 82, 0.1);
+    border-color: var(--color-mark-gold);
+    background: var(--color-gold-muted);
   }
 
   /* Ledger Indicator */
   .ledger-indicator {
     position: relative;
     background: none;
-    border: 1px solid rgba(245, 240, 232, 0.15);
-    color: var(--color-warm-cream);
+    border: 1px solid var(--color-bone-whisper);
+    color: var(--color-bone);
     width: 44px;
     height: 44px;
     display: flex;
@@ -262,8 +262,8 @@ import TallyCounter from './TallyCounter.astro';
   }
 
   .ledger-indicator:hover {
-    border-color: var(--color-gold);
-    color: var(--color-gold);
+    border-color: var(--color-mark-gold);
+    color: var(--color-mark-gold);
   }
 
   .ledger-count {
@@ -288,7 +288,7 @@ import TallyCounter from './TallyCounter.astro';
   .hamburger-line {
     width: 24px;
     height: 1px;
-    background-color: var(--color-warm-cream);
+    background-color: var(--color-bone);
     transition: transform var(--duration-standard) var(--ease-settle), opacity 0.2s;
   }
 
@@ -312,7 +312,7 @@ import TallyCounter from './TallyCounter.astro';
     left: 0;
     width: 100%;
     height: 100vh;
-    background: var(--color-forest-deep);
+    background: var(--color-deep-forest);
     padding: 8rem var(--space-xl) var(--space-xl);
     padding-bottom: calc(var(--space-xl) + env(safe-area-inset-bottom, 0px));
     flex-direction: column;
@@ -334,7 +334,7 @@ import TallyCounter from './TallyCounter.astro';
     font-family: var(--font-display);
     font-size: 1.5rem;
     font-weight: 400;
-    color: var(--color-warm-cream);
+    color: var(--color-bone);
     text-decoration: none;
     background: none;
     border: none;
@@ -345,13 +345,13 @@ import TallyCounter from './TallyCounter.astro';
   }
 
   .mobile-nav-link:hover {
-    color: var(--color-gold);
+    color: var(--color-mark-gold);
   }
 
   .mobile-nav-link--yields {
-    color: var(--color-gold);
+    color: var(--color-mark-gold);
     margin-top: var(--space-xl);
-    border-top: 1px solid rgba(198, 156, 82, 0.2);
+    border-top: 1px solid var(--color-gold-muted);
     padding-top: var(--space-xl);
   }
 
