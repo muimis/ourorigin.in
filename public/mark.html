@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OurOrigin — Brand Mark System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ─── TOKENS ─────────────────────────────────── */
+    :root {
+      --gold:    #C99A5B;   /* Mark Gold          */
+      --forest:  #0C1509;   /* Deep Forest        */
+      --bone:    #EFE6D3;   /* Bone               */
+      --ink:     rgba(12,21,9,0.07);
+    }
+    /* ─── RESET ──────────────────────────────────── */
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    html { scroll-behavior:smooth; }
+    body {
+      background: var(--bone);
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--forest);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── LAYOUT ─────────────────────────────────── */
+    .page     { max-width:1320px; margin:0 auto; padding:72px 64px 140px; }
+    .section  { margin-bottom:104px; }
+
+    /* ─── DOCUMENT HEADER ────────────────────────── */
+    .doc-header {
+      display:flex; justify-content:space-between; align-items:flex-end;
+      padding-bottom:24px; margin-bottom:80px;
+      border-bottom:1px solid var(--ink);
+    }
+    .doc-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size:22px; font-weight:400; letter-spacing:-.5px;
+    }
+    .doc-meta  { font-size:8.5px; letter-spacing:.13em; text-transform:uppercase; color:rgba(12,21,9,0.3); }
+    .doc-date  { font-size:8.5px; letter-spacing:.13em; text-transform:uppercase; color:rgba(12,21,9,0.25); }
+
+    /* ─── SECTION HEADER ─────────────────────────── */
+    .sec-head {
+      display:flex; align-items:baseline; gap:14px;
+      border-bottom:1px solid var(--ink);
+      padding-bottom:12px; margin-bottom:48px;
+    }
+    .sec-n { font-size:9px; letter-spacing:.14em; color:rgba(12,21,9,0.25); text-transform:uppercase; }
+    .sec-t { font-size:11px; letter-spacing:.07em; text-transform:uppercase; }
+
+    /* ─── CAPTIONS ───────────────────────────────── */
+    .cap {
+      display:block; font-size:8px; letter-spacing:.11em;
+      text-transform:uppercase; color:rgba(12,21,9,0.28);
+      margin-top:9px; text-align:center;
+    }
+    .cap.inv { color:rgba(239,230,211,0.28); }
+
+    /* ─── SURFACE PADS ───────────────────────────── */
+    .s-bone   { background:var(--bone);   padding:36px 32px; }
+    .s-forest { background:var(--forest); padding:36px 32px; }
+
+    /* ─── MARK SECTION ───────────────────────────── */
+    .mark-layout   { display:flex; gap:60px; align-items:flex-start; }
+    .mark-left     { display:flex; flex-direction:column; gap:28px; }
+    .mark-pair     { display:flex; gap:20px; align-items:flex-end; }
+    .mark-unit     { display:flex; flex-direction:column; align-items:center; }
+
+    .optical-wrap  {
+      border:1px solid var(--ink); padding:32px 28px;
+      display:flex; align-items:flex-end; gap:0;
+    }
+    .optical-cell  {
+      display:flex; flex-direction:column; align-items:center;
+      padding:0 28px; border-right:1px solid var(--ink);
+    }
+    .optical-cell:first-child { padding-left:0; }
+    .optical-cell:last-child  { padding-right:0; border-right:none; }
+    .optical-label { font-size:7.5px; letter-spacing:.1em; text-transform:uppercase; color:rgba(12,21,9,0.28); margin-top:9px; }
+    .optical-sub   { font-size:7px;   letter-spacing:.08em; text-transform:uppercase; color:rgba(12,21,9,0.18); margin-top:3px; }
+
+    /* ─── SPECS TABLE ────────────────────────────── */
+    .specs       { flex:1; }
+    .spec-row    { display:flex; padding:13px 0; border-bottom:1px solid var(--ink); }
+    .spec-k      { font-size:7.5px; letter-spacing:.1em; text-transform:uppercase; color:rgba(12,21,9,0.28); width:170px; flex-shrink:0; padding-top:2px; }
+    .spec-v      { font-size:9px; letter-spacing:.03em; line-height:1.8; }
+    .spec-v .sub { opacity:.45; display:block; font-size:8.5px; }
+    .gld         { color:var(--gold); }
+
+    /* ─── PRINCIPLE BOX ──────────────────────────── */
+    .principle {
+      background:rgba(201,154,91,0.07); border-left:2px solid var(--gold);
+      padding:20px 24px; margin-top:32px;
+      font-size:9px; letter-spacing:.06em; line-height:2.1; color:rgba(12,21,9,0.45);
+    }
+    .principle strong { color:var(--forest); font-weight:500; }
+
+    /* ─── WORDMARK SECTION ───────────────────────── */
+    .wm-stack   { display:flex; flex-direction:column; gap:28px; }
+    .wm-dark    { background:var(--forest); padding:40px 56px; display:inline-block; }
+
+    /* ─── LOCKUP GRID ────────────────────────────── */
+    .lockup-grid { display:grid; grid-template-columns:1fr 1fr; gap:2px; background:var(--ink); }
+    .lp          { padding:60px; display:flex; align-items:center; justify-content:center; min-height:260px; }
+    .lp.lt       { background:var(--bone); }
+    .lp.dk       { background:var(--forest); }
+    .lp-unit     { display:flex; flex-direction:column; align-items:flex-start; gap:18px; }
+
+    /* ─── USAGE SECTION ──────────────────────────── */
+    .usage-grid  { display:grid; grid-template-columns:1fr 1fr 1fr; gap:2px; background:var(--ink); }
+    .usage-cell  {
+      padding:40px 36px; background:var(--bone);
+      display:flex; flex-direction:column; align-items:center; gap:16px;
+      justify-content:center; min-height:200px;
+    }
+    .usage-cell.dk { background:var(--forest); }
+    .rule-tag    {
+      font-size:7.5px; letter-spacing:.12em; text-transform:uppercase;
+      padding:4px 10px; border:1px solid rgba(12,21,9,0.15);
+      color:rgba(12,21,9,0.4); margin-top:4px;
+    }
+    .rule-tag.inv { border-color:rgba(239,230,211,0.15); color:rgba(239,230,211,0.4); }
+    .rule-tag.no  { border-color:rgba(200,80,60,0.3); color:rgba(200,80,60,0.6); }
+
+    /* ─── FOOTNOTE ───────────────────────────────── */
+    .footnote { margin-top:80px; padding-top:24px; border-top:1px solid var(--ink); font-size:8px; letter-spacing:.07em; line-height:2.2; color:rgba(12,21,9,0.3); }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ══ DOCUMENT HEADER ══════════════════════════════════════════ -->
+  <div class="doc-header">
+    <div>
+      <div class="doc-brand">OurOrigin</div>
+      <div class="doc-meta" style="margin-top:6px;">Brand Mark System — Working Draft</div>
+    </div>
+    <div class="doc-date" id="stamp"></div>
+  </div>
+  <script>
+    // Stamp the current date
+    document.getElementById('stamp').textContent =
+      new Date().toLocaleDateString('en-GB', {day:'numeric', month:'long', year:'numeric'});
+  </script>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       00  BRAND POSITIONING — the foundation everything else rests on
+  ══════════════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="sec-head"><span class="sec-n">00</span><span class="sec-t">Brand Position</span></div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:2px; background:var(--ink);">
+
+      <div style="background:var(--bone); padding:40px 44px;">
+        <div style="font-size:9px; letter-spacing:.12em; text-transform:uppercase; color:rgba(12,21,9,0.3); margin-bottom:20px;">What OurOrigin Is</div>
+        <div style="font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:300; line-height:1.5; color:var(--forest);">
+          A universal model for ethical<br>
+          direct trade — between any<br>
+          farming community and the<br>
+          people who consume what<br>
+          they grow.
+        </div>
+        <div style="margin-top:28px; font-size:8.5px; letter-spacing:.07em; line-height:2; color:rgba(12,21,9,0.4);">
+          Not a region. Not a country. Not one crop.<br>
+          Any community. Any geography. One ethos.
+        </div>
+      </div>
+
+      <div style="background:var(--forest); padding:40px 44px;">
+        <div style="font-size:9px; letter-spacing:.12em; text-transform:uppercase; color:rgba(239,230,211,0.3); margin-bottom:20px;">What the Mark Must Do</div>
+        <div style="font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:300; line-height:1.5; color:var(--bone);">
+          Belong to no single<br>
+          place — and be immediately<br>
+          recognised by anyone who<br>
+          has ever counted anything<br>
+          by hand.
+        </div>
+        <div style="margin-top:28px; font-size:8.5px; letter-spacing:.07em; line-height:2; color:rgba(239,230,211,0.35);">
+          The tally mark is the most<br>
+          universal human counting symbol.<br>
+          Cave walls to cashbooks. Every culture. One gesture.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       01  THE MARK
+       The tally: universal, pre-national, pre-script.
+       Found in every culture that has ever needed to count things.
+  ══════════════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="sec-head"><span class="sec-n">01</span><span class="sec-t">The Mark</span></div>
+
+    <div class="mark-layout">
+      <div class="mark-left">
+
+        <!-- ── Primary pair ── -->
+        <div class="mark-pair">
+          <div class="mark-unit">
+            <div class="s-bone">
+              <!--
+                THE TALLY MARK — display variant
+                ─────────────────────────────────
+                Stroke centres: x = 15, 28, 41, 56
+                Steps:          13,  13,  15
+                The last gap is wider — a hand in motion
+                does not keep perfect time. This is honest.
+
+                Heights: 82, 83, 81, 83 — no two identical.
+
+                Diagonal: heavier (9px) than verticals (7px).
+                The cross stroke is drawn last. It closes
+                the count. It should feel like it.
+              -->
+              <svg viewBox="0 0 76 94" width="140" height="174" xmlns="http://www.w3.org/2000/svg" fill="none">
+                <path d="M 15 10 C 13 34, 17 56, 14 82" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+                <path d="M 28 10 C 27 28, 29 55, 28 83" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+                <path d="M 41 10 C 43 31, 40 54, 42 81" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+                <path d="M 56 11 C 58 32, 55 52, 57 83" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+                <path d="M  7 84 C 21 68, 48 30, 70 12" stroke="#C99A5B" stroke-width="9"  stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="cap">Gold on Bone — Primary</span>
+          </div>
+
+          <div class="mark-unit">
+            <div class="s-forest">
+              <svg viewBox="0 0 76 94" width="140" height="174" xmlns="http://www.w3.org/2000/svg" fill="none">
+                <path d="M 15 10 C 13 34, 17 56, 14 82" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+                <path d="M 28 10 C 27 28, 29 55, 28 83" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+                <path d="M 41 10 C 43 31, 40 54, 42 81" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+                <path d="M 56 11 C 58 32, 55 52, 57 83" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+                <path d="M  7 84 C 21 68, 48 30, 70 12" stroke="#C99A5B" stroke-width="9"  stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="cap">Gold on Forest — Secondary</span>
+          </div>
+        </div>
+
+        <!-- ── Optical size variants ── -->
+        <div>
+          <div style="font-size:8px; letter-spacing:.1em; text-transform:uppercase; color:rgba(12,21,9,0.28); margin-bottom:14px;">
+            Optical size system — four drawings, not one mark scaled
+          </div>
+          <div class="optical-wrap">
+
+            <!-- DISPLAY ≥ 60px -->
+            <div class="optical-cell">
+              <svg viewBox="0 0 76 94" width="88" height="109" xmlns="http://www.w3.org/2000/svg" fill="none">
+                <path d="M 15 10 C 13 34, 17 56, 14 82" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+                <path d="M 28 10 C 27 28, 29 55, 28 83" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+                <path d="M 41 10 C 43 31, 40 54, 42 81" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+                <path d="M 56 11 C 58 32, 55 52, 57 83" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+                <path d="M  7 84 C 21 68, 48 30, 70 12" stroke="#C99A5B" stroke-width="9"  stroke-linecap="round"/>
+              </svg>
+              <div class="optical-label">≥ 60px · Display</div>
+              <div class="optical-sub">Organic Bézier</div>
+            </div>
+
+            <!-- STANDARD 36–60px: simplified curves, heavier -->
+            <div class="optical-cell">
+              <svg viewBox="0 0 64 80" width="50" height="63" xmlns="http://www.w3.org/2000/svg" fill="none">
+                <path d="M 13 9 C 12 26, 14 48, 12 72"  stroke="#C99A5B" stroke-width="8"    stroke-linecap="round"/>
+                <path d="M 25 9 C 24 24, 26 50, 25 72"  stroke="#C99A5B" stroke-width="8"    stroke-linecap="round"/>
+                <path d="M 37 9 C 38 28, 36 48, 38 72"  stroke="#C99A5B" stroke-width="8"    stroke-linecap="round"/>
+                <path d="M 50 9 C 51 26, 50 50, 51 72"  stroke="#C99A5B" stroke-width="8"    stroke-linecap="round"/>
+                <path d="M  7 72 C 18 58, 42 26, 58 10" stroke="#C99A5B" stroke-width="9.5"  stroke-linecap="round"/>
+              </svg>
+              <div class="optical-label">36–60px · Standard</div>
+              <div class="optical-sub">Heavier, simplified</div>
+            </div>
+
+            <!-- SMALL 22–36px: straight lines, bold -->
+            <div class="optical-cell">
+              <svg viewBox="0 0 46 58" width="28" height="35" xmlns="http://www.w3.org/2000/svg" fill="none">
+                <line x1="9"  y1="6"  x2="9"  y2="52" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+                <line x1="19" y1="6"  x2="19" y2="52" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+                <line x1="29" y1="6"  x2="29" y2="52" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+                <line x1="39" y1="6"  x2="39" y2="52" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+                <line x1="5"  y1="50" x2="43" y2="8"  stroke="#C99A5B" stroke-width="9"  stroke-linecap="round"/>
+              </svg>
+              <div class="optical-label">22–36px · Small</div>
+              <div class="optical-sub">Lines only, bold</div>
+            </div>
+
+            <!-- MICRO ≤22px: pixel-optimised -->
+            <div class="optical-cell">
+              <svg viewBox="0 0 34 44" width="16" height="21" xmlns="http://www.w3.org/2000/svg" fill="none">
+                <line x1="6"  y1="5"  x2="6"  y2="40" stroke="#C99A5B" stroke-width="5.5" stroke-linecap="round"/>
+                <line x1="14" y1="4"  x2="14" y2="40" stroke="#C99A5B" stroke-width="5.5" stroke-linecap="round"/>
+                <line x1="22" y1="5"  x2="22" y2="41" stroke="#C99A5B" stroke-width="5.5" stroke-linecap="round"/>
+                <line x1="30" y1="4"  x2="30" y2="40" stroke="#C99A5B" stroke-width="5.5" stroke-linecap="round"/>
+                <line x1="3"  y1="39" x2="33" y2="6"  stroke="#C99A5B" stroke-width="7"   stroke-linecap="round"/>
+              </svg>
+              <div class="optical-label">≤ 22px · Micro</div>
+              <div class="optical-sub">Pixel-optimised</div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="principle">
+          <strong>Why the tally mark.</strong><br>
+          The tally mark is the oldest human counting record. It predates writing, currency, and borders.
+          It belongs to no country, no religion, no culture — only to the universal act of counting by hand.
+          A farmer in Kerala, a herder in Ethiopia, a fisherman in Norway, a grower in Colombia:
+          all have drawn this mark on a wall. It is OurOrigin's because it is everyone's.
+        </div>
+
+      </div><!-- /mark-left -->
+
+      <!-- ── SPECS ── -->
+      <div class="specs">
+        <div class="spec-row">
+          <span class="spec-k">Concept</span>
+          <span class="spec-v">A tally mark. The universal human record of counting.<br>
+            <span class="sub">Pre-national. Pre-script. Found in every culture.</span>
+          </span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-k">Stroke centres</span>
+          <span class="spec-v">x = 15 · 28 · 41 · 56<br>
+            <span class="sub">Steps: 13, 13, 15 — the last gap drifts wider.<br>
+            A hand counting does not keep perfect time.</span>
+          </span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-k">Stroke heights</span>
+          <span class="spec-v">82 · 83 · 81 · 83 px — no two are identical</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-k">Weight</span>
+          <span class="spec-v">Verticals 7px · Diagonal <span class="gld">9px</span><br>
+            <span class="sub">The cross stroke is heavier — it is drawn last,<br>
+            in one committed arc. It closes the count.</span>
+          </span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-k">Diagonal</span>
+          <span class="spec-v">Cubic Bézier: (7,84) → C 21 68, 48 30 → (70,12)<br>
+            <span class="sub">Visible arc — a stroke drawn with momentum, not a ruler.</span>
+          </span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-k">Optical sizes</span>
+          <span class="spec-v">4 separate drawings: Display / Standard / Small / Micro<br>
+            <span class="sub">At small sizes, curves become noise. The mark adapts:<br>
+            lines replace Béziers, weight increases proportionally.</span>
+          </span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-k">Colour rule</span>
+          <span class="spec-v"><span class="gld">Mark Gold (#C99A5B)</span> only. One colour. Always.<br>
+            <span class="sub">Never two colours in the mark. Never reversed to Forest on Gold.</span>
+          </span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-k">5 strokes</span>
+          <span class="spec-v">Farmer · Place · Nature · Product · <span class="gld">You</span><br>
+            <span class="sub">You are the diagonal. You close the count.<br>
+            Without you, it is 4 strokes — incomplete.</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       02  THE WORDMARK
+       ── The concept: the 'i' in "Origin" carries the tally's
+          cross stroke as its dot (tittle).
+       ── The wordmark reads as lettering. The tally is inside it.
+       ──
+       ── Current state: concept draft using Cormorant Garamond
+          as a working proxy. The final wordmark must be drawn
+          by a lettering artist — no font belongs to OurOrigin.
+  ══════════════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="sec-head"><span class="sec-n">02</span><span class="sec-t">The Wordmark</span></div>
+
+    <div class="wm-stack">
+      <!-- Light -->
+      <div>
+        <svg id="wm-lt" width="960" height="140" xmlns="http://www.w3.org/2000/svg" overflow="visible">
+          <text id="wm-lt-t" x="0" y="112"
+            font-family="'Cormorant Garamond', serif"
+            font-size="118" font-weight="400" letter-spacing="-1.5"
+            fill="#0C1509">OurOrigin</text>
+          <g id="tt-lt"></g>
+        </svg>
+        <span class="cap" style="text-align:left; margin-top:6px;">
+          Primary — Forest on Bone · 118px · Cormorant Garamond 400 (working proxy)
+        </span>
+      </div>
+
+      <!-- Dark -->
+      <div>
+        <div class="wm-dark">
+          <svg id="wm-dk" width="960" height="140" xmlns="http://www.w3.org/2000/svg" overflow="visible">
+            <text id="wm-dk-t" x="0" y="112"
+              font-family="'Cormorant Garamond', serif"
+              font-size="118" font-weight="400" letter-spacing="-1.5"
+              fill="#EFE6D3">OurOrigin</text>
+            <g id="tt-dk"></g>
+          </svg>
+        </div>
+        <span class="cap" style="text-align:left; margin-top:10px;">
+          Reversed — Bone on Forest
+        </span>
+      </div>
+    </div>
+
+    <div class="principle" style="margin-top:36px;">
+      <strong>On the ‹i› integration.</strong>
+      "OurOrigin" contains two lowercase ‹i› characters in "Or<strong style="color:var(--forest);">i</strong>g<strong style="color:var(--forest);">i</strong>n".
+      The dot (tittle) above each ‹i› is replaced by a short diagonal stroke in Mark Gold — 
+      the tally's cross stroke at 45°, miniaturised. The wordmark reads as lettering.
+      The tally is inside it, not attached.<br><br>
+
+      <strong>On the font.</strong>
+      Cormorant Garamond is used here as a working proxy only. Claude Garamond's 16th-century type
+      was drawn with a broad-nibbed quill — the strokes carry the memory of a pen, not a grid.
+      It belongs to no single geographic tradition. It is a placeholder for the concept, not the final asset.<br><br>
+
+      <strong>What must happen next.</strong>
+      The wordmark must be hand-drawn — commissioned from a lettering artist. No public font
+      belongs to OurOrigin. The ‹i› → tally concept is the brief. The final forms must be owned.
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       03  LOCKUP SYSTEM
+       Mark + wordmark together, at working sizes.
+  ══════════════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="sec-head"><span class="sec-n">03</span><span class="sec-t">Lockup System</span></div>
+
+    <div class="lockup-grid">
+
+      <!-- Primary lockup: light -->
+      <div class="lp lt">
+        <div class="lp-unit">
+          <svg viewBox="0 0 76 94" width="36" height="45" xmlns="http://www.w3.org/2000/svg" fill="none">
+            <path d="M 15 10 C 13 34, 17 56, 14 82" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+            <path d="M 28 10 C 27 28, 29 55, 28 83" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+            <path d="M 41 10 C 43 31, 40 54, 42 81" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+            <path d="M 56 11 C 58 32, 55 52, 57 83" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+            <path d="M  7 84 C 21 68, 48 30, 70 12" stroke="#C99A5B" stroke-width="9"  stroke-linecap="round"/>
+          </svg>
+          <svg id="lk-lt" width="520" height="76" xmlns="http://www.w3.org/2000/svg" overflow="visible">
+            <text id="lk-lt-t" x="0" y="60"
+              font-family="'Cormorant Garamond', serif"
+              font-size="64" font-weight="400" letter-spacing="-1"
+              fill="#0C1509">OurOrigin</text>
+            <g id="tt-lk-lt"></g>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Primary lockup: dark -->
+      <div class="lp dk">
+        <div class="lp-unit">
+          <svg viewBox="0 0 76 94" width="36" height="45" xmlns="http://www.w3.org/2000/svg" fill="none">
+            <path d="M 15 10 C 13 34, 17 56, 14 82" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+            <path d="M 28 10 C 27 28, 29 55, 28 83" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+            <path d="M 41 10 C 43 31, 40 54, 42 81" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+            <path d="M 56 11 C 58 32, 55 52, 57 83" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+            <path d="M  7 84 C 21 68, 48 30, 70 12" stroke="#C99A5B" stroke-width="9"  stroke-linecap="round"/>
+          </svg>
+          <svg id="lk-dk" width="520" height="76" xmlns="http://www.w3.org/2000/svg" overflow="visible">
+            <text id="lk-dk-t" x="0" y="60"
+              font-family="'Cormorant Garamond', serif"
+              font-size="64" font-weight="400" letter-spacing="-1"
+              fill="#EFE6D3">OurOrigin</text>
+            <g id="tt-lk-dk"></g>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Mark scale column: light -->
+      <div class="lp lt" style="gap:40px; flex-direction:row; justify-content:center; align-items:flex-end;">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+          <svg viewBox="0 0 76 94" width="68" height="84" xmlns="http://www.w3.org/2000/svg" fill="none">
+            <path d="M 15 10 C 13 34, 17 56, 14 82" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+            <path d="M 28 10 C 27 28, 29 55, 28 83" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+            <path d="M 41 10 C 43 31, 40 54, 42 81" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+            <path d="M 56 11 C 58 32, 55 52, 57 83" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+            <path d="M  7 84 C 21 68, 48 30, 70 12" stroke="#C99A5B" stroke-width="9"  stroke-linecap="round"/>
+          </svg>
+          <span class="cap">Display</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+          <svg viewBox="0 0 64 80" width="38" height="48" xmlns="http://www.w3.org/2000/svg" fill="none">
+            <path d="M 13 9 C 12 26, 14 48, 12 72"  stroke="#C99A5B" stroke-width="8"    stroke-linecap="round"/>
+            <path d="M 25 9 C 24 24, 26 50, 25 72"  stroke="#C99A5B" stroke-width="8"    stroke-linecap="round"/>
+            <path d="M 37 9 C 38 28, 36 48, 38 72"  stroke="#C99A5B" stroke-width="8"    stroke-linecap="round"/>
+            <path d="M 50 9 C 51 26, 50 50, 51 72"  stroke="#C99A5B" stroke-width="8"    stroke-linecap="round"/>
+            <path d="M  7 72 C 18 58, 42 26, 58 10" stroke="#C99A5B" stroke-width="9.5"  stroke-linecap="round"/>
+          </svg>
+          <span class="cap">Standard</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+          <svg viewBox="0 0 46 58" width="24" height="30" xmlns="http://www.w3.org/2000/svg" fill="none">
+            <line x1="9"  y1="6"  x2="9"  y2="52" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+            <line x1="19" y1="6"  x2="19" y2="52" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+            <line x1="29" y1="6"  x2="29" y2="52" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+            <line x1="39" y1="6"  x2="39" y2="52" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+            <line x1="5"  y1="50" x2="43" y2="8"  stroke="#C99A5B" stroke-width="9"  stroke-linecap="round"/>
+          </svg>
+          <span class="cap">Small</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+          <svg viewBox="0 0 34 44" width="16" height="21" xmlns="http://www.w3.org/2000/svg" fill="none">
+            <line x1="6"  y1="5"  x2="6"  y2="40" stroke="#C99A5B" stroke-width="5.5" stroke-linecap="round"/>
+            <line x1="14" y1="4"  x2="14" y2="40" stroke="#C99A5B" stroke-width="5.5" stroke-linecap="round"/>
+            <line x1="22" y1="5"  x2="22" y2="41" stroke="#C99A5B" stroke-width="5.5" stroke-linecap="round"/>
+            <line x1="30" y1="4"  x2="30" y2="40" stroke="#C99A5B" stroke-width="5.5" stroke-linecap="round"/>
+            <line x1="3"  y1="39" x2="33" y2="6"  stroke="#C99A5B" stroke-width="7"   stroke-linecap="round"/>
+          </svg>
+          <span class="cap">Micro</span>
+        </div>
+      </div>
+
+      <!-- Wordmark alone: dark -->
+      <div class="lp dk" style="justify-content:center;">
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <svg id="wm-sm" width="320" height="48" xmlns="http://www.w3.org/2000/svg" overflow="visible">
+            <text id="wm-sm-t" x="0" y="38"
+              font-family="'Cormorant Garamond', serif"
+              font-size="40" font-weight="400" letter-spacing="-0.5"
+              fill="#EFE6D3">OurOrigin</text>
+            <g id="tt-sm"></g>
+          </svg>
+          <span class="cap inv">Wordmark alone · 40px</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       04  USAGE — what the mark can and cannot do
+  ══════════════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="sec-head"><span class="sec-n">04</span><span class="sec-t">Usage</span></div>
+
+    <div class="usage-grid">
+
+      <!-- Correct: Gold on Bone -->
+      <div class="usage-cell">
+        <svg viewBox="0 0 76 94" width="64" height="79" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <path d="M 15 10 C 13 34, 17 56, 14 82" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+          <path d="M 28 10 C 27 28, 29 55, 28 83" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+          <path d="M 41 10 C 43 31, 40 54, 42 81" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+          <path d="M 56 11 C 58 32, 55 52, 57 83" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+          <path d="M  7 84 C 21 68, 48 30, 70 12" stroke="#C99A5B" stroke-width="9"  stroke-linecap="round"/>
+        </svg>
+        <div class="rule-tag">✓ Gold on Bone</div>
+      </div>
+
+      <!-- Correct: Gold on Forest -->
+      <div class="usage-cell dk">
+        <svg viewBox="0 0 76 94" width="64" height="79" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <path d="M 15 10 C 13 34, 17 56, 14 82" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+          <path d="M 28 10 C 27 28, 29 55, 28 83" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+          <path d="M 41 10 C 43 31, 40 54, 42 81" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+          <path d="M 56 11 C 58 32, 55 52, 57 83" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+          <path d="M  7 84 C 21 68, 48 30, 70 12" stroke="#C99A5B" stroke-width="9"  stroke-linecap="round"/>
+        </svg>
+        <div class="rule-tag inv">✓ Gold on Forest</div>
+      </div>
+
+      <!-- Incorrect: do not scale the display mark below 22px -->
+      <div class="usage-cell" style="position:relative;">
+        <!-- Show display mark scaled tiny (wrong) vs micro mark (right) -->
+        <div style="display:flex; gap:32px; align-items:flex-end;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <!-- Display mark scaled to 16px — wrong -->
+            <svg viewBox="0 0 76 94" width="16" height="20" xmlns="http://www.w3.org/2000/svg" fill="none" style="opacity:.4;">
+              <path d="M 15 10 C 13 34, 17 56, 14 82" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+              <path d="M 28 10 C 27 28, 29 55, 28 83" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+              <path d="M 41 10 C 43 31, 40 54, 42 81" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+              <path d="M 56 11 C 58 32, 55 52, 57 83" stroke="#C99A5B" stroke-width="7"  stroke-linecap="round"/>
+              <path d="M  7 84 C 21 68, 48 30, 70 12" stroke="#C99A5B" stroke-width="9"  stroke-linecap="round"/>
+            </svg>
+            <div class="rule-tag no">✗ Display scaled</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <!-- Micro mark — right -->
+            <svg viewBox="0 0 34 44" width="16" height="21" xmlns="http://www.w3.org/2000/svg" fill="none">
+              <line x1="6"  y1="5"  x2="6"  y2="40" stroke="#C99A5B" stroke-width="5.5" stroke-linecap="round"/>
+              <line x1="14" y1="4"  x2="14" y2="40" stroke="#C99A5B" stroke-width="5.5" stroke-linecap="round"/>
+              <line x1="22" y1="5"  x2="22" y2="41" stroke="#C99A5B" stroke-width="5.5" stroke-linecap="round"/>
+              <line x1="30" y1="4"  x2="30" y2="40" stroke="#C99A5B" stroke-width="5.5" stroke-linecap="round"/>
+              <line x1="3"  y1="39" x2="33" y2="6"  stroke="#C99A5B" stroke-width="7"   stroke-linecap="round"/>
+            </svg>
+            <div class="rule-tag">✓ Micro variant</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ══ FOOTNOTE ══════════════════════════════════════════════════ -->
+  <div class="footnote">
+    <strong>OurOrigin Brand Mark System — Single Source of Truth</strong><br>
+    This document supersedes all previous logo concept sheets from this session.<br>
+    Wordmark is a concept draft pending commissioned hand-lettering.<br>
+    All mark SVG geometry defined in this document is the current working specification.<br>
+    Open questions: wordmark lettering commission · mark clearspace values · colour system documentation in brand.astro
+  </div>
+
+</div><!-- /page -->
+
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+// TALLY TITTLE INJECTION
+// The dot above each lowercase 'i' in "OurOrigin" is replaced by
+// a short gold diagonal at 45° — the tally cross stroke, miniaturised.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const GOLD = '#C99A5B';
+
+function injectTittles(textId, groupId, bgFill) {
+  const textEl  = document.getElementById(textId);
+  const groupEl = document.getElementById(groupId);
+  if (!textEl || !groupEl) return;
+  const word = textEl.textContent;
+  for (let i = 0; i < word.length; i++) {
+    if (word[i] !== 'i') continue;
+    const ext   = textEl.getExtentOfChar(i);
+    const cx    = ext.x + ext.width  * 0.50;
+    const dotCy = ext.y + ext.height * 0.07;
+    const cr    = ext.height * 0.105;
+    // Cover original dot
+    const cover = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    cover.setAttribute('x',      (cx - cr).toFixed(2));
+    cover.setAttribute('y',      (dotCy - cr * 0.9).toFixed(2));
+    cover.setAttribute('width',  (cr * 2).toFixed(2));
+    cover.setAttribute('height', (cr * 2).toFixed(2));
+    cover.setAttribute('fill', bgFill);
+    groupEl.appendChild(cover);
+    // Draw gold 45° diagonal
+    const L = ext.height * 0.088;
+    const c = 0.7071;
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', (cx - L * c).toFixed(2));
+    line.setAttribute('y1', (dotCy + L * c).toFixed(2));
+    line.setAttribute('x2', (cx + L * c).toFixed(2));
+    line.setAttribute('y2', (dotCy - L * c).toFixed(2));
+    line.setAttribute('stroke', GOLD);
+    line.setAttribute('stroke-width', (ext.height * 0.050).toFixed(2));
+    line.setAttribute('stroke-linecap', 'round');
+    groupEl.appendChild(line);
+  }
+}
+
+document.fonts.ready.then(() => {
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    injectTittles('wm-lt-t',  'tt-lt',    '#EFE6D3');
+    injectTittles('wm-dk-t',  'tt-dk',    '#0C1509');
+    injectTittles('lk-lt-t',  'tt-lk-lt', '#EFE6D3');
+    injectTittles('lk-dk-t',  'tt-lk-dk', '#0C1509');
+    injectTittles('wm-sm-t',  'tt-sm',    '#0C1509');
+  }));
+});
+</script>
+</body>
+</html>

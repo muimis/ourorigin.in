@@ -1,124 +1,124 @@
 ---
 export interface Props {
   size?: number;
-  variant?: 'primary' | 'reversed' | 'gold';
+  variant?: "primary" | "reversed" | "forest";
   id?: string;
-  animate?: boolean;
 }
 
 const { 
-  size = 200, 
-  variant = 'gold', 
-  id = Math.random().toString(36).substring(7),
-  animate = false,
+  size = 400, 
+  variant = "forest", 
+  id = Math.random().toString(36).substring(7)
 } = Astro.props;
 
 const colorMap = {
-  primary: 'var(--color-bone)',
-  reversed: 'var(--color-deep-forest)',
-  gold: 'var(--color-gold, #c8a04d)'
+  primary: "var(--color-bone, #EFE6D3)",
+  reversed: "var(--color-deep-forest, #0C1509)",
+  forest: "var(--color-deep-forest, #0C1509)"
 };
-const strokeColor = colorMap[variant];
+const textColor = colorMap[variant] || colorMap.forest;
+// The background color behind the text, used to mask the original dot
+const bgColor = variant === "primary" ? "var(--color-deep-forest, #0C1509)" : "var(--color-bone, #EFE6D3)";
+
 ---
 
 <svg 
   id={`origin-wordmark-${id}`}
-  class={`origin-wordmark variant-${variant} ${animate ? 'is-animated' : ''}`} 
+  class={`origin-wordmark variant-${variant}`} 
   width={size} 
-  viewBox="0 0 420 130" 
+  viewBox="0 0 460 110" 
   aria-label="OurOrigin"
-  fill="none"
+  overflow="visible"
+  style={`height: auto; max-width: ${size}px; display: block;`}
 >
-  <g transform="translate(10, 10)" stroke={strokeColor} stroke-width="5" stroke-linecap="round" fill="none">
-    <!-- O -->
-    <path class="word-line w-1" d="M 30 20 Q 10 55 30 90" />
-    <path class="word-line w-2" d="M 30 20 Q 50 55 30 90" />
-    
-    <!-- u -->
-    <path class="word-line w-3" d="M 70 45 Q 65 85 80 88" />
-    <path class="word-line w-4" d="M 90 45 Q 92 65 88 90" />
-    
-    <!-- r -->
-    <path class="word-line w-5" d="M 120 45 Q 115 65 117 90" />
-    <path class="word-line w-6" d="M 116 55 Q 130 40 140 50" />
-    
-    <!-- O -->
-    <path class="word-line w-7" d="M 175 20 Q 155 55 175 90" />
-    <path class="word-line w-8" d="M 175 20 Q 195 55 175 90" />
-    
-    <!-- r -->
-    <path class="word-line w-9" d="M 215 45 Q 210 65 212 90" />
-    <path class="word-line w-10" d="M 211 55 Q 225 40 235 50" />
-    
-    <!-- i -->
-    <circle class="word-dot w-11" cx="255" cy="25" r="3" fill={strokeColor} stroke="none" />
-    <path class="word-line w-12" d="M 255 45 Q 252 65 254 90" />
-    
-    <!-- g -->
-    <path class="word-line w-13" d="M 295 45 Q 275 60 295 75" />
-    <path class="word-line w-14" d="M 295 45 Q 315 60 295 75" />
-    <path class="word-line w-15" d="M 305 60 Q 300 110 275 115" />
-    
-    <!-- i -->
-    <circle class="word-dot w-16" cx="335" cy="25" r="3" fill={strokeColor} stroke="none" />
-    <path class="word-line w-17" d="M 335 45 Q 332 65 334 90" />
-    
-    <!-- n -->
-    <path class="word-line w-18" d="M 370 45 Q 365 65 368 90" />
-    <path class="word-line w-19" d="M 366 55 Q 385 40 395 50" />
-    <path class="word-line w-20" d="M 395 50 Q 390 70 392 90" />
-  </g>
+  <text 
+    id={`wm-t-${id}`} 
+    x="0" 
+    y="86"
+    font-family="'Cormorant Garamond', serif"
+    font-size="94" 
+    font-weight="400" 
+    letter-spacing="-1"
+    fill={textColor}
+  >OurOrigin</text>
+  <g id={`tt-g-${id}`} data-bg={bgColor}></g>
 </svg>
 
-<style>
-  .origin-wordmark {
-    overflow: visible;
-    transform-origin: left center;
-  }
+<script>
+  // ─────────────────────────────────────────────────────────────────────────────
+  // TALLY TITTLE INJECTION
+  // The dot above each lowercase 'i' in "OurOrigin" is replaced by
+  // a short gold diagonal at 45° — the tally cross stroke, miniaturised.
+  // ─────────────────────────────────────────────────────────────────────────────
   
-  .origin-wordmark.is-animated .word-line {
-    stroke-dasharray: 100;
-    stroke-dashoffset: 100;
-    animation: drawWord 0.6s var(--ease-settle) forwards;
-  }
-  
-  .origin-wordmark.is-animated .word-dot {
-    opacity: 0;
-    transform: scale(0.5);
-    transform-origin: center;
-    animation: popWordDot 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  }
+  const GOLD = 'var(--color-mark-gold, #C99A5B)';
 
-  /* Stagger the drawing of the strokes for a handwritten effect */
-  .origin-wordmark.is-animated .w-1 { animation-delay: 0.1s; }
-  .origin-wordmark.is-animated .w-2 { animation-delay: 0.2s; }
-  .origin-wordmark.is-animated .w-3 { animation-delay: 0.3s; }
-  .origin-wordmark.is-animated .w-4 { animation-delay: 0.4s; }
-  .origin-wordmark.is-animated .w-5 { animation-delay: 0.5s; }
-  .origin-wordmark.is-animated .w-6 { animation-delay: 0.6s; }
-  .origin-wordmark.is-animated .w-7 { animation-delay: 0.7s; }
-  .origin-wordmark.is-animated .w-8 { animation-delay: 0.8s; }
-  .origin-wordmark.is-animated .w-9 { animation-delay: 0.9s; }
-  .origin-wordmark.is-animated .w-10 { animation-delay: 1.0s; }
-  .origin-wordmark.is-animated .w-11 { animation-delay: 1.1s; }
-  .origin-wordmark.is-animated .w-12 { animation-delay: 1.2s; }
-  .origin-wordmark.is-animated .w-13 { animation-delay: 1.3s; }
-  .origin-wordmark.is-animated .w-14 { animation-delay: 1.4s; }
-  .origin-wordmark.is-animated .w-15 { animation-delay: 1.5s; }
-  .origin-wordmark.is-animated .w-16 { animation-delay: 1.6s; }
-  .origin-wordmark.is-animated .w-17 { animation-delay: 1.7s; }
-  .origin-wordmark.is-animated .w-18 { animation-delay: 1.8s; }
-  .origin-wordmark.is-animated .w-19 { animation-delay: 1.9s; }
-  .origin-wordmark.is-animated .w-20 { animation-delay: 2.0s; }
-  
-  @keyframes drawWord {
-    to { stroke-dashoffset: 0; }
-  }
+  function injectTittles(svgEl: SVGSVGElement) {
+    if (svgEl.hasAttribute('data-tittles-injected')) return;
+    
+    const textEl = svgEl.querySelector('text');
+    const groupEl = svgEl.querySelector('g');
+    
+    if (!textEl || !groupEl) return;
+    
+    const word = textEl.textContent || "";
+    const bgFill = groupEl.getAttribute('data-bg') || '#EFE6D3';
 
-  @keyframes popWordDot {
-    to { 
-      opacity: 1; 
-      transform: scale(1);
+    for (let i = 0; i < word.length; i++) {
+      if (word[i] !== 'i') continue;
+      
+      try {
+        const ext = textEl.getExtentOfChar(i);
+        const cx = ext.x + ext.width * 0.50;
+        const dotCy = ext.y + ext.height * 0.07;
+        const cr = ext.height * 0.105;
+        
+        // Cover original dot
+        const cover = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        cover.setAttribute('x', (cx - cr).toFixed(2));
+        cover.setAttribute('y', (dotCy - cr * 0.9).toFixed(2));
+        cover.setAttribute('width', (cr * 2).toFixed(2));
+        cover.setAttribute('height', (cr * 2).toFixed(2));
+        cover.setAttribute('fill', bgFill);
+        groupEl.appendChild(cover);
+        
+        // Draw gold 45° diagonal
+        const L = ext.height * 0.088;
+        const c = 0.7071;
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', (cx - L * c).toFixed(2));
+        line.setAttribute('y1', (dotCy + L * c).toFixed(2));
+        line.setAttribute('x2', (cx + L * c).toFixed(2));
+        line.setAttribute('y2', (dotCy - L * c).toFixed(2));
+        line.setAttribute('stroke', GOLD);
+        line.setAttribute('stroke-width', (ext.height * 0.050).toFixed(2));
+        line.setAttribute('stroke-linecap', 'round');
+        groupEl.appendChild(line);
+      } catch (e) {
+        // getExtentOfChar might fail if SVG is not rendered yet, handled by fonts.ready
+      }
     }
+    
+    svgEl.setAttribute('data-tittles-injected', 'true');
   }
-</style>
+
+  function initWordmarks() {
+    document.fonts.ready.then(() => {
+      // requestAnimationFrame ensures text layout is fully resolved
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        document.querySelectorAll('.origin-wordmark').forEach((svg) => {
+          injectTittles(svg as SVGSVGElement);
+        });
+      }));
+    });
+  }
+
+  // Play entrance on load
+  if (!window["originWordmarkInit"]) {
+    window["originWordmarkInit"] = true;
+    document.addEventListener("DOMContentLoaded", initWordmarks);
+    document.addEventListener("astro:page-load", initWordmarks);
+  } else {
+    document.addEventListener("astro:page-load", initWordmarks);
+  }
+</script>

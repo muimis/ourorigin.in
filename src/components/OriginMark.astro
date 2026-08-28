@@ -3,54 +3,85 @@ export interface Props {
   size?: number;
   variant?: "primary" | "reversed" | "gold";
   id?: string;
-  hideDot?: boolean;
 }
 
 const {
-  size = 100,
-  variant = "primary",
+  size = 64,
+  variant = "gold",
   id = Math.random().toString(36).substring(7),
-  hideDot = false,
 } = Astro.props;
 
 const colorMap = {
-  primary: "var(--color-bone)",
-  reversed: "var(--color-deep-forest)",
-  gold: "var(--color-mark-gold)",
+  primary: "var(--color-bone, #EFE6D3)",
+  reversed: "var(--color-deep-forest, #0C1509)",
+  gold: "var(--color-mark-gold, #C99A5B)",
 };
-const strokeColor = colorMap[variant];
+const strokeColor = colorMap[variant] || colorMap.gold;
+
+// Determine optical size variant based on the provided size
+let opticalVariant = "display"; // >= 60px
+if (size <= 22) opticalVariant = "micro";
+else if (size <= 36) opticalVariant = "small";
+else if (size < 60) opticalVariant = "standard";
+
 ---
 
-<!--
-  The Tally Gate: ||||/
-  Four verticals + one diagonal = a completed count.
-  The oldest proof mark on earth.
-  Hand-drawn SVG — slight imperfection is intentional.
--->
 <svg
   id={`origin-mark-${id}`}
-  class={`origin-mark variant-${variant}`}
+  class={`origin-mark variant-${variant} optical-${opticalVariant}`}
   width={size}
-  height={size}
-  viewBox="0 0 60 60"
+  viewBox={
+    opticalVariant === "micro" ? "0 0 34 44" :
+    opticalVariant === "small" ? "0 0 46 58" :
+    opticalVariant === "standard" ? "0 0 64 80" :
+    "0 0 76 94"
+  }
   xmlns="http://www.w3.org/2000/svg"
   fill="none"
   aria-label="OurOrigin — Tally Mark"
   role="img"
+  style={`height: auto; max-width: ${size}px; display: block;`}
 >
-  <g
-    stroke={strokeColor}
-    stroke-width="4"
-    stroke-linecap="round"
-    class="tally-strokes"
-  >
-    <!-- Four verticals — slightly organic, not perfectly straight -->
-    <path class="om-s1" d="M 8  8 C  7 22, 10 36,  8 52"></path>
-    <path class="om-s2" d="M 20  6 C 18 22, 21 38, 19 54"></path>
-    <path class="om-s3" d="M 32  9 C 34 22, 31 36, 33 51"></path>
-    <path class="om-s4" d="M 44  7 C 42 21, 45 38, 43 53"></path>
-    <!-- The diagonal cross — closing the group -->
-    <path class="om-s5" d="M  2 48 C 18 36, 35 22, 55 10"></path>
+  <g stroke={strokeColor} stroke-linecap="round" class="tally-strokes">
+    {opticalVariant === "micro" && (
+      <>
+        <path d="M 6 5 L 6 40" stroke-width="5.5" />
+        <path d="M 14 4 L 14 40" stroke-width="5.5" />
+        <path d="M 22 5 L 22 41" stroke-width="5.5" />
+        <path d="M 30 4 L 30 40" stroke-width="5.5" />
+        <path d="M 3 39 L 33 6" stroke-width="7" />
+      </>
+    )}
+    
+    {opticalVariant === "small" && (
+      <>
+        <path d="M 9 6 L 9 52" stroke-width="7" />
+        <path d="M 19 6 L 19 52" stroke-width="7" />
+        <path d="M 29 6 L 29 52" stroke-width="7" />
+        <path d="M 39 6 L 39 52" stroke-width="7" />
+        <path d="M 5 50 L 43 8" stroke-width="9" />
+      </>
+    )}
+
+    {opticalVariant === "standard" && (
+      <>
+        <path d="M 13 9 C 12 26, 14 48, 12 72" stroke-width="8" />
+        <path d="M 25 9 C 24 24, 26 50, 25 72" stroke-width="8" />
+        <path d="M 37 9 C 38 28, 36 48, 38 72" stroke-width="8" />
+        <path d="M 50 9 C 51 26, 50 50, 51 72" stroke-width="8" />
+        <path d="M 7 72 C 18 58, 42 26, 58 10" stroke-width="9.5" />
+      </>
+    )}
+
+    {opticalVariant === "display" && (
+      <>
+        <path d="M 15 10 C 13 34, 17 56, 14 82" stroke-width="7" />
+        <path d="M 28 10 C 27 28, 29 55, 28 83" stroke-width="7" />
+        <path d="M 41 10 C 43 31, 40 54, 42 81" stroke-width="7" />
+        <path d="M 56 11 C 58 32, 55 52, 57 83" stroke-width="7" />
+        <path d="M 7 84 C 21 68, 48 30, 70 12" stroke-width="9" />
+      </>
+    )}
   </g>
 </svg>
 
@@ -59,17 +90,21 @@ const strokeColor = colorMap[variant];
 
   function initTallyMark() {
     document.querySelectorAll(".origin-mark").forEach((svg) => {
+      // Avoid re-running animation on same element
+      if (svg.hasAttribute("data-animated")) return;
+      svg.setAttribute("data-animated", "true");
+
       const strokes = svg.querySelectorAll(".tally-strokes path");
 
       strokes.forEach((s) => {
-        const len = (s as SVGPathElement).getTotalLength?.() || 60;
+        const len = (s as SVGPathElement).getTotalLength?.() || 100;
         gsap.set(s, { strokeDasharray: len, strokeDashoffset: len });
       });
 
       // Draw in sequence on first load
       const tl = gsap.timeline({ delay: 0.1 });
       strokes.forEach((s, i) => {
-        const len = (s as SVGPathElement).getTotalLength?.() || 60;
+        const len = (s as SVGPathElement).getTotalLength?.() || 100;
         tl.to(
           s,
           {
@@ -77,7 +112,7 @@ const strokeColor = colorMap[variant];
             duration: 0.28,
             ease: "power2.out",
           },
-          i * 0.08,
+          i * 0.08
         );
       });
     });
@@ -87,6 +122,9 @@ const strokeColor = colorMap[variant];
   if (!window["originMarkTallyInit"]) {
     window["originMarkTallyInit"] = true;
     document.addEventListener("DOMContentLoaded", initTallyMark);
+    document.addEventListener("astro:page-load", initTallyMark);
+  } else {
+    // If navigating back via view transitions, ensure new instances play
     document.addEventListener("astro:page-load", initTallyMark);
   }
 </script>
