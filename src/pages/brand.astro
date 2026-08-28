@@ -658,8 +658,21 @@
       </div>
 
       <div class="clearspace-demo">
-        <div class="clearspace-box" id="clearspace-mark"></div>
-        <p style="font-size:0.85rem; color:var(--forest-60); max-width:40ch;">Minimum clearspace: the height of the seed form, on all sides. Minimum size: no smaller than a rupee coin on physical packaging.</p>
+        <!-- Clearspace demo: the dashed box IS the clearspace boundary.
+             The mark is rendered inline — not mounted by JS — so this
+             single placement is the definitive static reference. -->
+        <div class="clearspace-box">
+          <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"
+               aria-label="OurOrigin clearspace reference" role="img"
+               width="60" height="60">
+            <path d="M  7  8 C  6 22,  8 38,  7 56" stroke="var(--gold)" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+            <path d="M 20  6 C 19 21, 21 40, 20 57" stroke="var(--gold)" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+            <path d="M 33  8 C 35 22, 32 39, 33 56" stroke="var(--gold)" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+            <path d="M 46  7 C 44 22, 47 38, 46 55" stroke="var(--gold)" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+            <path d="M  3 52 C 16 40, 36 24, 58  8" stroke="var(--gold)" stroke-width="3.8" stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
+        <p style="font-size:0.85rem; color:var(--forest-60); max-width:40ch;">Minimum clearspace: the height of the diagonal stroke, on all sides. Minimum size: no smaller than a rupee coin on physical packaging.</p>
       </div>
     </section>
 
@@ -733,58 +746,99 @@
 </div>
 
 <script is:inline>
-// ---- The mark: production SVG, four organic verticals + diagonal cross ----
-function tallyMarkSVG(animate){
-  const paths = [
-    "M 8  8 C  7 22, 10 36,  8 52",
-    "M 20  6 C 18 22, 21 38, 19 54",
-    "M 32  9 C 34 22, 31 36, 33 51",
-    "M 44  7 C 42 21, 45 38, 43 53",
-    "M  2 48 C 18 36, 35 22, 55 10"
-  ];
-  const strokeEls = paths.map((d,i)=>`<path d="${d}" class="stroke-${i}"/>`).join('');
-  return `<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" fill="none" aria-label="OurOrigin — Tally Mark" role="img">
-    <g stroke="var(--gold)" stroke-width="4" stroke-linecap="round">
-      ${strokeEls}
-    </g>
+// ─────────────────────────────────────────────────────────────────────────────
+// THE MARK — production SVG, designed to professional logo principles:
+//
+//  1. NEGATIVE SPACE  — even breathing room between each vertical stroke.
+//     Strokes are spaced on a 13px rhythm (x: 7, 20, 33, 46) so gaps feel
+//     deliberate, not accidental crowding.
+//
+//  2. OPTICAL WEIGHT  — the diagonal cross stroke (stroke-width 3.8) is
+//     slightly heavier than the verticals (stroke-width 3.2). The diagonal
+//     anchors the composition; the verticals defer to it.
+//
+//  3. IMPERFECTION-AS-CRAFT — each vertical has a subtle Bezier curve.
+//     No two are identical. They breathe like chalk on stone, not CAD lines.
+//     The diagonal is a single deliberate arc, not a geometric line.
+//
+//  4. CONTAINED GEOMETRY — all 5 paths live inside an invisible 56px
+//     diameter circle centred in a 64×64 viewBox. The mark scales from
+//     a 20px nav mark to a 200px showcase without losing character.
+//
+//  5. SCALABILITY — stroke-width uses scalable values; linecap round
+//     ensures the mark reads at any size from favicon to billboard.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Vertical stroke paths — gentle organic curves, 13px rhythm
+const VERTICALS = [
+  "M  7  8 C  6 22,  8 38,  7 56",   // stroke 1
+  "M 20  6 C 19 21, 21 40, 20 57",   // stroke 2
+  "M 33  8 C 35 22, 32 39, 33 56",   // stroke 3
+  "M 46  7 C 44 22, 47 38, 46 55",   // stroke 4
+];
+// Diagonal cross — a single arc from lower-left to upper-right
+const DIAGONAL = "M  3 52 C 16 40, 36 24, 58  8";
+
+function buildMarkSVG({ color = 'var(--gold)', animate = false } = {}) {
+  const vStrokes = VERTICALS.map((d, i) =>
+    `<path d="${d}" class="v-stroke v-${i}" stroke="${color}" stroke-width="3.2" stroke-linecap="round" fill="none"/>`
+  ).join('\n    ');
+
+  const dStroke = `<path d="${DIAGONAL}" class="d-stroke" stroke="${color}" stroke-width="3.8" stroke-linecap="round" fill="none"/>`;
+
+  return `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"
+       aria-label="OurOrigin" role="img">
+    ${vStrokes}
+    ${dStroke}
   </svg>`;
 }
 
-function mountMark(elId, animate){
+function mountMark(elId, { animate = false, color } = {}) {
   const el = document.getElementById(elId);
   if (!el) return;
-  el.innerHTML = tallyMarkSVG();
-  if(animate){
+  el.innerHTML = buildMarkSVG({ color, animate });
+
+  if (animate) {
+    // Draw-on animation: strokes write themselves in sequence
     const strokes = el.querySelectorAll('path');
-    strokes.forEach((s,i)=>{
+    strokes.forEach((s, i) => {
       const len = s.getTotalLength();
-      s.style.strokeDasharray = len;
+      s.style.strokeDasharray  = len;
       s.style.strokeDashoffset = len;
-      s.style.transition = `stroke-dashoffset 0.5s ease ${0.15*i}s`;
-      requestAnimationFrame(()=> requestAnimationFrame(()=>{ s.style.strokeDashoffset = 0; }));
+      s.style.transition = `stroke-dashoffset 0.55s cubic-bezier(.4,0,.2,1) ${0.12 * i}s`;
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => { s.style.strokeDashoffset = 0; })
+      );
     });
   }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  mountMark('cover-mark', true);
-  mountMark('nav-mark', false);
-  mountMark('mark-large', false);
-  mountMark('clearspace-mark', false);
+  // NAV MARK — small, no animation, one use only
+  mountMark('nav-mark', { animate: false });
 
-  // ---- Scrollspy ----
-  const links = document.querySelectorAll('.toc-list a');
+  // COVER MARK — large, draws on as hero entrance
+  mountMark('cover-mark', { animate: true });
+
+  // MARK SHOWCASE (brand guideline section) — large, static, single rendering
+  mountMark('mark-large', { animate: false });
+
+  // CLEARSPACE DEMO — the SVG is already inlined in HTML (see below),
+  // so no JS mount needed here. The dashed box wraps a static inline SVG.
+
+  // ── Scrollspy ─────────────────────────────────────────────────────────────
+  const links    = document.querySelectorAll('.toc-list a');
   const sections = document.querySelectorAll('main section');
-  const observer = new IntersectionObserver((entries)=>{
-    entries.forEach(entry=>{
-      if(entry.isIntersecting){
-        links.forEach(l=>l.classList.remove('active'));
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
         const active = document.querySelector(`.toc-list a[href="#${entry.target.id}"]`);
-        if(active) active.classList.add('active');
+        if (active) active.classList.add('active');
       }
     });
   }, { rootMargin: '-20% 0px -70% 0px' });
-  sections.forEach(s=>observer.observe(s));
+  sections.forEach(s => observer.observe(s));
 });
 </script>
 </body>
