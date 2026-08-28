@@ -35,7 +35,7 @@ import Footer from '../components/Footer.astro';
 
     if (!entriesContainer || !emptyState) return;
 
-    let ledger = [];
+    let ledger: any[] = [];
     try {
       const raw = localStorage.getItem('ourorigin_ledger_v1');
       if (raw) ledger = JSON.parse(raw);

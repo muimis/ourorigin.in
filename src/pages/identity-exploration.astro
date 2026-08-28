@@ -1,0 +1,257 @@
+---
+import '../styles/global.css';
+---
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OurOrigin — Identity System Exploration</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;700&display=swap');
+    
+    :root {
+      --color-bone: #EFE6D3;
+      --color-deep-forest: #0C1509;
+    }
+    
+    body {
+      background-color: var(--color-bone);
+      color: var(--color-deep-forest);
+      font-family: 'Cormorant Garamond', serif;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .serif { font-family: 'Cormorant Garamond', serif; }
+    
+    /* The WIDE layout for narrative presentation */
+    .presentation-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 10vh 5vw;
+    }
+
+    .header {
+      margin-bottom: 20vh;
+      max-width: 800px;
+    }
+    
+    .header h1 {
+      font-size: 3.5rem;
+      font-weight: 500;
+      line-height: 1.1;
+      margin-bottom: 2rem;
+    }
+
+    .header p {
+      font-size: 1.5rem;
+      line-height: 1.6;
+      opacity: 0.8;
+    }
+
+    /* Concept Blocks */
+    .concept {
+      margin-bottom: 30vh;
+    }
+
+    .concept-meta {
+      display: flex;
+      gap: 2rem;
+      border-top: 1px solid rgba(12,21,9,0.1);
+      padding-top: 2rem;
+      margin-bottom: 10vh;
+    }
+
+    .meta-col { flex: 1; }
+    .meta-label { font-family: 'JetBrains Mono'; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.5; margin-bottom: 1rem; display: block; }
+    .meta-value { font-size: 1.5rem; line-height: 1.4; }
+
+    /* The Canvas - Where the mark is displayed */
+    .canvas {
+      background: white;
+      width: 100%;
+      min-height: 60vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(12,21,9,0.05);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .canvas.dark {
+      background: var(--color-deep-forest);
+      color: white;
+    }
+
+    /* Scale controls for testing */
+    .test-strip {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2rem 0;
+      border-bottom: 1px solid rgba(12,21,9,0.1);
+    }
+    
+    .test-strip .sizes {
+      display: flex;
+      gap: 4rem;
+      align-items: flex-end;
+    }
+
+    /* Specific Typographic Lockups */
+    .lockup-temperature {
+      display: flex;
+      align-items: baseline;
+      white-space: nowrap;
+    }
+    
+    .temp-warm {
+      font-size: 12vw;
+      font-style: italic;
+      font-weight: 400;
+      padding-right: 2vw;
+      line-height: 0.8;
+    }
+    
+    .temp-precise {
+      font-family: 'JetBrains Mono';
+      font-size: 2.5vw;
+      font-weight: 700;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      transform: translateY(-1vw);
+    }
+
+    .lockup-monogram {
+      display: flex;
+      align-items: baseline;
+      font-size: 12vw;
+      line-height: 0.8;
+    }
+
+    .geom-o {
+      width: 0.7em;
+      height: 0.7em;
+      border: 0.06em solid currentColor;
+      border-radius: 50%;
+      margin-right: 0.05em;
+      transform: translateY(0.05em);
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <div class="presentation-container">
+    <header class="header">
+      <h1>I stepped back from the AI generator and opened the typography sketchbook.</h1>
+      <p>You challenged me to design an identity, not generate a picture. A world-class identity is often built on structural tension, proprietary typography, and a "visual physics" that behaves across the entire brand. Here are three meticulous, purely typographic and geometric systems engineered in CSS/SVG.</p>
+    </header>
+
+    <!-- SYSTEM 01: THE ASYMMETRIC MONOGRAM -->
+    <section class="concept">
+      <div class="concept-meta">
+        <div class="meta-col">
+          <span class="meta-label">Territory B</span>
+          <div class="meta-value">The Asymmetric Monogram</div>
+        </div>
+        <div class="meta-col">
+          <span class="meta-label">Philosophy</span>
+          <div class="meta-value">We collapse the distance between the precise system (coordinates, data) and the human element (narrative, touch). We build this tension directly into the two O's of the name. One O is a mathematically perfect geometric circle. The other is a flowing, humanist serif.</div>
+        </div>
+        <div class="meta-col">
+          <span class="meta-label">The 3-Second Test</span>
+          <div class="meta-value">"The brand with the two different O's." It requires no symbol. It is un-typeable by anyone else without structural intervention.</div>
+        </div>
+      </div>
+
+      <div class="canvas">
+        <div class="lockup-monogram">
+          <!-- The Precise System -->
+          <div class="geom-o"></div>
+          <!-- The Humanist Connection -->
+          <span>ur</span>
+          <span style="margin-left: 0.1em;">O</span>
+          <span>rigin</span>
+        </div>
+      </div>
+      
+      <div class="test-strip">
+        <span class="meta-label" style="margin:0;">Reduction Test</span>
+        <div class="sizes">
+          <!-- 16px -->
+          <div style="font-size: 16px;" class="lockup-monogram"><div class="geom-o" style="border-width: 0.1em;"></div><span style="margin-left:0.1em;">O</span></div>
+          <!-- 48px -->
+          <div style="font-size: 48px;" class="lockup-monogram"><div class="geom-o"></div><span style="margin-left:0.1em;">O</span></div>
+          <!-- 120px -->
+          <div style="font-size: 120px;" class="lockup-monogram"><div class="geom-o"></div><span style="margin-left:0.1em;">O</span></div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- SYSTEM 02: TWO TEMPERATURES -->
+    <section class="concept">
+      <div class="concept-meta">
+        <div class="meta-col">
+          <span class="meta-label">Territory E</span>
+          <div class="meta-value">The Two Temperatures Wordmark</div>
+        </div>
+        <div class="meta-col">
+          <span class="meta-label">Philosophy</span>
+          <div class="meta-value">Your brief specifies two temperatures: Warm (stories, people) and Precise (data, coordinates). This identity system forces them into a single structural lockup. There is no symbol. The typography *is* the identity.</div>
+        </div>
+        <div class="meta-col">
+          <span class="meta-label">Visual Physics</span>
+          <div class="meta-value">The organic, italicised 'Our' acts as a canopy over the rigid, heavily-tracked 'ORIGIN'. It visually represents the human narrative sheltering the hard evidence.</div>
+        </div>
+      </div>
+
+      <div class="canvas dark">
+        <div class="lockup-temperature">
+          <span class="temp-warm">Our</span>
+          <span class="temp-precise">Origin</span>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- SYSTEM 03: THE ORIGIN POINT -->
+    <section class="concept">
+      <div class="concept-meta">
+        <div class="meta-col">
+          <span class="meta-label">Territory D</span>
+          <div class="meta-value">The Coordinate Registration</div>
+        </div>
+        <div class="meta-col">
+          <span class="meta-label">Philosophy</span>
+          <div class="meta-value">Origin is a point from which something begins. We take the visual language of geo-coordinates (the degree symbol °) and the registration mark (used to perfectly align two disparate things in printing) and fuse them.</div>
+        </div>
+        <div class="meta-col">
+          <span class="meta-label">The Gesture</span>
+          <div class="meta-value">A heavy, indisputable dot (the origin point) suspended above a precise crosshair. It is stark, unapologetic, and completely bypasses the "agricultural logo" category.</div>
+        </div>
+      </div>
+
+      <div class="canvas">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 4rem;">
+          <!-- The Symbol -->
+          <svg width="120" height="120" viewBox="0 0 100 100">
+            <!-- Origin Point -->
+            <circle cx="50" cy="25" r="12" fill="var(--color-deep-forest)" />
+            <!-- Registration/Alignment Cross -->
+            <line x1="50" y1="50" x2="50" y2="100" stroke="var(--color-deep-forest)" stroke-width="4" />
+            <line x1="25" y1="75" x2="75" y2="75" stroke="var(--color-deep-forest)" stroke-width="4" />
+          </svg>
+          
+          <!-- The Wordmark -->
+          <div style="font-size: 3rem; letter-spacing: 0.05em;">OurOrigin</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>

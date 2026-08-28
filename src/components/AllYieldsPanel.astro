@@ -37,7 +37,7 @@ orderedOriginIds.forEach(originId => {
 });
 
 products.forEach(p => {
-  const originId = typeof p.data.originSlug === 'object' ? p.data.originSlug.id : p.data.originSlug;
+  const originId = typeof (p.data.originSlug as any) === 'object' ? (p.data.originSlug as any).id : p.data.originSlug;
   if (groupedProducts[originId]) {
     groupedProducts[originId].products.push(p);
   }
@@ -79,7 +79,7 @@ function getHighestElevation(elevationString: string) {
             {atmosphere}
           </div>
           <div class="yield-products">
-            {group.products.sort((a, b) => a.data.name.localeCompare(b.data.name)).map((product) => (
+            {group.products.sort((a: any, b: any) => a.data.name.localeCompare(b.data.name)).map((product: any) => (
               <div class="yield-product-row">
                 <a href={`/origins/${originId}/${product.id}`} class="yield-product-name-link">
                   <div class="yield-product-name">{product.data.name}</div>
@@ -113,6 +113,7 @@ function getHighestElevation(elevationString: string) {
     const backdrop = document.getElementById('all-yields-backdrop');
 
     const openPanel = () => {
+      if (!panel || !backdrop) return;
       panel.classList.remove('hidden');
       void panel.offsetWidth;
       panel.classList.add('open');
@@ -123,6 +124,7 @@ function getHighestElevation(elevationString: string) {
     };
 
     const closePanel = () => {
+      if (!panel || !backdrop) return;
       panel.classList.remove('open');
       backdrop.classList.remove('visible');
       panel.setAttribute('aria-hidden', 'true');

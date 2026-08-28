@@ -1,4 +1,5 @@
-import { z, defineCollection } from 'astro:content';
+import { defineCollection } from 'astro:content';
+import { z } from 'astro:schema';
 import { glob } from 'astro/loaders';
 
 const originsCollection = defineCollection({
@@ -62,6 +63,13 @@ const productsCollection = defineCollection({
     chemistry: z.object({
       activeCompound: z.string().optional(),
       moistureContent: z.string().optional(),
+    }).optional(),
+    proofSystem: z.object({
+      proofPhoto: z.string().optional(),
+      proofCert: z.string().optional(),
+      naturesShare: z.string().optional(),
+      directPricePaid: z.string().optional(),
+      firstHands: z.string().optional(),
     }).optional(),
   }),
 });

@@ -22,9 +22,6 @@ const originProducts = allProducts.filter((product) => {
   return pOriginId === origin.id;
 });
 
-const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp')
-  ? 'https://ourorigin.in/og-image.jpg'
-  : `https://ourorigin.in${origin.data.images?.specimen || '/og-image.jpg'}`;
 ---
 
 <Layout

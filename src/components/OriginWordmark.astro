@@ -114,8 +114,8 @@ const bgColor = variant === "primary" ? "var(--color-deep-forest, #0C1509)" : "v
   }
 
   // Play entrance on load
-  if (!window["originWordmarkInit"]) {
-    window["originWordmarkInit"] = true;
+  if (!(window as any)["originWordmarkInit"]) {
+    (window as any)["originWordmarkInit"] = true;
     document.addEventListener("DOMContentLoaded", initWordmarks);
     document.addEventListener("astro:page-load", initWordmarks);
   } else {

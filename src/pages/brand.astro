@@ -779,7 +779,7 @@ const VERTICALS = [
 // Diagonal cross — a single arc from lower-left to upper-right
 const DIAGONAL = "M  3 52 C 16 40, 36 24, 58  8";
 
-function buildMarkSVG({ color = 'var(--gold)', animate = false } = {}) {
+function buildMarkSVG({ color = 'var(--gold)' } = {}) {
   const vStrokes = VERTICALS.map((d, i) =>
     `<path d="${d}" class="v-stroke v-${i}" stroke="${color}" stroke-width="3.2" stroke-linecap="round" fill="none"/>`
   ).join('\n    ');

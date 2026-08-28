@@ -6,15 +6,15 @@ import OriginMark from './OriginMark.astro';
 const products = await getCollection('products');
 
 // Build a map of originId -> companion product names
-const companionProductsMap = {};
-const proofMap = {};
+const companionProductsMap: Record<string, any[]> = {};
+const proofMap: Record<string, any> = {};
 
 products.forEach(product => {
   if (product.data.proofSystem) {
     proofMap[product.id] = product.data.proofSystem;
   }
   if (!product.data.isAnchorProduct) {
-    const originId = typeof product.data.originSlug === 'object' ? product.data.originSlug.id : product.data.originSlug;
+    const originId = typeof (product.data.originSlug as any) === 'object' ? (product.data.originSlug as any).id : product.data.originSlug;
     if (!companionProductsMap[originId]) {
       companionProductsMap[originId] = [];
     }
@@ -171,11 +171,9 @@ const proofsJson = JSON.stringify(proofMap);
     const itemsContainer = document.getElementById('basket-items-container');
     const emptyState = document.getElementById('basket-empty-state');
     const footer = document.getElementById('basket-footer');
-    const totalPriceDisplay = document.getElementById('basket-total-price');
     const discoverySection = document.getElementById('basket-discovery');
     const discoveryText = document.getElementById('discovery-text');
     const connectBtn = document.getElementById('basket-connect-btn');
-    const toast = document.getElementById('basket-toast');
     const shippingForm = document.getElementById('shipping-form') as HTMLFormElement;
     const savedNote = document.getElementById('shipping-saved-note');
     const clearBtn = document.getElementById('clear-shipping-btn');
@@ -187,7 +185,7 @@ const proofsJson = JSON.stringify(proofMap);
       try {
         const data = JSON.parse(savedShipping);
         Object.keys(data).forEach(key => {
-          const el = shippingForm.elements[key] as HTMLInputElement;
+          const el = shippingForm.elements.namedItem(key) as HTMLInputElement;
           if (el) el.value = data[key];
         });
         if (savedNote) savedNote.classList.remove('hidden');
@@ -215,7 +213,7 @@ const proofsJson = JSON.stringify(proofMap);
       });
     }
     
-    function generateTallyHTML(count, size = 24) {
+    function generateTallyHTML(count: number, size = 24) {
       if (count === 0) return '0';
       const fullGroups = Math.floor(count / 5);
       const remainder = count % 5;
@@ -254,7 +252,7 @@ const proofsJson = JSON.stringify(proofMap);
       return html;
     }
 
-    function updateTrigger(count) {
+    function updateTrigger(count: number) {
       if (!trigger || !countDisplay) return;
       if (count > 0) {
         // Update the header Basket wrapper and the floating trigger
@@ -273,7 +271,7 @@ const proofsJson = JSON.stringify(proofMap);
       
       // Update global Dossier counts and toggle depth basket visibility
       document.querySelectorAll('.dossier-count').forEach(el => {
-        el.textContent = count;
+        el.textContent = String(count);
       });
       
       const depthBasket = document.getElementById('depth-basket-trigger');
@@ -291,7 +289,7 @@ const proofsJson = JSON.stringify(proofMap);
       }
     }
     
-    function renderItems(items) {
+    function renderItems(items: any[]) {
       if (!itemsContainer || !emptyState || !footer || !discoverySection) return;
       itemsContainer.innerHTML = '';
       
@@ -309,7 +307,7 @@ const proofsJson = JSON.stringify(proofMap);
       let originsInBasket = new Set<{id: string, name: string}>();
       let summaryHtml = '';
       
-      items.forEach(item => {
+      items.forEach((item: any) => {
         const lineTotal = item.price * item.quantity;
         total += lineTotal;
         originsInBasket.add({id: item.originId, name: item.origin});
@@ -351,7 +349,7 @@ const proofsJson = JSON.stringify(proofMap);
       if (summaryItems) summaryItems.innerHTML = summaryHtml;
       if (summarySub) summarySub.textContent = `₹${total}`;
       
-      const cityVal = ((shippingForm?.elements['city'] as HTMLInputElement)?.value || '').toLowerCase();
+      const cityVal = ((shippingForm?.elements.namedItem('city') as HTMLInputElement)?.value || '').toLowerCase();
       const isLocal = cityVal.includes('thiruvananthapuram') || cityVal.includes('trivandrum');
       
       let shippingCost = 0;
@@ -393,16 +391,16 @@ const proofsJson = JSON.stringify(proofMap);
       });
       
       // Handle Secondary Discovery
-      let discoveryHtmlChunks = [];
+      let discoveryHtmlChunks: string[] = [];
       const uniqueOriginsMap = new Map();
       Array.from(originsInBasket).forEach(o => uniqueOriginsMap.set(o.id, o.name));
       
       uniqueOriginsMap.forEach((originName, originId) => {
         const companions = companionsMap[originId];
         if (companions && companions.length > 0) {
-          const availableCompanions = companions.filter(c => !items.some(i => i.productId === c.id));
+          const availableCompanions = companions.filter((c: any) => !items.some((i: any) => i.productId === c.id));
           if (availableCompanions.length > 0) {
-            const linksHtml = availableCompanions.map(c => 
+            const linksHtml = availableCompanions.map((c: any) => 
               `<a href="#" class="discovery-link" data-origin="${originId}" data-product="${c.id}" aria-label="Browse more yields from ${originName}">${c.name}</a>`
             ).join(', ');
             discoveryHtmlChunks.push(`Also from ${originName}: ${linksHtml}`);
@@ -451,7 +449,7 @@ const proofsJson = JSON.stringify(proofMap);
         if (savedNote) savedNote.classList.remove('hidden');
         if (clearBtn) clearBtn.classList.remove('hidden');
 
-        const shippingCost = parseInt(shippingForm?.getAttribute('data-shipping-cost') || '0', 10);
+        // const shippingCost = parseInt(shippingForm?.getAttribute('data-shipping-cost') || '0', 10);
         const shippingText = shippingForm?.getAttribute('data-shipping-text') || 'Free';
         const orderTotal = shippingForm?.getAttribute('data-total') || '0';
 

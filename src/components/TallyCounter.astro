@@ -13,7 +13,7 @@ const remainder = count % 5;
 ---
 
 <div class="tally-counter" style={`--tally-size: ${size}px; --tally-color: ${color};`} aria-label={count.toString()}>
-  {Array.from({ length: fullGroups }).map((_, i) => (
+  {Array.from({ length: fullGroups }).map(() => (
     <svg class="tally-group" width="40" height="40" viewBox="0 0 60 60" aria-hidden="true" fill="none">
       <g stroke="currentColor" stroke-width="4" stroke-linecap="round">
         <path d="M 10 10 C 8 25, 12 40, 9 50" />
