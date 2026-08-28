@@ -17,71 +17,32 @@ const colorMap = {
   gold: "var(--color-mark-gold, #C99A5B)",
 };
 const strokeColor = colorMap[variant] || colorMap.gold;
-
-// Determine optical size variant based on the provided size
-let opticalVariant = "display"; // >= 60px
-if (size <= 22) opticalVariant = "micro";
-else if (size <= 36) opticalVariant = "small";
-else if (size < 60) opticalVariant = "standard";
-
 ---
 
 <svg
   id={`origin-mark-${id}`}
-  class={`origin-mark variant-${variant} optical-${opticalVariant}`}
+  class={`origin-mark variant-${variant}`}
   width={size}
-  viewBox={
-    opticalVariant === "micro" ? "0 0 34 44" :
-    opticalVariant === "small" ? "0 0 46 58" :
-    opticalVariant === "standard" ? "0 0 64 80" :
-    "0 0 76 94"
-  }
+  viewBox="0 0 580 540"
   xmlns="http://www.w3.org/2000/svg"
-  fill="none"
   aria-label="OurOrigin — Tally Mark"
   role="img"
   style={`height: auto; max-width: ${size}px; display: block;`}
 >
-  <g stroke={strokeColor} stroke-linecap="round" class="tally-strokes">
-    {opticalVariant === "micro" && (
-      <>
-        <path d="M 6 5 L 6 40" stroke-width="5.5" />
-        <path d="M 14 4 L 14 40" stroke-width="5.5" />
-        <path d="M 22 5 L 22 41" stroke-width="5.5" />
-        <path d="M 30 4 L 30 40" stroke-width="5.5" />
-        <path d="M 3 39 L 33 6" stroke-width="7" />
-      </>
-    )}
-    
-    {opticalVariant === "small" && (
-      <>
-        <path d="M 9 6 L 9 52" stroke-width="7" />
-        <path d="M 19 6 L 19 52" stroke-width="7" />
-        <path d="M 29 6 L 29 52" stroke-width="7" />
-        <path d="M 39 6 L 39 52" stroke-width="7" />
-        <path d="M 5 50 L 43 8" stroke-width="9" />
-      </>
-    )}
-
-    {opticalVariant === "standard" && (
-      <>
-        <path d="M 13 9 C 12 26, 14 48, 12 72" stroke-width="8" />
-        <path d="M 25 9 C 24 24, 26 50, 25 72" stroke-width="8" />
-        <path d="M 37 9 C 38 28, 36 48, 38 72" stroke-width="8" />
-        <path d="M 50 9 C 51 26, 50 50, 51 72" stroke-width="8" />
-        <path d="M 7 72 C 18 58, 42 26, 58 10" stroke-width="9.5" />
-      </>
-    )}
-
-    {opticalVariant === "display" && (
-      <>
-        <path d="M 15 10 C 13 34, 17 56, 14 82" stroke-width="7" />
-        <path d="M 28 10 C 27 28, 29 55, 28 83" stroke-width="7" />
-        <path d="M 41 10 C 43 31, 40 54, 42 81" stroke-width="7" />
-        <path d="M 56 11 C 58 32, 55 52, 57 83" stroke-width="7" />
-        <path d="M 7 84 C 21 68, 48 30, 70 12" stroke-width="9" />
-      </>
-    )}
+  <g class="tally-marks" fill={strokeColor}>
+    <!-- The vertical marks (formerly black-marks) -->
+    <path class="mark-path" d="M208,392 L158,414 L165,448 L177,491 L183,505 L193,515 L202,515 L208,511 L212,503 L214,491 L214,447 Z"/>
+    <path class="mark-path" d="M311,348 L270,365 L273,390 L282,433 L290,455 L295,459 L300,459 L304,456 L309,441 L311,423 Z"/>
+    <path class="mark-path" d="M426,307 L386,321 L382,372 L377,408 L378,420 L385,419 L391,413 L406,386 L416,357 Z"/>
+    <path class="mark-path" d="M415,203 L407,204 L403,208 L400,215 L391,269 L389,295 L428,284 L430,261 L429,233 L425,215 L421,207 Z"/>
+    <path class="mark-path" d="M291,131 L281,132 L274,143 L265,196 L262,277 L266,334 L311,319 L313,225 L310,185 L306,161 L301,144 L297,136 Z"/>
+    <path class="mark-path" d="M160,23 L153,23 L147,26 L142,32 L137,43 L131,69 L127,111 L127,169 L132,238 L142,330 L151,381 L205,357 L202,308 L200,210 L193,126 L187,88 L178,49 L170,30 L165,25 Z"/>
+  </g>
+  <g class="tally-gesture" fill="var(--color-mark-gold, #C99A5B)">
+    <!-- The origin dot -->
+    <path class="mark-dot" d="M527,324 L515,330 L511,335 L507,345 L508,357 L510,362 L517,369 L525,373 L540,373 L553,363 L557,352 L557,344 L552,333 L541,325 Z"/>
+    <!-- The sweeping gesture -->
+    <path class="mark-sweep" d="M519,269 L502,269 L473,274 L429,286 L424,286 L421,288 L416,288 L412,291 L409,290 L402,294 L399,293 L393,296 L391,295 L356,307 L342,310 L327,316 L310,320 L293,326 L291,328 L287,328 L279,332 L278,331 L271,335 L269,334 L262,338 L203,359 L200,362 L198,361 L195,364 L186,366 L180,370 L179,369 L176,372 L174,371 L172,374 L166,376 L165,375 L162,378 L154,380 L153,382 L152,381 L152,383 L149,383 L127,394 L94,413 L62,435 L51,446 L50,454 L52,457 L57,459 L70,456 L89,445 L158,412 L159,413 L169,407 L181,403 L234,378 L277,361 L283,357 L287,357 L307,349 L308,347 L310,348 L316,344 L348,333 L350,331 L365,327 L375,322 L386,320 L403,314 L404,312 L408,312 L411,309 L414,310 L419,307 L423,307 L425,305 L446,299 L474,288 L494,282 L499,279 L503,279 L519,272 Z"/>
   </g>
 </svg>
 
@@ -90,41 +51,54 @@ else if (size < 60) opticalVariant = "standard";
 
   function initTallyMark() {
     document.querySelectorAll(".origin-mark").forEach((svg) => {
-      // Avoid re-running animation on same element
       if (svg.hasAttribute("data-animated")) return;
       svg.setAttribute("data-animated", "true");
 
-      const strokes = svg.querySelectorAll(".tally-strokes path");
+      const verticals = svg.querySelectorAll(".mark-path");
+      const sweep = svg.querySelector(".mark-sweep");
+      const dot = svg.querySelector(".mark-dot");
 
-      strokes.forEach((s) => {
-        const len = (s as SVGPathElement).getTotalLength?.() || 100;
-        gsap.set(s, { strokeDasharray: len, strokeDashoffset: len });
-      });
+      // Hide initially
+      gsap.set([verticals, sweep, dot], { opacity: 0 });
+      gsap.set(verticals, { y: -8 });
+      gsap.set(sweep, { x: -15, y: 15 });
+      gsap.set(dot, { scale: 0, transformOrigin: "50% 50%" });
 
-      // Draw in sequence on first load
       const tl = gsap.timeline({ delay: 0.1 });
-      strokes.forEach((s, i) => {
-        const len = (s as SVGPathElement).getTotalLength?.() || 100;
-        tl.to(
-          s,
-          {
-            strokeDashoffset: 0,
-            duration: 0.28,
-            ease: "power2.out",
-          },
-          i * 0.08
-        );
+      
+      // Inking effect for verticals
+      tl.to(verticals, {
+        opacity: 1,
+        y: 0,
+        duration: 0.4,
+        stagger: 0.08,
+        ease: "power2.out"
       });
+
+      // Sweeping gold cross
+      tl.to(sweep, {
+        opacity: 1,
+        x: 0,
+        y: 0,
+        duration: 0.5,
+        ease: "power3.out"
+      }, "-=0.2");
+
+      // Stamp the gold dot
+      tl.to(dot, {
+        opacity: 1,
+        scale: 1,
+        duration: 0.4,
+        ease: "back.out(2)"
+      }, "-=0.3");
     });
   }
 
-  // Play entrance on load
   if (!window["originMarkTallyInit"]) {
     window["originMarkTallyInit"] = true;
     document.addEventListener("DOMContentLoaded", initTallyMark);
     document.addEventListener("astro:page-load", initTallyMark);
   } else {
-    // If navigating back via view transitions, ensure new instances play
     document.addEventListener("astro:page-load", initTallyMark);
   }
 </script>

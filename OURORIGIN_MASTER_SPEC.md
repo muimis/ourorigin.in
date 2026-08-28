@@ -48,9 +48,9 @@ The voice is poetic but strictly grounded in reality. It feels like an ink-stain
 
 ---
 
-## 4. The Visual System (Warm Humanist Minimalism)
+## 4. The Visual System (Controlled Maximalism)
 
-We have explicitly rejected cold "digital brutalism" and dark-mode aesthetics. The visual system evokes the tactile, organic feel of a field notebook.
+We have explicitly rejected cold "digital brutalism" and dark-mode aesthetics. The visual system evokes the tactile, organic feel of a field notebook, utilizing a strict 4-pillar structural grid to organize dense editorial layouts.
 
 ### The Palette
 *   **Primary Surface (Bone):** `var(--color-bone)` / `#EFE6D3`. Our new canvas—a soft, bone-white, paper-like surface that feels organic and inviting.
@@ -71,10 +71,10 @@ The authoritative specification for the mark and wordmark is maintained in `publ
 ### The Tally Mark
 The tally mark is our primary symbol because it is the oldest, most universal human record of counting. It predates writing, currency, and borders. Every culture that has ever counted has drawn this mark. It belongs to no single place.
 
-*   **Structure:** 4 vertical strokes + 1 diagonal cross stroke (The Tally Gate: `||||/`).
-*   **Geometry:** Drawn by hand, utilizing organic Bézier curves. The stroke centers are deliberately non-uniform to mimic the natural drift of a hand in motion.
-*   **The Diagonal:** The cross stroke is heavier and drawn with a distinct arc (momentum). It represents the consumer ("You") closing the count.
-*   **Optical Sizing:** The mark is **never** simply scaled down. There are four distinct SVG drawings engineered for specific size ranges (Display, Standard, Small, Micro).
+*   **Structure:** 4 organic vertical strokes + 1 sweeping diagonal cross stroke with a definitive dot.
+*   **Geometry:** The logo is derived strictly from the hand-drawn vector uploaded in `OurOrigin_master_mark_vector(1).svg`. It is not programmatically generated geometry; it represents genuine human touch.
+*   **The Gesture & Dot:** The gold crossing stroke is sweeping and organic, ending with a gold dot at the top right, signifying the closing of the count and the moment of origin.
+*   **Implementation:** Rendered via `OriginMark.astro` which maps the black strokes to adapt to the layout (Bone or Deep Forest) while keeping the gesture and dot strictly Mark Gold.
 
 ### The Wordmark
 *   **Concept:** The dot (tittle) above each lowercase "i" in the word "OurOrigin" is replaced by a short diagonal stroke in Mark Gold at exactly 45° — mirroring the tally's cross stroke.
@@ -97,4 +97,4 @@ The tally mark is our primary symbol because it is the oldest, most universal hu
 
 ### Quality Assurance
 *   "Zero flaws" is the discipline. Address console errors, hydration mismatches, and edge-case responsive bugs proactively.
-*   Ensure the optical sizing logic of the Tally Mark is strictly adhered to in component architecture (`OriginMark.astro` handles this automatically based on the `size` prop).
+*   Ensure the logo animation sequence plays perfectly across different components and scaling scenarios.
