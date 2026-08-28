@@ -62,8 +62,8 @@ const activeProducts = allProducts.filter(p => {
                 loading={i < 4 ? "eager" : "lazy"}
               />
             ) : (
-              <div class="tile-img-fallback">
-                <OriginMark size={32} variant="primary" hideDot={true} />
+              <div class="product-header">
+                <span class="product-id">{product.data.harvestId}</span>
               </div>
             )}
           </a>
