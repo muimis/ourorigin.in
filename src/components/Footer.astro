@@ -6,7 +6,7 @@ const currentYear = new Date().getFullYear();
 const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}`;
 ---
 <footer class="site-footer">
-  <div class="layout-pillar-grid footer-inner">
+  <div class="layout-three-marks footer-inner">
 
     <!-- Pillar 1: Brand & Manifesto -->
     <div class="footer-col-brand">
@@ -21,7 +21,7 @@ const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}`;
     <!-- Pillar 2: Empty or spacing -->
     <div class="footer-col-spacer"></div>
 
-    <!-- Pillar 3 & 4: Navigation -->
+    <!-- Pillar 3: Navigation -->
     <div class="footer-col-nav">
       <nav class="footer-nav" aria-label="Footer navigation">
         <div class="nav-group">
@@ -70,8 +70,8 @@ const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}`;
 
   .footer-col-brand {
     grid-column: span 1;
-    padding: var(--space-4xl) var(--space-xl);
-    border-right: 1px solid rgba(245, 240, 232, 0.06);
+    padding: var(--space-4xl) 0;
+    border-right: none;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -79,12 +79,12 @@ const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}`;
 
   .footer-col-spacer {
     grid-column: span 1;
-    border-right: 1px solid rgba(245, 240, 232, 0.06);
+    border-right: none;
   }
 
   .footer-col-nav {
-    grid-column: span 2;
-    padding: var(--space-4xl) var(--space-xl);
+    grid-column: span 1;
+    padding: var(--space-4xl) 0;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -176,7 +176,7 @@ const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}`;
 
   @media (max-width: 1024px) {
     .footer-col-brand, .footer-col-spacer, .footer-col-nav {
-      grid-column: span 4;
+      grid-column: span 1;
       border-right: none;
     }
     .footer-col-brand {

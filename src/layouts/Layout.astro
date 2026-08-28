@@ -75,11 +75,28 @@ const fullOgImage = ogImage.startsWith('http') ? ogImage : `${SITE_URL}${ogImage
             <div class="pillar"></div>
         </div>
 
-        <!-- ── The Crossing Gesture (Global Diagonal) ── -->
-        <svg class="global-crossing" aria-hidden="true" preserveAspectRatio="none" viewBox="0 0 100 100">
-            <line x1="0" y1="100" x2="100" y2="0" stroke="var(--color-mark-gold)" stroke-width="0.1" opacity="0.4" />
-            <circle cx="80" cy="20" r="0.8" fill="var(--color-mark-gold)" />
+        <!-- ── Invisible SVG Definitions ── -->
+        <svg aria-hidden="true" style="position: absolute; width: 0; height: 0;">
+            <defs>
+                <clipPath id="logo-mask" clipPathUnits="objectBoundingBox" transform="scale(0.001724, 0.001851)">
+                    <!-- ViewBox was 580x540, so 1/580 = 0.001724, 1/540 = 0.001851 -->
+                    <path class="mark-path" d="M208,392 L158,414 L165,448 L177,491 L183,505 L193,515 L202,515 L208,511 L212,503 L214,491 L214,447 Z"/>
+                    <path class="mark-path" d="M311,348 L270,365 L273,390 L282,433 L290,455 L295,459 L300,459 L304,456 L309,441 L311,423 Z"/>
+                    <path class="mark-path" d="M426,307 L386,321 L382,372 L377,408 L378,420 L385,419 L391,413 L406,386 L416,357 Z"/>
+                    <path class="mark-path" d="M415,203 L407,204 L403,208 L400,215 L391,269 L389,295 L428,284 L430,261 L429,233 L425,215 L421,207 Z"/>
+                    <path class="mark-path" d="M291,131 L281,132 L274,143 L265,196 L262,277 L266,334 L311,319 L313,225 L310,185 L306,161 L301,144 L297,136 Z"/>
+                    <path class="mark-path" d="M160,23 L153,23 L147,26 L142,32 L137,43 L131,69 L127,111 L127,169 L132,238 L142,330 L151,381 L205,357 L202,308 L200,210 L193,126 L187,88 L178,49 L170,30 L165,25 Z"/>
+                </clipPath>
+            </defs>
         </svg>
+
+        <!-- ── The Crossing Gesture (Global Diagonal) ── -->
+        <div class="global-crossing-container" aria-hidden="true" style="pointer-events: none;">
+            <svg class="global-crossing" viewBox="0 0 580 540" fill="none">
+                <path class="global-mark-dot" fill="var(--color-mark-gold)" d="M527,324 L515,330 L511,335 L507,345 L508,357 L510,362 L517,369 L525,373 L540,373 L553,363 L557,352 L557,344 L552,333 L541,325 Z"/>
+                <path class="global-mark-sweep" fill="var(--color-mark-gold)" d="M519,269 L502,269 L473,274 L429,286 L424,286 L421,288 L416,288 L412,291 L409,290 L402,294 L399,293 L393,296 L391,295 L356,307 L342,310 L327,316 L310,320 L293,326 L291,328 L287,328 L279,332 L278,331 L271,335 L269,334 L262,338 L203,359 L200,362 L198,361 L195,364 L186,366 L180,370 L179,369 L176,372 L174,371 L172,374 L166,376 L165,375 L162,378 L154,380 L153,382 L152,381 L152,383 L149,383 L127,394 L94,413 L62,435 L51,446 L50,454 L52,457 L57,459 L70,456 L89,445 L158,412 L159,413 L169,407 L181,403 L234,378 L277,361 L283,357 L287,357 L307,349 L308,347 L310,348 L316,344 L348,333 L350,331 L365,327 L375,322 L386,320 L403,314 L404,312 L408,312 L411,309 L414,310 L419,307 L423,307 L425,305 L446,299 L474,288 L494,282 L499,279 L503,279 L519,272 Z"/>
+            </svg>
+        </div>
 
         <script>
             import '../scripts/reveal.js';
@@ -127,14 +144,24 @@ const fullOgImage = ogImage.startsWith('http') ? ogImage : `${SITE_URL}${ogImage
     }
     
     /* ── Global Crossing (Diagonal) ── */
-    .global-crossing {
+    .global-crossing-container {
         position: fixed;
         top: 0;
         left: 0;
         width: 100vw;
         height: 100vh;
-        pointer-events: none;
-        z-index: 0;
+        z-index: 100; /* On top of most things, below header */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        mix-blend-mode: multiply; /* Optional: lets the gold blend into the paper */
+    }
+
+    .global-crossing {
+        width: 100%;
+        max-width: 800px; /* Scale with the hero */
+        height: auto;
+        opacity: 0; /* Hidden by default, animated by HeroSection GSAP */
     }
 
     .main-content {

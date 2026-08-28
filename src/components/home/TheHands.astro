@@ -5,7 +5,7 @@ import OriginMark from '../OriginMark.astro';
 
 <section class="hands-section" id="the-hands" aria-label="Harvested by Hand">
   
-  <div class="layout-pillar-grid">
+  <div class="layout-three-marks">
     
     <!-- Pillar 1 & 2: The Photography -->
     <div class="hands-visual-col">
@@ -117,14 +117,14 @@ import OriginMark from '../OriginMark.astro';
   }
 
   .hands-visual-col {
-    grid-column: span 2;
-    border-right: 1px solid var(--color-border-subtle);
-    padding: clamp(4rem, 8vh, 6rem) var(--space-xl);
+    grid-column: span 1;
+    border-right: none;
+    padding: clamp(4rem, 8vh, 6rem) 0;
   }
 
   .hands-text-col {
     grid-column: span 2;
-    padding: clamp(4rem, 8vh, 6rem) var(--space-xl);
+    padding: clamp(4rem, 8vh, 6rem) 0;
     display: flex;
     align-items: center;
   }
@@ -135,6 +135,7 @@ import OriginMark from '../OriginMark.astro';
     height: clamp(400px, 60vh, 700px);
     width: 100%;
     background: transparent;
+    border-radius: 4px 60px 4px 60px;
   }
 
   .hands-img {
@@ -270,8 +271,9 @@ import OriginMark from '../OriginMark.astro';
 
   @media (max-width: 900px) {
     .hands-visual-col, .hands-text-col {
-      grid-column: span 4;
+      grid-column: span 1;
       border-right: none;
+      padding: 2rem 0;
     }
     .hands-visual-col {
       border-bottom: 1px solid var(--color-border-subtle);

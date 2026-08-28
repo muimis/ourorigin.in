@@ -28,7 +28,7 @@ const activeProducts = allProducts.filter(p => {
     </p>
   </div>
 
-  <div class="layout-pillar-grid harvest-grid">
+  <div class="layout-three-marks harvest-grid">
     {activeProducts.map((product, i) => {
       const originId = typeof product.data.originSlug === 'object' ? (product.data.originSlug as any).id : product.data.originSlug;
       const origin = originMap[originId];
@@ -184,7 +184,7 @@ const activeProducts = allProducts.filter(p => {
 
   /* ══ Grid ══ */
   .harvest-grid {
-    border-bottom: 1px solid var(--color-border-subtle);
+    padding-bottom: var(--space-4xl);
   }
 
   /* ══ Individual tile ══ */
@@ -194,18 +194,15 @@ const activeProducts = allProducts.filter(p => {
     aspect-ratio: 3/4;
     background: var(--color-bone);
     cursor: pointer;
-    border-right: 1px solid var(--color-border-subtle);
-    border-bottom: 1px solid var(--color-border-subtle);
+    border-radius: 4px 40px 4px 40px; /* Organic asymmetrical curve */
+    transform: translateZ(0); /* Force GPU smoothing on border radius */
+    box-shadow: 0 4px 20px rgba(12, 21, 9, 0.05);
   }
 
-  .tile:nth-child(4n) {
-    border-right: none;
-  }
-
-  /* Large tiles span 2 columns and are taller */
+  /* Large tiles span more naturally */
   .tile--large {
-    grid-column: span 2;
-    aspect-ratio: 5/4;
+    grid-column: span 1; /* In a 3-col grid, let's keep them spanning 1 but maybe taller */
+    aspect-ratio: 4/5;
   }
 
   .tile-img-link {
