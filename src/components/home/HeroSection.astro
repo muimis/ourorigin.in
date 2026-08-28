@@ -1,113 +1,199 @@
 ---
-// HeroSection.astro — The Living Frame (Act I)
-import OriginMark from '../OriginMark.astro';
+// HeroSection.astro — Controlled Maximalism Editorial Frame
 ---
 
 <section class="hero-frame" id="hero" aria-label="The Land">
-
-  <!-- Immersive Imagery (The Life Beating) -->
-  <div class="hero-image-wrapper" data-reveal="fade">
-    <img src="/assets/images/gesture_hands.png" alt="The First Hands" class="hero-image" />
-    <div class="hero-image-gradient"></div>
-  </div>
-
-  <!-- Archival Telemetry (Rotated Left) -->
-  <div class="hero-telemetry-vertical" id="hero-telemetry" data-reveal="fade">
-    <span class="telemetry-coord">ALL NATURAL HARVESTS</span>
-    <span class="telemetry-sep">·</span>
-    <span class="telemetry-soil">DIRECT FROM THE GROWERS</span>
-  </div>
-
-  <!-- Monumental Primeval Truth -->
-  <div class="hero-content">
-    <div class="hero-brand-badge" data-reveal="fade">
-      <OriginMark size={36} variant="gold" />
-      <span class="hero-ancient-tag">OURORIGIN</span>
-    </div>
+  <div class="layout-pillar-grid hero-grid">
     
-    <h1 class="hero-title" data-reveal>
-      Real food from<br/>
-      the earth.<br/>
-      <span class="hero-title-accent">Harvested directly. Transferred intact.</span>
-    </h1>
-
-    <p class="hero-subtitle" data-reveal>
-      Native grains, mountain teas, and forest spices. We work directly with indigenous farming families who harvest crops the natural way. No factories. No middle-men.
-    </p>
-
-    <!-- Dual Action Matrix -->
-    <div class="hero-actions" data-reveal>
-      <a href="#origins" class="btn-hero btn-hero--descend">
-        <span class="btn-text">Explore This Season's Harvest</span>
-        <span class="btn-arrow" aria-hidden="true">↓</span>
-      </a>
+    <!-- Pillar 1: Primary Narrative -->
+    <div class="hero-col hero-col-text">
+      <div class="hero-text-content" data-reveal="fade-up">
+        <span class="hero-number">01</span>
+        <div class="hero-line"></div>
+        <h1 class="hero-title">
+          Rooted<br/>in origin.<br/>Driven by<br/>humanity<span class="hero-title-dot">.</span>
+        </h1>
+        <div class="hero-line hero-line-large"></div>
+        <p class="hero-subtitle">
+          We work at the intersection of native growers, purpose and impact to build a more meaningful harvest.
+        </p>
+        <a href="#origins" class="hero-link">
+          OUR STORY <span class="hero-link-arrow">→</span>
+        </a>
+      </div>
     </div>
-  </div>
 
+    <!-- Pillar 2: The Void (Deep Forest Contrast) -->
+    <div class="hero-col hero-col-void" aria-hidden="true" data-reveal="wipe">
+      <!-- Just an empty dark pillar for structure -->
+    </div>
+
+    <!-- Pillar 3: The Reality (Documentary Photography) -->
+    <div class="hero-col hero-col-visual" data-reveal="fade-in">
+      <img src="/assets/images/gesture_hands.png" alt="Harvesters on the mountain" class="hero-image" />
+    </div>
+
+    <!-- Pillar 4: Secondary Narrative -->
+    <div class="hero-col hero-col-text hero-col-secondary">
+      <div class="hero-text-content" data-reveal="fade-up" style="margin-top: 40vh;">
+        <span class="hero-number">02</span>
+        <div class="hero-line"></div>
+        <h2 class="hero-title hero-title-secondary">
+          We partner.<br/>We build.<br/>We create impact<br/>that lasts.
+        </h2>
+        <a href="#harvest" class="hero-link">
+          WHAT WE DO <span class="hero-link-arrow">→</span>
+        </a>
+      </div>
+    </div>
+
+  </div>
 </section>
 
 <script>
   import { gsap } from 'gsap';
 
   function initHero() {
-    const tl = gsap.timeline({ delay: 0.1 });
+    const tl = gsap.timeline({ delay: 0.2 });
 
-    // Slow, breathing image reveal
+    // The Void wipes down
+    tl.fromTo('.hero-col-void',
+      { scaleY: 0, transformOrigin: "top" },
+      { scaleY: 1, duration: 1.2, ease: "cubic-bezier(0.76, 0, 0.24, 1)" }
+    );
+
+    // Image fades in
     tl.fromTo('.hero-image',
-      { scale: 1.05, opacity: 0 },
-      { scale: 1, opacity: 0.85, duration: 3.5, ease: 'power2.out' }
+      { opacity: 0, scale: 1.05 },
+      { opacity: 1, scale: 1, filter: 'grayscale(100%) brightness(0.8)', duration: 2, ease: 'power2.out' },
+      '-=0.8'
     );
 
-    tl.fromTo('#hero-telemetry',
-      { opacity: 0, x: -16 },
-      { opacity: 1, x: 0, duration: 2.0, ease: 'power3.out' },
-      '-=3.0'
-    );
-
-    tl.fromTo('.hero-title',
-      { opacity: 0, y: 32, filter: 'blur(8px)' },
-      { opacity: 1, y: 0, filter: 'blur(0px)', duration: 2.2, ease: 'power2.out' },
-      '-=2.5'
-    );
-
-    tl.fromTo('.hero-subtitle',
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 1.8, ease: 'power2.out' },
-      '-=2.0'
-    );
-
-    tl.fromTo('.hero-actions',
-      { opacity: 0, y: 16 },
-      { opacity: 1, y: 0, duration: 1.5, ease: 'power2.out' },
+    // Text elements stagger up
+    tl.fromTo('[data-reveal="fade-up"] > *',
+      { opacity: 0, y: 30 },
+      { opacity: 1, y: 0, duration: 1, stagger: 0.1, ease: 'power3.out' },
       '-=1.5'
     );
   }
 
-  initHero();
-  document.addEventListener('astro:after-swap', initHero);
-  document.addEventListener('astro:page-load', initHero);
+  if (!(window as any)["heroPillarInit"]) {
+    (window as any)["heroPillarInit"] = true;
+    document.addEventListener("DOMContentLoaded", initHero);
+    document.addEventListener("astro:page-load", initHero);
+  } else {
+    document.addEventListener("astro:page-load", initHero);
+  }
 </script>
 
 <style>
   .hero-frame {
     position: relative;
+    width: 100%;
     min-height: 100vh;
-    display: flex;
-    align-items: center;
-    padding: clamp(5rem, 10vh, 8rem) clamp(4rem, 8vw, 10rem) clamp(2rem, 4vh, 4rem);
-    overflow: hidden;
-    background: transparent;
-    z-index: 1;
+    padding-top: 120px; /* Offset for header */
   }
 
-  /* Immersive Image */
-  .hero-image-wrapper {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 65%;
-    z-index: 0;
+  .hero-grid {
+    min-height: calc(100vh - 120px);
+    align-items: stretch;
+  }
+
+  .hero-col {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-2xl) var(--space-xl);
+  }
+
+  .hero-text-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    max-width: 320px;
+  }
+
+  .hero-number {
+    font-family: var(--font-evidence);
+    font-size: var(--type-evidence);
+    color: var(--color-mark-gold);
+    letter-spacing: 0.1em;
+  }
+
+  .hero-line {
+    width: 24px;
+    height: 1px;
+    background-color: var(--color-mark-gold);
+    margin: -10px 0 10px 0;
+  }
+
+  .hero-line-large {
+    width: 48px;
+    margin: 20px 0;
+  }
+
+  .hero-title {
+    margin: 0;
+    font-family: var(--font-narrative);
+    font-size: clamp(3rem, 5vw, 4.5rem);
+    line-height: 1.05;
+    color: var(--color-deep-forest);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-title-dot {
+    color: var(--color-mark-gold);
+  }
+
+  .hero-title-secondary {
+    font-size: clamp(2rem, 3.5vw, 3rem);
+  }
+
+  .hero-subtitle {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--type-narrative);
+    line-height: 1.7;
+    color: var(--color-deep-forest);
+    opacity: 0.8;
+  }
+
+  .hero-link {
+    margin-top: var(--space-xl);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-family: var(--font-evidence);
+    font-size: var(--type-whisper);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-deep-forest);
+    font-weight: 500;
+    border-bottom: 1px solid var(--color-deep-forest);
+    padding-bottom: 4px;
+    align-self: flex-start;
+    transition: color 0.3s, border-color 0.3s;
+  }
+
+  .hero-link:hover {
+    color: var(--color-mark-gold);
+    border-color: var(--color-mark-gold);
+  }
+
+  .hero-link-arrow {
+    color: var(--color-mark-gold);
+    font-weight: 300;
+  }
+
+  .hero-col-void {
+    background-color: var(--color-deep-forest);
+    padding: 0;
+  }
+
+  .hero-col-visual {
+    padding: 0;
     overflow: hidden;
   }
 
@@ -115,150 +201,20 @@ import OriginMark from '../OriginMark.astro';
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center left;
-    opacity: 0.85;
-    mix-blend-mode: luminosity; /* Blends nicely with the warm loam background */
-  }
-
-  .hero-image-gradient {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to right, var(--color-deep-forest) 0%, var(--color-forest-hover) 40%, rgba(12, 21, 9, 0) 100%);
-  }
-
-  /* Vertical Telemetry */
-  .hero-telemetry-vertical {
-    position: absolute;
-    left: clamp(1rem, 3vw, 2.5rem);
-    top: 50%;
-    transform: translateY(-50%) rotate(-90deg);
-    transform-origin: center left;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    font-family: var(--font-evidence);
-    font-size: var(--type-whisper);
-    color: var(--color-bone-muted);
-    letter-spacing: 0.2em;
-    white-space: nowrap;
-  }
-
-  .telemetry-coord {
-    color: var(--color-mark-gold);
-    font-weight: 500;
-  }
-
-  .telemetry-sep {
-    color: var(--color-bone-whisper);
-  }
-
-  /* Hero Content Overlap */
-  .hero-content {
-    position: relative;
-    z-index: 2;
-    max-width: 900px;
-    margin-left: clamp(2rem, 4vw, 6rem);
-  }
-
-  .hero-brand-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.85rem;
-    margin-bottom: 1.25rem;
-  }
-
-  .hero-ancient-tag {
-    display: inline-block;
-    font-family: var(--font-evidence);
-    font-size: var(--type-whisper);
-    letter-spacing: 0.3em;
-    color: var(--color-mark-gold);
-    text-transform: uppercase;
-  }
-
-  .hero-title {
-    margin: 0;
-    font-family: var(--font-display);
-    font-size: clamp(2.6rem, 5.5vw, 5.2rem); /* Calibrated so CTA stays in first viewport */
-    line-height: 1.05;
-    font-weight: 400;
-    color: var(--color-bone);
-    letter-spacing: -0.02em;
-    text-wrap: balance;
-    text-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); /* Lift off the image */
-  }
-
-  .hero-title-accent {
-    color: var(--color-mark-gold);
-    font-style: italic;
-    font-family: var(--font-narrative);
-    font-weight: 300;
-    letter-spacing: 0;
-  }
-
-  .hero-subtitle {
-    margin: clamp(1rem, 2vh, 1.5rem) 0 0;
-    font-family: var(--font-narrative);
-    font-size: clamp(1rem, 1.8vw, 1.35rem);
-    line-height: 1.6;
-    color: var(--color-bone-muted);
-    max-width: 520px;
-    font-weight: 300;
-    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  }
-
-  /* Actions */
-  .hero-actions {
-    margin-top: clamp(1.25rem, 2.5vh, 2rem);
-  }
-
-  .btn-hero {
-    display: inline-flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem 2rem;
-    font-family: var(--font-evidence);
-    font-size: var(--type-evidence);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    text-decoration: none;
-    border: 1px solid var(--color-mark-gold);
-    color: var(--color-bone);
-    background: var(--color-gold-muted);
-    border-radius: var(--radius);
-    transition: all var(--duration-slow) var(--ease-organic);
-    cursor: pointer;
-    backdrop-filter: blur(4px);
-  }
-
-  .btn-hero:hover {
-    background: rgba(201, 154, 91, 0.15);
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(201, 154, 91, 0.15);
-  }
-
-  .btn-arrow {
-    transition: transform var(--duration-slow) var(--ease-organic);
-  }
-
-  .btn-hero:hover .btn-arrow {
-    transform: translateY(4px);
+    object-position: center;
+    filter: grayscale(100%) brightness(0.85) contrast(1.1);
   }
 
   @media (max-width: 1024px) {
-    .hero-image-wrapper {
-      width: 100%;
-      opacity: 0.4;
+    .hero-grid {
+      grid-template-columns: 1fr;
     }
-    .hero-image-gradient {
-      background: linear-gradient(to top, var(--color-deep-forest) 0%, var(--color-forest-surface) 50%, rgba(12, 21, 9, 0.2) 100%);
+    .hero-col-void {
+      display: none;
     }
-    .hero-content {
-      margin-left: 0;
-    }
-    .hero-telemetry-vertical {
-      display: none; /* Hide on smaller screens */
+    .hero-col-visual {
+      height: 60vh;
+      order: -1;
     }
   }
 </style>

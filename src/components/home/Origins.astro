@@ -1,5 +1,5 @@
 ---
-// Origins.astro
+// Origins.astro — 4-Pillar Layout for Origins
 import { getCollection } from 'astro:content';
 import OriginMark from '../OriginMark.astro';
 
@@ -28,122 +28,128 @@ sortedOrigins.forEach(origin => {
 ---
 
 <section class="origins-section" id="origins" aria-label="Where It Grows">
+  <div class="layout-pillar-grid">
+    
+    <!-- Pillar 1: Section Header (Deep Forest Background) -->
+    <div class="origins-header-col">
+      <div class="header-content" data-reveal>
+        <span class="section-number">03</span>
+        <div class="hero-line"></div>
+        <h2 class="section-title">Where It<br/>Grows.</h2>
+        <p class="section-desc">
+          Different heights and climates produce different yields. From cold high-mountain teas to deep cardamom valleys.
+        </p>
+      </div>
+    </div>
 
-  <div class="origins-header" data-reveal>
-    <h2 class="section-title">Where It Grows</h2>
-    <p class="section-desc">
-      Different heights and climates produce different yields. From cold high-mountain teas and deep cardamom valleys to black pepper and native millets.
-    </p>
-  </div>
+    <!-- Pillars 2,3,4: The Accordion -->
+    <div class="origins-list-col">
+      <div class="origins-container">
+        {sortedOrigins.map((origin, index) => {
+          const originProducts = productsByOrigin[origin.data.slug] || [];
+          const canopyImg = origin.data.images?.canopy || '';
+          const isFirst = index === 0;
 
-  <div class="origins-container">
-    {sortedOrigins.map((origin, index) => {
-      const originProducts = productsByOrigin[origin.data.slug] || [];
-      const canopyImg = origin.data.images?.canopy || '';
-      const isFirst = index === 0;
-
-      return (
-        <div class="origin-node" data-realm={origin.data.slug} data-reveal>
-          
-          <button 
-            type="button"
-            class="origin-card" 
-            aria-expanded={isFirst ? "true" : "false"}
-            aria-controls={`yields-${origin.data.slug}`}
-          >
-            {canopyImg && (
-              <div 
-                class="origin-bg-image" 
-                style={`background-image: url('${canopyImg}');`}
-                aria-hidden="true"
-              />
-            )}
-            <div class="origin-wash" aria-hidden="true"></div>
-
-            <div class="origin-content">
-              <span class="origin-elevation">
-                <span class="elevation-icon" aria-hidden="true">▲</span>
-                {origin.data.elevation}
-              </span>
-              <h3 class="origin-name">{origin.data.name}</h3>
-              <p class="origin-soil">{origin.data.soil}</p>
-            </div>
-
-            <div class="origin-toggle">
-              <span class="toggle-text">View Harvests</span>
-              <span class="toggle-icon" aria-hidden="true">+</span>
-            </div>
-          </button>
-
-          <!-- Drawer -->
-          <div 
-            id={`yields-${origin.data.slug}`} 
-            class:list={["origin-yields", { "is-active": isFirst }]}
-            aria-hidden={isFirst ? "false" : "true"}
-          >
-            <div class="yields-inner">
-              <div class="yields-grid">
-                {originProducts.length === 0 ? (
-                  <p class="no-yields">Resting between seasons. Next harvest after the monsoon.</p>
-                ) : (
-                  originProducts.map((product) => {
-                    const firstSize = product.data.sizes[0];
-                    const prodImg = product.data.images?.product || product.data.images?.packaging || '';
-                    const priceDisplay = product.data.sizes.length > 1
-                      ? `₹${Math.min(...product.data.sizes.map(s => s.priceINR))} - ₹${Math.max(...product.data.sizes.map(s => s.priceINR))}`
-                      : `₹${firstSize.priceINR}`;
-
-                    const itemPayload = JSON.stringify({
-                      id: `${product.id}-${firstSize.label}`,
-                      productId: product.id,
-                      name: product.data.name,
-                      origin: origin.data.name,
-                      originId: origin.id,
-                      price: firstSize.priceINR,
-                      size: firstSize.label,
-                      weight: firstSize.label,
-                      quantity: 1
-                    });
-
-                    return (
-                      <div class="yield-card">
-                        <div class="yield-img-box">
-                          <div class="card-origin-seal">
-                            <OriginMark size={14} variant="gold" />
-                          </div>
-                          <a href={`/origins/${origin.data.slug}/${product.id}`} class="yield-img-link" aria-label={`View ${product.data.name}`}>
-                            {prodImg && (
-                              <img src={prodImg} alt={product.data.name} class="yield-img" />
-                            )}
-                          </a>
-                        </div>
-                        <div class="yield-body">
-                          <span class="yield-botanical">{product.data.botanicalName}</span>
-                          <h4 class="yield-name">
-                            <a href={`/origins/${origin.data.slug}/${product.id}`}>{product.data.name}</a>
-                          </h4>
-                          <div class="yield-footer">
-                            <span class="yield-price">{priceDisplay}</span>
-                            <button 
-                              type="button"
-                              class="btn-gather" 
-                              data-product-json={itemPayload}
-                              aria-label={`Add ${product.data.name} to basket`}
-                            >
-                              + Add
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })
+          return (
+            <div class="origin-node" data-realm={origin.data.slug} data-reveal>
+              <button 
+                type="button"
+                class="origin-card" 
+                aria-expanded={isFirst ? "true" : "false"}
+                aria-controls={`yields-${origin.data.slug}`}
+              >
+                {canopyImg && (
+                  <div 
+                    class="origin-bg-image" 
+                    style={`background-image: url('${canopyImg}');`}
+                    aria-hidden="true"
+                  />
                 )}
+                <div class="origin-wash" aria-hidden="true"></div>
+
+                <div class="origin-content">
+                  <span class="origin-elevation">
+                    <span class="elevation-icon" aria-hidden="true">▲</span>
+                    {origin.data.elevation}
+                  </span>
+                  <h3 class="origin-name">{origin.data.name}</h3>
+                  <p class="origin-soil">{origin.data.soil}</p>
+                </div>
+
+                <div class="origin-toggle">
+                  <span class="toggle-text">View Harvests</span>
+                  <span class="toggle-icon" aria-hidden="true">+</span>
+                </div>
+              </button>
+
+              <!-- Drawer -->
+              <div 
+                id={`yields-${origin.data.slug}`} 
+                class:list={["origin-yields", { "is-active": isFirst }]}
+                aria-hidden={isFirst ? "false" : "true"}
+              >
+                <div class="yields-inner">
+                  <div class="yields-grid">
+                    {originProducts.length === 0 ? (
+                      <p class="no-yields">Resting between seasons. Next harvest after the monsoon.</p>
+                    ) : (
+                      originProducts.map((product) => {
+                        const firstSize = product.data.sizes[0];
+                        const prodImg = product.data.images?.product || product.data.images?.packaging || '';
+                        const priceDisplay = product.data.sizes.length > 1
+                          ? `₹${Math.min(...product.data.sizes.map(s => s.priceINR))} - ₹${Math.max(...product.data.sizes.map(s => s.priceINR))}`
+                          : `₹${firstSize.priceINR}`;
+
+                        const itemPayload = JSON.stringify({
+                          id: `${product.id}-${firstSize.label}`,
+                          productId: product.id,
+                          name: product.data.name,
+                          origin: origin.data.name,
+                          originId: origin.id,
+                          price: firstSize.priceINR,
+                          size: firstSize.label,
+                          weight: firstSize.label,
+                          quantity: 1
+                        });
+
+                        return (
+                          <div class="yield-card">
+                            <div class="yield-img-box">
+                              <a href={`/origins/${origin.data.slug}/${product.id}`} class="yield-img-link" aria-label={`View ${product.data.name}`}>
+                                {prodImg && (
+                                  <img src={prodImg} alt={product.data.name} class="yield-img" />
+                                )}
+                              </a>
+                            </div>
+                            <div class="yield-body">
+                              <span class="yield-botanical">{product.data.botanicalName}</span>
+                              <h4 class="yield-name">
+                                <a href={`/origins/${origin.data.slug}/${product.id}`}>{product.data.name}</a>
+                              </h4>
+                              <div class="yield-footer">
+                                <span class="yield-price">{priceDisplay}</span>
+                                <button 
+                                  type="button"
+                                  class="btn-gather" 
+                                  data-product-json={itemPayload}
+                                  aria-label={`Add ${product.data.name} to basket`}
+                                >
+                                  + Add
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      );
-    })}
+          );
+        })}
+      </div>
+    </div>
   </div>
 </section>
 
@@ -211,30 +217,56 @@ sortedOrigins.forEach(origin => {
   .origins-section {
     position: relative;
     z-index: 2;
-    padding: clamp(3rem, 6vh, 4.5rem) clamp(1rem, 4vw, 4rem);
-    background: var(--color-deep-forest);
+    background: var(--color-bone);
+    border-top: 1px solid var(--color-border-subtle);
   }
 
-  .origins-header {
-    max-width: 600px;
-    margin-bottom: clamp(2rem, 4vh, 3rem);
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
+  .origins-header-col {
+    grid-column: span 1;
+    background: var(--color-deep-forest);
+    padding: clamp(3rem, 6vh, 4.5rem) var(--space-xl);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .origins-list-col {
+    grid-column: span 3;
+    padding: clamp(3rem, 6vh, 4.5rem) var(--space-xl);
+  }
+
+  .header-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .section-number {
+    font-family: var(--font-evidence);
+    font-size: var(--type-evidence);
+    color: var(--color-mark-gold);
+    letter-spacing: 0.1em;
+  }
+
+  .hero-line {
+    width: 24px;
+    height: 1px;
+    background-color: var(--color-mark-gold);
+    margin: -4px 0 8px 0;
   }
 
   .section-title {
     margin: 0;
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 4vw, 3rem);
-    line-height: 1.1;
+    font-family: var(--font-narrative);
+    font-size: clamp(2.5rem, 4vw, 3.5rem);
+    line-height: 1.05;
     color: var(--color-bone);
     font-weight: 300;
   }
 
   .section-desc {
     margin: 1rem 0 0;
-    font-family: var(--font-narrative);
+    font-family: var(--font-body);
     font-size: 1.05rem;
     color: var(--color-bone-muted);
     line-height: 1.5;
@@ -243,9 +275,7 @@ sortedOrigins.forEach(origin => {
   .origins-container {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
-    max-width: 1000px;
-    margin: 0 auto;
+    gap: 1.5rem;
   }
 
   .origin-node {
@@ -257,22 +287,21 @@ sortedOrigins.forEach(origin => {
     position: relative;
     width: 100%;
     text-align: left;
-    background: var(--color-forest-surface);
-    border: 1px solid rgba(240, 234, 214, 0.1);
-    border-radius: var(--radius, 8px);
-    padding: clamp(1.25rem, 2.5vw, 2rem);
+    background: var(--color-deep-forest);
+    border: 1px solid rgba(12, 21, 9, 0.1);
+    padding: clamp(1.5rem, 2.5vw, 2.5rem);
     cursor: pointer;
     overflow: hidden;
     display: flex;
     justify-content: space-between;
     align-items: center;
     color: var(--color-bone);
-    min-height: 120px;
+    min-height: 140px;
     transition: all var(--duration-standard) ease;
   }
 
   .origin-card:hover {
-    border-color: rgba(212, 139, 22, 0.4);
+    border-color: var(--color-mark-gold);
     transform: translateY(-2px);
   }
 
@@ -281,10 +310,11 @@ sortedOrigins.forEach(origin => {
     inset: 0;
     background-size: cover;
     background-position: center;
-    opacity: 0.18;
+    opacity: 0.2;
     transition: opacity var(--duration-slow) ease, transform var(--duration-slow) ease;
     z-index: 0;
     pointer-events: none;
+    filter: grayscale(100%);
   }
 
   .origin-card:hover .origin-bg-image,
@@ -296,7 +326,7 @@ sortedOrigins.forEach(origin => {
   .origin-wash {
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(8, 13, 6, 0.9) 0%, rgba(8, 13, 6, 0.6) 100%);
+    background: linear-gradient(135deg, rgba(12, 21, 9, 0.9) 0%, rgba(12, 21, 9, 0.5) 100%);
     z-index: 1;
     pointer-events: none;
   }
@@ -326,7 +356,7 @@ sortedOrigins.forEach(origin => {
   .origin-name {
     margin: 0;
     font-family: var(--font-display);
-    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+    font-size: clamp(2rem, 3.5vw, 2.5rem);
     color: var(--color-bone);
     font-weight: 300;
   }
@@ -365,7 +395,7 @@ sortedOrigins.forEach(origin => {
   /* Drawer */
   .origin-yields {
     display: none;
-    margin-top: 0.75rem;
+    margin-top: 1rem;
   }
 
   .origin-yields.is-active {
@@ -379,20 +409,19 @@ sortedOrigins.forEach(origin => {
   }
 
   .yields-inner {
-    padding: 0.5rem 0 1.5rem;
+    padding: 1rem 0 2rem;
   }
 
   .yields-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
   }
 
   /* Compact Clean Product Cards */
   .yield-card {
-    background: var(--color-forest-surface);
-    border: 1px solid rgba(240, 234, 214, 0.08);
-    border-radius: var(--radius, 8px);
+    background: var(--color-bone);
+    border: 1px solid var(--color-border-subtle);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -401,27 +430,19 @@ sortedOrigins.forEach(origin => {
   }
 
   .yield-card:hover {
-    border-color: rgba(212, 139, 22, 0.4);
+    border-color: var(--color-mark-gold);
     transform: translateY(-2px);
   }
 
   .yield-img-box {
     position: relative;
-    height: 160px;
-    background: #080605;
+    height: 180px;
+    background: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 1rem;
     border-bottom: 1px solid var(--color-border-subtle);
-  }
-
-  .card-origin-seal {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    z-index: 2;
-    opacity: 0.85;
   }
 
   .yield-img-link {
@@ -433,11 +454,11 @@ sortedOrigins.forEach(origin => {
   }
 
   .yield-img {
-    max-height: 85%;
-    max-width: 85%;
+    max-height: 90%;
+    max-width: 90%;
     object-fit: contain;
-    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
     transition: transform var(--duration-slow) ease;
+    mix-blend-mode: multiply; /* Perfect for light background */
   }
 
   .yield-card:hover .yield-img {
@@ -454,7 +475,8 @@ sortedOrigins.forEach(origin => {
   .yield-botanical {
     font-family: var(--font-narrative);
     font-style: italic;
-    color: var(--color-mark-gold);
+    color: var(--color-deep-forest);
+    opacity: 0.6;
     font-size: 12px;
     margin-bottom: 0.25rem;
   }
@@ -462,13 +484,13 @@ sortedOrigins.forEach(origin => {
   .yield-name {
     margin: 0;
     font-family: var(--font-display);
-    font-size: 1.15rem;
+    font-size: 1.2rem;
     font-weight: 400;
     line-height: 1.25;
   }
 
   .yield-name a {
-    color: var(--color-bone);
+    color: var(--color-deep-forest);
     text-decoration: none;
   }
 
@@ -482,21 +504,20 @@ sortedOrigins.forEach(origin => {
     align-items: center;
     margin-top: 1rem;
     padding-top: 0.5rem;
-    border-top: 1px solid rgba(240, 234, 214, 0.08);
+    border-top: 1px solid var(--color-border-subtle);
   }
 
   .yield-price {
     font-family: var(--font-evidence);
     font-size: 13px;
-    color: var(--color-bone);
+    color: var(--color-deep-forest);
     font-weight: 500;
   }
 
   .btn-gather {
     background: transparent;
-    color: var(--color-mark-gold);
-    border: 1px solid var(--color-mark-gold);
-    border-radius: 4px;
+    color: var(--color-deep-forest);
+    border: 1px solid var(--color-deep-forest);
     padding: 0.35rem 0.75rem;
     font-family: var(--font-evidence);
     font-size: 10px;
@@ -507,64 +528,35 @@ sortedOrigins.forEach(origin => {
   }
 
   .btn-gather:hover {
-    background: var(--color-mark-gold);
-    color: var(--color-deep-forest);
+    background: var(--color-deep-forest);
+    color: var(--color-bone);
   }
 
   .btn-gather.is-added {
-    background: var(--color-bone);
-    border-color: var(--color-bone);
+    background: var(--color-mark-gold);
+    border-color: var(--color-mark-gold);
     color: var(--color-deep-forest);
   }
 
   .no-yields {
-    color: var(--color-bone-muted);
+    color: var(--color-deep-forest);
+    opacity: 0.6;
     font-family: var(--font-narrative);
     font-style: italic;
     padding: 1.5rem;
     font-size: 14px;
+    grid-column: span 3;
   }
 
-  @media (max-width: 768px) {
-    .origin-card {
-      padding: 1.25rem 1rem;
-      min-height: 90px;
+  @media (max-width: 1024px) {
+    .origins-header-col {
+      grid-column: span 4;
     }
-
-    .origin-name {
-      font-size: 1.4rem;
+    .origins-list-col {
+      grid-column: span 4;
     }
-
     .yields-grid {
       grid-template-columns: repeat(2, 1fr);
-      gap: 0.65rem;
-    }
-
-    .yield-img-box {
-      height: 120px;
-      padding: 0.5rem;
-    }
-
-    .yield-body {
-      padding: 0.65rem;
-    }
-
-    .yield-name {
-      font-size: 0.95rem;
-    }
-
-    .yield-botanical {
-      display: none;
-    }
-
-    .yield-price {
-      font-size: 12px;
-    }
-
-    .btn-gather {
-      padding: 0.3rem 0.5rem;
-      font-size: 9px;
-      min-height: 28px;
     }
   }
 </style>

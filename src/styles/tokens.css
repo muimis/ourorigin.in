@@ -25,49 +25,71 @@
   --color-border-subtle: rgba(239, 230, 211, 0.1);
   --color-border-accent: rgba(201, 154, 91, 0.35);
 
-  /* ── Typography — Three Registers ──
-     1. Fraunces (philosophical register)
-     2. JetBrains Mono (ledger/proof)
-     3. Inter (body) */
+  /* ── Typography — The Core Identity Tension ──
+     1. Fraunces (philosophical, warm, human, narrative)
+     2. JetBrains Mono (precise, direct, evidence, telemetry)
+     3. Inter (functional, structural) */
   --font-narrative: 'Fraunces', serif;
   --font-evidence: 'JetBrains Mono', monospace;
-  --font-mono: 'JetBrains Mono', monospace;
   --font-body: 'Inter', sans-serif;
   --font-display: 'Fraunces', serif;
 
   /* ── Fluid Type Scale ── */
-  --type-display:   clamp(32px, 6vw, 56px);
-  --type-statement: clamp(24px, 4.5vw, 40px);
-  --type-narrative: clamp(18px, 2.5vw, 24px);
-  --type-evidence:  clamp(12px, 1.4vw, 14px);
-  --type-whisper:   clamp(10px, 1.1vw, 12px);
+  --type-display:   clamp(40px, 8vw, 84px);
+  --type-statement: clamp(28px, 5vw, 48px);
+  --type-narrative: clamp(20px, 2.5vw, 28px);
+  --type-evidence:  clamp(11px, 1vw, 13px);
+  --type-whisper:   clamp(9px, 1vw, 11px);
 
-  /* Line Heights */
-  --line-height-tight: 1.1;
-  --line-height-base: 1.6;
-  --line-height-loose: 1.85;
+  /* Line Heights (Editorial) */
+  --line-height-tight: 1.05;
+  --line-height-base: 1.5;
+  --line-height-loose: 1.8;
 
-  /* ── Layout ── */
-  --radius-sm: 2px;
-  --radius-md: 4px;
-  --radius-lg: 8px;
+  /* ── Asymmetric Rhythms (The Three Unequal Marks) ── */
+  --grid-rhythm-primary: 1.5fr 4.5fr 5fr;
+  --grid-rhythm-alt: 1fr 2fr 1fr;
+  
+  /* ── Structural Constraints ── */
+  --content-max-width: 1400px;
+  --canvas-pad-x: clamp(2rem, 5vw, 6rem);
+  --canvas-pad-y: clamp(4rem, 10vh, 8rem);
 
-  /* ── Spacing ── */
+  /* No border radii. Sharp, direct cuts like paper and film. */
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+
+  /* ── Spacing (The Negative Space) ── */
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;
   --space-md: 1rem;
   --space-lg: 1.5rem;
-  --space-xl: 2rem;
-  --space-2xl: 3rem;
-  --space-3xl: 4rem;
-  --space-4xl: 6rem;
+  --space-xl: 3rem;
+  --space-2xl: 5rem;
+  --space-3xl: 8rem;
+  --space-4xl: 12rem;
 
-  /* ── Animation & Transitions ── */
-  --duration-fast: 0.15s;
-  --duration-standard: 0.3s;
-  --duration-slow: 0.6s;
-  --ease-organic: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  --ease-settle: cubic-bezier(0.16, 1, 0.3, 1);
+  /* ── Animation & Transitions (GSAP driven) ── */
+  --duration-fast: 0.2s;
+  --duration-standard: 0.4s;
+  --duration-slow: 0.8s;
+  --ease-crossing: cubic-bezier(0.76, 0, 0.24, 1); /* Movement / Encounter */
+  --ease-human: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ── Editorial Layout Primitives (Controlled Maximalism) ── */
+.layout-pillar-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .layout-pillar-grid {
+      /* A strict 4-column grid acting as the foundational pillars */
+      grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -85,8 +107,8 @@ html {
 html, body {
   margin: 0;
   padding: 0;
-  background-color: var(--color-deep-forest);
-  color: var(--color-bone);
+  background-color: var(--color-bone);
+  color: var(--color-deep-forest);
   font-family: var(--font-body);
   line-height: var(--line-height-base);
   -webkit-font-smoothing: antialiased;
@@ -97,6 +119,7 @@ html, body {
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-narrative);
   font-weight: 300;
+  color: var(--color-deep-forest);
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -111,7 +134,7 @@ body::after {
   width: 100vw;
   height: 100vh;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.4'/%3E%3C/svg%3E");
-  opacity: 0.12;
+  opacity: 0.15; /* Slightly increased for light mode */
   pointer-events: none;
   z-index: 9999;
 }

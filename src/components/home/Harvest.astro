@@ -18,8 +18,9 @@ const activeProducts = allProducts.filter(p => {
 
   <div class="harvest-head">
     <div class="harvest-head-left">
-      <span class="harvest-kicker">THIS SEASON</span>
-      <h2 class="harvest-title">The Harvest</h2>
+      <span class="harvest-kicker">04</span>
+      <div class="hero-line"></div>
+      <h2 class="harvest-title">The Harvest.</h2>
     </div>
     <p class="harvest-desc">
       Freshly gathered. Sun-dried. Packed at source.<br />
@@ -27,7 +28,7 @@ const activeProducts = allProducts.filter(p => {
     </p>
   </div>
 
-  <div class="harvest-grid">
+  <div class="layout-pillar-grid harvest-grid">
     {activeProducts.map((product, i) => {
       const originId = typeof product.data.originSlug === 'object' ? (product.data.originSlug as any).id : product.data.originSlug;
       const origin = originMap[originId];
@@ -62,7 +63,7 @@ const activeProducts = allProducts.filter(p => {
               />
             ) : (
               <div class="tile-img-fallback">
-                <OriginMark size={32} variant="gold" />
+                <OriginMark size={32} variant="primary" hideDot={true} />
               </div>
             )}
           </a>
@@ -126,10 +127,10 @@ const activeProducts = allProducts.filter(p => {
 </script>
 
 <style>
-  /* ══ Section header ══ */
   .harvest {
     padding: 0;
-    background: var(--color-deep-forest);
+    background: var(--color-bone);
+    border-top: 1px solid var(--color-border-subtle);
   }
 
   .harvest-head {
@@ -149,26 +150,32 @@ const activeProducts = allProducts.filter(p => {
 
   .harvest-kicker {
     font-family: var(--font-evidence);
-    font-size: 10px;
-    letter-spacing: 0.25em;
+    font-size: var(--type-evidence);
+    letter-spacing: 0.1em;
     color: var(--color-mark-gold);
-    opacity: 0.7;
+  }
+
+  .hero-line {
+    width: 24px;
+    height: 1px;
+    background-color: var(--color-mark-gold);
+    margin: 8px 0;
   }
 
   .harvest-title {
     font-family: var(--font-display);
-    font-size: clamp(2.2rem, 5vw, 4rem);
-    font-weight: 400;
-    color: var(--color-bone);
+    font-size: clamp(2.5rem, 4vw, 3.5rem);
+    font-weight: 300;
+    color: var(--color-deep-forest);
     margin: 0;
     line-height: 1.0;
-    letter-spacing: 0.01em;
   }
 
   .harvest-desc {
     font-family: var(--font-narrative);
     font-size: clamp(0.95rem, 1.5vw, 1.1rem);
-    color: var(--color-bone-muted);
+    color: var(--color-deep-forest);
+    opacity: 0.8;
     line-height: 1.65;
     margin: 0;
     text-align: right;
@@ -177,11 +184,7 @@ const activeProducts = allProducts.filter(p => {
 
   /* ══ Grid ══ */
   .harvest-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    /* No gap — tiles touch edge to edge like a newspaper */
-    gap: 1px;
-    background: var(--color-border-subtle); /* gap color */
+    border-bottom: 1px solid var(--color-border-subtle);
   }
 
   /* ══ Individual tile ══ */
@@ -189,8 +192,14 @@ const activeProducts = allProducts.filter(p => {
     position: relative;
     overflow: hidden;
     aspect-ratio: 3/4;
-    background: var(--color-forest-surface);
+    background: var(--color-bone);
     cursor: pointer;
+    border-right: 1px solid var(--color-border-subtle);
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+
+  .tile:nth-child(4n) {
+    border-right: none;
   }
 
   /* Large tiles span 2 columns and are taller */
@@ -214,12 +223,13 @@ const activeProducts = allProducts.filter(p => {
     object-position: center;
     transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94),
                 filter 0.5s ease;
-    filter: saturate(0.82) contrast(1.06) brightness(0.9);
+    mix-blend-mode: multiply; /* Perfect for light background */
+    filter: saturate(0.8) contrast(1.1);
   }
 
   .tile:hover .tile-img {
     transform: scale(1.05);
-    filter: saturate(1) contrast(1.05) brightness(0.85);
+    filter: saturate(1) contrast(1.1);
   }
 
   .tile-img-fallback {
@@ -228,8 +238,8 @@ const activeProducts = allProducts.filter(p => {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--color-forest-surface);
-    opacity: 0.4;
+    background: transparent;
+    opacity: 0.2;
   }
 
   /* ══ Overlay ══ */
@@ -239,12 +249,12 @@ const activeProducts = allProducts.filter(p => {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    /* Gradient from transparent → almost-black at bottom */
+    /* Gradient from transparent → bone at bottom */
     background: linear-gradient(
       to bottom,
-      transparent 30%,
-      rgba(5, 3, 2, 0.4) 60%,
-      rgba(5, 3, 2, 0.92) 100%
+      rgba(239, 230, 211, 0) 30%,
+      rgba(239, 230, 211, 0.9) 70%,
+      rgba(239, 230, 211, 1) 100%
     );
     padding: 1.1rem 1.25rem 1.1rem;
     transition: background 0.4s ease;
@@ -253,9 +263,9 @@ const activeProducts = allProducts.filter(p => {
   .tile:hover .tile-overlay {
     background: linear-gradient(
       to bottom,
-      transparent 20%,
-      rgba(5, 3, 2, 0.5) 55%,
-      rgba(5, 3, 2, 0.96) 100%
+      rgba(239, 230, 211, 0) 20%,
+      rgba(239, 230, 211, 0.95) 60%,
+      rgba(239, 230, 211, 1) 100%
     );
   }
 
@@ -271,11 +281,12 @@ const activeProducts = allProducts.filter(p => {
     font-size: 9px;
     letter-spacing: 0.2em;
     color: var(--color-mark-gold);
-    opacity: 0.85;
+    font-weight: 500;
   }
 
   .tile-sep {
-    color: var(--color-bone-whisper);
+    color: var(--color-deep-forest);
+    opacity: 0.3;
     font-size: 9px;
   }
 
@@ -283,7 +294,8 @@ const activeProducts = allProducts.filter(p => {
     font-family: var(--font-evidence);
     font-size: 9px;
     letter-spacing: 0.1em;
-    color: var(--color-bone-whisper);
+    color: var(--color-deep-forest);
+    opacity: 0.6;
   }
 
   .tile-bottom {
@@ -304,7 +316,7 @@ const activeProducts = allProducts.filter(p => {
     font-family: var(--font-display);
     font-size: clamp(0.9rem, 1.6vw, 1.2rem);
     font-weight: 400;
-    color: var(--color-bone);
+    color: var(--color-deep-forest);
     text-decoration: none;
     line-height: 1.15;
     letter-spacing: 0.01em;
@@ -319,7 +331,8 @@ const activeProducts = allProducts.filter(p => {
     font-family: var(--font-narrative);
     font-size: 11px;
     font-style: italic;
-    color: var(--color-bone-whisper);
+    color: var(--color-deep-forest);
+    opacity: 0.6;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -342,15 +355,16 @@ const activeProducts = allProducts.filter(p => {
   .tile-price {
     font-family: var(--font-evidence);
     font-size: 11px;
-    color: var(--color-mark-gold);
+    color: var(--color-deep-forest);
+    font-weight: 500;
     letter-spacing: 0.06em;
     white-space: nowrap;
   }
 
   .tile-add {
-    background: var(--color-mark-gold);
+    background: transparent;
     color: var(--color-deep-forest);
-    border: none;
+    border: 1px solid var(--color-deep-forest);
     font-family: var(--font-evidence);
     font-size: 9px;
     font-weight: 600;
@@ -363,32 +377,26 @@ const activeProducts = allProducts.filter(p => {
   }
 
   .tile-add:hover {
-    background: var(--color-bone);
-    transform: translateY(-1px);
+    background: var(--color-deep-forest);
+    color: var(--color-bone);
   }
 
   .tile-add--done {
-    background: var(--color-bone-whisper);
-    color: var(--color-bone);
+    background: var(--color-mark-gold);
+    color: var(--color-deep-forest);
+    border-color: var(--color-mark-gold);
   }
 
   /* ══ Mobile ══ */
   @media (max-width: 900px) {
-    .harvest-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
     .tile--large {
-      grid-column: span 2;
       aspect-ratio: 16/9;
     }
-
     .harvest-head {
       flex-direction: column;
       align-items: flex-start;
       gap: 1rem;
     }
-
     .harvest-desc {
       text-align: left;
       max-width: 100%;
@@ -396,18 +404,9 @@ const activeProducts = allProducts.filter(p => {
   }
 
   @media (max-width: 520px) {
-    .harvest-grid {
-      grid-template-columns: 1fr 1fr;
-    }
-
-    .tile--large {
-      grid-column: span 2;
-    }
-
     .tile {
       aspect-ratio: 1/1;
     }
-
     .tile--large {
       aspect-ratio: 16/10;
     }

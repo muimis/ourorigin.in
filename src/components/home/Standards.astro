@@ -1,140 +1,125 @@
 ---
-// Standards.astro — Proof bar. One line. No lecture.
+// Standards.astro — Proof bar mapped to the 4-pillar grid.
 ---
 
 <section class="proof-bar" aria-label="Our Standards">
-
-  <div class="proof-inner">
+  <div class="layout-pillar-grid proof-inner">
 
     <div class="proof-item">
       <span class="proof-num">0</span>
       <span class="proof-label">Chemical<br/>inputs</span>
     </div>
 
-    <div class="proof-divider" aria-hidden="true">—</div>
-
     <div class="proof-item">
       <span class="proof-num">1st</span>
       <span class="proof-label">Hand.<br/>Direct from grower.</span>
     </div>
 
-    <div class="proof-divider" aria-hidden="true">—</div>
-
     <div class="proof-item">
       <span class="proof-num">100%</span>
-      <span class="proof-label">Single<br/>origin, never blended</span>
+      <span class="proof-label">Single origin,<br/>never blended</span>
     </div>
 
-    <div class="proof-divider" aria-hidden="true">—</div>
-
-    <div class="proof-item">
-      <span class="proof-num">48h</span>
-      <span class="proof-label">Farm to<br/>packaging</span>
-    </div>
-
-    <div class="proof-divider" aria-hidden="true">—</div>
-
-    <div class="proof-item proof-item--cta">
+    <div class="proof-item proof-item-last">
+      <div class="proof-stat">
+        <span class="proof-num">48h</span>
+        <span class="proof-label">Farm to<br/>packaging</span>
+      </div>
       <a href="/about" class="proof-cta-link">
-        Why this<br/>exists →
+        OUR STANDARDS <span class="cta-arrow">→</span>
       </a>
     </div>
 
   </div>
-
 </section>
 
 <style>
   .proof-bar {
-    background: var(--color-forest-surface);
     border-top: 1px solid var(--color-border-subtle);
     border-bottom: 1px solid var(--color-border-subtle);
-    padding: clamp(2.5rem, 5vw, 4rem) clamp(1.5rem, 5vw, 4rem);
+    background: var(--color-bone);
   }
 
   .proof-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: clamp(1.5rem, 3vw, 3rem);
-    max-width: 1200px;
-    margin: 0 auto;
-    flex-wrap: wrap;
+    /* layout-pillar-grid handles the 4 columns */
   }
 
   .proof-item {
     display: flex;
     flex-direction: column;
-    gap: 0.35rem;
-    flex: 1;
-    min-width: 100px;
+    justify-content: space-between;
+    padding: clamp(2rem, 4vw, 3rem) var(--space-xl);
+    border-right: 1px solid var(--color-border-subtle);
+  }
+
+  .proof-item:last-child {
+    border-right: none;
+  }
+
+  .proof-item:first-child {
+    border-left: 1px solid var(--color-border-subtle);
   }
 
   .proof-num {
     font-family: var(--font-display);
-    font-size: clamp(2rem, 4vw, 3.5rem);
-    font-weight: 400;
-    color: var(--color-mark-gold);
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 300;
+    color: var(--color-deep-forest);
     line-height: 1.0;
-    letter-spacing: -0.01em;
+    margin-bottom: var(--space-md);
   }
 
   .proof-label {
     font-family: var(--font-evidence);
-    font-size: 10px;
-    letter-spacing: 0.14em;
+    font-size: 11px;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: var(--color-bone-muted);
+    color: var(--color-deep-forest);
+    opacity: 0.7;
     line-height: 1.5;
   }
 
-  .proof-divider {
-    color: var(--color-bone-whisper);
-    font-size: 1.5rem;
-    font-family: var(--font-evidence);
-    flex-shrink: 0;
-    align-self: stretch;
+  .proof-item-last {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--space-xl);
   }
 
-  .proof-item--cta {
-    align-items: flex-start;
+  .proof-stat {
+    display: flex;
+    flex-direction: column;
   }
 
   .proof-cta-link {
-    font-family: var(--font-narrative);
-    font-style: italic;
-    font-size: clamp(1rem, 1.8vw, 1.3rem);
-    color: var(--color-bone-muted);
+    font-family: var(--font-evidence);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-mark-gold);
     text-decoration: none;
-    line-height: 1.4;
-    transition: color 0.2s;
-    border-bottom: 1px solid var(--color-bone-whisper);
-    padding-bottom: 2px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    transition: color 0.3s;
   }
 
   .proof-cta-link:hover {
-    color: var(--color-mark-gold);
-    border-color: var(--color-mark-gold);
+    color: var(--color-deep-forest);
   }
 
-  @media (max-width: 768px) {
-    .proof-divider { display: none; }
-
-    .proof-inner {
-      gap: 1.5rem 2rem;
-    }
-
+  @media (max-width: 1024px) {
     .proof-item {
-      min-width: 120px;
-      flex: 0 0 calc(50% - 1rem);
+      padding: 1.5rem var(--space-lg);
+      border-right: none;
+      border-bottom: 1px solid var(--color-border-subtle);
     }
-
-    .proof-item--cta {
-      flex: 0 0 100%;
-      border-top: 1px solid var(--color-border-subtle);
-      padding-top: 1rem;
+    .proof-item:first-child {
+      border-left: none;
+    }
+    .proof-item:last-child {
+      border-bottom: none;
     }
   }
 </style>
