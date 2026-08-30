@@ -1,0 +1,325 @@
+---
+// ExplodedMarkLayout.astro — The architectural skeleton of the page
+import { getCollection } from 'astro:content';
+
+const allProducts = await getCollection('products');
+const allOrigins = await getCollection('origins');
+const activeProducts = allProducts.filter(p => p.data.sizes && p.data.sizes.length > 0).slice(0, 4);
+---
+<div class="liquid-wrapper">
+  
+  <div class="gold-sweep-cross"></div>
+
+  <div class="exploded-mark-container">
+    
+    <!-- LEFT STROKE: The Narrative (Scrolls normally) -->
+    <section class="mark-stroke mark-left" id="stroke-left">
+      <div class="stroke-content">
+        <h1 class="stroke-title">The First<br/>Hands.</h1>
+        <p class="stroke-desc">
+          We are not a brand. We are the conduit.
+          Native grains, mountain teas, and forest spices.
+          Harvested by indigenous farming families, shipped direct.
+        </p>
+
+        <div class="stroke-spacer-large"></div>
+
+        <h2 class="stroke-subtitle">The Hands</h2>
+        <p class="stroke-text">
+          Whether harvesting whole tea leaves in the morning fog, climbing 40-foot trees for pepper, or cutting native millets with a sickle. Local farming families harvest only what nature gives willingly.
+        </p>
+      </div>
+    </section>
+
+    <!-- CENTER STROKE: The Void / Photography (Scrolls slower - Parallax) -->
+    <section class="mark-stroke mark-center" id="stroke-center">
+      <div class="stroke-content center-gallery">
+        <div class="liquid-image-container hero-img">
+          <img src="/assets/origins/wayanad-harvest-documentary.jpg" alt="The Origin" class="liquid-img" />
+        </div>
+        
+        <div class="stroke-spacer-medium"></div>
+        
+        <div class="liquid-image-container">
+          <img src="/assets/origins/wayanad-hand-documentary.jpg" alt="The Hands" class="liquid-img" />
+        </div>
+        
+        <div class="stroke-spacer-medium"></div>
+
+        <div class="liquid-image-container">
+          <img src="/assets/origins/spiti-valley-farm.jpg" alt="Spiti Valley" class="liquid-img" />
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT STROKE: The Harvest / Products (Scrolls faster - Parallax) -->
+    <section class="mark-stroke mark-right" id="stroke-right">
+      <div class="stroke-content">
+        <div class="origin-dot"></div>
+        
+        <div class="stroke-spacer-small"></div>
+        
+        <h2 class="stroke-subtitle">The Harvest</h2>
+        
+        <div class="liquid-products">
+          {activeProducts.map(product => {
+            const prodImg = product.data.images?.product || product.data.images?.packaging || '';
+            const size = product.data.sizes[0];
+            return (
+              <a href={`/origins/${typeof product.data.originSlug === 'object' ? product.data.originSlug.id : product.data.originSlug}/${product.id}`} class="liquid-product-card">
+                <div class="liquid-product-img-wrap">
+                  {prodImg && <img src={prodImg} alt={product.data.name} loading="lazy" />}
+                </div>
+                <div class="liquid-product-info">
+                  <h3>{product.data.name}</h3>
+                  <span>₹{size?.priceINR}</span>
+                </div>
+              </a>
+            )
+          })}
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initExplodedMark() {
+    // Parallax on the strokes
+    gsap.to('#stroke-center', {
+      yPercent: -15,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '.exploded-mark-container',
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: true,
+      }
+    });
+
+    gsap.to('#stroke-right', {
+      yPercent: -30,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '.exploded-mark-container',
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: true,
+      }
+    });
+
+    // The gold sweep horizontal movement
+    gsap.to('.gold-sweep-cross', {
+      xPercent: 100,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '.exploded-mark-container',
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: true,
+      }
+    });
+  }
+
+  document.addEventListener('astro:page-load', initExplodedMark);
+</script>
+
+<style>
+  .liquid-wrapper {
+    background-color: var(--color-bone);
+    min-height: 200vh;
+    position: relative;
+    overflow: hidden;
+    padding-top: var(--space-4xl);
+    padding-bottom: 20vh;
+  }
+
+  .exploded-mark-container {
+    display: grid;
+    /* Mimicking the proportions of the 3 marks */
+    grid-template-columns: 2fr 4.5fr 3fr;
+    gap: clamp(2rem, 5vw, 6rem);
+    padding: 0 var(--space-xl);
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    align-items: start;
+    position: relative;
+    z-index: 2;
+  }
+
+  .mark-stroke {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .mark-left {
+    padding-top: 20vh;
+  }
+  
+  .mark-center {
+    padding-top: 5vh;
+  }
+
+  .mark-right {
+    padding-top: 40vh;
+  }
+
+  .stroke-title {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 6vw, 5rem);
+    color: var(--color-deep-forest);
+    line-height: 1.0;
+    margin-bottom: var(--space-lg);
+  }
+
+  .stroke-subtitle {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    color: var(--color-deep-forest);
+    margin-bottom: var(--space-md);
+  }
+
+  .stroke-desc {
+    font-family: var(--font-narrative);
+    font-size: clamp(1rem, 1.5vw, 1.25rem);
+    color: var(--color-deep-forest);
+    line-height: 1.6;
+    opacity: 0.8;
+  }
+
+  .stroke-text {
+    font-family: var(--font-narrative);
+    font-size: 1.1rem;
+    color: var(--color-deep-forest);
+    line-height: 1.6;
+    opacity: 0.8;
+  }
+
+  .stroke-spacer-large { height: 40vh; }
+  .stroke-spacer-medium { height: 20vh; }
+  .stroke-spacer-small { height: 10vh; }
+
+  /* Liquid Image Containers */
+  .liquid-image-container {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    /* Organic, asymmetrical blob shape */
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    animation: morph 12s ease-in-out infinite;
+    transform: translateZ(0);
+    box-shadow: 0 10px 40px rgba(12, 21, 9, 0.05);
+  }
+
+  .hero-img {
+    aspect-ratio: 3/4;
+    border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+    animation-delay: -2s;
+    height: 80vh;
+  }
+
+  .liquid-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.8) contrast(1.1);
+  }
+
+  @keyframes morph {
+    0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+    50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+    100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+  }
+
+  /* Liquid Products */
+  .liquid-products {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4xl);
+  }
+
+  .liquid-product-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    text-decoration: none;
+    color: var(--color-deep-forest);
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  
+  .liquid-product-card:hover {
+    transform: translateY(-10px);
+  }
+
+  .liquid-product-img-wrap {
+    width: 100%;
+    aspect-ratio: 3/4;
+    overflow: hidden;
+    border-radius: 40% 60% 60% 40% / 60% 30% 70% 40%;
+    background: rgba(12, 21, 9, 0.05);
+    animation: morph 15s ease-in-out infinite reverse;
+  }
+
+  .liquid-product-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    mix-blend-mode: multiply;
+  }
+
+  .liquid-product-info h3 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    margin: 0;
+  }
+  
+  .liquid-product-info span {
+    font-family: var(--font-evidence);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--color-mark-gold);
+  }
+
+  /* The Sweeping Gold Cross */
+  .gold-sweep-cross {
+    position: absolute;
+    top: 60vh;
+    left: -20vw;
+    width: 150vw;
+    height: 12px;
+    background-color: var(--color-mark-gold);
+    border-radius: 12px;
+    z-index: 1;
+    transform-origin: left center;
+    rotate: -10deg; /* Angular slash */
+    opacity: 0.5;
+    filter: blur(1px);
+  }
+
+  /* The Origin Dot */
+  .origin-dot {
+    width: 48px;
+    height: 48px;
+    background-color: var(--color-mark-gold);
+    border-radius: 50%;
+    box-shadow: 0 0 30px rgba(201, 154, 91, 0.4);
+    margin-bottom: var(--space-xl);
+  }
+
+  @media (max-width: 900px) {
+    .exploded-mark-container {
+      grid-template-columns: 1fr;
+    }
+    .mark-stroke {
+      min-height: auto;
+      padding-top: var(--space-2xl);
+    }
+  }
+</style>
