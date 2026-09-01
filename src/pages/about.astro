@@ -4,237 +4,233 @@ import OriginMark from '../components/OriginMark.astro';
 ---
 
 <Layout
-  title="The Record — OurOrigin"
+  title="Our Ethos & Manifesto — OurOrigin"
   description="We know the person who grew this. We know the hill it came from. We know what the soil looks like in January."
-  noHeaderPadding={true}
 >
-  <main class="manifesto-viewport">
+  <article class="about-page">
+    
+    <!-- Hero Header -->
+    <header class="about-hero">
+      <div class="container-narrow">
+        <span class="badge-origin badge-gold">
+          <OriginMark size={14} variant="gold" />
+          <span>OUR ETHOS & MANIFESTO</span>
+        </span>
+        <h1 class="about-headline font-serif">
+          We are not a brand.<br />
+          <span class="italic-text">We are the conduit.</span>
+        </h1>
+        <p class="about-intro font-sans text-muted">
+          Most things travel too far before they find you. Something gets lost each time they change hands. By the time food reaches a commercial shelf, the place it came from is gone. The soil is gone. The season is gone. The name is gone.
+        </p>
+      </div>
+    </header>
 
-    <!-- Atmospheric terrain beneath the words -->
-    <div class="manifesto-bg" aria-hidden="true">
-      <img src="/assets/origins/wayanad-canopy.webp" alt="" class="manifesto-bg-img" />
-      <div class="manifesto-bg-veil"></div>
-    </div>
-
-    <div class="manifesto-track">
-
-      <!-- Beat 1 -->
-      <section class="manifesto-beat">
-        <div class="beat-content" data-cinematic="scale-down">
-          <h1 class="massive-statement">We know the person<br/>who grew this.</h1>
-        </div>
+    <!-- Narrative Section -->
+    <div class="about-body container-narrow">
+      
+      <!-- Section 1: First Hands -->
+      <section class="about-section">
+        <span class="section-kicker font-mono">01 / THE FIRST HANDS PRINCIPLE</span>
+        <h2 class="section-heading font-serif">The grower’s knowledge is the true credential.</h2>
+        <p>
+          The person who climbed the tree to pick the pepper berry, or walked the misty slopes at dawn to pluck the tea leaf, knew precisely when it was ready. No one closer to the source exists.
+        </p>
+        <p>
+          Their hands were first. In our model, farming families are not anonymous suppliers or charitable "beneficiaries" of a corporate scheme. They are the expert authors of the harvest. We print their names, their families, and their communities directly on the package.
+        </p>
       </section>
 
-      <!-- Beat 2 -->
-      <section class="manifesto-beat">
-        <div class="beat-content" data-cinematic="scale-down">
-          <h2 class="massive-statement">We know the hill<br/>it came from.</h2>
-          <p class="qualifier-text">11°36′N, 76°04′E — not a region. A place.</p>
-        </div>
+      <!-- Section 2: Terroir & Nature's Share -->
+      <section class="about-section">
+        <span class="section-kicker font-mono">02 / TERROIR & ECOLOGY</span>
+        <h2 class="section-heading font-serif">Flavor is geography, not a formulation.</h2>
+        <p>
+          True single-origin harvests carry the exact chemistry of their terroir: the specific elevation, the angle of sunlight through the Shola forest, the leaf litter decomposing into the soil over decades, and the monsoon currents moving over the mountain ridges.
+        </p>
+        <p>
+          When you blend harvests from hundreds of farms in bulk warehouses, you average out the flavor into anonymity. We keep every batch 100% single origin, unblended, and untouched by artificial additives or sulfur processing.
+        </p>
       </section>
 
-      <!-- Beat 3 -->
-      <section class="manifesto-beat">
-        <div class="beat-content" data-cinematic="scale-down">
-          <h2 class="massive-statement">Most things travel<br/>too far before<br/>they find you.</h2>
-          <p class="qualifier-text">Something gets lost each time they change hands.<br>By the time it reaches a shelf, the place it came from is gone.</p>
-        </div>
-      </section>
-
-      <!-- Beat 4 -->
-      <section class="manifesto-beat">
-        <div class="beat-content" data-cinematic="scale-down">
-          <h2 class="massive-statement">The soil is gone.<br/>The season is gone.<br/>The name is gone.</h2>
-          <p class="qualifier-text">What's left is a label.<br>A weight. A price. Nothing that could tell you<br>when it was ready or who knew when to cut it.</p>
-        </div>
-      </section>
-
-      <!-- Beat 5 -->
-      <section class="manifesto-beat">
-        <div class="beat-content" data-cinematic="scale-down">
-          <h2 class="massive-statement">First Hands.</h2>
-          <p class="qualifier-text">The person who grew this knew when to cut it.<br/>No one closer to the source exists. Their knowledge is the credential. Their hands were first.</p>
-          <div class="tally-stamp-wrap" style="display:flex;align-items:center;justify-content:center;gap:0.75rem;margin-top:1.5rem;">
-            <OriginMark size={32} variant="gold" />
-            <span style="font-family:var(--font-evidence);font-size:12px;color:var(--color-mark-gold);letter-spacing:0.1em;">THE TALLY GATE · PROOF OF COUNT</span>
+      <!-- Section 3: The Open Ledger -->
+      <section class="about-section">
+        <span class="section-kicker font-mono">03 / RADICAL TRANSPARENCY</span>
+        <h2 class="section-heading font-serif">Proving ethics with verifiable numbers.</h2>
+        <p>
+          We don't ask you to trust vague marketing slogans. We publish the actual numbers:
+        </p>
+        
+        <div class="ethos-stats-grid">
+          <div class="ethos-stat-card">
+            <span class="stat-num font-mono">60%</span>
+            <span class="stat-label">Average premium paid directly above local mandi rates.</span>
+          </div>
+          <div class="ethos-stat-card">
+            <span class="stat-num font-mono">100%</span>
+            <span class="stat-label">Single-origin integrity with verifiable GPS coordinates.</span>
+          </div>
+          <div class="ethos-stat-card">
+            <span class="stat-num font-mono">0</span>
+            <span class="stat-label">Commercial brokers, warehouse blenders, or corporate middlemen.</span>
           </div>
         </div>
       </section>
 
-      <!-- Beat 6: Closer -->
-      <section class="manifesto-beat beat-closer">
-        <div class="beat-content" data-cinematic="scale-down">
-          <h2 class="massive-statement">We are not a brand.</h2>
-          <p class="closer-text">We are the conduit.</p>
-          <a href="/" class="return-link">← Return to the Harvest</a>
+      <!-- Callout Box -->
+      <div class="ethos-quote-box">
+        <p class="quote-text font-serif">
+          "The colour you've always known as black pepper isn't the colour it grew. It's the colour of what happened to it afterward. We bring you food as it truly is."
+        </p>
+        <div class="quote-footer font-mono">
+          <span>THE RECORD OF ORIGIN</span> · <span>WESTERN GHATS</span>
         </div>
-      </section>
+      </div>
+
+      <!-- Final Actions -->
+      <div class="about-actions">
+        <a href="/#harvest" class="btn-primary">
+          <span>Explore This Season's Harvest</span>
+          <span aria-hidden="true">→</span>
+        </a>
+        <a href="/ledger" class="btn-secondary">
+          <span>Inspect The Open Ledger</span>
+        </a>
+      </div>
 
     </div>
-  </main>
+
+  </article>
 </Layout>
 
-<script>
-  import { gsap } from 'gsap';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-  gsap.registerPlugin(ScrollTrigger);
-
-  function initManifesto() {
-    document.querySelectorAll('[data-cinematic="scale-down"]').forEach((el) => {
-      gsap.fromTo(el,
-        { scale: 1.12, opacity: 0, filter: 'blur(16px)' },
-        {
-          scale: 1, opacity: 1, filter: 'blur(0px)',
-          duration: 1.2, ease: 'power2.out',
-          scrollTrigger: {
-            trigger: el, start: 'top 80%', end: 'center center', scrub: 0.8,
-          }
-        }
-      );
-      gsap.to(el, {
-        opacity: 0, filter: 'blur(8px)', scale: 0.94,
-        scrollTrigger: {
-          trigger: el, start: 'center center', end: 'bottom top', scrub: 0.8
-        }
-      });
-    });
-  }
-
-  initManifesto();
-  document.addEventListener('astro:after-swap', initManifesto);
-</script>
-
 <style>
-  .manifesto-viewport {
-    background-color: var(--color-deep-forest);
-    color: var(--color-bone);
-    position: relative;
-    overflow: hidden;
+  .about-page {
+    padding-bottom: clamp(4rem, 8vw, 7rem);
+    background-color: var(--color-bone);
   }
 
-  .manifesto-bg {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
+  .about-hero {
+    padding: clamp(3.5rem, 6vw, 5.5rem) 0 clamp(2.5rem, 4vw, 3.5rem);
+    background: linear-gradient(180deg, var(--color-bone-warm) 0%, var(--color-bone) 100%);
+    border-bottom: 1px solid var(--color-border-subtle);
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
   }
 
-  .manifesto-bg-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0.18;
-    filter: saturate(0.8) contrast(1.1);
+  .about-headline {
+    font-size: var(--type-display);
+    line-height: 1.15;
+    margin-top: 1rem;
+    margin-bottom: 1.25rem;
+    font-weight: 350;
   }
 
-  .manifesto-bg-veil {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at center, rgba(13,9,7,0.5) 0%, rgba(13,9,7,0.95) 100%);
-  }
-
-  .manifesto-track {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .manifesto-beat {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: var(--space-4xl) clamp(1.5rem, 6vw, 5rem);
-    text-align: center;
-  }
-
-  .beat-content {
-    max-width: 900px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-2xl);
-    will-change: transform, opacity, filter;
-  }
-
-  .massive-statement {
-    font-family: var(--font-display);
-    font-size: clamp(2.2rem, 5.5vw, 5rem);
-    line-height: 1.1;
-    font-weight: 400;
-    color: var(--color-bone);
-    margin: 0;
-    letter-spacing: -0.01em;
-  }
-
-  .qualifier-text {
-    font-family: var(--font-narrative);
-    font-size: clamp(1rem, 1.8vw, 1.5rem);
-    color: var(--color-bone-muted);
-    line-height: 1.7;
-    max-width: 580px;
-    margin: 0;
-    font-weight: 300;
-  }
-
-  .tally-note {
-    font-family: var(--font-evidence);
-    font-size: var(--type-whisper);
-    color: rgba(255, 69, 0, 0.45);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-top: var(--space-sm);
-  }
-
-  .closer-text {
-    font-family: var(--font-narrative);
-    font-size: clamp(1.4rem, 3vw, 2.2rem);
+  .italic-text {
     font-style: italic;
-    color: var(--color-mark-gold);
+    color: var(--color-ink-muted);
+  }
+
+  .about-intro {
+    font-size: 1.125rem;
+    line-height: 1.7;
     margin: 0;
   }
 
-  .beat-closer {
-    min-height: 100vh;
+  .about-body {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(2.5rem, 5vw, 4rem);
   }
 
-  .return-link {
-    margin-top: 12vh;
-    font-family: var(--font-evidence);
-    font-size: var(--type-evidence);
-    color: var(--color-bone-whisper);
-    text-decoration: none;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    transition: color var(--duration-standard) var(--ease-settle);
-    display: inline-block;
-    min-height: 44px;
-    line-height: 44px;
+  .about-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
   }
 
-  .return-link:hover {
+  .section-kicker {
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
     color: var(--color-mark-gold);
   }
 
-  /* ── Mobile ── */
-  @media (max-width: 768px) {
-    .manifesto-beat {
-      min-height: 90vh;
-      padding: var(--space-3xl) var(--space-lg);
-    }
+  .section-heading {
+    font-size: var(--type-title);
+    font-weight: 450;
+    margin: 0;
+    line-height: 1.25;
+  }
 
-    .massive-statement {
-      font-size: clamp(1.8rem, 8vw, 3.5rem);
-    }
+  .about-section p {
+    font-size: 1rem;
+    line-height: 1.75;
+    color: var(--color-ink-muted);
+    margin: 0;
+  }
 
-    .qualifier-text {
-      font-size: clamp(0.95rem, 4vw, 1.2rem);
-    }
+  /* Stats Grid */
+  .ethos-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    margin-top: 1rem;
+  }
 
-    .return-link {
-      margin-top: 8vh;
+  @media (min-width: 600px) {
+    .ethos-stats-grid {
+      grid-template-columns: repeat(3, 1fr);
     }
+  }
+
+  .ethos-stat-card {
+    padding: 1.5rem;
+    background-color: var(--color-bone-card);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .stat-num {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--color-mark-gold);
+  }
+
+  .stat-label {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--color-ink-muted);
+  }
+
+  /* Quote Box */
+  .ethos-quote-box {
+    padding: clamp(2rem, 4vw, 3rem);
+    background-color: var(--color-forest-dark);
+    color: var(--color-bone);
+    border-radius: 8px;
+    box-shadow: var(--shadow-card);
+  }
+
+  .quote-text {
+    font-size: clamp(1.15rem, 2vw, 1.45rem);
+    line-height: 1.5;
+    font-weight: 350;
+    font-style: italic;
+    color: var(--color-bone);
+    margin-bottom: 1.5rem;
+  }
+
+  .quote-footer {
+    font-size: 0.75rem;
+    color: var(--color-mark-gold);
+    letter-spacing: 0.05em;
+  }
+
+  .about-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding-top: 1rem;
   }
 </style>

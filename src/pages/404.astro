@@ -1,61 +1,51 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import OriginMark from '../components/OriginMark.astro';
 ---
 
 <Layout
-  title="Not Found — OurOrigin"
-  description="The trail ends here. But the origin continues."
+  title="Page Not Found — OurOrigin"
+  description="The trail ends here, but the origin continues."
 >
-    <main class="page-container">
-        <h1>404</h1>
-        <p>The trail ends here. But the origin continues.</p>
-        <a href="/#the-core" class="nav-link">← Back to The Core</a>
-    </main>
+  <div class="not-found-page">
+    <div class="container-narrow not-found-content">
+      <OriginMark size={36} variant="gold" />
+      <span class="badge-origin badge-gold">404 ERROR</span>
+      <h1 class="not-found-title font-serif">The Trail Ends Here</h1>
+      <p class="not-found-desc text-muted">
+        The page you are looking for has moved or does not exist. The harvests and origins remain intact.
+      </p>
+      <a href="/" class="btn-primary">← Return to Season's Harvest</a>
+    </div>
+  </div>
 </Layout>
 
 <style>
-    .page-container {
-        min-height: 80vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        padding: 0 5vw;
-    }
+  .not-found-page {
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(4rem, 8vw, 6rem) 0;
+    background-color: var(--color-bone);
+  }
 
-    h1 {
-        font-family: var(--font-display);
-        font-size: clamp(6rem, 15vw, 10rem);
-        margin: 0;
-        font-weight: 400;
-        opacity: 0.06;
-        color: var(--color-bone);
-        line-height: 1;
-    }
+  .not-found-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.25rem;
+  }
 
-    p {
-        font-family: var(--font-narrative);
-        font-size: var(--type-narrative);
-        line-height: var(--line-height-loose);
-        margin: 0;
-        color: var(--color-bone);
-        opacity: 0.7;
-    }
+  .not-found-title {
+    font-size: var(--type-display);
+    margin: 0;
+  }
 
-    .nav-link {
-        font-family: var(--font-evidence);
-        font-size: var(--type-evidence);
-        color: var(--color-bone-whisper);
-        text-decoration: none;
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-        margin-top: 3rem;
-        display: inline-block;
-        transition: color var(--duration-standard) var(--ease-settle);
-    }
-
-    .nav-link:hover {
-        color: var(--color-bone);
-    }
+  .not-found-desc {
+    font-size: 1rem;
+    max-width: 360px;
+    margin: 0;
+  }
 </style>

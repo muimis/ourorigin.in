@@ -5,190 +5,207 @@ import OriginMark from './OriginMark.astro';
 const currentYear = new Date().getFullYear();
 const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}`;
 ---
+
 <footer class="site-footer">
-  <div class="layout-three-marks footer-inner">
-
-    <!-- Pillar 1: Brand & Manifesto -->
-    <div class="footer-col-brand">
-      <div class="footer-brand-lockup">
-        <OriginMark size={24} variant="gold" />
-        <span class="wordmark">OurOrigin</span>
-      </div>
-      <p class="tagline">The first hands. The exact place. Honest harvests straight to your kitchen.</p>
-      <p class="footer-manifesto">Real food from the earth. Harvested directly. Transferred intact.</p>
-    </div>
-
-    <!-- Pillar 2: Empty or spacing -->
-    <div class="footer-col-spacer"></div>
-
-    <!-- Pillar 3: Navigation -->
-    <div class="footer-col-nav">
-      <nav class="footer-nav" aria-label="Footer navigation">
-        <div class="nav-group">
-          <span class="footer-col-title">The Archive</span>
-          <a href="/" class="footer-link">Home</a>
-          <a href="/about" class="footer-link">Why This Exists</a>
-          <a href="/observations" class="footer-link">Field Notes</a>
-        </div>
-        <div class="nav-group">
-          <span class="footer-col-title">Reach Us</span>
-          <a href={whatsappLink} class="footer-link" target="_blank" rel="noopener noreferrer">WhatsApp</a>
-          <a href={`mailto:${EMAIL_ADDRESS}`} class="footer-link">{EMAIL_ADDRESS}</a>
-          <a href="/contact" class="footer-link">Contact</a>
-        </div>
-        <div class="nav-group">
-          <span class="footer-col-title">Legal</span>
-          <a href="/terms" class="footer-link">Terms & Conditions</a>
-          <a href="/privacy" class="footer-link">Privacy Policy</a>
-        </div>
-      </nav>
-      
-      <div class="footer-bottom">
-        <div class="footer-copy">
-          &copy; {currentYear} OurOrigin. All rights reserved.
-        </div>
-        <div class="footer-fssai">
-          FSSAI Reg. No. {FSSAI_NUMBER}
+  <div class="footer-container">
+    <div class="footer-top-grid">
+      <!-- Col 1: Brand & Ethos -->
+      <div class="footer-col-main">
+        <a href="/" class="footer-brand" aria-label="OurOrigin">
+          <OriginMark size={28} variant="gold" />
+          <span class="footer-brand-title">OurOrigin</span>
+        </a>
+        <p class="footer-description">
+          Real Food from Wild Earth. Single-origin spices, high-mountain teas, and native grains sourced directly from indigenous farming families across the Western Ghats.
+        </p>
+        <div class="footer-coordinates">
+          <span>8°29′N, 76°57′E</span> · <span>Western Ghats Terroir</span>
         </div>
       </div>
+
+      <!-- Col 2: Navigation Links -->
+      <div class="footer-nav-group">
+        <h4 class="footer-heading">Harvests</h4>
+        <ul class="footer-links">
+          <li><a href="/origins/wayanad/black-pepper">Wayanad Black Pepper</a></li>
+          <li><a href="/origins/idukki/cardamom">Idukki Cardamom</a></li>
+          <li><a href="/origins/nilgiris/green-tea">Nilgiris Mountain Tea</a></li>
+          <li><a href="/origins/attappady/finger-millet">Attappady Millets</a></li>
+          <li><a href="/origins/thiruvananthapuram/dry-ginger">Sun-Dried Ginger</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 3: Principles & Traceability -->
+      <div class="footer-nav-group">
+        <h4 class="footer-heading">Provenance</h4>
+        <ul class="footer-links">
+          <li><a href="/about">First Hands Ethos</a></li>
+          <li><a href="/ledger">The Open Ledger</a></li>
+          <li><a href="/observations">Field Notes</a></li>
+          <li><a href="/#origins">Origins & Terroir</a></li>
+          <li><a href="/contact">Grower Partnerships</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 4: Direct Contact -->
+      <div class="footer-nav-group">
+        <h4 class="footer-heading">Direct Contact</h4>
+        <ul class="footer-links">
+          <li><a href={whatsappLink} target="_blank" rel="noopener noreferrer">Order via WhatsApp</a></li>
+          <li><a href={`mailto:${EMAIL_ADDRESS}`}>{EMAIL_ADDRESS}</a></li>
+          <li><a href="/contact">Inquiries & Custom Orders</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/terms">Terms of Trade</a></li>
+        </ul>
+      </div>
     </div>
 
+    <!-- Footer Bottom Bar -->
+    <div class="footer-bottom-bar">
+      <p class="footer-copy">
+        &copy; {currentYear} OurOrigin. Universal Ethical Direct Trade. All rights reserved.
+      </p>
+      <div class="footer-meta-tags">
+        <span class="fssai-badge">FSSAI Reg. No. {FSSAI_NUMBER}</span>
+        <span class="dot-sep">·</span>
+        <span>Zero Middlemen</span>
+      </div>
+    </div>
   </div>
 </footer>
 
 <style>
   .site-footer {
-    border-top: 1px solid rgba(245, 240, 232, 0.06);
-    background-color: var(--color-deep-forest);
+    background-color: var(--color-forest-dark);
     color: var(--color-bone);
-    margin-top: auto;
+    padding: clamp(3.5rem, 6vw, 5.5rem) 0 2rem;
+    border-top: 1px solid var(--color-border-dark);
   }
 
-  .footer-inner {
-    align-items: stretch;
+  .footer-container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--gutter-x);
   }
 
-  .footer-col-brand {
-    grid-column: span 1;
-    padding: var(--space-4xl) 0;
-    border-right: none;
+  .footer-top-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    padding-bottom: 3.5rem;
+    border-bottom: 1px solid var(--color-border-dark);
+  }
+
+  @media (min-width: 640px) {
+    .footer-top-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .footer-top-grid {
+      grid-template-columns: 2fr 1fr 1fr 1.25fr;
+      gap: 3rem;
+    }
+  }
+
+  .footer-col-main {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    gap: 1rem;
   }
 
-  .footer-col-spacer {
-    grid-column: span 1;
-    border-right: none;
-  }
-
-  .footer-col-nav {
-    grid-column: span 1;
-    padding: var(--space-4xl) 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-
-  .footer-brand-lockup {
-    display: flex;
+  .footer-brand {
+    display: inline-flex;
     align-items: center;
-    gap: 0.6rem;
-    margin-bottom: var(--space-lg);
+    gap: 0.65rem;
   }
 
-  .wordmark {
-    font-family: var(--font-display);
-    font-size: 1.5rem;
-    letter-spacing: 0.05em;
-    display: block;
-    margin-bottom: 0;
+  .footer-brand-title {
+    font-family: var(--font-serif);
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--color-bone);
   }
 
-  .tagline {
-    font-family: var(--font-narrative);
-    font-style: italic;
-    font-size: var(--type-narrative);
-    color: var(--color-bone-muted);
-    margin: 0 0 var(--space-2xl) 0;
-    line-height: var(--line-height-base);
-  }
-
-  .footer-manifesto {
-    font-family: var(--font-evidence);
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--color-mark-gold);
-    margin: 0;
+  .footer-description {
+    font-size: 0.875rem;
     line-height: 1.6;
+    color: var(--color-forest-muted);
+    max-width: 360px;
+    margin: 0;
   }
 
-  .footer-nav {
-    display: flex;
-    justify-content: flex-start;
-    gap: 4rem;
-    margin-bottom: var(--space-4xl);
-  }
-
-  .nav-group {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-sm);
-  }
-
-  .footer-col-title {
-    font-family: var(--font-evidence);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
+  .footer-coordinates {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
     color: var(--color-mark-gold);
-    margin-bottom: var(--space-md);
-  }
-
-  .footer-link {
-    font-family: var(--font-evidence);
-    font-size: 12px;
-    color: var(--color-bone-whisper);
-    text-decoration: none;
-    transition: color var(--duration-standard) var(--ease-settle);
-    line-height: 1.8;
-  }
-
-  .footer-link:hover {
-    color: var(--color-bone);
-  }
-
-  .footer-bottom {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-top: 1px solid rgba(245, 240, 232, 0.06);
-    padding-top: var(--space-xl);
-  }
-
-  .footer-copy, .footer-fssai {
-    font-family: var(--font-evidence);
-    font-size: 10px;
-    color: var(--color-bone-whisper);
     letter-spacing: 0.05em;
   }
 
-  @media (max-width: 1024px) {
-    .footer-col-brand, .footer-col-spacer, .footer-col-nav {
-      grid-column: span 1;
-      border-right: none;
+  .footer-heading {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-mark-gold);
+    margin-bottom: 1.25rem;
+  }
+
+  .footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .footer-links a {
+    font-size: 0.875rem;
+    color: var(--color-forest-muted);
+    transition: color var(--duration-base) var(--ease-smooth);
+  }
+
+  .footer-links a:hover {
+    color: var(--color-bone);
+  }
+
+  /* Bottom Bar */
+  .footer-bottom-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-top: 2rem;
+    font-size: 0.75rem;
+    color: var(--color-forest-whisper);
+  }
+
+  @media (min-width: 768px) {
+    .footer-bottom-bar {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
     }
-    .footer-col-brand {
-      border-bottom: 1px solid rgba(245, 240, 232, 0.06);
-      padding-bottom: var(--space-2xl);
-    }
-    .footer-col-spacer {
-      display: none;
-    }
-    .footer-nav {
-      flex-wrap: wrap;
-      gap: 2rem;
-    }
+  }
+
+  .footer-copy {
+    margin: 0;
+  }
+
+  .footer-meta-tags {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+  }
+
+  .fssai-badge {
+    color: var(--color-forest-muted);
+  }
+
+  .dot-sep {
+    color: var(--color-forest-whisper);
   }
 </style>

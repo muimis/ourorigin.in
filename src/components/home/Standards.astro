@@ -1,125 +1,141 @@
 ---
-// Standards.astro — Proof bar mapped to the 4-pillar grid.
+// Standards.astro — Core Principles & Direct Trade Standard
 ---
 
-<section class="proof-bar" aria-label="Our Standards">
-  <div class="layout-pillar-grid proof-inner">
+<section class="standards-section" aria-label="Our Ethical Trade Standards">
+  <div class="container">
+    <div class="standards-grid">
 
-    <div class="proof-item">
-      <span class="proof-num">0</span>
-      <span class="proof-label">Chemical<br/>inputs</span>
-    </div>
-
-    <div class="proof-item">
-      <span class="proof-num">1st</span>
-      <span class="proof-label">Hand.<br/>Direct from grower.</span>
-    </div>
-
-    <div class="proof-item">
-      <span class="proof-num">100%</span>
-      <span class="proof-label">Single origin,<br/>never blended</span>
-    </div>
-
-    <div class="proof-item proof-item-last">
-      <div class="proof-stat">
-        <span class="proof-num">48h</span>
-        <span class="proof-label">Farm to<br/>packaging</span>
+      <div class="standard-card">
+        <span class="standard-idx font-mono">01 / FIRST HANDS</span>
+        <h3 class="standard-title font-serif">Named Growers</h3>
+        <p class="standard-desc">
+          Every harvest is credited to the specific family who grew and gathered it. We work directly with native practitioners whose ecological knowledge is the true credential.
+        </p>
       </div>
-      <a href="/about" class="proof-cta-link">
-        OUR STANDARDS <span class="cta-arrow">→</span>
-      </a>
-    </div>
 
+      <div class="standard-card">
+        <span class="standard-idx font-mono">02 / TERROIR</span>
+        <h3 class="standard-title font-serif">Never Blended</h3>
+        <p class="standard-desc">
+          100% single origin from specific micro-climates in the Western Ghats. We never mix harvests from different farms or seasons. You taste the true soil and weather of that place.
+        </p>
+      </div>
+
+      <div class="standard-card">
+        <span class="standard-idx font-mono">03 / ECOLOGY</span>
+        <h3 class="standard-title font-serif">Nature’s Share</h3>
+        <p class="standard-desc">
+          Harvested in sync with the forest canopy. Native growers leave the unripened berries and the forest canopy intact for wild wildlife, harvesting only what the earth yields willingly.
+        </p>
+      </div>
+
+      <div class="standard-card standard-card--cta">
+        <span class="standard-idx font-mono">04 / THE PROOF</span>
+        <h3 class="standard-title font-serif">Open Ledger</h3>
+        <p class="standard-desc">
+          We publish the exact price paid to growers (typically 40–60% above local market benchmarks) alongside verifiable geo-coordinates and batch numbers.
+        </p>
+        <a href="/ledger" class="standard-link font-sans">
+          <span>Inspect the Ledger</span>
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+
+    </div>
   </div>
 </section>
 
 <style>
-  .proof-bar {
-    border-top: 1px solid var(--color-border-subtle);
+  .standards-section {
+    padding: clamp(3.5rem, 6vw, 5.5rem) 0;
+    background-color: var(--color-bone-card);
     border-bottom: 1px solid var(--color-border-subtle);
-    background: var(--color-bone);
   }
 
-  .proof-inner {
-    /* layout-pillar-grid handles the 4 columns */
+  .standards-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 
-  .proof-item {
+  @media (min-width: 640px) {
+    .standards-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .standards-grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+    }
+  }
+
+  .standard-card {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    padding: clamp(2rem, 4vw, 3rem) var(--space-xl);
-    border-right: 1px solid var(--color-border-subtle);
+    padding: 2rem 1.5rem;
+    background-color: var(--color-bone);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 6px;
+    transition: transform var(--duration-base) var(--ease-smooth), box-shadow var(--duration-base) var(--ease-smooth);
   }
 
-  .proof-item:last-child {
-    border-right: none;
+  .standard-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-subtle);
+    border-color: var(--color-border-medium);
   }
 
-  .proof-item:first-child {
-    border-left: 1px solid var(--color-border-subtle);
+  .standard-card--cta {
+    background-color: var(--color-forest-dark);
+    color: var(--color-bone);
+    border-color: transparent;
   }
 
-  .proof-num {
-    font-family: var(--font-display);
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    font-weight: 300;
-    color: var(--color-deep-forest);
-    line-height: 1.0;
-    margin-bottom: var(--space-md);
+  .standard-card--cta .standard-title {
+    color: var(--color-bone);
   }
 
-  .proof-label {
-    font-family: var(--font-evidence);
-    font-size: 11px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--color-deep-forest);
-    opacity: 0.7;
-    line-height: 1.5;
+  .standard-card--cta .standard-desc {
+    color: var(--color-forest-muted);
   }
 
-  .proof-item-last {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: var(--space-xl);
-  }
-
-  .proof-stat {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .proof-cta-link {
-    font-family: var(--font-evidence);
-    font-size: 11px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
+  .standard-idx {
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
     color: var(--color-mark-gold);
-    text-decoration: none;
+    margin-bottom: 1rem;
+  }
+
+  .standard-title {
+    font-size: 1.45rem;
     font-weight: 500;
+    margin-bottom: 0.75rem;
+    color: var(--color-deep-forest);
+  }
+
+  .standard-desc {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--color-ink-muted);
+    margin-bottom: 1.25rem;
+    flex-grow: 1;
+  }
+
+  .standard-link {
     display: inline-flex;
     align-items: center;
-    gap: var(--space-sm);
-    transition: color 0.3s;
+    gap: 0.35rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--color-mark-gold);
+    text-decoration: none;
+    margin-top: auto;
   }
 
-  .proof-cta-link:hover {
-    color: var(--color-deep-forest);
-  }
-
-  @media (max-width: 1024px) {
-    .proof-item {
-      padding: 1.5rem var(--space-lg);
-      border-right: none;
-      border-bottom: 1px solid var(--color-border-subtle);
-    }
-    .proof-item:first-child {
-      border-left: none;
-    }
-    .proof-item:last-child {
-      border-bottom: none;
-    }
+  .standard-link:hover {
+    text-decoration: underline;
   }
 </style>

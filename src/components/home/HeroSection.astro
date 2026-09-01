@@ -1,245 +1,222 @@
 ---
-// HeroSection.astro — The Clipped Origin Mask
+// HeroSection.astro — Clean Editorial Hero
+import OriginMark from '../OriginMark.astro';
 ---
 
-<section class="hero-frame" id="hero" aria-label="The Land">
-  <!-- The main container holding both the mask and the gold sweep -->
-  <div class="hero-logo-mask-wrapper" id="hero-logo-trigger">
+<section class="hero-section" id="hero" aria-label="OurOrigin Introduction">
+  <div class="hero-container">
     
-    <!-- The Image masked by the 3 marks (defined in Layout.astro) -->
-    <div class="hero-clip-layer">
-      <div class="hero-media">
-        <img src="/assets/images/gesture_hands.png" alt="Harvesters on the mountain" />
+    <!-- Top Provenance Tag -->
+    <div class="hero-top-badge">
+      <span class="badge-origin badge-gold">
+        <OriginMark size={14} variant="gold" />
+        <span>Universal Ethical Direct Trade</span>
+      </span>
+      <span class="hero-coords font-mono text-whisper">11°36′N, 76°04′E · Western Ghats</span>
+    </div>
+
+    <!-- Main Editorial Headline -->
+    <div class="hero-content">
+      <h1 class="hero-headline font-serif">
+        Real food from wild earth.<br />
+        <span class="headline-italic">Direct from first hands.</span>
+      </h1>
+      
+      <p class="hero-lead font-sans">
+        Native grains, high-mountain teas, and forest spices. Sourced directly from indigenous farming families across the Western Ghats with zero middlemen, complete price transparency, and unblended single-origin integrity.
+      </p>
+
+      <!-- Action CTAs -->
+      <div class="hero-actions">
+        <a href="#harvest" class="btn-primary">
+          <span>Explore Season’s Harvest</span>
+          <span class="btn-arrow" aria-hidden="true">↓</span>
+        </a>
+        <a href="/about" class="btn-secondary">
+          <span>Our Ethos & Origin</span>
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </a>
       </div>
     </div>
-    
-    <!-- The Gold Sweep & Dot perfectly overlaid -->
-    <div class="hero-gold-layer">
-      <svg viewBox="0 0 580 540" fill="none" class="hero-gold-svg">
-        <path class="hero-dot" fill="var(--color-mark-gold)" d="M527,324 L515,330 L511,335 L507,345 L508,357 L510,362 L517,369 L525,373 L540,373 L553,363 L557,352 L557,344 L552,333 L541,325 Z"/>
-        <path class="hero-sweep" fill="var(--color-mark-gold)" d="M519,269 L502,269 L473,274 L429,286 L424,286 L421,288 L416,288 L412,291 L409,290 L402,294 L399,293 L393,296 L391,295 L356,307 L342,310 L327,316 L310,320 L293,326 L291,328 L287,328 L279,332 L278,331 L271,335 L269,334 L262,338 L203,359 L200,362 L198,361 L195,364 L186,366 L180,370 L179,369 L176,372 L174,371 L172,374 L166,376 L165,375 L162,378 L154,380 L153,382 L152,381 L152,383 L149,383 L127,394 L94,413 L62,435 L51,446 L50,454 L52,457 L57,459 L70,456 L89,445 L158,412 L159,413 L169,407 L181,403 L234,378 L277,361 L283,357 L287,357 L307,349 L308,347 L310,348 L316,344 L348,333 L350,331 L365,327 L375,322 L386,320 L403,314 L404,312 L408,312 L411,309 L414,310 L419,307 L423,307 L425,305 L446,299 L474,288 L494,282 L499,279 L503,279 L519,272 Z"/>
-      </svg>
-    </div>
 
-    <!-- The floating typography -->
-    <div class="hero-floating-text hero-text-left" data-reveal="fade-up">
-      <h1 class="hero-title">
-        Rooted in origin.<br/>Driven by humanity.
-      </h1>
-      <p class="hero-subtitle">
-        We work at the intersection of native growers, purpose and impact.
-      </p>
-    </div>
+    <!-- Minimalist Visual Feature Strip -->
+    <div class="hero-feature-card">
+      <div class="hero-media-wrapper">
+        <img 
+          src="/assets/images/gesture_hands.png" 
+          alt="Hands harvesting forest crop at source" 
+          class="hero-media-img"
+          loading="eager"
+        />
+        <div class="hero-media-overlay"></div>
+      </div>
 
-    <div class="hero-floating-text hero-text-right" data-reveal="fade-up">
-      <a href="#origins" class="hero-link">
-        OUR STORY <span class="hero-link-arrow">→</span>
-      </a>
+      <div class="hero-feature-meta">
+        <div class="meta-item">
+          <span class="meta-label font-mono">FIRST HANDS</span>
+          <span class="meta-val">Named farming families</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label font-mono">TERROIR</span>
+          <span class="meta-val">Forest Canopy & Shola mist</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label font-mono">PURITY</span>
+          <span class="meta-val">100% Single-origin & unblended</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label font-mono">LEDGER</span>
+          <span class="meta-val text-gold">Direct fair payout</span>
+        </div>
+      </div>
     </div>
 
   </div>
 </section>
 
-<script>
-  import { gsap } from 'gsap';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-  function initHero() {
-    gsap.registerPlugin(ScrollTrigger);
-
-    const tl = gsap.timeline({ delay: 0.2 });
-
-    // Entrance animation
-    tl.fromTo('.hero-media img',
-      { scale: 1.2, opacity: 0, filter: 'grayscale(100%)' },
-      { scale: 1, opacity: 1, filter: 'grayscale(0%)', duration: 2, ease: 'power3.out' }
-    );
-
-    tl.fromTo('.hero-sweep',
-      { opacity: 0, x: 20, y: -20 },
-      { opacity: 1, x: 0, y: 0, duration: 1.2, ease: 'power2.out' },
-      '-=1.5'
-    );
-
-    tl.fromTo('.hero-dot',
-      { scale: 0, transformOrigin: '50% 50%' },
-      { scale: 1, duration: 0.6, ease: 'back.out(2)' },
-      '-=1'
-    );
-
-    tl.fromTo('[data-reveal="fade-up"]',
-      { opacity: 0, y: 30 },
-      { opacity: 1, y: 0, duration: 1, stagger: 0.2, ease: 'power3.out' },
-      '-=1'
-    );
-
-    // Scroll animation: The mask scales up to reveal the world
-    gsap.to('.hero-clip-layer', {
-      scrollTrigger: {
-        trigger: '.hero-frame',
-        start: 'top top',
-        end: '+=1500', // Pin for 1500px of scrolling
-        scrub: 1,
-        pin: true,
-      },
-      scale: 30, // Huge scale to reveal the image completely
-      transformOrigin: '50% 50%', // Center
-      ease: 'power1.inOut'
-    });
-
-    gsap.to('.hero-gold-layer, .hero-floating-text', {
-      scrollTrigger: {
-        trigger: '.hero-frame',
-        start: 'top top',
-        end: '+=500',
-        scrub: true,
-      },
-      opacity: 0,
-      y: -50,
-    });
-  }
-
-  if (!(window as any)["heroClipInit"]) {
-    (window as any)["heroClipInit"] = true;
-    document.addEventListener("DOMContentLoaded", initHero);
-    document.addEventListener("astro:page-load", initHero);
-  } else {
-    document.addEventListener("astro:page-load", initHero);
-  }
-</script>
-
 <style>
-  .hero-frame {
-    width: 100%;
-    min-height: 100vh;
+  .hero-section {
+    padding: clamp(3rem, 6vw, 5.5rem) 0 clamp(3.5rem, 7vw, 6rem);
+    background: linear-gradient(180deg, var(--color-bone) 0%, var(--color-bone-warm) 100%);
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+
+  .hero-container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--gutter-x);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(2rem, 4vw, 3.5rem);
+  }
+
+  .hero-top-badge {
     display: flex;
     align-items: center;
-    justify-content: center;
-    background-color: var(--color-bone);
-    overflow: hidden; /* Keep the massive scaled mask from breaking horizontal scroll */
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
   }
 
-  .hero-logo-mask-wrapper {
+  .hero-coords {
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+
+  .hero-content {
+    max-width: 920px;
+  }
+
+  .hero-headline {
+    font-size: var(--type-hero);
+    line-height: 1.1;
+    font-weight: 350;
+    color: var(--color-deep-forest);
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .headline-italic {
+    font-style: italic;
+    color: var(--color-ink-muted);
+  }
+
+  .hero-lead {
+    font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+    line-height: 1.65;
+    color: var(--color-ink-muted);
+    max-width: 760px;
+    margin-bottom: 2rem;
+    font-weight: 400;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .btn-arrow {
+    font-size: 1.1em;
+    transition: transform 0.2s ease;
+  }
+
+  .btn-primary:hover .btn-arrow {
+    transform: translateY(2px);
+  }
+
+  .btn-secondary:hover .btn-arrow {
+    transform: translateX(3px);
+  }
+
+  /* Feature Banner Card */
+  .hero-feature-card {
+    background-color: var(--color-bone-card);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+
+  .hero-media-wrapper {
     position: relative;
     width: 100%;
-    max-width: 900px; /* Large cinematic size */
-    aspect-ratio: 580 / 540;
-    margin: 0 auto;
-    margin-top: 5vh;
+    height: clamp(240px, 35vw, 440px);
+    background-color: var(--color-forest-dark);
+    overflow: hidden;
   }
 
-  .hero-clip-layer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    clip-path: url(#logo-mask); /* The 3 vertical marks from Layout.astro */
-    z-index: 1;
-  }
-
-  .hero-media {
-    width: 100%;
-    height: 100%;
-    background-color: var(--color-deep-forest);
-  }
-
-  .hero-media img {
+  .hero-media-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: center;
+    filter: saturate(0.95) contrast(1.05);
+    transition: transform 0.8s var(--ease-smooth);
   }
 
-  .hero-gold-layer {
+  .hero-feature-card:hover .hero-media-img {
+    transform: scale(1.02);
+  }
+
+  .hero-media-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 2; /* Sits exactly on top of the clipped image */
+    inset: 0;
+    background: linear-gradient(180deg, rgba(12, 21, 10, 0.05) 0%, rgba(12, 21, 10, 0.35) 100%);
     pointer-events: none;
   }
 
-  .hero-gold-svg {
-    width: 100%;
-    height: 100%;
+  .hero-feature-meta {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    padding: 1.5rem clamp(1.25rem, 3vw, 2.5rem);
+    background-color: var(--color-bone-card);
+    border-top: 1px solid var(--color-border-subtle);
   }
 
-  .hero-floating-text {
-    position: absolute;
-    z-index: 3;
-    max-width: 300px;
-    pointer-events: auto;
+  @media (min-width: 768px) {
+    .hero-feature-meta {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
   }
 
-  .hero-text-left {
-    top: 40%;
-    left: -15%;
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
   }
 
-  .hero-text-right {
-    bottom: 10%;
-    right: -10%;
+  .meta-label {
+    font-size: 0.6875rem;
+    color: var(--color-ink-whisper);
+    letter-spacing: 0.08em;
   }
 
-  .hero-title {
-    margin: 0 0 var(--space-md) 0;
-    font-family: var(--font-narrative);
-    font-size: clamp(2.5rem, 4vw, 3.5rem);
-    line-height: 1.05;
-    color: var(--color-deep-forest);
-    font-weight: 300;
-  }
-
-  .hero-subtitle {
-    margin: 0;
-    font-family: var(--font-body);
-    font-size: var(--type-whisper);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    line-height: 1.7;
-    color: var(--color-deep-forest);
-    opacity: 0.8;
-  }
-
-  .hero-link {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-sm);
-    font-family: var(--font-evidence);
-    font-size: var(--type-whisper);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    text-decoration: none;
-    color: var(--color-deep-forest);
+  .meta-val {
+    font-size: 0.875rem;
     font-weight: 500;
-    border-bottom: 1px solid var(--color-deep-forest);
-    padding-bottom: 4px;
-    transition: color 0.3s, border-color 0.3s;
-  }
-
-  .hero-link:hover {
-    color: var(--color-mark-gold);
-    border-color: var(--color-mark-gold);
-  }
-
-  .hero-link-arrow {
-    color: var(--color-mark-gold);
-    font-weight: 300;
-  }
-
-  @media (max-width: 1024px) {
-    .hero-text-left {
-      top: -10%;
-      left: 5%;
-    }
-    .hero-text-right {
-      bottom: -15%;
-      right: 5%;
-    }
-    .hero-logo-mask-wrapper {
-      max-width: 90vw;
-    }
+    color: var(--color-deep-forest);
   }
 </style>

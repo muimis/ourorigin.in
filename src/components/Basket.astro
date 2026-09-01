@@ -1,1199 +1,647 @@
 ---
-import { getCollection } from 'astro:content';
-import { WHATSAPP_NUMBER, FSSAI_NUMBER, GOOGLE_SHEET_API_URL } from '../utils/constants';
+import { WHATSAPP_NUMBER, FSSAI_NUMBER } from '../utils/constants';
 import OriginMark from './OriginMark.astro';
-
-const products = await getCollection('products');
-
-// Build a map of originId -> companion product names
-const companionProductsMap: Record<string, any[]> = {};
-const proofMap: Record<string, any> = {};
-
-products.forEach(product => {
-  if (product.data.proofSystem) {
-    proofMap[product.id] = product.data.proofSystem;
-  }
-  if (!product.data.isAnchorProduct) {
-    const originId = typeof (product.data.originSlug as any) === 'object' ? (product.data.originSlug as any).id : product.data.originSlug;
-    if (!companionProductsMap[originId]) {
-      companionProductsMap[originId] = [];
-    }
-    companionProductsMap[originId].push({
-      id: product.id,
-      name: product.data.name
-    });
-  }
-});
-
-const companionsJson = JSON.stringify(companionProductsMap);
-const proofsJson = JSON.stringify(proofMap);
 ---
 
-<!-- Global Toast Removed -->
+<!-- Basket Backdrop -->
+<div id="basket-backdrop" class="basket-backdrop" aria-hidden="true"></div>
 
-<!-- Persistent Trigger -->
-<div id="basket-trigger" class="basket-trigger hidden" aria-live="polite" role="button" tabindex="0">
-  <span id="basket-count"></span> in Harvest
-</div>
-
-<!-- Slide-up Panel -->
-<div id="basket-overlay" class="basket-overlay hidden" data-whatsapp={WHATSAPP_NUMBER} data-api-url={GOOGLE_SHEET_API_URL} data-companions={companionsJson} data-proofs={proofsJson}>
-  <div class="basket-backdrop" id="basket-close-backdrop"></div>
-  <div class="basket-panel" role="complementary" aria-label="Your Basket">
+<!-- Basket Slide-over Panel -->
+<aside id="basket-drawer" class="basket-drawer" aria-label="Shopping Basket" aria-hidden="true">
+  <div class="basket-container">
+    
+    <!-- Drawer Header -->
     <div class="basket-header">
-      <h2 class="basket-title">Your Harvest</h2>
-      <button id="basket-close-btn" class="basket-close" aria-label="Close Basket">Close</button>
+      <div class="basket-header-title">
+        <OriginMark size={20} variant="gold" />
+        <h2 class="basket-heading font-serif">Your Harvest Basket</h2>
+      </div>
+      <button type="button" id="basket-close-btn" class="basket-close-btn" aria-label="Close basket">
+        ✕
+      </button>
     </div>
-    
-    <div class="basket-content">
-      <div id="basket-items-container" class="basket-items">
-        <!-- JS will populate items here -->
+
+    <!-- Basket Body -->
+    <div class="basket-body">
+      <!-- Empty State -->
+      <div id="basket-empty" class="basket-empty-state">
+        <div class="empty-icon font-mono">∅</div>
+        <p class="empty-title font-serif">Your harvest is empty</p>
+        <p class="empty-desc text-muted">Explore our native spices, mountain teas, and heritage grains.</p>
+        <a href="/#harvest" class="btn-primary btn-sm" id="empty-explore-btn">Browse Harvests</a>
       </div>
-      
-      <div id="basket-empty-state" class="basket-empty hidden">
-        Your Harvest is empty.<br>Explore our origins.
-      </div>
-      
-      <div id="basket-footer" class="basket-footer hidden">
-        <div class="basket-total">
-          <span>Subtotal</span>
-          <span id="basket-subtotal-price" class="price-font">₹0</span>
-        </div>
-        
-        <!-- Order Summary (Gap 2) -->
-        <div id="basket-order-summary" class="basket-order-summary">
-          <p class="summary-heading">YOUR ORDER</p>
-          <div id="summary-items" class="summary-items"></div>
-          <hr class="summary-divider" />
-          <div class="summary-row">
-            <span>Subtotal</span>
-            <span id="summary-subtotal">₹0</span>
-          </div>
-          <div class="summary-row">
-            <span>Shipping</span>
-            <span id="summary-shipping">Free</span>
-          </div>
-          <div id="shipping-prompt-note" class="shipping-prompt-note hidden"></div>
-          <hr class="summary-divider-solid" />
-          <div class="summary-row total-row">
-            <span>Total</span>
-            <span id="summary-total">₹0</span>
-          </div>
-          <p class="dispatch-timeline">DISPATCH WITHIN 2–3 WORKING DAYS · THIRUVANANTHAPURAM</p>
-        </div>
-        <!-- Community Impact Summary -->
-        <div id="basket-community-summary" class="basket-community-summary">
-          <span class="community-summary-tag">SUPPORTED ORIGINS</span>
-          <span id="community-origins-list" class="community-origins-list">First Hands · Western Ghats Community</span>
-        </div>
 
-        <div class="basket-observation-guide">
-          <p class="observation-title">THE FINAL INCH</p>
-          <p class="observation-text">
-            This harvest reflects a journey deep into the forest. It reflects the First Hands leaving the unripened—and whatever the wild animals claim—to nature with joy, not compromise. Their dignity is inherent. By completing this transfer, you take your place as the final link in this origin system.
-          </p>
-        </div>
-
-        <p class="summary-heading">WHERE TO SEND THIS</p>        
-        <!-- Shipping Form -->
-        <form id="shipping-form" class="shipping-form">
-          <input type="text" id="ship-name" name="name" placeholder="Full name" required />
-          <input type="text" id="ship-house" name="house" placeholder="House/Flat number" required />
-          <input type="text" id="ship-street" name="street" placeholder="Street/Locality" required />
-          <div class="form-row">
-            <input type="text" id="ship-city" name="city" placeholder="City" required />
-            <input type="text" id="ship-state" name="state" placeholder="State" required />
-          </div>
-          <div class="form-row">
-            <input type="text" id="ship-pin" name="pin" placeholder="PIN Code (6 digits)" pattern="[0-9]{6}" required />
-            <input type="tel" id="ship-phone" name="phone" placeholder="Phone (for delivery updates)" pattern="[0-9]{10,12}" required />
-          </div>
-          <div class="shipping-actions">
-            <p id="shipping-saved-note" class="shipping-saved-note hidden">Saved from your last order. Tap any field to change.</p>
-            <button type="button" id="clear-shipping-btn" class="clear-shipping-btn hidden">Clear saved details</button>
-          </div>
-        </form>
-
-        <!-- What happens next (Gap 3) -->
-        <p class="human-note">You will receive a payment link via WhatsApp. No account required.</p>
-
-        <!-- UPI Option -->
-        <div class="basket-upi-section">
-          <p class="upi-prompt">Prefer to pay directly?</p>
-          <p class="upi-id">UPI: <span id="upi-text">ourorigin@ybl</span> <button type="button" id="copy-upi-btn" class="copy-upi-btn" aria-label="Copy UPI ID">Copy</button></p>
-          <p class="upi-note human-note-small">Paid via UPI? Include your payment reference in the message and we'll confirm immediately.</p>
-        </div>
-
-        <button id="basket-connect-btn" class="basket-connect" aria-label="Transmit manifest via WhatsApp">Complete the Transfer</button>
-        
-        <div class="basket-fssai">FSSAI Reg. No. {FSSAI_NUMBER}</div>
-      </div>
-      
-      <!-- Post-checkout state (Gap 4) -->
-      <div id="basket-post-checkout" class="basket-post-checkout hidden">
-        <div class="post-mark-container" style="margin-bottom: 2rem;">
-          <OriginMark id="post-checkout-mark" variant="gold" size={80} />
-        </div>
-        <p class="post-title">Honored &#x2713;</p>
-        <p class="post-subtitle">We'll reply on WhatsApp.</p>
-        <div class="post-copy-fallback">
-          <p class="fallback-note">If WhatsApp did not open, you can copy the order details manually to paste:</p>
-          <button type="button" id="copy-order-details-btn" class="copy-order-details-btn">[ COPY ORDER TEXT ]</button>
-        </div>
-        <p id="post-reinvite" class="post-reinvite hidden">Four other origins are still waiting.</p>
-      </div>
-      
-      <!-- Secondary Discovery -->
-      <div id="basket-discovery" class="basket-discovery hidden">
-        <p id="discovery-text" class="discovery-text"></p>
+      <!-- Items List -->
+      <div id="basket-items-list" class="basket-items-list">
+        <!-- Dynamically rendered by JS -->
       </div>
     </div>
+
+    <!-- Drawer Footer / Checkout -->
+    <div id="basket-footer" class="basket-footer">
+      <!-- Price Breakdown -->
+      <div class="basket-summary">
+        <div class="summary-row">
+          <span class="text-muted">Subtotal</span>
+          <span id="summary-subtotal" class="font-mono font-bold">₹0</span>
+        </div>
+        <div class="summary-row">
+          <span class="text-muted">Direct Farm Dispatch</span>
+          <span id="summary-shipping" class="font-mono text-gold">FREE</span>
+        </div>
+        <div class="summary-row summary-total">
+          <span class="font-serif">Total</span>
+          <span id="summary-total" class="font-mono total-amount">₹0</span>
+        </div>
+      </div>
+
+      <!-- Shipping Information Form -->
+      <form id="basket-checkout-form" class="checkout-form">
+        <div class="form-title font-mono">DELIVERY INFORMATION</div>
+        
+        <input 
+          type="text" 
+          id="cust-name" 
+          placeholder="Your full name" 
+          required 
+          class="form-input" 
+        />
+        
+        <input 
+          type="tel" 
+          id="cust-phone" 
+          placeholder="WhatsApp phone number" 
+          required 
+          class="form-input" 
+        />
+
+        <textarea 
+          id="cust-address" 
+          placeholder="Delivery address & Pincode" 
+          rows="2" 
+          required 
+          class="form-input form-textarea"
+        ></textarea>
+
+        <!-- Action: WhatsApp Checkout -->
+        <button type="submit" class="btn-primary btn-checkout">
+          <span>Complete Order on WhatsApp</span>
+          <span aria-hidden="true">→</span>
+        </button>
+
+        <!-- UPI Direct Note -->
+        <div class="upi-box">
+          <div class="upi-header">
+            <span class="upi-tag font-mono">DIRECT UPI</span>
+            <span class="upi-id font-mono">ourorigin@ybl</span>
+            <button type="button" id="copy-upi-btn" class="upi-copy-btn font-mono">Copy</button>
+          </div>
+          <p class="upi-note">You will receive instant dispatch confirmation once ordered.</p>
+        </div>
+      </form>
+    </div>
+
   </div>
-</div>
-
-<script>
-  import { cartState } from '../scripts/cart.js';
-  import gsap from 'gsap';
-
-  document.addEventListener('DOMContentLoaded', () => {
-    const overlay = document.getElementById('basket-overlay');
-    if (!overlay) return;
-
-    const whatsappNumber = overlay.getAttribute('data-whatsapp') || '';
-    const googleSheetUrl = overlay.getAttribute('data-api-url') || '';
-    const companionsMap = JSON.parse(overlay.getAttribute('data-companions') || '{}');
-    const proofsMap = JSON.parse(overlay.getAttribute('data-proofs') || '{}');
-
-    const trigger = document.getElementById('basket-trigger');
-    const countDisplay = document.getElementById('basket-count');
-    const closeBtn = document.getElementById('basket-close-btn');
-    const backdrop = document.getElementById('basket-close-backdrop');
-    const itemsContainer = document.getElementById('basket-items-container');
-    const emptyState = document.getElementById('basket-empty-state');
-    const footer = document.getElementById('basket-footer');
-    const discoverySection = document.getElementById('basket-discovery');
-    const discoveryText = document.getElementById('discovery-text');
-    const connectBtn = document.getElementById('basket-connect-btn');
-    const shippingForm = document.getElementById('shipping-form') as HTMLFormElement;
-    const savedNote = document.getElementById('shipping-saved-note');
-    const clearBtn = document.getElementById('clear-shipping-btn');
-    const copyUpiBtn = document.getElementById('copy-upi-btn');
-    
-    // Load shipping details
-    const savedShipping = localStorage.getItem('ourorigin_shipping_v1');
-    if (savedShipping && shippingForm) {
-      try {
-        const data = JSON.parse(savedShipping);
-        Object.keys(data).forEach(key => {
-          const el = shippingForm.elements.namedItem(key) as HTMLInputElement;
-          if (el) el.value = data[key];
-        });
-        if (savedNote) savedNote.classList.remove('hidden');
-        if (clearBtn) clearBtn.classList.remove('hidden');
-      } catch (e) {}
-    }
-    
-    if (clearBtn && shippingForm) {
-      clearBtn.addEventListener('click', () => {
-        shippingForm.reset();
-        localStorage.removeItem('ourorigin_shipping_v1');
-        if (savedNote) savedNote.classList.add('hidden');
-        clearBtn.classList.add('hidden');
-      });
-    }
-
-    if (copyUpiBtn) {
-      copyUpiBtn.addEventListener('click', () => {
-        const upiText = document.getElementById('upi-text')?.textContent || '';
-        navigator.clipboard.writeText(upiText).then(() => {
-          const originalText = copyUpiBtn.textContent;
-          copyUpiBtn.textContent = 'Copied.';
-          setTimeout(() => copyUpiBtn.textContent = originalText, 1500);
-        });
-      });
-    }
-    
-    function generateTallyHTML(count: number, size = 24) {
-      if (count === 0) return '0';
-      const fullGroups = Math.floor(count / 5);
-      const remainder = count % 5;
-      
-      let html = `<div style="display:inline-flex;align-items:center;gap:4px;height:${size}px;color:var(--color-mark-gold)">`;
-      
-      const groupSvg = `
-        <svg style="height:100%;width:auto" viewBox="0 0 60 60" fill="none">
-          <g stroke="currentColor" stroke-width="4" stroke-linecap="round">
-            <path d="M 10 10 C 8 25, 12 40, 9 50" />
-            <path d="M 22 8 C 19 25, 23 40, 20 52" />
-            <path d="M 34 12 C 37 25, 32 35, 35 48" />
-            <path d="M 46 6 C 43 20, 47 40, 44 55" />
-            <path d="M 2 45 C 20 35, 35 20, 52 10" />
-          </g>
-        </svg>
-      `;
-      
-      for (let i = 0; i < fullGroups; i++) html += groupSvg;
-      
-      if (remainder > 0) {
-        let remainderPaths = '';
-        if (remainder >= 1) remainderPaths += '<path d="M 10 10 C 8 25, 12 40, 9 50" />';
-        if (remainder >= 2) remainderPaths += '<path d="M 22 8 C 19 25, 23 40, 20 52" />';
-        if (remainder >= 3) remainderPaths += '<path d="M 34 12 C 37 25, 32 35, 35 48" />';
-        if (remainder >= 4) remainderPaths += '<path d="M 46 6 C 43 20, 47 40, 44 55" />';
-        html += `
-          <svg style="height:100%;width:auto" viewBox="0 0 ${remainder * 15 + 15} 60" fill="none">
-            <g stroke="currentColor" stroke-width="4" stroke-linecap="round">
-              ${remainderPaths}
-            </g>
-          </svg>
-        `;
-      }
-      html += '</div>';
-      return html;
-    }
-
-    function updateTrigger(count: number) {
-      if (!trigger || !countDisplay) return;
-      if (count > 0) {
-        // Update the header Basket wrapper and the floating trigger
-        const countWrapper = document.getElementById('basket-count-wrapper');
-        if (countWrapper) countWrapper.innerHTML = generateTallyHTML(count, 24);
-        
-        countDisplay.innerHTML = generateTallyHTML(count, 18);
-        trigger.classList.remove('hidden');
-        trigger.setAttribute('aria-label', `Open Basket — ${count} items held`);
-      } else {
-        const countWrapper = document.getElementById('basket-count-wrapper');
-        if (countWrapper) countWrapper.innerHTML = '0';
-        trigger.classList.add('hidden');
-        trigger.removeAttribute('aria-label');
-      }
-      
-      // Update global Dossier counts and toggle depth basket visibility
-      document.querySelectorAll('.dossier-count').forEach(el => {
-        el.textContent = String(count);
-      });
-      
-      const depthBasket = document.getElementById('depth-basket-trigger');
-      if (depthBasket) {
-        depthBasket.style.display = count > 0 ? 'block' : 'none';
-      }
-      
-      const depthYields = document.getElementById('depth-yields-trigger');
-      if (depthYields) {
-        depthYields.textContent = count > 0 ? '[ ALL YIELDS ]' : '[ EXPLORE YIELDS ]';
-      }
-      const ccYields = document.getElementById('trigger-yields');
-      if (ccYields) {
-        ccYields.textContent = count > 0 ? '[ ALL YIELDS ]' : '[ EXPLORE YIELDS ]';
-      }
-    }
-    
-    function renderItems(items: any[]) {
-      if (!itemsContainer || !emptyState || !footer || !discoverySection) return;
-      itemsContainer.innerHTML = '';
-      
-      if (!items || items.length === 0) {
-        emptyState.classList.remove('hidden');
-        footer.classList.add('hidden');
-        discoverySection.classList.add('hidden');
-        return;
-      }
-      
-      emptyState.classList.add('hidden');
-      footer.classList.remove('hidden');
-      
-      let total = 0;
-      let originsInBasket = new Set<{id: string, name: string}>();
-      let summaryHtml = '';
-      
-      items.forEach((item: any) => {
-        const lineTotal = item.price * item.quantity;
-        total += lineTotal;
-        originsInBasket.add({id: item.originId, name: item.origin});
-        
-        const el = document.createElement('div');
-        el.className = 'basket-item';
-        el.innerHTML = `
-          <div class="item-info">
-            <span class="item-name">${item.name}</span>
-            <div class="qty-controls">
-              <button class="qty-btn dec" data-id="${item.id}" aria-label="Decrease quantity of ${item.name}">-</button>
-              <span class="qty-val price-font">${generateTallyHTML(item.quantity, 16)}</span>
-              <button class="qty-btn inc" data-id="${item.id}" aria-label="Increase quantity of ${item.name}">+</button>
-            </div>
-            <span class="item-size">${item.size || item.weight} · ₹${item.price}</span>
-            <span class="item-line-total price-font"><span style="display:inline-flex;align-items:center;gap:4px;">${generateTallyHTML(item.quantity, 14)} &times; ₹${item.price} = ₹${lineTotal}</span></span>
-          </div>
-        `;
-        itemsContainer.appendChild(el);
-        
-        summaryHtml += `
-          <div class="summary-item-row">
-            <span style="display:flex;align-items:center;gap:6px;">${item.name} (${item.size || item.weight}) &times; ${generateTallyHTML(item.quantity, 12)}</span>
-            <span>₹${lineTotal}</span>
-          </div>
-        `;
-      });
-      
-      const subtotalPriceEl = document.getElementById('basket-subtotal-price');
-      if (subtotalPriceEl) subtotalPriceEl.textContent = `₹${total}`;
-      
-      // Update Invoice Summary
-      const summaryItems = document.getElementById('summary-items');
-      const summarySub = document.getElementById('summary-subtotal');
-      const summaryShip = document.getElementById('summary-shipping');
-      const summaryTot = document.getElementById('summary-total');
-      const shipNote = document.getElementById('shipping-prompt-note');
-      
-      if (summaryItems) summaryItems.innerHTML = summaryHtml;
-      if (summarySub) summarySub.textContent = `₹${total}`;
-      
-      const cityVal = ((shippingForm?.elements.namedItem('city') as HTMLInputElement)?.value || '').toLowerCase();
-      const isLocal = cityVal.includes('thiruvananthapuram') || cityVal.includes('trivandrum');
-      
-      let shippingCost = 0;
-      let shippingText = '';
-      
-      if (isLocal) {
-        shippingText = 'Free — local delivery';
-        if (shipNote) shipNote.classList.add('hidden');
-      } else if (total < 399) {
-        shippingCost = 60;
-        shippingText = `₹${shippingCost}`;
-        if (shipNote) {
-          shipNote.textContent = `Add ₹${399 - total} more for free shipping.`;
-          shipNote.classList.remove('hidden');
-        }
-      } else {
-        shippingText = 'Free';
-        if (shipNote) shipNote.classList.add('hidden');
-      }
-      
-      if (summaryShip) summaryShip.textContent = shippingText;
-      if (summaryTot) summaryTot.textContent = `₹${total + shippingCost}`;
-      
-      if (shippingForm) {
-        shippingForm.setAttribute('data-shipping-cost', shippingCost.toString());
-        shippingForm.setAttribute('data-shipping-text', shippingText);
-        shippingForm.setAttribute('data-total', (total + shippingCost).toString());
-      }
-      
-      // Wire up qty buttons
-      document.querySelectorAll('.qty-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const id = (e.target as HTMLElement).getAttribute('data-id');
-          const isInc = (e.target as HTMLElement).classList.contains('inc');
-          if (id) {
-            cartState.updateQuantity(id, isInc ? 1 : -1);
-          }
-        });
-      });
-      
-      // Handle Secondary Discovery
-      let discoveryHtmlChunks: string[] = [];
-      const uniqueOriginsMap = new Map();
-      Array.from(originsInBasket).forEach(o => uniqueOriginsMap.set(o.id, o.name));
-      
-      uniqueOriginsMap.forEach((originName, originId) => {
-        const companions = companionsMap[originId];
-        if (companions && companions.length > 0) {
-          const availableCompanions = companions.filter((c: any) => !items.some((i: any) => i.productId === c.id));
-          if (availableCompanions.length > 0) {
-            const linksHtml = availableCompanions.map((c: any) => 
-              `<a href="#" class="discovery-link" data-origin="${originId}" data-product="${c.id}" aria-label="Browse more yields from ${originName}">${c.name}</a>`
-            ).join(', ');
-            discoveryHtmlChunks.push(`Also from ${originName}: ${linksHtml}`);
-          }
-        }
-      });
-      
-      if (discoveryHtmlChunks.length > 0 && discoveryText) {
-        discoveryText.innerHTML = discoveryHtmlChunks.join('<br>');
-        discoverySection.classList.remove('hidden');
-        
-        document.querySelectorAll('.discovery-link').forEach(link => {
-          link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const originId = (e.target as HTMLElement).getAttribute('data-origin');
-            closeBasket();
-            window.dispatchEvent(new CustomEvent('open-carousel', { detail: { originId: originId, excludeAnchor: true } }));
-          });
-        });
-      } else {
-        discoverySection.classList.add('hidden');
-      }
-    }
-    
-    // Re-render when shipping city changes to update shipping logic instantly
-    const cityInput = document.getElementById('ship-city');
-    if (cityInput) {
-      cityInput.addEventListener('input', () => renderItems(cartState.items));
-    }
-    
-    // Connection logic
-    if (connectBtn) {
-      connectBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        
-        if (cartState.items.length === 0) return;
-        
-        if (shippingForm && !shippingForm.checkValidity()) {
-          shippingForm.reportValidity();
-          return;
-        }
-        
-        const formData = new FormData(shippingForm);
-        const data = Object.fromEntries(formData.entries());
-        localStorage.setItem('ourorigin_shipping_v1', JSON.stringify(data));
-        if (savedNote) savedNote.classList.remove('hidden');
-        if (clearBtn) clearBtn.classList.remove('hidden');
-
-        // const shippingCost = parseInt(shippingForm?.getAttribute('data-shipping-cost') || '0', 10);
-        const shippingText = shippingForm?.getAttribute('data-shipping-text') || 'Free';
-        const orderTotal = shippingForm?.getAttribute('data-total') || '0';
-
-        let currentOrderMessage = '';
-
-        if (cartState.items.length === 1 && cartState.items[0].quantity === 1) {
-          const item = cartState.items[0];
-          currentOrderMessage = `Hi — I'd like to order ${item.name} (${item.size || item.weight}) from OurOrigin.\nTotal: ₹${orderTotal}. Shipping: ${shippingText}.\n\nName: ${data.name}\nAddress: ${data.house}, ${data.street}, ${data.city}, ${data.state} – ${data.pin}\nPhone: ${data.phone}\n\nFound you at ourorigin.in.`;
-        } else {
-          currentOrderMessage = `Hi — I'd like to order the following from OurOrigin.\n\n`;
-          cartState.items.forEach(item => {
-            currentOrderMessage += `– ${item.name} (${item.size || item.weight}) × ${item.quantity} · ₹${item.price * item.quantity}\n`;
-          });
-          currentOrderMessage += `\nTotal: ₹${orderTotal}\nShipping: ${shippingText}\n\nName: ${data.name}\nAddress: ${data.house}, ${data.street}, ${data.city}, ${data.state} – ${data.pin}\nPhone: ${data.phone}\n\nFound you at ourorigin.in.`;
-        }
-        
-        const encodedMessage = encodeURIComponent(currentOrderMessage);
-        
-        // POST to Google Sheets API (if configured)
-        if (googleSheetUrl) {
-          const orderPayload = {
-            name: data.name,
-            phone: data.phone,
-            address: `${data.house}, ${data.street}, ${data.city}, ${data.state} - ${data.pin}`,
-            items: cartState.items.map(i => `${i.name} (${i.size || i.weight}) x ${i.quantity}`).join(', '),
-            totalPrice: `₹${orderTotal}`,
-            shippingCost: shippingText
-          };
-
-          fetch(googleSheetUrl, {
-            method: 'POST',
-            mode: 'no-cors', // Apps Script web apps often require no-cors for simple posts
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(orderPayload)
-          }).catch(console.error); // Fire and forget
-        }
-
-        window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, '_blank');
-        
-        if (itemsContainer) itemsContainer.classList.add('hidden');
-        if (footer) footer.classList.add('hidden');
-        if (discoverySection) discoverySection.classList.add('hidden');
-        const postCheckout = document.getElementById('basket-post-checkout');
-        if (postCheckout) {
-          postCheckout.classList.remove('hidden');
-          const svg = postCheckout.querySelector('.origin-mark');
-          if (svg) {
-            const strokes = svg.querySelectorAll('.tally-strokes path');
-            strokes.forEach(s => {
-              const len = (s as SVGPathElement).getTotalLength?.() || 60;
-              gsap.set(s, { strokeDashoffset: len });
-            });
-            const tl = gsap.timeline({ delay: 0.1 });
-            strokes.forEach((s, i) => {
-              tl.to(s, { strokeDashoffset: 0, duration: 0.28, ease: 'power2.out' }, i * 0.08);
-            });
-          }
-        }
-        
-        // Save to Ledger
-        try {
-          const ledgerRaw = localStorage.getItem('ourorigin_ledger_v1');
-          const ledger = ledgerRaw ? JSON.parse(ledgerRaw) : [];
-          const now = new Date().toISOString();
-          cartState.items.forEach(item => {
-            const proof = proofsMap[item.id] || {};
-            ledger.push({
-              date: now,
-              name: item.name,
-              size: item.size || item.weight,
-              price: item.price,
-              quantity: item.quantity,
-              origin: item.origin,
-              firstHands: proof.firstHands || 'The Farmers',
-              directPricePaid: proof.directPricePaid || `₹${item.price}/kg`,
-              naturesShare: proof.naturesShare || 'Harvested responsibly.',
-              proofLink: proof.fssaiCertLink || '#',
-              proofImage: proof.yieldPhoto || ''
-            });
-          });
-          localStorage.setItem('ourorigin_ledger_v1', JSON.stringify(ledger));
-        } catch (e) {}
-
-        setTimeout(() => {
-          const reinvite = document.getElementById('post-reinvite');
-          if (reinvite) reinvite.classList.remove('hidden');
-        }, 1500);
-
-        const copyOrderBtn = document.getElementById('copy-order-details-btn');
-        if (copyOrderBtn) {
-          copyOrderBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(currentOrderMessage).then(() => {
-              const originalText = copyOrderBtn.textContent;
-              copyOrderBtn.textContent = '[ COPIED TO CLIPBOARD ]';
-              setTimeout(() => {
-                copyOrderBtn.textContent = originalText;
-              }, 1500);
-            });
-          });
-        }
-        
-        // Clear cart
-        cartState.clear();
-        
-        // Close after 15s to give the user enough time to copy order details manually if needed
-        setTimeout(() => {
-          closeBasket();
-          setTimeout(() => {
-            if (postCheckout) postCheckout.classList.add('hidden');
-            if (itemsContainer) itemsContainer.classList.remove('hidden');
-            const reinvite = document.getElementById('post-reinvite');
-            if (reinvite) reinvite.classList.add('hidden');
-          }, 500);
-        }, 15000);
-      });
-    }
-    
-    // Listen to cart-updated broadcasts from cartState
-    window.addEventListener('cart-updated', (e: any) => {
-      const { items, totalItems } = e.detail;
-      updateTrigger(totalItems);
-      renderItems(items);
-      
-      // Pulse trigger on add
-      if (trigger && totalItems > 0) {
-        trigger.classList.add('pulse-anim');
-        setTimeout(() => {
-          trigger.classList.remove('pulse-anim');
-        }, 500);
-      }
-
-      // Removed global toast firing logic
-
-      trigger?.setAttribute('data-prev-total', totalItems.toString());
-    });
-    
-    const openBasket = () => {
-      renderItems(cartState.items);
-      if (overlay) overlay.classList.remove('hidden');
-    };
-    
-    const closeBasket = () => {
-      if (overlay) overlay.classList.add('hidden');
-    };
-    
-    if (trigger) trigger.addEventListener('click', openBasket);
-    if (closeBtn) closeBtn.addEventListener('click', closeBasket);
-    if (backdrop) backdrop.addEventListener('click', closeBasket);
-    
-    const triggerDossier = document.getElementById('trigger-dossier');
-    if (triggerDossier) {
-      triggerDossier.addEventListener('click', openBasket);
-    }
-
-    // Global listeners for direct open-cart/close-cart calls
-    window.addEventListener('open-cart', openBasket);
-    window.addEventListener('close-cart', closeBasket);
-    window.addEventListener('trigger-dossier', openBasket);
-    
-    // Initial sync
-    updateTrigger(cartState.getTotalItems());
-  });
-</script>
+</aside>
 
 <style>
-  .basket-toast {
-    position: fixed;
-    top: 2rem;
-    left: 50%;
-    transform: translateX(-50%) translateY(-10px);
-    z-index: 10000;
-    font-family: var(--font-evidence);
-    font-size: var(--type-evidence);
-    background-color: var(--color-deep-forest);
-    color: var(--color-bone);
-    padding: 0.6rem 1.2rem;
-    opacity: 0;
-    transition: opacity 0.3s ease, transform var(--duration-standard) var(--ease-settle);
-    pointer-events: none;
-    border: 1px solid var(--color-bone-whisper);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-  .basket-toast.visible {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-
-  @keyframes pulse {
-    0% { transform: scale(1); box-shadow: 0 0 0 0 var(--color-bone-whisper); }
-    70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(245, 240, 232, 0); }
-    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 240, 232, 0); }
-  }
-
-  .pulse-anim {
-    animation: pulse 0.5s ease-out;
-  }
-
-  .basket-trigger {
-    position: fixed;
-    bottom: 2rem;
-    left: 2rem;
-    z-index: 900;
-    font-family: var(--font-evidence);
-    font-size: var(--type-evidence);
-    color: var(--color-bone);
-    cursor: pointer;
-    background: transparent;
-    border: none;
-    padding: 0;
-    transition: opacity var(--duration-standard) var(--ease-settle);
-  }
-  .basket-trigger.hidden {
-    opacity: 0;
-    pointer-events: none;
-  }
-  
-  .basket-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    z-index: 8500;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    pointer-events: auto;
-    opacity: 1;
-    transition: opacity var(--duration-standard) var(--ease-settle);
-  }
-  .basket-overlay.hidden {
-    opacity: 0;
-    pointer-events: none;
-  }
-  
+  /* Backdrop */
   .basket-backdrop {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--color-forest-surface);
+    position: fixed;
+    inset: 0;
+    background-color: rgba(12, 21, 10, 0.45);
     backdrop-filter: blur(4px);
-    transition: opacity var(--duration-standard) var(--ease-settle);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 200;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s var(--ease-smooth), visibility 0.3s;
   }
-  
-  .basket-panel {
-    position: relative;
+
+  .basket-backdrop.is-open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Drawer Panel */
+  .basket-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
     width: 100%;
-    height: 75dvh;
-    background: var(--color-deep-forest);
-    border-top: 1px dashed var(--color-bone-whisper);
-    z-index: 1;
+    max-width: 440px;
+    background-color: var(--color-bone);
+    box-shadow: -10px 0 40px rgba(12, 21, 10, 0.2);
+    z-index: 210;
+    transform: translateX(100%);
+    transition: transform 0.35s var(--ease-smooth);
     display: flex;
     flex-direction: column;
-    transform: translateY(0);
-    transition: transform var(--duration-standard) var(--ease-settle);
-    padding-bottom: calc(var(--space-xl) + env(safe-area-inset-bottom, 0px));
   }
-  .basket-overlay.hidden .basket-panel {
-    transform: translateY(100%);
+
+  .basket-drawer.is-open {
+    transform: translateX(0%);
   }
-  
+
+  .basket-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Header */
   .basket-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 2rem 5vw 1.5rem;
-    border-bottom: 1px dashed var(--color-border-subtle);
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    background-color: var(--color-bone-card);
+    border-bottom: 1px solid var(--color-border-subtle);
   }
-  .basket-title {
-    font-family: var(--font-display);
-    font-size: var(--type-display);
+
+  .basket-header-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .basket-heading {
+    font-size: 1.25rem;
+    font-weight: 500;
     margin: 0;
   }
-  .basket-close {
-    background: none;
-    border: none;
-    color: var(--color-bone);
-    font-family: var(--font-evidence);
-    font-size: var(--type-evidence);
-    cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    min-height: 44px;
-    min-width: 44px;
+
+  .basket-close-btn {
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 50%;
+    font-size: 1rem;
+    color: var(--color-ink-muted);
+    background-color: var(--color-bone-warm);
+    transition: all 0.2s ease;
   }
-  
-  .basket-content {
+
+  .basket-close-btn:hover {
+    background-color: var(--color-deep-forest);
+    color: var(--color-bone);
+  }
+
+  /* Body */
+  .basket-body {
     flex-grow: 1;
     overflow-y: auto;
-    padding: 2rem 5vw;
+    padding: 1.5rem;
+  }
+
+  /* Empty State */
+  .basket-empty-state {
     display: flex;
     flex-direction: column;
-  }
-  
-  .basket-empty {
-    font-family: var(--font-narrative);
-    font-size: var(--type-statement);
-    color: var(--color-bone-muted);
-    text-align: center;
-    margin-top: 2rem;
-  }
-  
-  .basket-item {
-    display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding-bottom: 1.5rem;
-    margin-bottom: 1.5rem;
-    border-bottom: 1px solid var(--color-border-subtle);
+    justify-content: center;
+    height: 100%;
+    min-height: 240px;
+    text-align: center;
+    gap: 0.75rem;
   }
-  @media (max-width: 600px) {
-    .basket-item {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 1rem;
-    }
+
+  .empty-icon {
+    font-size: 2.5rem;
+    color: var(--color-mark-gold);
+    opacity: 0.6;
   }
-  .item-info {
+
+  .empty-title {
+    font-size: 1.35rem;
+    margin: 0;
+  }
+
+  .empty-desc {
+    font-size: 0.875rem;
+    max-width: 260px;
+    margin: 0;
+  }
+
+  .btn-sm {
+    padding: 0.5rem 1.2rem;
+    font-size: 0.8125rem;
+    margin-top: 0.5rem;
+  }
+
+  /* Items List */
+  .basket-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* Item Card (Generated via JS) */
+  :global(.basket-item-card) {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: var(--color-bone-card);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 6px;
+    align-items: center;
+  }
+
+  :global(.basket-item-img) {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    background-color: var(--color-bone-warm);
+    flex-shrink: 0;
+  }
+
+  :global(.basket-item-info) {
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
     gap: 0.2rem;
   }
-  .item-name {
-    font-family: var(--font-display);
-    font-size: var(--type-statement);
+
+  :global(.basket-item-title) {
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    font-weight: 500;
+    margin: 0;
+    color: var(--color-deep-forest);
   }
-  .item-size {
-    font-family: var(--font-evidence);
-    font-size: var(--type-whisper);
-    color: var(--color-bone-muted);
+
+  :global(.basket-item-origin) {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--color-ink-whisper);
   }
-  .item-line-total {
-    font-size: var(--type-whisper);
-    color: var(--color-bone-whisper);
-    margin-top: 0.2rem;
+
+  :global(.basket-item-price) {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-deep-forest);
   }
-  .item-controls {
+
+  :global(.basket-item-qty-wrap) {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
-  }
-  .price-font {
-    font-family: var(--font-evidence);
-  }
-  .qty-controls {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    border: 1px solid var(--color-bone-whisper);
-    border-radius: 20px;
+    gap: 0.5rem;
+    background-color: var(--color-bone-warm);
     padding: 0.2rem 0.5rem;
+    border-radius: 4px;
   }
-  .qty-btn {
-    background: none;
-    border: none;
-    color: var(--color-bone);
-    cursor: pointer;
-    font-size: var(--type-statement);
+
+  :global(.qty-btn) {
+    font-size: 0.875rem;
+    font-weight: 600;
+    width: 20px;
+    height: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 44px;
-    min-height: 44px;
+    color: var(--color-deep-forest);
   }
-  
+
+  :global(.qty-num) {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    min-width: 14px;
+    text-align: center;
+  }
+
+  :global(.remove-item-btn) {
+    color: var(--color-ink-whisper);
+    font-size: 1rem;
+    padding: 0.25rem;
+    line-height: 1;
+  }
+
+  :global(.remove-item-btn:hover) {
+    color: #C23B22;
+  }
+
+  /* Footer */
   .basket-footer {
-    margin-top: auto;
-    padding-top: 2rem;
+    padding: 1.25rem 1.5rem 1.5rem;
+    background-color: var(--color-bone-card);
+    border-top: 1px solid var(--color-border-subtle);
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1rem;
+    max-height: 50vh;
+    overflow-y: auto;
   }
-  .basket-total {
-    display: flex;
-    justify-content: space-between;
-    font-family: var(--font-display);
-    font-size: var(--type-statement);
-  }
-  .basket-order-summary {
-    margin-top: 1rem;
-    margin-bottom: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  .summary-heading {
-    font-family: var(--font-display);
-    font-size: var(--type-whisper);
-    letter-spacing: 0.3em;
-    color: var(--color-bone-muted);
-    margin: 0 0 1rem 0;
-    text-transform: uppercase;
-  }
-  .summary-items {
+
+  .basket-summary {
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--color-border-subtle);
   }
-  .summary-item-row {
-    display: flex;
-    justify-content: space-between;
-    font-family: var(--font-evidence);
-    font-size: var(--type-evidence);
-    color: var(--color-bone);
-  }
+
   .summary-row {
     display: flex;
     justify-content: space-between;
-    font-family: var(--font-evidence);
-    font-size: var(--type-evidence);
-    color: var(--color-bone-muted);
-  }
-  .total-row {
-    color: var(--color-bone);
-    font-weight: bold;
-  }
-  .summary-divider {
-    border: none;
-    border-top: 1px dashed var(--color-bone-whisper);
-    margin: 0.5rem 0;
-    width: 100%;
-  }
-  .summary-divider-solid {
-    border: none;
-    border-top: 1px dashed var(--color-bone-muted);
-    margin: 0.5rem 0;
-    width: 100%;
-  }
-  .shipping-prompt-note {
-    font-family: var(--font-narrative);
-    font-style: italic;
-    font-size: var(--type-evidence);
-    color: var(--color-bone-whisper);
-    margin: 0;
-  }
-  .dispatch-timeline {
-    font-family: var(--font-evidence);
-    font-size: var(--type-whisper);
-    color: var(--color-bone-whisper);
-    margin: 1rem 0 0 0;
-    text-transform: uppercase;
-  }
-  .basket-community-summary {
-    background: var(--color-gold-muted);
-    border: 1px solid var(--color-gold-muted);
-    padding: 12px 16px;
-    margin-bottom: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+    font-size: 0.875rem;
   }
 
-  .community-summary-tag {
-    font-family: var(--font-evidence);
-    font-size: var(--type-whisper);
-    letter-spacing: 0.15em;
-    color: var(--color-mark-gold);
-    text-transform: uppercase;
-  }
-
-  .community-origins-list {
-    font-family: var(--font-display);
-    font-size: var(--type-evidence);
-    color: var(--color-bone);
-  }
-
-  .human-note {
-    font-family: var(--font-narrative);
-    font-style: italic;
-    font-size: var(--type-evidence);
-    color: var(--color-bone-muted);
-    margin: 0 0 1.5rem 0;
-  }
-  .human-note-small {
-    font-family: var(--font-narrative);
-    font-style: italic;
-    font-size: var(--type-evidence);
-    color: var(--color-bone-whisper);
-    margin: 0;
-  }
-  .basket-post-checkout {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    text-align: center;
-  }
-  .post-title {
-    font-family: var(--font-narrative);
-    font-style: italic;
-    font-size: var(--type-display);
-    color: var(--color-bone-muted);
-    margin: 0 0 0.5rem 0;
-  }
-  .post-subtitle {
-    font-family: var(--font-narrative);
-    font-size: var(--type-narrative);
-    color: var(--color-bone-muted);
-    margin: 0;
-  }
-  .post-reinvite {
-    font-family: var(--font-narrative);
-    font-size: var(--type-evidence);
-    color: var(--color-bone-whisper);
-    margin: 1.5rem 0 0 0;
-    transition: opacity var(--duration-standard) var(--ease-settle);
-  }
-  
-  .basket-connect {
-    background: var(--color-bone);
-    color: var(--color-deep-forest);
-    font-family: var(--font-evidence);
-    font-size: var(--type-narrative);
-    padding: 1.4rem;
-    border: none;
-    cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
+  .summary-total {
+    font-size: 1.15rem;
     font-weight: 600;
-    border-radius: var(--radius);
-    width: 100%;
-    margin-top: 2rem;
-    transition: background var(--duration-standard) var(--ease-settle);
-  }
-  .basket-connect:hover {
-    background: var(--color-mark-gold);
-  }
-  
-  .basket-fssai {
-    font-family: var(--font-evidence);
-    font-size: var(--type-whisper);
-    color: var(--color-bone-whisper);
-    text-align: center;
-    margin-top: 1.5rem;
-    letter-spacing: 0.1em;
-  }
-  
-  .discovery-link {
-    color: var(--color-mark-gold);
-    text-decoration: none;
-    border-bottom: 1px solid var(--color-gold-muted);
-    transition: opacity var(--duration-standard) var(--ease-settle);
-  }
-  .discovery-link:hover {
-    opacity: 0.7;
-  }
-  
-  .basket-discovery {
-    margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px dashed var(--color-border-subtle);
-  }
-  .discovery-text {
-    font-family: var(--font-narrative);
-    font-size: 1.1rem;
-    line-height: 1.6;
-    color: var(--color-bone-muted);
-    margin: 0;
-  }
-  .discovery-link {
-    color: var(--color-bone);
-    text-decoration: none;
-    border-bottom: 1px solid var(--color-bone-whisper);
-    transition: border-color var(--duration-standard) var(--ease-settle);
-  }
-  .discovery-link:hover {
-    border-bottom-color: var(--color-bone);
-  }
-  
-  .hidden {
-    display: none !important;
-  }
-  
-  .basket-observation-guide {
-    margin: 2rem 0;
-    padding: 1.5rem;
-    border: 1px dashed var(--color-gold-muted); /* Subtle gold dashed border */
-    background: var(--color-forest-hover);
-    border-radius: 4px;
-  }
-  
-  .observation-title {
-    font-family: var(--font-evidence);
-    font-size: var(--type-whisper);
-    letter-spacing: 0.15em;
-    color: var(--color-gold-muted); /* Perfect visibility secondary color (gold) */
-    margin: 0 0 1rem 0;
-    text-transform: uppercase;
-  }
-  
-  .observation-text {
-    font-family: var(--font-narrative);
-    font-size: var(--type-narrative);
-    line-height: 1.5;
-    color: var(--color-bone); /* Perfect readability */
-    margin: 0;
-    opacity: 0.9;
-  }
-  
-  .shipping-form {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-    margin-bottom: 2rem;
-  }
-  .shipping-form input {
-    background: transparent;
-    border: none;
-    border-bottom: 1px dashed var(--color-bone-whisper);
-    color: var(--color-bone);
-    font-family: var(--font-evidence);
-    font-size: var(--type-whisper);
-    padding: 0.5rem 0;
-    width: 100%;
-    box-sizing: border-box;
-    transition: border-color 0.2s ease, background var(--duration-standard) var(--ease-settle);
-  }
-  .shipping-form input:focus {
-    outline: none;
-    border-color: var(--color-bone-muted);
-    background: transparent;
-  }
-  .shipping-form input:user-invalid {
-    border-color: rgba(255, 100, 100, 0.5);
-  }
-  .form-row {
-    display: flex;
-    gap: 1rem;
-  }
-  .shipping-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 0.5rem;
-  }
-  .shipping-saved-note {
-    font-family: var(--font-narrative);
-    font-style: italic;
-    font-size: var(--type-evidence);
-    color: var(--color-bone-whisper);
-    margin: 0;
-  }
-  .clear-shipping-btn {
-    background: none;
-    border: none;
-    color: var(--color-bone-whisper);
-    font-family: var(--font-evidence);
-    font-size: var(--type-whisper);
-    cursor: pointer;
-    text-decoration: underline;
-    padding: 0;
-    min-height: 44px;
-    min-width: 44px;
-  }
-  .clear-shipping-btn:hover {
-    color: var(--color-bone);
-  }
-  
-  .basket-upi-section {
-    margin-bottom: 1.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--color-border-subtle);
-  }
-  .upi-prompt {
-    font-family: var(--font-narrative);
-    font-size: var(--type-evidence);
-    color: var(--color-bone-muted);
-    margin: 0 0 0.2rem 0;
-  }
-  .upi-id {
-    font-family: var(--font-narrative);
-    font-size: var(--type-narrative);
-    color: var(--color-bone-muted);
-    margin: 0 0 0.4rem 0;
-  }
-  #upi-text {
-    font-family: var(--font-evidence);
-    font-size: var(--type-evidence);
-  }
-  .copy-upi-btn {
-    background: var(--color-border-subtle);
-    border: none;
-    color: var(--color-bone);
-    font-family: var(--font-evidence);
-    font-size: var(--type-whisper);
-    padding: 0.2rem 0.4rem;
-    border-radius: 2px;
-    cursor: pointer;
-    margin-left: 0.5rem;
-    min-height: 44px;
-    min-width: 44px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .copy-upi-btn:hover {
-    background: var(--color-border-subtle);
-  }
-  .upi-note {
-    font-family: var(--font-narrative);
-    font-style: italic;
-    font-size: var(--type-evidence);
-    color: var(--color-bone-whisper);
-    margin: 0;
+    padding-top: 0.4rem;
+    color: var(--color-deep-forest);
   }
 
-  .post-copy-fallback {
-    margin: 2rem auto;
-    padding: 1.5rem;
-    border: 1px solid var(--color-bone-whisper);
-    background: rgba(245, 240, 232, 0.02);
-    text-align: center;
-    max-width: 400px;
+  .total-amount {
+    color: var(--color-deep-forest);
   }
-  .fallback-note {
-    font-family: var(--font-narrative);
-    font-size: var(--type-evidence);
-    color: var(--color-bone-muted);
-    margin: 0 0 1rem 0;
-    line-height: 1.4;
+
+  /* Checkout Form */
+  .checkout-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
   }
-  .copy-order-details-btn {
-    background: transparent;
-    border: 1px solid var(--color-bone-whisper);
-    color: var(--color-bone);
-    font-family: var(--font-evidence);
-    font-size: var(--type-evidence);
-    padding: 0.8rem 1.5rem;
-    cursor: pointer;
+
+  .form-title {
+    font-size: 0.6875rem;
+    color: var(--color-ink-whisper);
+    letter-spacing: 0.08em;
+  }
+
+  .form-input {
     width: 100%;
-    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 4px;
+    background-color: var(--color-bone);
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    color: var(--color-deep-forest);
+    outline: none;
+    transition: border-color 0.2s ease;
   }
-  .copy-order-details-btn:hover {
-    background-color: rgba(245, 240, 232, 0.05);
+
+  .form-input:focus {
     border-color: var(--color-mark-gold);
+  }
+
+  .form-textarea {
+    resize: none;
+  }
+
+  .btn-checkout {
+    width: 100%;
+    padding: 0.85rem;
+    margin-top: 0.25rem;
+  }
+
+  /* UPI Box */
+  .upi-box {
+    padding: 0.75rem;
+    background-color: var(--color-bone-warm);
+    border: 1px dashed var(--color-border-gold);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .upi-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.75rem;
+  }
+
+  .upi-tag {
+    color: var(--color-ink-whisper);
+    font-size: 0.625rem;
+  }
+
+  .upi-id {
+    font-weight: 600;
+    color: var(--color-deep-forest);
+  }
+
+  .upi-copy-btn {
+    font-size: 0.6875rem;
     color: var(--color-mark-gold);
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    border: 1px solid var(--color-border-gold);
+  }
+
+  .upi-copy-btn:hover {
+    background-color: var(--color-mark-gold);
+    color: #0C150A;
+  }
+
+  .upi-note {
+    font-size: 0.6875rem;
+    color: var(--color-ink-muted);
+    margin: 0;
   }
 </style>
+
+<script define:vars={{ WHATSAPP_NUMBER }}>
+  function initBasket() {
+    const drawer = document.getElementById('basket-drawer');
+    const backdrop = document.getElementById('basket-backdrop');
+    const closeBtn = document.getElementById('basket-close-btn');
+    const emptyState = document.getElementById('basket-empty');
+    const itemsList = document.getElementById('basket-items-list');
+    const footer = document.getElementById('basket-footer');
+    const subtotalEl = document.getElementById('summary-subtotal');
+    const totalEl = document.getElementById('summary-total');
+    const checkoutForm = document.getElementById('basket-checkout-form');
+    const copyUpiBtn = document.getElementById('copy-upi-btn');
+    const emptyExploreBtn = document.getElementById('empty-explore-btn');
+
+    function openBasket() {
+      if (drawer && backdrop) {
+        drawer.classList.add('is-open');
+        backdrop.classList.add('is-open');
+        drawer.setAttribute('aria-hidden', 'false');
+        backdrop.setAttribute('aria-hidden', 'false');
+        renderBasket();
+      }
+    }
+
+    function closeBasket() {
+      if (drawer && backdrop) {
+        drawer.classList.remove('is-open');
+        backdrop.classList.remove('is-open');
+        drawer.setAttribute('aria-hidden', 'true');
+        backdrop.setAttribute('aria-hidden', 'true');
+      }
+    }
+
+    function toggleBasket() {
+      if (drawer?.classList.contains('is-open')) {
+        closeBasket();
+      } else {
+        openBasket();
+      }
+    }
+
+    if (closeBtn) closeBtn.addEventListener('click', closeBasket);
+    if (backdrop) backdrop.addEventListener('click', closeBasket);
+    if (emptyExploreBtn) emptyExploreBtn.addEventListener('click', closeBasket);
+
+    window.addEventListener('open-basket', openBasket);
+    window.addEventListener('close-basket', closeBasket);
+    window.addEventListener('toggle-basket', toggleBasket);
+    window.addEventListener('basket-updated', renderBasket);
+
+    // Render Basket Items
+    function getStoredItems() {
+      try {
+        const stored = localStorage.getItem('ourorigin_basket');
+        return stored ? JSON.parse(stored) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveItems(items) {
+      localStorage.setItem('ourorigin_basket', JSON.stringify(items));
+      window.dispatchEvent(new CustomEvent('basket-updated'));
+    }
+
+    function renderBasket() {
+      const items = getStoredItems();
+      if (!itemsList || !emptyState || !footer) return;
+
+      if (items.length === 0) {
+        emptyState.style.display = 'flex';
+        itemsList.style.display = 'none';
+        footer.style.display = 'none';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+      itemsList.style.display = 'flex';
+      footer.style.display = 'flex';
+
+      let subtotal = 0;
+      itemsList.innerHTML = '';
+
+      items.forEach((item, index) => {
+        const qty = Number(item.quantity) || 1;
+        const price = Number(item.price) || 0;
+        const itemTotal = price * qty;
+        subtotal += itemTotal;
+
+        const card = document.createElement('div');
+        card.className = 'basket-item-card';
+        card.innerHTML = `
+          <img src="${item.image || '/assets/products/minimal-packaging-pouch.jpg'}" alt="${item.name}" class="basket-item-img" />
+          <div class="basket-item-info">
+            <h4 class="basket-item-title">${item.name}</h4>
+            <span class="basket-item-origin">${item.origin || ''} · ${item.size || ''}</span>
+            <span class="basket-item-price">₹${itemTotal}</span>
+          </div>
+          <div class="basket-item-qty-wrap">
+            <button type="button" class="qty-btn" data-action="decrease" data-index="${index}" aria-label="Decrease quantity">−</button>
+            <span class="qty-num">${qty}</span>
+            <button type="button" class="qty-btn" data-action="increase" data-index="${index}" aria-label="Increase quantity">+</button>
+          </div>
+          <button type="button" class="remove-item-btn" data-action="remove" data-index="${index}" aria-label="Remove item">✕</button>
+        `;
+        itemsList.appendChild(card);
+      });
+
+      if (subtotalEl) subtotalEl.textContent = `₹${subtotal}`;
+      if (totalEl) totalEl.textContent = `₹${subtotal}`;
+
+      // Attach item controls
+      itemsList.querySelectorAll('.qty-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const action = btn.dataset.action;
+          const index = Number(btn.dataset.index);
+          const currentItems = getStoredItems();
+          if (action === 'increase') {
+            currentItems[index].quantity = (currentItems[index].quantity || 1) + 1;
+          } else if (action === 'decrease') {
+            if ((currentItems[index].quantity || 1) > 1) {
+              currentItems[index].quantity -= 1;
+            } else {
+              currentItems.splice(index, 1);
+            }
+          }
+          saveItems(currentItems);
+        });
+      });
+
+      itemsList.querySelectorAll('.remove-item-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const index = Number(btn.dataset.index);
+          const currentItems = getStoredItems();
+          currentItems.splice(index, 1);
+          saveItems(currentItems);
+        });
+      });
+    }
+
+    // Handle WhatsApp Checkout
+    if (checkoutForm) {
+      checkoutForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const items = getStoredItems();
+        if (items.length === 0) return;
+
+        const name = (document.getElementById('cust-name') as HTMLInputElement)?.value.trim();
+        const phone = (document.getElementById('cust-phone') as HTMLInputElement)?.value.trim();
+        const address = (document.getElementById('cust-address') as HTMLTextAreaElement)?.value.trim();
+
+        let subtotal = 0;
+        let itemsText = '';
+
+        items.forEach((item) => {
+          const qty = Number(item.quantity) || 1;
+          const price = Number(item.price) || 0;
+          const itemTotal = price * qty;
+          subtotal += itemTotal;
+          itemsText += `• ${item.name} (${item.size}) × ${qty} = ₹${itemTotal}\n`;
+        });
+
+        const message = `🌿 *OurOrigin — Harvest Order Request*\n\n` +
+          `*Customer Details:*\n` +
+          `Name: ${name}\n` +
+          `Phone: ${phone}\n` +
+          `Delivery Address: ${address}\n\n` +
+          `*Harvest Items:*\n${itemsText}\n` +
+          `*Total Amount:* ₹${subtotal}\n` +
+          `*Dispatch:* Direct Farm Dispatch (Free)\n\n` +
+          `_Please confirm availability and dispatch schedule._`;
+
+        const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+        window.open(waUrl, '_blank');
+      });
+    }
+
+    // Copy UPI ID
+    if (copyUpiBtn) {
+      copyUpiBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText('ourorigin@ybl').then(() => {
+          copyUpiBtn.textContent = 'Copied!';
+          setTimeout(() => {
+            copyUpiBtn.textContent = 'Copy';
+          }, 2000);
+        });
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', initBasket);
+  document.addEventListener('astro:page-load', initBasket);
+</script>

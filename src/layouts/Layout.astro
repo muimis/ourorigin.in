@@ -3,182 +3,91 @@ import { ClientRouter } from 'astro:transitions';
 import '../styles/tokens.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import AllYieldsPanel from '../components/AllYieldsPanel.astro';
 import Basket from '../components/Basket.astro';
-import CustomCursor from '../components/CustomCursor.astro';
 import { SITE_URL } from '../utils/constants';
 
 interface Props {
-	title: string;
-    description?: string;
-    ogImage?: string;
-    noHeaderPadding?: boolean;
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  noHeaderPadding?: boolean;
 }
 
 const { 
-    title, 
-    description = "A provenance record for what the land gives. The coordinate, the community, the first hands — that is the product.",
-    ogImage = "/og-image.jpg",
-    noHeaderPadding = false
+  title = "OurOrigin — Real Food from Wild Earth", 
+  description = "Single-origin forest spices, mountain teas, and heritage grains. Harvested by native farming families across the Western Ghats, shipped direct.",
+  ogImage = "/og-image.jpg",
+  noHeaderPadding = false
 } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
-const fullOgImage = ogImage.startsWith('http') ? ogImage : `${SITE_URL}${ogImage}`;
+const canonicalURL = new URL(Astro.url.pathname, SITE_URL || 'https://ourorigin.in');
+const fullOgImage = ogImage.startsWith('http') ? ogImage : `${SITE_URL || 'https://ourorigin.in'}${ogImage}`;
 ---
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="description" content={description} />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="canonical" href={canonicalURL} />
-		<meta name="generator" content={Astro.generator} />
-		
-        <!-- Open Graph -->
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={description} />
-        <meta property="og:image" content={fullOgImage} />
-        <meta property="og:url" content={canonicalURL} />
-        <meta property="og:type" content="website" />
-        <meta property="og:site_name" content="OurOrigin" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonicalURL} />
+    <meta name="generator" content={Astro.generator} />
+    
+    <!-- Open Graph / Social -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={fullOgImage} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="OurOrigin" />
 
-        <!-- Twitter Card -->
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={title} />
-        <meta name="twitter:description" content={description} />
-        <meta name="twitter:image" content={fullOgImage} />
-        <meta name="theme-color" content="#0c1509" />
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={fullOgImage} />
+    <meta name="theme-color" content="#FAF7F2" />
 
-        <!-- Google Fonts -->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=DM+Mono:ital,wght@0,300;0,400;0,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-        
-        <ClientRouter fallback="swap" />
-        <title>{title}</title>
-	</head>
-	<body>
-        <Header />
-        
-        <!-- Unified global UI navigation and checkout system -->
-        <AllYieldsPanel />
-        <Basket />
-        <CustomCursor />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <ClientRouter fallback="swap" />
+  </head>
+  <body class="site-body">
+    <Header />
+    
+    <main id="main-content" class={noHeaderPadding ? 'main-no-pad' : 'main-with-pad'}>
+      <slot />
+    </main>
 
-        <!-- ── The Pillar Grid (Background Structure) ── -->
-        <div class="global-pillars" aria-hidden="true">
-            <div class="pillar"></div>
-            <div class="pillar"></div>
-            <div class="pillar"></div>
-            <div class="pillar"></div>
-        </div>
-
-        <!-- ── Invisible SVG Definitions ── -->
-        <svg aria-hidden="true" style="position: absolute; width: 0; height: 0;">
-            <defs>
-                <clipPath id="logo-mask" clipPathUnits="objectBoundingBox" transform="scale(0.001724, 0.001851)">
-                    <!-- ViewBox was 580x540, so 1/580 = 0.001724, 1/540 = 0.001851 -->
-                    <path class="mark-path" d="M208,392 L158,414 L165,448 L177,491 L183,505 L193,515 L202,515 L208,511 L212,503 L214,491 L214,447 Z"/>
-                    <path class="mark-path" d="M311,348 L270,365 L273,390 L282,433 L290,455 L295,459 L300,459 L304,456 L309,441 L311,423 Z"/>
-                    <path class="mark-path" d="M426,307 L386,321 L382,372 L377,408 L378,420 L385,419 L391,413 L406,386 L416,357 Z"/>
-                    <path class="mark-path" d="M415,203 L407,204 L403,208 L400,215 L391,269 L389,295 L428,284 L430,261 L429,233 L425,215 L421,207 Z"/>
-                    <path class="mark-path" d="M291,131 L281,132 L274,143 L265,196 L262,277 L266,334 L311,319 L313,225 L310,185 L306,161 L301,144 L297,136 Z"/>
-                    <path class="mark-path" d="M160,23 L153,23 L147,26 L142,32 L137,43 L131,69 L127,111 L127,169 L132,238 L142,330 L151,381 L205,357 L202,308 L200,210 L193,126 L187,88 L178,49 L170,30 L165,25 Z"/>
-                </clipPath>
-            </defs>
-        </svg>
-
-        <!-- ── The Crossing Gesture (Global Diagonal) ── -->
-        <div class="global-crossing-container" aria-hidden="true" style="pointer-events: none;">
-            <svg class="global-crossing" viewBox="0 0 580 540" fill="none">
-                <path class="global-mark-dot" fill="var(--color-mark-gold)" d="M527,324 L515,330 L511,335 L507,345 L508,357 L510,362 L517,369 L525,373 L540,373 L553,363 L557,352 L557,344 L552,333 L541,325 Z"/>
-                <path class="global-mark-sweep" fill="var(--color-mark-gold)" d="M519,269 L502,269 L473,274 L429,286 L424,286 L421,288 L416,288 L412,291 L409,290 L402,294 L399,293 L393,296 L391,295 L356,307 L342,310 L327,316 L310,320 L293,326 L291,328 L287,328 L279,332 L278,331 L271,335 L269,334 L262,338 L203,359 L200,362 L198,361 L195,364 L186,366 L180,370 L179,369 L176,372 L174,371 L172,374 L166,376 L165,375 L162,378 L154,380 L153,382 L152,381 L152,383 L149,383 L127,394 L94,413 L62,435 L51,446 L50,454 L52,457 L57,459 L70,456 L89,445 L158,412 L159,413 L169,407 L181,403 L234,378 L277,361 L283,357 L287,357 L307,349 L308,347 L310,348 L316,344 L348,333 L350,331 L365,327 L375,322 L386,320 L403,314 L404,312 L408,312 L411,309 L414,310 L419,307 L423,307 L425,305 L446,299 L474,288 L494,282 L499,279 L503,279 L519,272 Z"/>
-            </svg>
-        </div>
-
-        <script>
-            import '../scripts/reveal.js';
-        </script>
-		
-        <main class:list={["main-content", { "main-content--no-pad": noHeaderPadding }]}>
-            <slot />
-        </main>
-
-        <Footer />
-	</body>
+    <Footer />
+    
+    <!-- Seamless Shopping Basket Slide-over -->
+    <Basket />
+  </body>
 </html>
 
 <style>
-    body {
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-        position: relative;
-    }
+  .site-body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-bone);
+  }
 
-    /* ── Global Pillar Lines ── */
-    .global-pillars {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        pointer-events: none;
-        z-index: -1;
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        max-width: var(--content-max-width);
-        margin: 0 auto;
-        left: 50%;
-        transform: translateX(-50%);
-    }
+  main {
+    flex: 1 0 auto;
+  }
 
-    .pillar {
-        border-right: 1px solid var(--color-border-subtle);
-    }
-    
-    .pillar:first-child {
-        border-left: 1px solid var(--color-border-subtle);
-    }
-    
-    /* ── Global Crossing (Diagonal) ── */
-    .global-crossing-container {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        z-index: 100; /* On top of most things, below header */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        mix-blend-mode: multiply; /* Optional: lets the gold blend into the paper */
-    }
+  .main-with-pad {
+    padding-top: 5rem;
+  }
 
-    .global-crossing {
-        width: 100%;
-        max-width: 800px; /* Scale with the hero */
-        height: auto;
-        opacity: 0; /* Hidden by default, animated by HeroSection GSAP */
-    }
-
-    .main-content {
-        flex: 1;
-        width: 100%;
-        max-width: var(--content-max-width);
-        margin: 0 auto;
-        padding: 120px 0 0; /* Align with pillars, no horizontal padding */
-        position: relative;
-        z-index: 1;
-    }
-
-    /* Homepage and cinematic pages override this */
-    .main-content--no-pad {
-        padding-top: 0;
-        padding-left: 0;
-        padding-right: 0;
-        max-width: 100%;
-    }
+  .main-no-pad {
+    padding-top: 0;
+  }
 </style>

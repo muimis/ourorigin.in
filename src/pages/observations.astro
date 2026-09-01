@@ -1,194 +1,197 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import OriginMark from '../components/OriginMark.astro';
 
-// Observations: Real field entries, not generic blog posts
 const observations = [
   {
     date: "01 OCT 2026",
+    origin: "Attappady · 750m",
     title: "The First Harvest of Attappady",
-    body: "The Black Pepper harvest has begun. The density of the peppercorns this year is remarkable — a direct result of the extended dry spell followed by sudden, intense monsoons. The soil retained more moisture than usual, and the vines responded.",
-    size: "large"
+    body: "The native millet harvest has begun. The density of the grains this year is remarkable — a direct result of the extended dry spell followed by sudden, intense monsoons. The soil retained more moisture than usual, and the crop responded.",
+    author: "Field Dispatch"
   },
   {
     date: "15 SEP 2026",
+    origin: "Wayanad · 1,100m",
     title: "Sun-drying and Essential Oils",
-    body: "Why we insist on ambient sun-drying. Industrial dryers strip away the volatile compounds that give our spices their signature aroma and therapeutic properties. The difference is measurable.",
-    size: "medium"
+    body: "Why we insist on ambient sun-drying on natural mats. Industrial dryers strip away the volatile compounds that give spices their signature aroma and therapeutic properties. The difference is immediately apparent in the volatile oil test.",
+    author: "Terroir Note"
   },
   {
     date: "28 AUG 2026",
-    title: "Nilgiris Frost Line",
-    body: "The frost line moved 50 metres downhill this January. The tea that grows below it now has a different character — a sharper note in the first flush that wasn't there two years ago.",
-    size: "small"
+    origin: "The Nilgiris · 2,600m",
+    title: "The Shola Frost Line",
+    body: "The frost line moved 50 metres downhill this winter. The tea that grows below it now has a different character — a sharper citrus note in the first flush that wasn't there two years ago.",
+    author: "Grower Observation"
   },
   {
     date: "10 AUG 2026",
-    title: "Wayanad Canopy Report",
-    body: "The pepper vines in Wayanad grow on living trees. This season the canopy cover was measured at 72% — enough to slow the morning light but not block it. The vines that grew under this specific cover produced berries with 5.8% piperine content.",
-    size: "large"
+    origin: "Wayanad · 1,100m",
+    title: "Canopy Shade Cover Report",
+    body: "The pepper vines in Wayanad climb living native trees. This season the canopy cover was measured at 72% — enough to filter the morning light without starving the vine. The berries tested at 5.8% natural piperine content.",
+    author: "Ecology Record"
   },
   {
     date: "22 JUL 2026",
-    title: "Monsoon Arrival",
-    body: "The southwest monsoon arrived 11 days late this year. Every day of delay changes what the harvest will be.",
-    size: "small"
+    origin: "Western Ghats",
+    title: "Southwest Monsoon Arrival",
+    body: "The southwest monsoon arrived 11 days late this year. In conventional agriculture that is a crisis; in a natural biodiverse forest canopy, the root systems hold the groundwater and balance the cycle naturally.",
+    author: "Weather Ledger"
   },
   {
     date: "05 JUL 2026",
+    origin: "Idukki · 1,200m",
     title: "Idukki Cardamom Assessment",
-    body: "The cardamom in Idukki is entering its flowering cycle. The capsules are forming with good density. The essential oil percentage from last season's yield tested at 6.7% — well above market average of 4%.",
-    size: "medium"
+    body: "The wild cardamom in Idukki is entering its flowering cycle. The capsules are forming with high oil density. The essential oil percentage from last season's yield tested at 6.7% — well above the commercial average of 4%.",
+    author: "Harvest Report"
   }
 ];
 ---
 
 <Layout 
-  title="Field Notes — OurOrigin" 
+  title="Field Notes & Dispatches — OurOrigin" 
   description="Observations from the forest, the ledger, and the changing seasons."
 >
-  <main class="observations-page">
-    <div class="observations-container">
-      
-      <div class="page-header" data-reveal="fade">
-        <h1 class="page-title">Field Notes</h1>
-        <p class="page-subtitle">
-          Observations from the forest, the ledger, and the changing seasons. Not marketing. Documentation.
+  <div class="observations-page">
+    
+    <!-- Hero Header -->
+    <header class="obs-hero">
+      <div class="container">
+        <span class="badge-origin badge-gold">
+          <OriginMark size={14} variant="gold" />
+          <span>WESTERN GHATS DISPATCHES</span>
+        </span>
+        <h1 class="obs-headline font-serif">Field Notes & Observations</h1>
+        <p class="obs-intro text-muted">
+          Observations from the forest canopy, the drying mats, and the changing seasons. Documentation, not advertising.
         </p>
       </div>
+    </header>
 
-      <div class="bento-grid" data-reveal="stagger">
-        {observations.map((entry) => (
-          <div class={`bento-tile bento-tile--${entry.size}`}>
-            <span class="tile-date">{entry.date}</span>
-            <h2 class="tile-title">{entry.title}</h2>
-            <p class="tile-body">{entry.body}</p>
+    <!-- Dispatches Grid -->
+    <div class="container obs-grid">
+      {observations.map((entry) => (
+        <article class="obs-card">
+          <div class="obs-meta">
+            <span class="obs-date font-mono">{entry.date}</span>
+            <span class="obs-origin font-mono">{entry.origin}</span>
           </div>
-        ))}
-      </div>
 
+          <h2 class="obs-title font-serif">{entry.title}</h2>
+          <p class="obs-body text-muted">{entry.body}</p>
+
+          <div class="obs-footer">
+            <span class="obs-author font-mono">{entry.author}</span>
+            <span class="obs-mark font-mono text-gold">VERIFIED · FIRST HANDS</span>
+          </div>
+        </article>
+      ))}
     </div>
-  </main>
+
+  </div>
 </Layout>
 
 <style>
   .observations-page {
-    min-height: 100vh;
-    background-color: var(--color-deep-forest);
-    background-image: radial-gradient(circle at center top, var(--color-gold-muted) 0%, transparent 60%);
-    color: var(--color-bone);
-    padding: 0 var(--space-xl) var(--space-4xl);
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .observations-page::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: url('/noise.png') repeat;
-    opacity: 0.03;
-    pointer-events: none;
-    z-index: 0;
+    padding-bottom: clamp(4rem, 8vw, 7rem);
+    background-color: var(--color-bone);
   }
 
-  .observations-container {
-    position: relative;
-    z-index: 1;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding-top: var(--space-4xl);
+  .obs-hero {
+    padding: clamp(3.5rem, 6vw, 5.5rem) 0 clamp(2.5rem, 4vw, 3.5rem);
+    background: linear-gradient(180deg, var(--color-bone-warm) 0%, var(--color-bone) 100%);
+    border-bottom: 1px solid var(--color-border-subtle);
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
   }
 
-  .page-header {
-    margin-bottom: var(--space-4xl);
-  }
-
-  .page-title {
-    font-family: var(--font-display);
+  .obs-headline {
     font-size: var(--type-display);
-    font-weight: 400;
-    margin: 0 0 var(--space-lg) 0;
-    letter-spacing: 0.03em;
+    line-height: 1.15;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-weight: 350;
   }
 
-  .page-subtitle {
-    font-family: var(--font-narrative);
-    font-size: var(--type-narrative);
-    color: var(--color-bone-muted);
+  .obs-intro {
+    font-size: 1.05rem;
+    line-height: 1.65;
+    max-width: 640px;
     margin: 0;
-    max-width: 600px;
-    line-height: var(--line-height-loose);
   }
 
-  /* Bento Grid */
-  .bento-grid {
+  .obs-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-xl);
+    grid-template-columns: 1fr;
+    gap: 2rem;
   }
 
-  .bento-tile {
-    padding: var(--space-2xl);
-    background: rgba(245, 240, 232, 0.02);
-    border: 1px solid var(--color-gold-muted);
+  @media (min-width: 720px) {
+    .obs-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1040px) {
+    .obs-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .obs-card {
+    background-color: var(--color-bone-card);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 8px;
+    padding: 1.75rem;
     display: flex;
     flex-direction: column;
-    gap: var(--space-sm);
-    transition: all var(--duration-standard) var(--ease-settle);
+    gap: 1rem;
+    box-shadow: var(--shadow-subtle);
+    transition: transform var(--duration-base) var(--ease-smooth), box-shadow var(--duration-base) var(--ease-smooth);
   }
 
-  .bento-tile:hover {
-    border-color: var(--color-gold-muted);
-    background: rgba(245, 240, 232, 0.04);
+  .obs-card:hover {
     transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
+    border-color: var(--color-border-medium);
   }
 
-  /* Size variations */
-  .bento-tile--large {
-    grid-column: span 2;
+  .obs-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 0.6875rem;
+    color: var(--color-ink-whisper);
   }
 
-  .bento-tile--small .tile-body {
-    font-size: var(--type-evidence);
-    line-height: var(--line-height-base);
+  .obs-origin {
+    color: var(--color-mark-gold);
   }
 
-  .tile-date {
-    font-family: var(--font-evidence);
-    font-size: var(--type-whisper);
-    letter-spacing: 0.1em;
-    color: var(--color-bone-whisper);
-    text-transform: uppercase;
-  }
-
-  .tile-title {
-    font-family: var(--font-display);
-    font-size: clamp(1rem, 2vw, 1.25rem);
-    font-weight: 400;
-    color: var(--color-bone);
+  .obs-title {
+    font-size: 1.35rem;
+    font-weight: 450;
     margin: 0;
-    line-height: 1.2;
+    line-height: 1.3;
+    color: var(--color-deep-forest);
   }
 
-  .tile-body {
-    font-family: var(--font-narrative);
-    font-size: var(--type-narrative);
-    color: var(--color-bone-muted);
-    line-height: var(--line-height-loose);
+  .obs-body {
+    font-size: 0.9375rem;
+    line-height: 1.65;
     margin: 0;
+    flex-grow: 1;
   }
 
-  @media (max-width: 768px) {
-    .bento-grid {
-      grid-template-columns: 1fr;
-    }
+  .obs-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border-subtle);
+    font-size: 0.6875rem;
+  }
 
-    .bento-tile--large {
-      grid-column: span 1;
-    }
-
-    .observations-page {
-      padding: 0 var(--space-lg) var(--space-3xl);
-    }
+  .obs-author {
+    color: var(--color-ink-muted);
   }
 </style>

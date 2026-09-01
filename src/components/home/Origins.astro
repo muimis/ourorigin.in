@@ -1,562 +1,353 @@
 ---
-// Origins.astro — 4-Pillar Layout for Origins
+// Origins.astro — Clean Terroir & Ecological Showcase
 import { getCollection } from 'astro:content';
-import OriginMark from '../OriginMark.astro';
 
 const allOrigins = await getCollection('origins');
 const allProducts = await getCollection('products');
 
-function parseElevation(elevStr: string) {
-  const match = String(elevStr || '').match(/[\d,]+/);
-  return match ? parseInt(match[0].replace(/,/g, ''), 10) : 0;
-}
+// Filter out malabar-coast if it has no products
+const filteredOrigins = allOrigins.filter(o => o.id !== 'malabar-coast');
 
-// Sort: highest elevation first
-const sortedOrigins = [...allOrigins].sort((a, b) => {
-  return parseElevation(b.data.elevation) - parseElevation(a.data.elevation);
-});
-
-// Group products by origin
+// Map products to origin
 const productsByOrigin: Record<string, typeof allProducts> = {};
-sortedOrigins.forEach(origin => {
+filteredOrigins.forEach(origin => {
   const originSlug = origin.data.slug;
   productsByOrigin[originSlug] = allProducts.filter(p => {
     const originId = typeof p.data.originSlug === 'object' ? (p.data.originSlug as any)?.id : p.data.originSlug;
-    return originId === originSlug && p.data.sizes && p.data.sizes.length > 0;
+    return originId === originSlug;
   });
 });
 ---
 
-<section class="origins-section" id="origins" aria-label="Where It Grows">
-  <div class="layout-pillar-grid">
+<section class="origins-section" id="origins" aria-label="Origins and Terroirs">
+  <div class="container">
     
-    <!-- Pillar 1: Section Header (Deep Forest Background) -->
-    <div class="origins-header-col">
-      <div class="header-content" data-reveal>
-        <span class="section-number">03</span>
-        <div class="hero-line"></div>
-        <h2 class="section-title">Where It<br/>Grows.</h2>
-        <p class="section-desc">
-          Different heights and climates produce different yields. From cold high-mountain teas to deep cardamom valleys.
+    <!-- Section Header -->
+    <div class="origins-header">
+      <div class="origins-header-content">
+        <span class="badge-origin badge-gold">TERROIR & MICRO-CLIMATES</span>
+        <h2 class="origins-title font-serif">The Land That Shapes The Harvest</h2>
+        <p class="origins-subtitle">
+          Flavor is geography. Different elevations, monsoon currents, and soil structures give each harvest its unmistakable profile.
         </p>
       </div>
+      <a href="/ledger" class="origins-ledger-link font-mono">
+        <span>View Terroir Coordinates</span>
+        <span aria-hidden="true">→</span>
+      </a>
     </div>
 
-    <!-- Pillars 2,3,4: The Accordion -->
-    <div class="origins-list-col">
-      <div class="origins-container">
-        {sortedOrigins.map((origin, index) => {
-          const originProducts = productsByOrigin[origin.data.slug] || [];
-          const canopyImg = origin.data.images?.canopy || '';
-          const isFirst = index === 0;
+    <!-- Origins Grid -->
+    <div class="origins-grid">
+      {filteredOrigins.map((origin) => {
+        const yields = productsByOrigin[origin.data.slug] || [];
+        const canopyImg = origin.data.images?.canopy || origin.data.images?.hand || '/assets/images/gesture_hands.png';
+        const narrative = origin.data.narrative?.canopy || origin.data.soil || '';
 
-          return (
-            <div class="origin-node" data-realm={origin.data.slug} data-reveal>
-              <button 
-                type="button"
-                class="origin-card" 
-                aria-expanded={isFirst ? "true" : "false"}
-                aria-controls={`yields-${origin.data.slug}`}
-              >
-                {canopyImg && (
-                  <div 
-                    class="origin-bg-image" 
-                    style={`background-image: url('${canopyImg}');`}
-                    aria-hidden="true"
-                  />
-                )}
-                <div class="origin-wash" aria-hidden="true"></div>
-
-                <div class="origin-content">
-                  <span class="origin-elevation">
-                    <span class="elevation-icon" aria-hidden="true">▲</span>
-                    {origin.data.elevation}
-                  </span>
-                  <h3 class="origin-name">{origin.data.name}</h3>
-                  <p class="origin-soil">{origin.data.soil}</p>
-                </div>
-
-                <div class="origin-toggle">
-                  <span class="toggle-text">View Harvests</span>
-                  <span class="toggle-icon" aria-hidden="true">+</span>
-                </div>
-              </button>
-
-              <!-- Drawer -->
-              <div 
-                id={`yields-${origin.data.slug}`} 
-                class:list={["origin-yields", { "is-active": isFirst }]}
-                aria-hidden={isFirst ? "false" : "true"}
-              >
-                <div class="yields-inner">
-                  <div class="yields-grid">
-                    {originProducts.length === 0 ? (
-                      <p class="no-yields">Resting between seasons. Next harvest after the monsoon.</p>
-                    ) : (
-                      originProducts.map((product) => {
-                        const firstSize = product.data.sizes[0];
-                        const prodImg = product.data.images?.product || product.data.images?.packaging || '';
-                        const priceDisplay = product.data.sizes.length > 1
-                          ? `₹${Math.min(...product.data.sizes.map(s => s.priceINR))} - ₹${Math.max(...product.data.sizes.map(s => s.priceINR))}`
-                          : `₹${firstSize.priceINR}`;
-
-                        const itemPayload = JSON.stringify({
-                          id: `${product.id}-${firstSize.label}`,
-                          productId: product.id,
-                          name: product.data.name,
-                          origin: origin.data.name,
-                          originId: origin.id,
-                          price: firstSize.priceINR,
-                          size: firstSize.label,
-                          weight: firstSize.label,
-                          quantity: 1
-                        });
-
-                        return (
-                          <div class="yield-card">
-                            <div class="yield-img-box">
-                              <a href={`/origins/${origin.data.slug}/${product.id}`} class="yield-img-link" aria-label={`View ${product.data.name}`}>
-                                {prodImg && (
-                                  <img src={prodImg} alt={product.data.name} class="yield-img" />
-                                )}
-                              </a>
-                            </div>
-                            <div class="yield-body">
-                              <span class="yield-botanical">{product.data.botanicalName}</span>
-                              <h4 class="yield-name">
-                                <a href={`/origins/${origin.data.slug}/${product.id}`}>{product.data.name}</a>
-                              </h4>
-                              <div class="yield-footer">
-                                <span class="yield-price">{priceDisplay}</span>
-                                <button 
-                                  type="button"
-                                  class="btn-gather" 
-                                  data-product-json={itemPayload}
-                                  aria-label={`Add ${product.data.name} to basket`}
-                                >
-                                  + Add
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })
-                    )}
-                  </div>
-                </div>
+        return (
+          <article class="origin-card">
+            <!-- Media Backdrop -->
+            <div class="origin-card-media">
+              <img 
+                src={canopyImg} 
+                alt={`${origin.data.name} terroir canopy`} 
+                class="origin-img"
+                loading="lazy"
+                onerror="this.src='/assets/images/gesture_hands.png'"
+              />
+              <div class="origin-media-shade"></div>
+              
+              <div class="origin-media-meta">
+                <span class="origin-elevation-badge font-mono">
+                  ▲ {origin.data.elevation}
+                </span>
+                <span class="origin-coords-badge font-mono">
+                  {origin.data.coordinates}
+                </span>
               </div>
             </div>
-          );
-        })}
-      </div>
+
+            <!-- Content Area -->
+            <div class="origin-card-body">
+              <div class="origin-title-row">
+                <h3 class="origin-name font-serif">{origin.data.name}</h3>
+                <span class="origin-bioregion font-mono">{origin.data.bioregion}</span>
+              </div>
+
+              {origin.data.soil && (
+                <div class="origin-soil-tag font-mono">
+                  {origin.data.soil}
+                </div>
+              )}
+
+              {narrative && (
+                <p class="origin-story">
+                  {narrative.length > 140 ? `${narrative.slice(0, 140)}...` : narrative}
+                </p>
+              )}
+
+              <!-- Associated Yields -->
+              <div class="origin-yields-wrapper">
+                <span class="yields-label font-mono">KEY HARVESTS:</span>
+                <div class="yields-pills">
+                  {yields.slice(0, 4).map((item) => (
+                    <a 
+                      href={`/origins/${origin.data.slug}/${item.id}`} 
+                      class="yield-pill"
+                    >
+                      {item.data.name}
+                    </a>
+                  ))}
+                </div>
+              </div>
+
+              <!-- Explore Link -->
+              <div class="origin-card-action">
+                <a href={`/origins/${origin.data.slug}`} class="origin-explore-btn">
+                  <span>Explore Terroir</span>
+                  <span aria-hidden="true">→</span>
+                </a>
+              </div>
+            </div>
+          </article>
+        );
+      })}
     </div>
+
   </div>
 </section>
 
-<script>
-  document.addEventListener('click', (e) => {
-    const target = e.target as HTMLElement | null;
-    if (!target) return;
-
-    const cardBtn = target.closest('.origin-card') as HTMLButtonElement | null;
-    if (cardBtn) {
-      e.preventDefault();
-      const node = cardBtn.closest('.origin-node');
-      if (!node) return;
-      const panel = node.querySelector('.origin-yields');
-      if (!panel) return;
-
-      const isCurrentlyExpanded = cardBtn.getAttribute('aria-expanded') === 'true';
-      const allNodes = document.querySelectorAll('.origin-node');
-
-      allNodes.forEach((otherNode) => {
-        const otherBtn = otherNode.querySelector('.origin-card');
-        const otherPanel = otherNode.querySelector('.origin-yields');
-        if (otherBtn && otherPanel) {
-          otherBtn.setAttribute('aria-expanded', 'false');
-          otherPanel.classList.remove('is-active');
-          otherPanel.setAttribute('aria-hidden', 'true');
-        }
-      });
-
-      if (!isCurrentlyExpanded) {
-        cardBtn.setAttribute('aria-expanded', 'true');
-        panel.classList.add('is-active');
-        panel.setAttribute('aria-hidden', 'false');
-      }
-      return;
-    }
-
-    const addBtn = target.closest('.btn-gather') as HTMLElement | null;
-    if (addBtn) {
-      e.preventDefault();
-      e.stopPropagation();
-
-      const jsonStr = addBtn.dataset.productJson;
-      if (!jsonStr) return;
-
-      try {
-        const item = JSON.parse(jsonStr);
-        window.dispatchEvent(new CustomEvent('add-to-cart', { detail: item }));
-        
-        const originalText = addBtn.textContent;
-        addBtn.textContent = 'Added';
-        addBtn.classList.add('is-added');
-        setTimeout(() => {
-          addBtn.textContent = originalText;
-          addBtn.classList.remove('is-added');
-        }, 1400);
-      } catch (err) {
-        console.error('Error adding to harvest bundle:', err);
-      }
-    }
-  });
-</script>
-
 <style>
   .origins-section {
-    position: relative;
-    z-index: 2;
-    background: var(--color-bone);
-    border-top: 1px solid var(--color-border-subtle);
-  }
-
-  .origins-header-col {
-    grid-column: span 1;
-    background: var(--color-deep-forest);
-    padding: clamp(3rem, 6vh, 4.5rem) var(--space-xl);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-
-  .origins-list-col {
-    grid-column: span 3;
-    padding: clamp(3rem, 6vh, 4.5rem) var(--space-xl);
-  }
-
-  .header-content {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
-  }
-
-  .section-number {
-    font-family: var(--font-evidence);
-    font-size: var(--type-evidence);
-    color: var(--color-mark-gold);
-    letter-spacing: 0.1em;
-  }
-
-  .hero-line {
-    width: 24px;
-    height: 1px;
-    background-color: var(--color-mark-gold);
-    margin: -4px 0 8px 0;
-  }
-
-  .section-title {
-    margin: 0;
-    font-family: var(--font-narrative);
-    font-size: clamp(2.5rem, 4vw, 3.5rem);
-    line-height: 1.05;
-    color: var(--color-bone);
-    font-weight: 300;
-  }
-
-  .section-desc {
-    margin: 1rem 0 0;
-    font-family: var(--font-body);
-    font-size: 1.05rem;
-    color: var(--color-bone-muted);
-    line-height: 1.5;
-  }
-
-  .origins-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .origin-node {
-    background: transparent;
-  }
-
-  /* Compact Clean Origin Card */
-  .origin-card {
-    position: relative;
-    width: 100%;
-    text-align: left;
-    background: var(--color-deep-forest);
-    border: 1px solid rgba(12, 21, 9, 0.1);
-    padding: clamp(1.5rem, 2.5vw, 2.5rem);
-    cursor: pointer;
-    overflow: hidden;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: var(--color-bone);
-    min-height: 140px;
-    transition: all var(--duration-standard) ease;
-  }
-
-  .origin-card:hover {
-    border-color: var(--color-mark-gold);
-    transform: translateY(-2px);
-  }
-
-  .origin-bg-image {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-    opacity: 0.2;
-    transition: opacity var(--duration-slow) ease, transform var(--duration-slow) ease;
-    z-index: 0;
-    pointer-events: none;
-    filter: grayscale(100%);
-  }
-
-  .origin-card:hover .origin-bg-image,
-  .origin-card[aria-expanded="true"] .origin-bg-image {
-    opacity: 0.35;
-    transform: scale(1.03);
-  }
-
-  .origin-wash {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(12, 21, 9, 0.9) 0%, rgba(12, 21, 9, 0.5) 100%);
-    z-index: 1;
-    pointer-events: none;
-  }
-
-  .origin-content {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-  }
-
-  .origin-elevation {
-    color: var(--color-mark-gold);
-    font-family: var(--font-evidence);
-    font-size: 12px;
-    letter-spacing: 0.15em;
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-  }
-
-  .elevation-icon {
-    font-size: 9px;
-  }
-
-  .origin-name {
-    margin: 0;
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 3.5vw, 2.5rem);
-    color: var(--color-bone);
-    font-weight: 300;
-  }
-
-  .origin-soil {
-    margin: 0;
-    font-family: var(--font-narrative);
-    font-size: 13px;
-    color: var(--color-bone-muted);
-    font-style: italic;
-  }
-
-  .origin-toggle {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-family: var(--font-evidence);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--color-mark-gold);
-  }
-
-  .toggle-icon {
-    font-size: 1.3rem;
-    font-weight: 300;
-    transition: transform 0.3s ease;
-  }
-
-  .origin-card[aria-expanded="true"] .toggle-icon {
-    transform: rotate(45deg);
-  }
-
-  /* Drawer */
-  .origin-yields {
-    display: none;
-    margin-top: 1rem;
-  }
-
-  .origin-yields.is-active {
-    display: block;
-    animation: fadeIn 0.3s ease;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .yields-inner {
-    padding: 1rem 0 2rem;
-  }
-
-  .yields-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-  }
-
-  /* Compact Clean Product Cards */
-  .yield-card {
-    background: var(--color-bone);
-    border: 1px solid var(--color-border-subtle);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    transition: all var(--duration-standard) ease;
-    position: relative;
-  }
-
-  .yield-card:hover {
-    border-color: var(--color-mark-gold);
-    transform: translateY(-2px);
-  }
-
-  .yield-img-box {
-    position: relative;
-    height: 180px;
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
+    padding: clamp(4rem, 7vw, 6.5rem) 0;
+    background-color: var(--color-bone-warm);
     border-bottom: 1px solid var(--color-border-subtle);
   }
 
-  .yield-img-link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: 100%;
-  }
-
-  .yield-img {
-    max-height: 90%;
-    max-width: 90%;
-    object-fit: contain;
-    transition: transform var(--duration-slow) ease;
-    mix-blend-mode: multiply; /* Perfect for light background */
-  }
-
-  .yield-card:hover .yield-img {
-    transform: scale(1.05);
-  }
-
-  .yield-body {
-    padding: 1rem;
+  .origins-header {
     display: flex;
     flex-direction: column;
-    flex: 1;
+    gap: 1.5rem;
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
+    border-bottom: 1px solid var(--color-border-subtle);
+    padding-bottom: 2rem;
   }
 
-  .yield-botanical {
-    font-family: var(--font-narrative);
-    font-style: italic;
-    color: var(--color-deep-forest);
-    opacity: 0.6;
-    font-size: 12px;
-    margin-bottom: 0.25rem;
+  @media (min-width: 860px) {
+    .origins-header {
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
   }
 
-  .yield-name {
+  .origins-header-content {
+    max-width: 600px;
+  }
+
+  .origins-title {
+    font-size: var(--type-display);
+    margin-top: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .origins-subtitle {
+    font-size: 1rem;
+    color: var(--color-ink-muted);
     margin: 0;
-    font-family: var(--font-display);
-    font-size: 1.2rem;
-    font-weight: 400;
-    line-height: 1.25;
   }
 
-  .yield-name a {
-    color: var(--color-deep-forest);
-    text-decoration: none;
-  }
-
-  .yield-name a:hover {
-    color: var(--color-mark-gold);
-  }
-
-  .yield-footer {
-    display: flex;
-    justify-content: space-between;
+  .origins-ledger-link {
+    display: inline-flex;
     align-items: center;
-    margin-top: 1rem;
-    padding-top: 0.5rem;
-    border-top: 1px solid var(--color-border-subtle);
-  }
-
-  .yield-price {
-    font-family: var(--font-evidence);
-    font-size: 13px;
+    gap: 0.4rem;
+    font-size: 0.8125rem;
     color: var(--color-deep-forest);
     font-weight: 500;
   }
 
-  .btn-gather {
-    background: transparent;
-    color: var(--color-deep-forest);
-    border: 1px solid var(--color-deep-forest);
-    padding: 0.35rem 0.75rem;
-    font-family: var(--font-evidence);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    cursor: pointer;
-    transition: all 0.2s ease;
+  .origins-ledger-link:hover {
+    color: var(--color-mark-gold);
   }
 
-  .btn-gather:hover {
-    background: var(--color-deep-forest);
-    color: var(--color-bone);
+  /* Grid */
+  .origins-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
   }
 
-  .btn-gather.is-added {
-    background: var(--color-mark-gold);
-    border-color: var(--color-mark-gold);
-    color: var(--color-deep-forest);
-  }
-
-  .no-yields {
-    color: var(--color-deep-forest);
-    opacity: 0.6;
-    font-family: var(--font-narrative);
-    font-style: italic;
-    padding: 1.5rem;
-    font-size: 14px;
-    grid-column: span 3;
-  }
-
-  @media (max-width: 1024px) {
-    .origins-header-col {
-      grid-column: span 4;
-    }
-    .origins-list-col {
-      grid-column: span 4;
-    }
-    .yields-grid {
+  @media (min-width: 720px) {
+    .origins-grid {
       grid-template-columns: repeat(2, 1fr);
     }
+  }
+
+  @media (min-width: 1100px) {
+    .origins-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /* Origin Card */
+  .origin-card {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-bone-card);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow-subtle);
+    transition: transform var(--duration-base) var(--ease-smooth), box-shadow var(--duration-base) var(--ease-smooth);
+  }
+
+  .origin-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-card);
+  }
+
+  .origin-card-media {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    background-color: var(--color-forest-dark);
+    overflow: hidden;
+  }
+
+  .origin-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.6s var(--ease-smooth);
+  }
+
+  .origin-card:hover .origin-img {
+    transform: scale(1.05);
+  }
+
+  .origin-media-shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(12, 21, 10, 0.15) 0%, rgba(12, 21, 10, 0.7) 100%);
+  }
+
+  .origin-media-meta {
+    position: absolute;
+    bottom: 0.85rem;
+    left: 0.85rem;
+    right: 0.85rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--color-bone);
+    font-size: 0.6875rem;
+  }
+
+  .origin-elevation-badge {
+    padding: 0.2rem 0.5rem;
+    background-color: var(--color-mark-gold);
+    color: #0C150A;
+    font-weight: 600;
+    border-radius: 4px;
+  }
+
+  .origin-coords-badge {
+    opacity: 0.85;
+    letter-spacing: 0.04em;
+  }
+
+  /* Card Body */
+  .origin-card-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: 1rem;
+  }
+
+  .origin-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .origin-name {
+    font-size: 1.45rem;
+    font-weight: 500;
+    margin: 0;
+    color: var(--color-deep-forest);
+  }
+
+  .origin-bioregion {
+    font-size: 0.6875rem;
+    color: var(--color-ink-whisper);
+    letter-spacing: 0.05em;
+  }
+
+  .origin-soil-tag {
+    font-size: 0.6875rem;
+    color: var(--color-proof-green);
+    letter-spacing: 0.06em;
+  }
+
+  .origin-story {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--color-ink-muted);
+    margin: 0;
+    flex-grow: 1;
+  }
+
+  .origin-yields-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--color-border-subtle);
+  }
+
+  .yields-label {
+    font-size: 0.625rem;
+    color: var(--color-ink-whisper);
+    letter-spacing: 0.08em;
+  }
+
+  .yields-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .yield-pill {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    background-color: var(--color-bone-warm);
+    border-radius: 4px;
+    color: var(--color-deep-forest);
+    transition: background-color var(--duration-base) var(--ease-smooth);
+  }
+
+  .yield-pill:hover {
+    background-color: var(--color-mark-gold);
+    color: #0C150A;
+  }
+
+  .origin-card-action {
+    padding-top: 0.5rem;
+  }
+
+  .origin-explore-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-deep-forest);
+  }
+
+  .origin-explore-btn:hover {
+    color: var(--color-mark-gold);
   }
 </style>

@@ -1,411 +1,448 @@
 ---
-// Harvest.astro — Editorial product grid
+// Harvest.astro — Clean, Elegant Product Catalog
 import { getCollection } from 'astro:content';
-import OriginMark from '../OriginMark.astro';
 
 const allProducts = await getCollection('products');
 const allOrigins = await getCollection('origins');
 
 const originMap = Object.fromEntries(allOrigins.map(o => [o.id, o.data]));
 
+// Filter active products with valid sizes
 const activeProducts = allProducts.filter(p => {
   const originId = typeof p.data.originSlug === 'object' ? (p.data.originSlug as any).id : p.data.originSlug;
   return originId !== 'malabar-coast' && p.data.sizes && p.data.sizes.length > 0;
-}).slice(0, 12); // Show first 12
+});
+
+// Helper for category classification
+function getCategory(slug: string, originSlug: string): string {
+  if (slug.includes('tea') || slug.includes('coffee')) return 'tea';
+  if (slug.includes('millet')) return 'grain';
+  return 'spice';
+}
 ---
 
-<section class="harvest" id="harvest" aria-label="This Season's Harvest">
+<section class="harvest-section" id="harvest" aria-label="This Season's Harvest">
+  <div class="container">
+    
+    <!-- Section Header -->
+    <div class="harvest-header">
+      <div class="harvest-header-left">
+        <span class="badge-origin badge-gold">SEASONAL HARVEST</span>
+        <h2 class="harvest-title font-serif">Pure From First Hands</h2>
+        <p class="harvest-subtitle">
+          Sun-dried, unblended, and packaged directly at the origin.
+        </p>
+      </div>
 
-  <div class="harvest-head">
-    <div class="harvest-head-left">
-      <span class="harvest-kicker">04</span>
-      <div class="hero-line"></div>
-      <h2 class="harvest-title">The Harvest.</h2>
+      <!-- Filter Controls -->
+      <div class="harvest-filters" role="tablist" aria-label="Harvest categories">
+        <button type="button" class="filter-btn is-active" data-filter="all" role="tab" aria-selected="true">
+          All Yields ({activeProducts.length})
+        </button>
+        <button type="button" class="filter-btn" data-filter="spice" role="tab" aria-selected="false">
+          Forest Spices
+        </button>
+        <button type="button" class="filter-btn" data-filter="tea" role="tab" aria-selected="false">
+          Mountain Teas & Coffee
+        </button>
+        <button type="button" class="filter-btn" data-filter="grain" role="tab" aria-selected="false">
+          Native Grains
+        </button>
+      </div>
     </div>
-    <p class="harvest-desc">
-      Freshly gathered. Sun-dried. Packed at source.<br />
-      No warehouses. No blending. No middlemen.
-    </p>
-  </div>
 
-  <div class="layout-three-marks harvest-grid">
-    {activeProducts.map((product, i) => {
-      const originId = typeof product.data.originSlug === 'object' ? (product.data.originSlug as any).id : product.data.originSlug;
-      const origin = originMap[originId];
-      const originName = origin ? origin.name : originId;
-      const firstSize = product.data.sizes[0];
-      const prodImg = product.data.images?.product || product.data.images?.packaging || '';
+    <!-- Product Grid -->
+    <div class="harvest-grid" id="harvest-grid">
+      {activeProducts.map((product) => {
+        const originId = typeof product.data.originSlug === 'object' ? (product.data.originSlug as any).id : product.data.originSlug;
+        const origin = originMap[originId];
+        const originName = origin ? origin.name : originId;
+        const elevation = origin?.elevation || '';
+        const firstSize = product.data.sizes[0];
+        const category = getCategory(product.id, originId);
+        const prodImg = product.data.images?.product || product.data.images?.packaging || '/assets/products/minimal-packaging-pouch.jpg';
 
-      const itemPayload = JSON.stringify({
-        id: `${product.id}-${firstSize.label}`,
-        productId: product.id,
-        name: product.data.name,
-        origin: originName,
-        originId: originId,
-        price: firstSize.priceINR,
-        size: firstSize.label,
-        weight: firstSize.label,
-        quantity: 1
-      });
+        const itemPayload = JSON.stringify({
+          id: `${product.id}-${firstSize.label}`,
+          productId: product.id,
+          name: product.data.name,
+          origin: originName,
+          originId: originId,
+          price: firstSize.priceINR,
+          size: firstSize.label,
+          weight: firstSize.label,
+          image: prodImg,
+          quantity: 1
+        });
 
-      // Alternate tile sizes: 0,3,6,9 are large; rest normal
-      const isLarge = i % 4 === 0;
-
-      return (
-        <article class:list={["tile", { "tile--large": isLarge }]} data-origin={originId}>
-          <a href={`/origins/${originId}/${product.id}`} class="tile-img-link" tabindex="-1" aria-hidden="true">
-            {prodImg ? (
-              <img
-                src={prodImg}
-                alt={product.data.name}
-                class="tile-img"
-                loading={i < 4 ? "eager" : "lazy"}
-              />
-            ) : (
-              <div class="product-header">
-                <span class="product-id">{product.data.harvestId}</span>
+        return (
+          <article 
+            class="harvest-card" 
+            data-category={category} 
+            data-product-id={product.id}
+          >
+            <!-- Image Frame -->
+            <a 
+              href={`/origins/${originId}/${product.id}`} 
+              class="card-media-link" 
+              aria-label={`View details for ${product.data.name}`}
+            >
+              <div class="card-media">
+                <img
+                  src={prodImg}
+                  alt={product.data.name}
+                  class="card-img"
+                  loading="lazy"
+                  onerror="this.src='/assets/products/minimal-packaging-pouch.jpg'"
+                />
+                <span class="card-origin-pill font-mono">
+                  {originName.toUpperCase()} {elevation ? `· ${elevation}` : ''}
+                </span>
               </div>
-            )}
-          </a>
+            </a>
 
-          <!-- Overlay: always visible bottom strip -->
-          <div class="tile-overlay">
-            <div class="tile-meta">
-              <span class="tile-origin">{originName.toUpperCase()}</span>
-              <span class="tile-sep">·</span>
-              <span class="tile-elevation">{origin?.elevation || ''}</span>
-            </div>
-            <div class="tile-bottom">
-              <div class="tile-name-wrap">
-                <a href={`/origins/${originId}/${product.id}`} class="tile-name">{product.data.name}</a>
+            <!-- Card Info -->
+            <div class="card-body">
+              <div class="card-title-group">
+                <h3 class="card-title font-serif">
+                  <a href={`/origins/${originId}/${product.id}`} class="title-link">
+                    {product.data.name}
+                  </a>
+                </h3>
                 {product.data.botanicalName && (
-                  <span class="tile-botanical">{product.data.botanicalName}</span>
+                  <span class="card-botanical font-serif">{product.data.botanicalName}</span>
                 )}
               </div>
-              <div class="tile-action">
-                <span class="tile-price">₹{firstSize.priceINR}</span>
+
+              <!-- Price & Add Action -->
+              <div class="card-footer">
+                <div class="price-block">
+                  <span class="price-currency">₹</span>
+                  <span class="price-val font-mono">{firstSize.priceINR}</span>
+                  <span class="price-unit">/ {firstSize.label}</span>
+                </div>
+
                 <button
                   type="button"
-                  class="tile-add"
+                  class="btn-add-harvest"
                   data-product-json={itemPayload}
-                  aria-label={`Add ${product.data.name} to basket`}
+                  aria-label={`Add ${product.data.name} to Harvest basket`}
                 >
-                  + Add
+                  <span>+ Add</span>
                 </button>
               </div>
             </div>
-          </div>
-        </article>
-      );
-    })}
-  </div>
+          </article>
+        );
+      })}
+    </div>
 
+  </div>
 </section>
 
-<script>
-  function initHarvest() {
-    document.querySelectorAll('.tile-add').forEach(btn => {
-      const fresh = btn.cloneNode(true) as HTMLElement;
-      btn.parentNode?.replaceChild(fresh, btn);
-      fresh.addEventListener('click', (e) => {
-        e.preventDefault();
-        const data = JSON.parse(fresh.dataset.productJson || '{}');
-        window.dispatchEvent(new CustomEvent('add-to-cart', { detail: data }));
-        // Flash feedback
-        fresh.textContent = '✓ Added';
-        fresh.classList.add('tile-add--done');
-        setTimeout(() => {
-          fresh.textContent = '+ Add';
-          fresh.classList.remove('tile-add--done');
-        }, 1400);
-      });
-    });
-  }
-
-  initHarvest();
-  document.addEventListener('astro:after-swap', initHarvest);
-</script>
-
 <style>
-  .harvest {
-    padding: 0;
-    background: var(--color-bone);
-    border-top: 1px solid var(--color-border-subtle);
+  .harvest-section {
+    padding: clamp(4rem, 7vw, 6.5rem) 0;
+    background-color: var(--color-bone);
   }
 
-  .harvest-head {
+  .harvest-header {
     display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 2rem;
-    padding: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 5vw, 4rem) clamp(2rem, 3vw, 2.5rem);
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
     border-bottom: 1px solid var(--color-border-subtle);
+    padding-bottom: 2rem;
   }
 
-  .harvest-head-left {
+  @media (min-width: 900px) {
+    .harvest-header {
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+  }
+
+  .harvest-header-left {
+    max-width: 540px;
+  }
+
+  .harvest-title {
+    font-size: var(--type-display);
+    margin-top: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .harvest-subtitle {
+    font-size: 1rem;
+    color: var(--color-ink-muted);
+    margin: 0;
+  }
+
+  /* Filters */
+  .harvest-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .filter-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    border-radius: 9999px;
+    background-color: var(--color-bone-card);
+    border: 1px solid var(--color-border-subtle);
+    color: var(--color-ink-muted);
+    transition: all var(--duration-base) var(--ease-smooth);
+  }
+
+  .filter-btn:hover {
+    color: var(--color-deep-forest);
+    border-color: var(--color-border-medium);
+  }
+
+  .filter-btn.is-active {
+    background-color: var(--color-deep-forest);
+    color: var(--color-bone);
+    border-color: var(--color-deep-forest);
+  }
+
+  /* Grid */
+  .harvest-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 580px) {
+    .harvest-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 960px) {
+    .harvest-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .harvest-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  /* Card */
+  .harvest-card {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-bone-card);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform var(--duration-base) var(--ease-smooth), box-shadow var(--duration-base) var(--ease-smooth), border-color var(--duration-base) var(--ease-smooth);
+  }
+
+  .harvest-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-card);
+    border-color: var(--color-border-medium);
+  }
+
+  .card-media-link {
+    text-decoration: none;
+    display: block;
+  }
+
+  .card-media {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background-color: var(--color-bone-warm);
+    overflow: hidden;
+  }
+
+  .card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.5s var(--ease-smooth);
+  }
+
+  .harvest-card:hover .card-img {
+    transform: scale(1.04);
+  }
+
+  .card-origin-pill {
+    position: absolute;
+    bottom: 0.75rem;
+    left: 0.75rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.06em;
+    padding: 0.25rem 0.6rem;
+    background-color: rgba(18, 28, 19, 0.78);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: var(--color-bone);
+    border-radius: 4px;
+  }
+
+  .card-body {
+    padding: 1.25rem 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: space-between;
+    gap: 1.25rem;
+  }
+
+  .card-title-group {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
   }
 
-  .harvest-kicker {
-    font-family: var(--font-evidence);
-    font-size: var(--type-evidence);
-    letter-spacing: 0.1em;
-    color: var(--color-mark-gold);
-  }
-
-  .hero-line {
-    width: 24px;
-    height: 1px;
-    background-color: var(--color-mark-gold);
-    margin: 8px 0;
-  }
-
-  .harvest-title {
-    font-family: var(--font-display);
-    font-size: clamp(2.5rem, 4vw, 3.5rem);
-    font-weight: 300;
-    color: var(--color-deep-forest);
-    margin: 0;
-    line-height: 1.0;
-  }
-
-  .harvest-desc {
-    font-family: var(--font-narrative);
-    font-size: clamp(0.95rem, 1.5vw, 1.1rem);
-    color: var(--color-deep-forest);
-    opacity: 0.8;
-    line-height: 1.65;
-    margin: 0;
-    text-align: right;
-    max-width: 440px;
-  }
-
-  /* ══ Grid ══ */
-  .harvest-grid {
-    padding-bottom: var(--space-4xl);
-  }
-
-  /* ══ Individual tile ══ */
-  .tile {
-    position: relative;
-    overflow: hidden;
-    aspect-ratio: 3/4;
-    background: var(--color-bone);
-    cursor: pointer;
-    border-radius: 4px 40px 4px 40px; /* Organic asymmetrical curve */
-    transform: translateZ(0); /* Force GPU smoothing on border radius */
-    box-shadow: 0 4px 20px rgba(12, 21, 9, 0.05);
-  }
-
-  /* Large tiles span more naturally */
-  .tile--large {
-    grid-column: span 1; /* In a 3-col grid, let's keep them spanning 1 but maybe taller */
-    aspect-ratio: 4/5;
-  }
-
-  .tile-img-link {
-    display: block;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    inset: 0;
-  }
-
-  .tile-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                filter 0.5s ease;
-    mix-blend-mode: multiply; /* Perfect for light background */
-    filter: saturate(0.8) contrast(1.1);
-  }
-
-  .tile:hover .tile-img {
-    transform: scale(1.05);
-    filter: saturate(1) contrast(1.1);
-  }
-
-  .tile-img-fallback {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    opacity: 0.2;
-  }
-
-  /* ══ Overlay ══ */
-  .tile-overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    /* Gradient from transparent → bone at bottom */
-    background: linear-gradient(
-      to bottom,
-      rgba(239, 230, 211, 0) 30%,
-      rgba(239, 230, 211, 0.9) 70%,
-      rgba(239, 230, 211, 1) 100%
-    );
-    padding: 1.1rem 1.25rem 1.1rem;
-    transition: background 0.4s ease;
-  }
-
-  .tile:hover .tile-overlay {
-    background: linear-gradient(
-      to bottom,
-      rgba(239, 230, 211, 0) 20%,
-      rgba(239, 230, 211, 0.95) 60%,
-      rgba(239, 230, 211, 1) 100%
-    );
-  }
-
-  .tile-meta {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    margin-bottom: 0.4rem;
-  }
-
-  .tile-origin {
-    font-family: var(--font-evidence);
-    font-size: 9px;
-    letter-spacing: 0.2em;
-    color: var(--color-mark-gold);
+  .card-title {
+    font-size: 1.25rem;
     font-weight: 500;
+    margin: 0;
+    line-height: 1.3;
   }
 
-  .tile-sep {
-    color: var(--color-deep-forest);
-    opacity: 0.3;
-    font-size: 9px;
-  }
-
-  .tile-elevation {
-    font-family: var(--font-evidence);
-    font-size: 9px;
-    letter-spacing: 0.1em;
-    color: var(--color-deep-forest);
-    opacity: 0.6;
-  }
-
-  .tile-bottom {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 0.75rem;
-  }
-
-  .tile-name-wrap {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    min-width: 0;
-  }
-
-  .tile-name {
-    font-family: var(--font-display);
-    font-size: clamp(0.9rem, 1.6vw, 1.2rem);
-    font-weight: 400;
-    color: var(--color-deep-forest);
-    text-decoration: none;
-    line-height: 1.15;
-    letter-spacing: 0.01em;
-    display: block;
-  }
-
-  .tile-name:hover {
+  .title-link:hover {
     color: var(--color-mark-gold);
   }
 
-  .tile-botanical {
-    font-family: var(--font-narrative);
-    font-size: 11px;
+  .card-botanical {
+    font-size: 0.8125rem;
     font-style: italic;
-    color: var(--color-deep-forest);
-    opacity: 0.6;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    color: var(--color-ink-muted);
   }
 
-  /* Large tiles: bigger name */
-  .tile--large .tile-name {
-    font-size: clamp(1.2rem, 2.2vw, 1.75rem);
-  }
-
-  /* ══ Action area ══ */
-  .tile-action {
+  .card-footer {
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.4rem;
-    flex-shrink: 0;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--color-border-subtle);
   }
 
-  .tile-price {
-    font-family: var(--font-evidence);
-    font-size: 11px;
-    color: var(--color-deep-forest);
+  .price-block {
+    display: flex;
+    align-items: baseline;
+    gap: 0.15rem;
+  }
+
+  .price-currency {
+    font-size: 0.85rem;
     font-weight: 500;
-    letter-spacing: 0.06em;
-    white-space: nowrap;
+    color: var(--color-deep-forest);
   }
 
-  .tile-add {
-    background: transparent;
-    color: var(--color-deep-forest);
-    border: 1px solid var(--color-deep-forest);
-    font-family: var(--font-evidence);
-    font-size: 9px;
+  .price-val {
+    font-size: 1.15rem;
     font-weight: 600;
-    letter-spacing: 0.15em;
-    padding: 0.45rem 0.85rem;
-    cursor: pointer;
-    white-space: nowrap;
-    min-height: 32px;
-    transition: background 0.2s, transform 0.1s;
-  }
-
-  .tile-add:hover {
-    background: var(--color-deep-forest);
-    color: var(--color-bone);
-  }
-
-  .tile-add--done {
-    background: var(--color-mark-gold);
     color: var(--color-deep-forest);
+  }
+
+  .price-unit {
+    font-size: 0.75rem;
+    color: var(--color-ink-whisper);
+    margin-left: 0.15rem;
+  }
+
+  .btn-add-harvest {
+    padding: 0.45rem 0.9rem;
+    background-color: var(--color-bone-warm);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 4px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-deep-forest);
+    transition: all var(--duration-base) var(--ease-smooth);
+  }
+
+  .btn-add-harvest:hover {
+    background-color: var(--color-mark-gold);
+    color: #0C150A;
     border-color: var(--color-mark-gold);
   }
 
-  /* ══ Mobile ══ */
-  @media (max-width: 900px) {
-    .tile--large {
-      aspect-ratio: 16/9;
-    }
-    .harvest-head {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 1rem;
-    }
-    .harvest-desc {
-      text-align: left;
-      max-width: 100%;
-    }
-  }
-
-  @media (max-width: 520px) {
-    .tile {
-      aspect-ratio: 1/1;
-    }
-    .tile--large {
-      aspect-ratio: 16/10;
-    }
+  .btn-add-harvest.is-added {
+    background-color: var(--color-proof-green);
+    color: #FFFFFF;
+    border-color: var(--color-proof-green);
   }
 </style>
+
+<script>
+  function initHarvestCatalog() {
+    // Category Filtering
+    const filterBtns = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
+    const cards = document.querySelectorAll<HTMLElement>('.harvest-card');
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const filter = btn.dataset.filter || 'all';
+
+        filterBtns.forEach(b => {
+          b.classList.toggle('is-active', b === btn);
+          b.setAttribute('aria-selected', String(b === btn));
+        });
+
+        cards.forEach(card => {
+          const category = card.dataset.category || '';
+          if (filter === 'all' || category === filter) {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // Add to Harvest Basket
+    document.querySelectorAll<HTMLButtonElement>('.btn-add-harvest').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const jsonStr = btn.dataset.productJson;
+        if (!jsonStr) return;
+
+        try {
+          const product = JSON.parse(jsonStr);
+          const stored = localStorage.getItem('ourorigin_basket');
+          let items = stored ? JSON.parse(stored) : [];
+          
+          const existingIndex = items.findIndex((item: any) => item.id === product.id);
+          if (existingIndex > -1) {
+            items[existingIndex].quantity = (items[existingIndex].quantity || 1) + 1;
+          } else {
+            items.push(product);
+          }
+
+          localStorage.setItem('ourorigin_basket', JSON.stringify(items));
+          window.dispatchEvent(new CustomEvent('basket-updated'));
+          window.dispatchEvent(new CustomEvent('open-basket'));
+
+          // Visual feedback
+          btn.classList.add('is-added');
+          const originalText = btn.innerHTML;
+          btn.innerHTML = '<span>Added ✓</span>';
+          setTimeout(() => {
+            btn.classList.remove('is-added');
+            btn.innerHTML = originalText;
+          }, 1500);
+
+        } catch (err) {
+          console.error('Error adding product to basket:', err);
+        }
+      });
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', initHarvestCatalog);
+  document.addEventListener('astro:page-load', initHarvestCatalog);
+</script>

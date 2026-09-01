@@ -2,6 +2,7 @@
 import { getCollection, getEntry } from 'astro:content';
 import Layout from '../../../layouts/Layout.astro';
 import OriginMark from '../../../components/OriginMark.astro';
+import { WHATSAPP_NUMBER } from '../../../utils/constants';
 
 export async function getStaticPaths() {
   const products = await getCollection('products');
@@ -24,637 +25,653 @@ const origin = await getEntry('origins', originId);
 
 if (!origin) throw new Error(`Origin not found for product: ${product.id}`);
 
-const ogImageUrl = origin.data.images?.specimen?.endsWith('.webp')
-  ? 'https://ourorigin.in/og-image.jpg'
-  : `https://ourorigin.in${origin.data.images?.specimen || '/og-image.jpg'}`;
-
 const sp = product.data.sensoryProfile;
-
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Product",
-  "name": `${product.data.name} — ${origin.data.name}`,
-  "image": ogImageUrl,
-  "description": `${product.data.botanicalName ? product.data.botanicalName + '. ' : ''}${origin.data.elevation}. ${product.data.batchRef ? 'Batch ' + product.data.batchRef + '.' : ''}`,
-  "brand": {
-    "@type": "Brand",
-    "name": "OurOrigin"
-  },
-  "offers": {
-    "@type": "Offer",
-    "priceCurrency": "INR",
-    "price": product.data.sizes?.[0]?.priceINR || "0",
-    "availability": "https://schema.org/InStock",
-    "seller": {
-      "@type": "Organization",
-      "name": "OurOrigin"
-    }
-  },
-  "additionalProperty": [
-    ...(product.data.botanicalName ? [{ "@type": "PropertyValue", "name": "Botanical Name", "value": product.data.botanicalName }] : []),
-    ...(origin.data.elevation ? [{ "@type": "PropertyValue", "name": "Elevation", "value": origin.data.elevation }] : []),
-    ...(product.data.batchRef ? [{ "@type": "PropertyValue", "name": "Batch", "value": product.data.batchRef }] : [])
-  ]
-};
+const proof = product.data.proofSystem;
+const defaultSize = product.data.sizes?.[0] || { label: '100g', priceINR: 199 };
+const prodImg = product.data.images?.product || product.data.images?.packaging || '/assets/products/minimal-packaging-pouch.jpg';
+const packImg = product.data.images?.packaging || product.data.images?.product || prodImg;
 ---
+
 <Layout
   title={`${product.data.name} — ${origin.data.name} · OurOrigin`}
-  description={`${sp?.aroma || ''} ${sp?.flavor || ''} — ${product.data.name} from ${origin.data.name}, ${origin.data.elevation}.`}
-  ogImage={ogImageUrl}
-  noHeaderPadding={true}
+  description={`${product.data.name} from ${origin.data.name}, ${origin.data.elevation}. 100% single origin, unblended, shipped direct from first hands.`}
 >
-  <main class="product-viewport">
+  <div class="product-page">
+    <div class="container">
+      
+      <!-- Breadcrumbs -->
+      <nav class="breadcrumb font-mono" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span>/</span>
+        <a href="/#harvest">Harvests</a>
+        <span>/</span>
+        <a href={`/origins/${origin.id}`}>{origin.data.name}</a>
+        <span>/</span>
+        <span class="current-crumb">{product.data.name}</span>
+      </nav>
 
-    <!-- Back -->
-    <a href="/" class="back-link" aria-label="Back to all yields">
-      <OriginMark size={18} variant="gold" />
-    </a>
-
-    <!-- ══ HERO: Full-bleed image takes over the screen ══ -->
-    <section class="product-hero" aria-label={product.data.name}>
-      <div class="hero-img-wrap" id="hero-img-wrap">
-        {product.data.images.product ? (
-          <img
-            src={product.data.images.product}
-            alt={`${product.data.name}`}
-            class="hero-img"
-            style={`view-transition-name: yield-img-${product.id}`}
-          />
-        ) : product.data.images.packaging ? (
-          <img
-            src={product.data.images.packaging}
-            alt={`${product.data.name} packaging`}
-            class="hero-img"
-            style={`view-transition-name: yield-img-${product.id}`}
-          />
-        ) : (
-          <div class="hero-img-placeholder">
-            <OriginMark size={64} variant="gold" />
-          </div>
-        )}
-        <!-- Dark gradient overlay so text is legible -->
-        <div class="hero-veil" aria-hidden="true"></div>
-      </div>
-
-      <!-- Product name overlaps bottom of image -->
-      <div class="hero-identity">
-        <div class="hero-origin-tag">
-          <OriginMark size={14} variant="gold" />
-          <span class="hero-origin-name">{origin.data.name}</span>
-          <span class="hero-origin-elev">{origin.data.elevation}</span>
-        </div>
-        <h1 class="hero-product-name" style={`view-transition-name: yield-title-${product.id}`}>
-          {product.data.name}
-        </h1>
-        {product.data.botanicalName && (
-          <p class="hero-botanical">{product.data.botanicalName}</p>
-        )}
-      </div>
-    </section>
-
-    <!-- ══ SENSORY: First thing after the image — what does it taste like? ══ -->
-    {sp && (sp.aroma || sp.flavor || sp.appearance) && (
-      <section class="sense-section" data-reveal>
-        <div class="sense-inner">
-          {sp.aroma && (
-            <div class="sense-item">
-              <span class="field-label">Aroma</span>
-              <p class="field-body">{sp.aroma}</p>
-            </div>
-          )}
-          {sp.flavor && (
-            <div class="sense-item">
-              <span class="field-label">Flavor</span>
-              <p class="field-body">{sp.flavor}</p>
-            </div>
-          )}
-          {sp.appearance && (
-            <div class="sense-item sense-item--wide">
-              <span class="field-label">Appearance</span>
-              <p class="field-body">{sp.appearance}</p>
-            </div>
-          )}
-        </div>
-      </section>
-    )}
-
-    <!-- ══ THE PROOF SYSTEM: Transfer Ledger ══ -->
-    <section class="proof-section" data-reveal>
-      <div class="proof-inner">
-        <div class="proof-ledger">
-          <div class="proof-row">
-            <span class="proof-label">Crop:</span>
-            <span class="proof-value">{product.data.name}</span>
-          </div>
-          <div class="proof-row">
-            <span class="proof-label">First Hands:</span>
-            <span class="proof-value">{product.data.proofSystem?.firstHands || '---'}</span>
-          </div>
-          <div class="proof-row">
-            <span class="proof-label">Direct Price Paid:</span>
-            <span class="proof-value">{product.data.proofSystem?.directPricePaid || '---'}</span>
-          </div>
-          <div class="proof-row">
-            <span class="proof-label">Nature's Share:</span>
-            <span class="proof-value">{product.data.proofSystem?.naturesShare || '---'}</span>
-          </div>
-          <div class="proof-row">
-            <span class="proof-label">Proof:</span>
-            <span class="proof-value proof-links">
-              {product.data.proofSystem?.proofCert ? <a href={product.data.proofSystem.proofCert} target="_blank" rel="noreferrer">[FSSAI Cert]</a> : '---'}
-              <span class="proof-dot">·</span>
-              {product.data.proofSystem?.proofPhoto ? <a href={product.data.proofSystem.proofPhoto} target="_blank" rel="noreferrer">[Batch Photo]</a> : '---'}
+      <!-- Main Product Grid -->
+      <div class="product-layout-grid">
+        
+        <!-- Left: Imagery Gallery -->
+        <div class="product-gallery">
+          <div class="gallery-main-frame">
+            <img 
+              id="main-product-image"
+              src={prodImg} 
+              alt={product.data.name} 
+              class="gallery-main-img"
+              onerror="this.src='/assets/products/minimal-packaging-pouch.jpg'"
+            />
+            <span class="origin-tag font-mono">
+              {origin.data.name.toUpperCase()} · {origin.data.elevation}
             </span>
           </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- ══ THE OFFERING: Size picker + giant CTA ══ -->
-    <section class="offering-section" data-reveal>
-      <div class="offering-inner">
-        {product.data.batchRef && (
-          <div class="batch-ref">BATCH · {product.data.batchRef}</div>
-        )}
-
-        <div class="sizes-row">
-          {product.data.sizes.map((size: any, i: number) => (
-            <button
-              class:list={["size-pill", { "size-pill--active": i === 0 }]}
-              data-product={JSON.stringify({
-                id: product.id + '-' + size.label,
-                productId: product.id,
-                name: product.data.name,
-                origin: origin.data.name,
-                originId: origin.id,
-                size: size.label,
-                price: size.priceINR,
-                quantity: 1
-              })}
-              type="button"
-            >
-              <span class="size-qty">{size.label}</span>
-              <span class="size-price">₹{size.priceINR}</span>
+          <!-- Thumbnails -->
+          <div class="gallery-thumbs">
+            <button type="button" class="thumb-btn is-active" data-src={prodImg}>
+              <img src={prodImg} alt="Product view" class="thumb-img" onerror="this.src='/assets/products/minimal-packaging-pouch.jpg'" />
             </button>
-          ))}
+            {packImg && packImg !== prodImg && (
+              <button type="button" class="thumb-btn" data-src={packImg}>
+                <img src={packImg} alt="Packaging view" class="thumb-img" onerror="this.src='/assets/products/minimal-packaging-pouch.jpg'" />
+              </button>
+            )}
+          </div>
         </div>
 
-        <button class="ledger-cta" id="purchase-cta" type="button">
-          Add to Ledger
-        </button>
-      </div>
-    </section>
+        <!-- Right: Purchasing & Provenance Details -->
+        <div class="product-details-col">
+          
+          <!-- Header info -->
+          <div class="product-header-block">
+            <span class="badge-origin badge-gold">
+              <OriginMark size={14} variant="gold" />
+              <span>SINGLE-ORIGIN HARVEST</span>
+            </span>
 
-  </main>
-  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
+            <h1 class="product-main-title font-serif">{product.data.name}</h1>
+            
+            {product.data.botanicalName && (
+              <div class="product-botanical-tag font-serif">{product.data.botanicalName}</div>
+            )}
+          </div>
+
+          <!-- Price & Sizes -->
+          <div class="product-purchase-box">
+            <div class="price-display">
+              <span class="currency-symbol">₹</span>
+              <span id="active-price" class="price-amount font-mono">{defaultSize.priceINR}</span>
+              <span id="active-size-label" class="price-size-label font-mono">/ {defaultSize.label}</span>
+            </div>
+
+            <!-- Size Options -->
+            {product.data.sizes && product.data.sizes.length > 1 && (
+              <div class="size-options-wrapper">
+                <span class="options-label font-mono">SELECT HARVEST WEIGHT:</span>
+                <div class="size-btn-group">
+                  {product.data.sizes.map((s, idx) => (
+                    <button 
+                      type="button" 
+                      class={`size-btn font-mono ${idx === 0 ? 'is-active' : ''}`}
+                      data-size={s.label}
+                      data-price={s.priceINR}
+                    >
+                      {s.label} — ₹{s.priceINR}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <!-- Add to Cart CTA -->
+            <div class="action-buttons-group">
+              <button 
+                type="button" 
+                id="add-to-basket-main"
+                class="btn-primary btn-lg"
+                data-product-id={product.id}
+                data-product-name={product.data.name}
+                data-origin={origin.data.name}
+                data-origin-id={origin.id}
+                data-image={prodImg}
+                data-price={defaultSize.priceINR}
+                data-size={defaultSize.label}
+              >
+                <span>Add to Harvest Basket</span>
+                <span aria-hidden="true">+</span>
+              </button>
+
+              <button 
+                type="button"
+                id="order-whatsapp-direct"
+                class="btn-secondary"
+                data-product-name={product.data.name}
+                data-origin={origin.data.name}
+                data-whatsapp={WHATSAPP_NUMBER}
+              >
+                <span>Inquire on WhatsApp</span>
+                <span aria-hidden="true">→</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- The First Hands Provenance Ledger Box -->
+          <div class="provenance-ledger-card">
+            <div class="ledger-card-header">
+              <span class="ledger-tag font-mono">PROVENANCE LEDGER</span>
+              <span class="batch-num font-mono">{product.data.batchRef || 'OG-BATCH-01'}</span>
+            </div>
+
+            <div class="ledger-rows">
+              <div class="ledger-row">
+                <span class="row-label font-mono">FIRST HANDS</span>
+                <span class="row-val">{proof?.firstHands || 'Indigenous Grower Family'}</span>
+              </div>
+              <div class="ledger-row">
+                <span class="row-label font-mono">DIRECT PRICE PAID</span>
+                <span class="row-val text-gold font-mono">{proof?.directPricePaid || 'Direct premium above market'}</span>
+              </div>
+              <div class="ledger-row">
+                <span class="row-label font-mono">TERROIR & ELEVATION</span>
+                <span class="row-val">{origin.data.name} ({origin.data.elevation})</span>
+              </div>
+              <div class="ledger-row">
+                <span class="row-label font-mono">GEO-COORDINATES</span>
+                <span class="row-val font-mono">{origin.data.coordinates}</span>
+              </div>
+              <div class="ledger-row">
+                <span class="row-label font-mono">METHOD & PURITY</span>
+                <span class="row-val">{product.data.methodDescription || 'Hand-picked, sun-dried on mats, 100% unblended'}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sensory Profile -->
+          {sp && (
+            <div class="sensory-box">
+              <h3 class="sensory-title font-serif">Sensory & Chemical Profile</h3>
+              <div class="sensory-grid">
+                {sp.aroma && (
+                  <div class="sensory-item">
+                    <span class="sensory-label font-mono">AROMA</span>
+                    <p class="sensory-text">{sp.aroma}</p>
+                  </div>
+                )}
+                {sp.flavor && (
+                  <div class="sensory-item">
+                    <span class="sensory-label font-mono">FLAVOR</span>
+                    <p class="sensory-text">{sp.flavor}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {product.data.specimenCopy && (
+            <div class="specimen-note">
+              <p class="specimen-quote font-serif">"{product.data.specimenCopy}"</p>
+            </div>
+          )}
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
 </Layout>
 
-<script>
-  import { gsap } from 'gsap';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-  gsap.registerPlugin(ScrollTrigger);
-
-  function initProduct() {
-    // Scroll reveal
-    document.querySelectorAll('[data-reveal]').forEach((el, i) => {
-      gsap.fromTo(el,
-        { y: 32, opacity: 0 },
-        {
-          y: 0, opacity: 1, duration: 0.75, ease: 'power2.out',
-          delay: i * 0.05,
-          scrollTrigger: { trigger: el, start: 'top 90%' }
-        }
-      );
-    });
-
-    // Hero image parallax — image drifts upward as you scroll
-    const heroImg = document.querySelector('.hero-img') as HTMLElement;
-    if (heroImg) {
-      gsap.to(heroImg, {
-        yPercent: -18,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '.product-hero',
-          start: 'top top',
-          end: 'bottom top',
-          scrub: true
-        }
-      });
-    }
-
-    // Size selection
-    const sizePills = document.querySelectorAll('.size-pill');
-    sizePills.forEach(btn => {
-      const newBtn = btn.cloneNode(true) as HTMLElement;
-      btn.parentNode?.replaceChild(newBtn, btn);
-
-      newBtn.addEventListener('click', () => {
-        document.querySelectorAll('.size-pill').forEach(b => b.classList.remove('size-pill--active'));
-        newBtn.classList.add('size-pill--active');
-        // Also dispatch cart event on size select
-        const data = JSON.parse(newBtn.dataset.product || '{}');
-        window.dispatchEvent(new CustomEvent('add-to-ledger', { detail: {
-          id: data.id, productId: data.productId, name: data.name,
-          origin: data.origin, originId: data.originId,
-          size: data.size, price: data.price, quantity: 1
-        }}));
-      });
-    });
-
-    // Purchase CTA
-    const purchaseBtn = document.getElementById('purchase-cta');
-    if (purchaseBtn) {
-      const newBtn = purchaseBtn.cloneNode(true) as HTMLElement;
-      purchaseBtn.parentNode?.replaceChild(newBtn, purchaseBtn);
-      newBtn.addEventListener('click', () => {
-        const selected = document.querySelector('.size-pill--active') as HTMLElement
-          || document.querySelector('.size-pill') as HTMLElement;
-        if (selected) selected.click();
-        setTimeout(() => {
-          document.getElementById('ledger-trigger')?.click();
-        }, 150);
-      });
-    }
-  }
-
-  initProduct();
-  document.addEventListener('astro:after-swap', initProduct);
-</script>
-
 <style>
-  .product-viewport {
-    background: var(--color-deep-forest);
-    color: var(--color-bone);
+  .product-page {
+    padding: clamp(2rem, 4vw, 3.5rem) 0 clamp(4rem, 8vw, 7rem);
+    background-color: var(--color-bone);
   }
 
-  /* ── Back link ── */
-  .back-link {
-    position: fixed;
-    top: 24px;
-    left: 24px;
-    z-index: 200;
-    color: var(--color-mark-gold);
-    text-decoration: none;
-    opacity: 0.7;
-    transition: opacity 0.2s;
-    mix-blend-mode: screen;
-  }
-  .back-link:hover { opacity: 1; }
-
-  /* ══════════════════════════════
-     HERO — full bleed, 85vh tall
-  ══════════════════════════════ */
-  .product-hero {
-    position: relative;
-    height: 85vh;
-    min-height: 500px;
-    overflow: hidden;
+  .breadcrumb {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--color-ink-whisper);
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
   }
 
-  .hero-img-wrap {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
+  .breadcrumb a:hover {
+    color: var(--color-deep-forest);
   }
 
-  .hero-img {
+  .current-crumb {
+    color: var(--color-deep-forest);
+  }
+
+  /* Grid */
+  .product-layout-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  @media (min-width: 960px) {
+    .product-layout-grid {
+      grid-template-columns: 1.05fr 1.15fr;
+      gap: clamp(3rem, 5vw, 5rem);
+      align-items: start;
+    }
+  }
+
+  /* Gallery */
+  .product-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: sticky;
+    top: 5rem;
+  }
+
+  .gallery-main-frame {
+    position: relative;
     width: 100%;
-    height: 115%; /* Extra height for parallax travel */
-    object-fit: cover;
-    object-position: center;
-    transform-origin: center top;
-    will-change: transform;
-    filter: saturate(0.88) contrast(1.08);
+    aspect-ratio: 1 / 1;
+    background-color: var(--color-bone-card);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
   }
 
-  .hero-img-placeholder {
+  .gallery-main-img {
     width: 100%;
     height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--color-forest-surface);
-    opacity: 0.3;
+    object-fit: cover;
+    object-position: center;
   }
 
-  /* Gradient: transparent top → deep bottom so text is readable */
-  .hero-veil {
+  .origin-tag {
     position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      to bottom,
-      rgba(6,4,3,0.1) 0%,
-      rgba(6,4,3,0.15) 40%,
-      rgba(6,4,3,0.75) 72%,
-      rgba(6,4,3,0.97) 100%
-    );
-  }
-
-  /* Product identity: anchored to the bottom of the hero */
-  .hero-identity {
-    position: relative;
-    z-index: 2;
-    padding: 0 clamp(1.5rem, 5vw, 5rem) clamp(2rem, 5vh, 3.5rem);
-    width: 100%;
-    max-width: 900px;
-  }
-
-  .hero-origin-tag {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .hero-origin-name {
-    font-family: var(--font-evidence);
-    font-size: 11px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--color-mark-gold);
-  }
-
-  .hero-origin-elev {
-    font-family: var(--font-evidence);
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    color: var(--color-bone-whisper);
-  }
-
-  .hero-product-name {
-    font-family: var(--font-display);
-    font-size: clamp(2.4rem, 6.5vw, 6rem);
-    font-weight: 400;
-    line-height: 1.0;
-    margin: 0 0 0.4rem 0;
-    letter-spacing: 0.01em;
+    bottom: 1rem;
+    left: 1rem;
+    padding: 0.3rem 0.65rem;
+    background-color: rgba(18, 28, 19, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     color: var(--color-bone);
-    opacity: 1;
+    font-size: 0.6875rem;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
   }
 
-  .hero-botanical {
-    font-family: var(--font-narrative);
-    font-style: italic;
-    font-size: clamp(0.9rem, 1.6vw, 1.1rem);
-    color: var(--color-bone-muted);
-    margin: 0;
+  .gallery-thumbs {
+    display: flex;
+    gap: 0.75rem;
   }
 
-  /* ══════════════════════════════
-     SENSORY SECTION
-  ══════════════════════════════ */
-  .sense-section {
-    padding: clamp(3rem, 6vh, 5rem) clamp(1.5rem, 5vw, 5rem);
-    border-bottom: 1px solid var(--color-border-subtle);
+  .thumb-btn {
+    width: 72px;
+    height: 72px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 2px solid transparent;
+    padding: 0;
+    background-color: var(--color-bone-card);
+    cursor: pointer;
+    transition: border-color 0.2s ease;
   }
 
-  .sense-inner {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: clamp(1.5rem, 4vw, 3rem);
-    max-width: 900px;
+  .thumb-btn.is-active {
+    border-color: var(--color-mark-gold);
   }
 
-  .sense-item {
+  .thumb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Details Column */
+  .product-details-col {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .product-header-block {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
   }
 
-  .sense-item--wide {
-    grid-column: 1 / -1;
-  }
-
-  /* ══════════════════════════════
-     PROOF SYSTEM SECTION
-  ══════════════════════════════ */
-  .proof-section {
-    padding: clamp(3rem, 6vh, 5rem) clamp(1.5rem, 5vw, 5rem);
-    border-bottom: 1px solid var(--color-border-subtle);
-  }
-
-  .proof-inner {
-    max-width: 900px;
-    background: rgba(240, 234, 214, 0.03);
-    padding: clamp(1.5rem, 4vw, 3rem);
-    border-left: 2px solid var(--color-mark-gold);
-  }
-
-  .proof-ledger {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    font-family: var(--font-evidence); /* JetBrains Mono */
-    font-size: clamp(0.8rem, 1.5vw, 0.95rem);
-    line-height: 1.6;
-    color: var(--color-bone);
-  }
-
-  .proof-row {
-    display: flex;
-    flex-direction: column;
-  }
-
-  @media (min-width: 768px) {
-    .proof-row {
-      flex-direction: row;
-      gap: 2rem;
-    }
-  }
-
-  .proof-label {
-    width: 220px;
-    flex-shrink: 0;
-    color: var(--color-mark-gold);
-    opacity: 0.8;
-  }
-
-  .proof-value {
-    flex: 1;
-    color: rgba(239, 230, 211, 0.9); /* bone color */
-  }
-
-  .proof-links a {
-    color: inherit;
-    text-decoration: none;
-    border-bottom: 1px solid rgba(239, 230, 211, 0.3);
-    transition: color 0.2s, border-color 0.2s;
-  }
-
-  .proof-links a:hover {
-    color: var(--color-mark-gold);
-    border-color: var(--color-mark-gold);
-  }
-
-  .proof-dot {
-    margin: 0 0.75rem;
-    opacity: 0.4;
-  }
-
-  /* ══════════════════════════════
-     SHARED FIELD LABELS
-  ══════════════════════════════ */
-  .field-label {
-    font-family: var(--font-evidence);
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: var(--color-mark-gold);
-    opacity: 0.6;
-  }
-
-  .field-body {
-    font-family: var(--font-narrative);
-    font-size: clamp(1rem, 1.9vw, 1.2rem);
-    line-height: 1.5;
-    color: var(--color-bone-muted);
+  .product-main-title {
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    line-height: 1.15;
     margin: 0;
+    font-weight: 400;
   }
 
-  .field-note-link {
-    font-family: var(--font-evidence);
-    font-size: var(--type-whisper);
-    color: var(--color-bone-whisper);
-    text-decoration: none;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    transition: color 0.2s;
-    display: inline-block;
-    align-self: flex-start;
-  }
-  .field-note-link:hover { color: var(--color-mark-gold); }
-
-  /* ══════════════════════════════
-     OFFERING / BUY SECTION
-  ══════════════════════════════ */
-  .offering-section {
-    padding: clamp(3rem, 6vh, 5rem) clamp(1.5rem, 5vw, 5rem) clamp(4rem, 10vh, 7rem);
+  .product-botanical-tag {
+    font-size: 1.05rem;
+    font-style: italic;
+    color: var(--color-ink-muted);
   }
 
-  .offering-inner {
-    max-width: 600px;
+  /* Purchase Box */
+  .product-purchase-box {
+    padding: 1.75rem;
+    background-color: var(--color-bone-card);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 8px;
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 1.5rem;
+    box-shadow: var(--shadow-subtle);
   }
 
-  .batch-ref {
-    font-family: var(--font-evidence);
-    font-size: 9px;
-    letter-spacing: 0.22em;
-    color: var(--color-bone-whisper);
-    text-transform: uppercase;
+  .price-display {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
   }
 
-  .sizes-row {
+  .currency-symbol {
+    font-size: 1.25rem;
+    font-weight: 500;
+  }
+
+  .price-amount {
+    font-size: 2.25rem;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--color-deep-forest);
+  }
+
+  .price-size-label {
+    font-size: 0.9375rem;
+    color: var(--color-ink-whisper);
+    margin-left: 0.35rem;
+  }
+
+  .size-options-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .options-label {
+    font-size: 0.6875rem;
+    color: var(--color-ink-whisper);
+    letter-spacing: 0.08em;
+  }
+
+  .size-btn-group {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
   }
 
-  .size-pill {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    background: transparent;
-    border: 1px solid rgba(240, 234, 214, 0.12);
-    color: var(--color-bone);
-    padding: 0.75rem 1.25rem;
-    font-family: var(--font-evidence);
-    font-size: var(--type-evidence);
-    cursor: pointer;
+  .size-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-border-medium);
+    border-radius: 4px;
+    background-color: var(--color-bone);
+    font-size: 0.8125rem;
+    color: var(--color-deep-forest);
     transition: all 0.2s ease;
-    min-height: 46px;
   }
 
-  .size-pill:hover,
-  .size-pill--active {
-    border-color: var(--color-mark-gold);
-    background: rgba(212, 139, 22, 0.08);
+  .size-btn.is-active {
+    background-color: var(--color-deep-forest);
+    color: var(--color-bone);
+    border-color: var(--color-deep-forest);
+  }
+
+  .action-buttons-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  @media (min-width: 500px) {
+    .action-buttons-group {
+      flex-direction: row;
+    }
+  }
+
+  .btn-lg {
+    flex-grow: 1;
+    padding: 1rem 1.5rem;
+    font-size: 0.9375rem;
+  }
+
+  /* Provenance Card */
+  .provenance-ledger-card {
+    padding: 1.75rem;
+    background-color: var(--color-bone-warm);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .ledger-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+
+  .ledger-tag {
+    font-size: 0.6875rem;
+    color: var(--color-mark-gold);
+    letter-spacing: 0.08em;
+  }
+
+  .batch-num {
+    font-size: 0.75rem;
+    color: var(--color-ink-whisper);
+  }
+
+  .ledger-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .ledger-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  @media (min-width: 500px) {
+    .ledger-row {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+  }
+
+  .row-label {
+    font-size: 0.6875rem;
+    color: var(--color-ink-whisper);
+    letter-spacing: 0.05em;
+  }
+
+  .row-val {
+    font-size: 0.875rem;
+    color: var(--color-deep-forest);
+    text-align: right;
+  }
+
+  /* Sensory */
+  .sensory-box {
+    padding: 1.5rem;
+    background-color: var(--color-bone-card);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .sensory-title {
+    font-size: 1.2rem;
+    margin: 0;
+  }
+
+  .sensory-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .sensory-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .sensory-label {
+    font-size: 0.6875rem;
     color: var(--color-mark-gold);
   }
 
-  .size-qty { letter-spacing: 0.06em; }
-
-  .size-price {
-    color: var(--color-bone-muted);
-    font-size: var(--type-whisper);
-    transition: color 0.2s;
+  .sensory-text {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--color-ink-muted);
+    margin: 0;
   }
 
-  .size-pill--active .size-price,
-  .size-pill:hover .size-price { color: var(--color-mark-gold); }
+  /* Specimen */
+  .specimen-note {
+    padding: 1.5rem;
+    border-left: 3px solid var(--color-mark-gold);
+    background-color: var(--color-bone-warm);
+    border-radius: 0 6px 6px 0;
+  }
 
-  /* THE GOLD BUTTON — unmissable */
-  .ledger-cta {
-    width: 100%;
-    padding: 1.1rem 2rem;
-    background: var(--color-mark-gold);
+  .specimen-quote {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    font-style: italic;
     color: var(--color-deep-forest);
-    border: none;
-    font-family: var(--font-evidence);
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.22em;
-    cursor: pointer;
-    transition: background 0.25s, transform 0.12s;
-    min-height: 56px;
-  }
-
-  .ledger-cta:hover {
-    background: var(--color-bone);
-    transform: translateY(-2px);
-  }
-
-  .ledger-cta:active { transform: translateY(0); }
-
-  /* ══════════════════════════════
-     MOBILE
-  ══════════════════════════════ */
-  @media (max-width: 768px) {
-    .product-hero {
-      height: 65vh;
-      min-height: 360px;
-    }
-
-    .hero-product-name {
-      font-size: clamp(2rem, 9vw, 3.5rem);
-    }
-
-    .sense-inner {
-      grid-template-columns: 1fr 1fr;
-    }
-
-    .sense-item--wide {
-      grid-column: 1 / -1;
-    }
-
-    .back-link {
-      top: 16px;
-      left: 16px;
-    }
-
-    .offering-section {
-      padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
-    }
-  }
-
-  @media (max-width: 480px) {
-    .sense-inner {
-      grid-template-columns: 1fr;
-    }
-
-    .sizes-row {
-      flex-direction: column;
-    }
-
-    .size-option {
-      width: 100%;
-      justify-content: space-between;
-    }
+    margin: 0;
   }
 </style>
+
+<script>
+  function initProductPage() {
+    let currentPrice = 0;
+    let currentSize = '';
+
+    const priceEl = document.getElementById('active-price');
+    const sizeLabelEl = document.getElementById('active-size-label');
+    const sizeBtns = document.querySelectorAll<HTMLButtonElement>('.size-btn');
+    const addToBasketBtn = document.getElementById('add-to-basket-main');
+    const whatsappBtn = document.getElementById('order-whatsapp-direct');
+    const mainImg = document.getElementById('main-product-image') as HTMLImageElement;
+    const thumbBtns = document.querySelectorAll<HTMLButtonElement>('.thumb-btn');
+
+    // Thumbnail switching
+    thumbBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const src = btn.dataset.src;
+        if (src && mainImg) {
+          mainImg.src = src;
+          thumbBtns.forEach(b => b.classList.remove('is-active'));
+          btn.classList.add('is-active');
+        }
+      });
+    });
+
+    // Size switching
+    sizeBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        sizeBtns.forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+
+        currentSize = btn.dataset.size || '';
+        currentPrice = Number(btn.dataset.price) || 0;
+
+        if (priceEl) priceEl.textContent = String(currentPrice);
+        if (sizeLabelEl) sizeLabelEl.textContent = `/ ${currentSize}`;
+
+        if (addToBasketBtn) {
+          addToBasketBtn.dataset.price = String(currentPrice);
+          addToBasketBtn.dataset.size = currentSize;
+        }
+      });
+    });
+
+    // Initialize current price/size from active button or defaults
+    const activeSizeBtn = document.querySelector<HTMLButtonElement>('.size-btn.is-active');
+    if (activeSizeBtn) {
+      currentSize = activeSizeBtn.dataset.size || '';
+      currentPrice = Number(activeSizeBtn.dataset.price) || 0;
+    } else if (addToBasketBtn) {
+      currentSize = addToBasketBtn.dataset.size || '100g';
+      currentPrice = Number(addToBasketBtn.dataset.price) || 0;
+    }
+
+    // Add to Basket
+    if (addToBasketBtn) {
+      addToBasketBtn.addEventListener('click', () => {
+        const product = {
+          id: `${addToBasketBtn.dataset.productId}-${currentSize}`,
+          productId: addToBasketBtn.dataset.productId,
+          name: addToBasketBtn.dataset.productName,
+          origin: addToBasketBtn.dataset.origin,
+          originId: addToBasketBtn.dataset.originId,
+          price: Number(addToBasketBtn.dataset.price),
+          size: currentSize,
+          weight: currentSize,
+          image: addToBasketBtn.dataset.image,
+          quantity: 1
+        };
+
+        try {
+          const stored = localStorage.getItem('ourorigin_basket');
+          let items = stored ? JSON.parse(stored) : [];
+          
+          const existingIndex = items.findIndex((item: any) => item.id === product.id);
+          if (existingIndex > -1) {
+            items[existingIndex].quantity = (items[existingIndex].quantity || 1) + 1;
+          } else {
+            items.push(product);
+          }
+
+          localStorage.setItem('ourorigin_basket', JSON.stringify(items));
+          window.dispatchEvent(new CustomEvent('basket-updated'));
+          window.dispatchEvent(new CustomEvent('open-basket'));
+
+          const originalText = addToBasketBtn.innerHTML;
+          addToBasketBtn.innerHTML = '<span>Added to Basket ✓</span>';
+          setTimeout(() => {
+            addToBasketBtn.innerHTML = originalText;
+          }, 1500);
+        } catch (err) {
+          console.error(err);
+        }
+      });
+    }
+
+    // Direct WhatsApp Inquiry
+    if (whatsappBtn) {
+      whatsappBtn.addEventListener('click', () => {
+        const prodName = whatsappBtn.dataset.productName;
+        const originName = whatsappBtn.dataset.origin;
+        const waNum = whatsappBtn.dataset.whatsapp;
+        const message = `Hello OurOrigin, I'd like to reserve ${prodName} (${currentSize || '100g'} - ₹${currentPrice}) from ${originName}.`;
+        const url = `https://wa.me/${waNum}?text=${encodeURIComponent(message)}`;
+        window.open(url, '_blank');
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', initProductPage);
+  document.addEventListener('astro:page-load', initProductPage);
+</script>

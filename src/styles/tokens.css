@@ -1,101 +1,74 @@
 /* ═══════════════════════════════════════════════════════════
-   OurOrigin — Authoritative Design Tokens
+   OurOrigin — Modern Humanist Minimalism Design Tokens
    ═══════════════════════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=Inter:wght@300;400&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
 :root {
-  /* ── Authoritative Brand Palette ── */
-  --color-deep-forest: #0C1509;        /* Primary background */
-  --color-bone: #EFE6D3;               /* Primary text */
-  --color-mark-gold: #C99A5B;          /* The Mark, accents */
-  --color-proof-green: #4A7A4E;        /* Ledger confirmations */
+  /* ── Canvas & Surface Colors ── */
+  --color-bone: #FAF7F2;                 /* Primary canvas surface */
+  --color-bone-warm: #F4EFE6;            /* Secondary warm surface */
+  --color-bone-card: #FFFFFF;            /* Clean card background */
+  --color-bone-subtle: #EDE6D8;          /* Muted element background */
   
-  /* UI Surface Variants */
-  --color-forest-surface: #142010;     
-  --color-forest-hover: #1c2a17;       
+  /* ── Deep Forest & Ink Colors ── */
+  --color-deep-forest: #121C13;          /* Primary body & heading ink */
+  --color-forest-dark: #0C150A;          /* Inverted sections & footer background */
+  --color-forest-surface: #172419;       /* Dark section card surface */
+  --color-forest-muted: rgba(250, 247, 242, 0.72);
+  --color-forest-whisper: rgba(250, 247, 242, 0.4);
+
+  /* ── Accents & Signatures ── */
+  --color-mark-gold: #C59A5A;            /* Warm Sun Gold brand mark & key accents */
+  --color-gold-hover: #B48847;
+  --color-gold-subtle: rgba(197, 154, 90, 0.12);
+  --color-proof-green: #3D6A42;          /* Transparent ledger & origin verified */
   
-  --color-bone-muted: rgba(239, 230, 211, 0.65);
-  --color-bone-whisper: rgba(239, 230, 211, 0.3);
-  
-  --color-gold-muted: rgba(201, 154, 91, 0.2);
+  /* ── Text Muted Variants ── */
+  --color-ink-muted: #535E54;            /* Secondary readable text */
+  --color-ink-whisper: #8C968D;          /* Metadata, hints */
 
   /* ── Borders & Dividers ── */
-  --color-border-subtle: rgba(239, 230, 211, 0.1);
-  --color-border-accent: rgba(201, 154, 91, 0.35);
+  --color-border-subtle: rgba(18, 28, 19, 0.08);
+  --color-border-medium: rgba(18, 28, 19, 0.16);
+  --color-border-dark: rgba(250, 247, 242, 0.12);
+  --color-border-gold: rgba(197, 154, 90, 0.35);
 
-  /* ── Typography — The Core Identity Tension ──
-     1. Fraunces (philosophical, warm, human, narrative)
-     2. JetBrains Mono (precise, direct, evidence, telemetry)
-     3. Inter (functional, structural) */
-  --font-narrative: 'Fraunces', serif;
-  --font-evidence: 'JetBrains Mono', monospace;
-  --font-body: 'Inter', sans-serif;
-  --font-display: 'Fraunces', serif;
+  /* ── Typography System ── */
+  --font-serif: 'Fraunces', Georgia, serif;
+  --font-narrative: 'Fraunces', Georgia, serif;
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'DM Mono', monospace;
+  --font-evidence: 'JetBrains Mono', 'DM Mono', monospace;
 
-  /* ── Fluid Type Scale ── */
-  --type-display:   clamp(40px, 8vw, 84px);
-  --type-statement: clamp(28px, 5vw, 48px);
-  --type-narrative: clamp(20px, 2.5vw, 28px);
-  --type-evidence:  clamp(11px, 1vw, 13px);
-  --type-whisper:   clamp(9px, 1vw, 11px);
+  /* ── Fluid Typography Scale ── */
+  --type-hero: clamp(2.5rem, 5.5vw, 4.5rem);
+  --type-display: clamp(2rem, 4vw, 3.25rem);
+  --type-title: clamp(1.5rem, 2.5vw, 2.25rem);
+  --type-subheading: clamp(1.15rem, 1.8vw, 1.5rem);
+  --type-body: 1rem;
+  --type-body-sm: 0.875rem;
+  --type-meta: 0.75rem;
 
-  /* Line Heights (Editorial) */
-  --line-height-tight: 1.05;
-  --line-height-base: 1.5;
-  --line-height-loose: 1.8;
+  /* ── Layout & Constraints ── */
+  --max-width: 1240px;
+  --max-width-narrow: 840px;
+  --gutter-x: clamp(1.25rem, 4vw, 3rem);
+  --section-pad-y: clamp(4rem, 8vw, 7.5rem);
 
-  /* ── Asymmetric Rhythms (The Three Unequal Marks) ── */
-  --grid-rhythm-primary: 1.5fr 4.5fr 5fr;
-  --grid-rhythm-alt: 1fr 2fr 1fr;
-  
-  /* ── Structural Constraints ── */
-  --content-max-width: 1400px;
-  --canvas-pad-x: clamp(2rem, 5vw, 6rem);
-  --canvas-pad-y: clamp(4rem, 10vh, 8rem);
-
-  /* No border radii. Sharp, direct cuts like paper and film. */
-  --radius-sm: 0px;
-  --radius-md: 0px;
-  --radius-lg: 0px;
-
-  /* ── Spacing (The Negative Space) ── */
-  --space-xs: 0.25rem;
-  --space-sm: 0.5rem;
-  --space-md: 1rem;
-  --space-lg: 1.5rem;
-  --space-xl: 3rem;
-  --space-2xl: 5rem;
-  --space-3xl: 8rem;
-  --space-4xl: 12rem;
-
-  /* ── Animation & Transitions (GSAP driven) ── */
-  --duration-fast: 0.2s;
-  --duration-standard: 0.4s;
-  --duration-slow: 0.8s;
-  --ease-crossing: cubic-bezier(0.76, 0, 0.24, 1); /* Movement / Encounter */
-  --ease-human: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-/* ── Editorial Layout Primitives (The Three Marks) ── */
-.layout-three-marks {
-  display: grid;
-  grid-template-columns: 1fr;
-  width: 100%;
-  gap: var(--space-xl);
-}
-
-@media (min-width: 1024px) {
-  .layout-three-marks {
-      /* The exact ratio of the three marks */
-      grid-template-columns: var(--grid-rhythm-primary);
-      gap: clamp(2rem, 5vw, 4rem);
-  }
+  /* ── Shadows & Transitions ── */
+  --shadow-subtle: 0 2px 12px rgba(18, 28, 19, 0.04);
+  --shadow-card: 0 8px 30px rgba(18, 28, 19, 0.06);
+  --shadow-hover: 0 16px 40px rgba(18, 28, 19, 0.1);
+  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-base: 0.25s;
 }
 
 /* ═══════════════════════════════════════════════════════════
-   Global Reset & Base
+   Base & Resets
    ═══════════════════════════════════════════════════════════ */
 
 *, *::before, *::after {
@@ -104,48 +77,188 @@
 
 html {
   scroll-behavior: smooth;
+  color-scheme: light;
 }
 
-html, body {
+body {
   margin: 0;
   padding: 0;
   background-color: var(--color-bone);
   color: var(--color-deep-forest);
   font-family: var(--font-body);
-  line-height: var(--line-height-base);
+  font-size: var(--type-body);
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-narrative);
-  font-weight: 300;
+  margin-top: 0;
+  font-family: var(--font-serif);
+  font-weight: 400;
   color: var(--color-deep-forest);
+  line-height: 1.2;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   Tactile Paper Texture (Organic Grain)
-   ═══════════════════════════════════════════════════════════ */
-
-body::after {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.4'/%3E%3C/svg%3E");
-  opacity: 0.15; /* Slightly increased for light mode */
-  pointer-events: none;
-  z-index: 9999;
+p {
+  margin-top: 0;
+  margin-bottom: 1.25rem;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   Selection
-   ═══════════════════════════════════════════════════════════ */
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--duration-base) var(--ease-smooth), opacity var(--duration-base) var(--ease-smooth);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
 
 ::selection {
   background-color: var(--color-mark-gold);
+  color: #0C150A;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Reusable Utility Classes
+   ═══════════════════════════════════════════════════════════ */
+
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--gutter-x);
+  padding-right: var(--gutter-x);
+}
+
+.container-narrow {
+  width: 100%;
+  max-width: var(--max-width-narrow);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--gutter-x);
+  padding-right: var(--gutter-x);
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+.font-sans {
+  font-family: var(--font-sans);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.text-gold {
+  color: var(--color-mark-gold);
+}
+
+.text-muted {
+  color: var(--color-ink-muted);
+}
+
+.text-whisper {
+  color: var(--color-ink-whisper);
+}
+
+.badge-origin {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  background-color: var(--color-bone-warm);
+  color: var(--color-ink-muted);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.badge-gold {
+  background-color: var(--color-gold-subtle);
+  color: #8C6228;
+  border-color: rgba(197, 154, 90, 0.25);
+}
+
+/* Clean CTA Buttons */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.6rem;
+  background-color: var(--color-deep-forest);
+  color: var(--color-bone);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  border-radius: 4px;
+  transition: all var(--duration-base) var(--ease-smooth);
+}
+
+.btn-primary:hover {
+  background-color: #243525;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-subtle);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.6rem;
+  background-color: transparent;
   color: var(--color-deep-forest);
+  border: 1px solid var(--color-border-medium);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  border-radius: 4px;
+  transition: all var(--duration-base) var(--ease-smooth);
+}
+
+.btn-secondary:hover {
+  border-color: var(--color-deep-forest);
+  background-color: var(--color-bone-warm);
+}
+
+.btn-gold {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.6rem;
+  background-color: var(--color-mark-gold);
+  color: #0C150A;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border-radius: 4px;
+  transition: all var(--duration-base) var(--ease-smooth);
+}
+
+.btn-gold:hover {
+  background-color: var(--color-gold-hover);
+  transform: translateY(-1px);
 }

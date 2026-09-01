@@ -4,127 +4,111 @@ import { EMAIL_ADDRESS, FSSAI_NUMBER } from '../utils/constants';
 ---
 
 <Layout
-  title="Protocol 02: Checkout & Terms — OurOrigin"
-  description="Terms governing orders, seasonal yields, and deliveries from OurOrigin."
+  title="Terms of Trade — OurOrigin"
+  description="Terms governing orders, seasonal harvests, and direct fulfillment from OurOrigin."
 >
-    <main id="main-content" class="page-container">
-        <h1>[ PROTOCOL 02 : TRANSITIONAL AGREEMENTS & CHECKOUT POLICIES ]</h1>
-        <p class="subtitle">Effective: January 2026</p>
+  <div class="legal-page">
+    <div class="container-narrow">
+      <header class="legal-header">
+        <span class="badge-origin badge-gold">LEGAL</span>
+        <h1 class="legal-title font-serif">Terms of Trade</h1>
+        <p class="legal-meta font-mono">Effective: 2026 · Ethical Direct Trade</p>
+      </header>
 
-        <section class="legal-section">
-            <h2>01 · Order Processing</h2>
-            <p>OurOrigin does not function as an automated merchant storefront. All orders represent inquiries initialized by the user via a formatted WhatsApp link. Prices shown are for informational purposes representing current seasonal yields. We confirm availability and finalize order requests manually on our WhatsApp line before receiving payment references.</p>
+      <div class="legal-content">
+        <section class="legal-block">
+          <h2 class="font-serif">01 · Seasonal Direct Trade</h2>
+          <p>
+            OurOrigin operates as an ethical conduit between native farming families in the Western Ghats and conscious consumers. All yields are genuine single-origin harvests. Because our products are forest-canopy grown and unblended, natural seasonal variations in aroma, color, and density are authentic hallmarks of quality.
+          </p>
         </section>
 
-        <section class="legal-section">
-            <h2>02 · Payments</h2>
-            <p>We collect payments manually using direct UPI transfers. When checking out, we share our UPI ID (`ourorigin@ybl`) for convenient copying. We verify and confirm all transactions individually upon receiving the transaction reference ID over our official WhatsApp support channel.</p>
+        <section class="legal-block">
+          <h2 class="font-serif">02 · Order Inquiries & Availability</h2>
+          <p>
+            Because harvests are gathered in finite seasonal batches, checkout requests initialized on this website represent direct order reservations confirmed manually with our team on WhatsApp before dispatch.
+          </p>
         </section>
 
-        <section class="legal-section">
-            <h2>03 · Seasonal Yields & Natural Variation</h2>
-            <p>We source all spices, teas, and ingredients directly from shade-grown forest micro-regions in the Western Ghats. Since these are forest-harvested and selectively picked items, they exhibit natural differences in flavor, color, sizing, and essential oil content across seasons. We prioritize harvest integrity over product uniformity. These natural variations are not considered manufacturing defects.</p>
+        <section class="legal-block">
+          <h2 class="font-serif">03 · Dispatch & Delivery</h2>
+          <p>
+            Orders are carefully packed at origin and dispatched from Thiruvananthapuram, Kerala, within 2 to 3 business days of payment confirmation.
+          </p>
         </section>
 
-        <section class="legal-section">
-            <h2>04 · Shipping & Dispatch</h2>
-            <p>Orders are packaged and dispatched from Thiruvananthapuram, Kerala, usually within 2 to 3 working days of payment confirmation. Shipping within India is free for orders of ₹399 and above; orders below ₹399 are subject to a nominal shipping fee of ₹60. Local delivery in Thiruvananthapuram is free with no minimum purchase requirement.</p>
+        <section class="legal-block">
+          <h2 class="font-serif">04 · Compliance & Standards</h2>
+          <p>
+            Our operations comply with local food safety standards under the Food Safety and Standards Authority of India (FSSAI Reg. No. {FSSAI_NUMBER}).
+          </p>
         </section>
 
-        <section class="legal-section">
-            <h2>05 · Compliance & Registrations</h2>
-            <p>Our operations comply with local food safety guidelines under the Food Safety and Standards Authority of India (FSSAI). Our registration number is: <strong>{FSSAI_NUMBER}</strong>.</p>
+        <section class="legal-block">
+          <h2 class="font-serif">05 · Contact & Bulk Orders</h2>
+          <p>
+            For institutional, restaurant, or bulk harvest inquiries (above 25kg), contact us directly at <a href={`mailto:${EMAIL_ADDRESS}`} class="text-gold">{EMAIL_ADDRESS}</a>.
+          </p>
         </section>
 
-        <section class="legal-section">
-            <h2>06 · Contact</h2>
-            <p>For support or wholesale queries (orders above 50 units), contact us at: <a href={`mailto:${EMAIL_ADDRESS}`} class="legal-link">{EMAIL_ADDRESS}</a></p>
-        </section>
-
-        <a href="/" class="nav-link">← Back to Home</a>
-    </main>
+        <div class="legal-footer">
+          <a href="/" class="btn-secondary btn-sm">← Return to Home</a>
+        </div>
+      </div>
+    </div>
+  </div>
 </Layout>
 
 <style>
-    .page-container {
-        max-width: 700px;
-        margin: 0 auto;
-        padding-top: max(140px, 20vh);
-        padding-left: 5vw;
-        padding-right: 5vw;
-        padding-bottom: 10vh;
-        display: flex;
-        flex-direction: column;
-        gap: 2rem;
-    }
+  .legal-page {
+    padding: clamp(3rem, 6vw, 5rem) 0 clamp(4rem, 8vw, 7rem);
+    background-color: var(--color-bone);
+  }
 
-    h1 {
-        font-family: var(--font-display);
-        font-size: var(--type-statement);
-        margin: 0 0 0.5rem 0;
-        font-weight: 400;
-        color: var(--color-bone);
-    }
+  .legal-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--color-border-subtle);
+    margin-bottom: 2.5rem;
+  }
 
-    .subtitle {
-        font-family: var(--font-evidence);
-        font-size: var(--type-whisper);
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        opacity: 0.4;
-        margin: 0 0 3rem 0;
-        color: var(--color-bone);
-    }
+  .legal-title {
+    font-size: var(--type-display);
+    margin: 0;
+  }
 
-    .legal-section {
-        margin-bottom: 3rem;
-        border-left: 1px solid rgba(245, 237, 216, 0.12);
-        padding-left: 2rem;
-    }
+  .legal-meta {
+    font-size: 0.75rem;
+    color: var(--color-ink-whisper);
+  }
 
-    .legal-section h2 {
-        font-family: var(--font-evidence);
-        font-size: var(--type-evidence);
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        font-weight: 400;
-        margin: 0 0 1rem 0;
-        color: var(--color-mark-gold);
-    }
+  .legal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
 
-    .legal-section p {
-        font-family: var(--font-narrative);
-        font-size: var(--type-narrative);
-        line-height: var(--line-height-loose);
-        margin: 0 0 1rem 0;
-        opacity: 0.85;
-        color: var(--color-bone);
-    }
+  .legal-block h2 {
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
 
-    .legal-link {
-        color: var(--color-mark-gold);
-        text-decoration: underline;
-        transition: color 0.3s ease;
-    }
+  .legal-block p {
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--color-ink-muted);
+    margin: 0;
+  }
 
-    .legal-link:hover {
-        color: var(--color-bone);
-    }
+  .legal-footer {
+    padding-top: 1.5rem;
+  }
 
-    .nav-link {
-        font-family: var(--font-evidence);
-        font-size: var(--type-evidence);
-        color: rgba(245, 237, 216, 0.5);
-        text-decoration: none;
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-        margin-top: 3rem;
-        display: inline-block;
-        transition: color var(--duration-standard) var(--ease-settle);
-        align-self: flex-start;
-    }
-
-    .nav-link:hover {
-        color: var(--color-bone);
-    }
+  .btn-sm {
+    padding: 0.5rem 1.25rem;
+    font-size: 0.8125rem;
+  }
 </style>

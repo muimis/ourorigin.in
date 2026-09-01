@@ -1,125 +1,87 @@
 ---
-const socialItems = [
-  {
-    id: "edge",
-    title: "Grown on the edge<br>of the Ghats",
-    note: "Single-origin.",
-    img: "/images/social-content/edge.webp"
-  },
-  {
-    id: "sticker_1",
-    title: "",
-    note: "",
-    img: "/images/social-content/sticker_1.webp"
-  },
-  {
-    id: "always_on",
-    title: "Always Seasonal",
-    note: "Monsoon-aligned. Harvest-honest.",
-    img: "/images/social-content/always_on.webp"
-  },
-  {
-    id: "color",
-    title: "",
-    note: "",
-    img: "/images/social-content/color.webp"
-  }
-];
----
-<section id="social-content" class="social-section">
-  <div class="social-container">
-    
-    <div class="social-grid">
-      {socialItems.map(item => (
-        <div class="social-item raw-panel">
-          <div class="social-image-wrapper">
-            <!-- Using a solid color as placeholder since images might not exist in fresh install -->
-            <div class="image-placeholder" style={`background-image: url('${item.img}')`}></div>
-          </div>
-          
-          {(item.title || item.note) && (
-            <div class="social-content">
-              {item.title && <h5 class="social-title" set:html={item.title} />}
-              {item.note && <div class="social-note">{item.note}</div>}
-            </div>
-          )}
-        </div>
-      ))}
-    </div>
+// SocialSection.astro — Seasonal Updates & Direct Connection
+import { WHATSAPP_NUMBER, EMAIL_ADDRESS } from '../../utils/constants';
+import OriginMark from '../OriginMark.astro';
 
+const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Hello OurOrigin, I'd like to inquire about this season's harvests.")}`;
+---
+
+<section class="connect-section" aria-label="Stay Connected">
+  <div class="container">
+    <div class="connect-card">
+      <div class="connect-content">
+        <div class="connect-mark">
+          <OriginMark size={32} variant="gold" />
+        </div>
+        <span class="badge-origin badge-gold">SEASONAL NOTIFICATIONS</span>
+        <h2 class="connect-title font-serif">
+          Fresh harvests arrive with the seasons.
+        </h2>
+        <p class="connect-desc">
+          We harvest in small, unblended batches aligned with monsoon and flowering cycles. Connect directly with us on WhatsApp or email for custom requests and fresh seasonal drop notifications.
+        </p>
+
+        <div class="connect-actions">
+          <a href={whatsappLink} class="btn-gold" target="_blank" rel="noopener noreferrer">
+            <span>Connect on WhatsApp</span>
+            <span aria-hidden="true">→</span>
+          </a>
+          <a href={`mailto:${EMAIL_ADDRESS}`} class="btn-secondary" style="border-color: rgba(250, 247, 242, 0.2); color: var(--color-bone);">
+            <span>Email Us</span>
+          </a>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
 <style>
-  .social-section {
-    padding: var(--space-4xl) var(--space-xl);
-    position: relative;
-    z-index: 2;
+  .connect-section {
+    padding: clamp(3.5rem, 6vw, 5.5rem) 0;
+    background-color: var(--color-bone);
   }
 
-  .social-container {
-    max-width: 1400px;
+  .connect-card {
+    background-color: var(--color-forest-dark);
+    color: var(--color-bone);
+    border-radius: 8px;
+    padding: clamp(2.5rem, 5vw, 4.5rem) clamp(1.5rem, 4vw, 3.5rem);
+    text-align: center;
+    box-shadow: var(--shadow-card);
+  }
+
+  .connect-content {
+    max-width: 640px;
     margin: 0 auto;
-  }
-
-  .social-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: var(--space-xl);
-  }
-
-  .social-item {
-    position: relative;
-    border-radius: 12px;
-    overflow: hidden;
-    aspect-ratio: 4/5; /* Portrait style like Instagram */
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
+    align-items: center;
+    gap: 1.25rem;
   }
 
-  .social-image-wrapper {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
+  .connect-mark {
+    margin-bottom: 0.5rem;
   }
 
-  .image-placeholder {
-    width: 100%;
-    height: 100%;
-    background-color: var(--color-gold-muted);
-    background-size: cover;
-    background-position: center;
-    transition: transform var(--duration-slow) var(--ease-settle);
-  }
-
-  .social-item:hover .image-placeholder {
-    transform: scale(1.05);
-  }
-
-  .social-content {
-    position: relative;
-    z-index: 2;
-    padding: var(--space-2xl) var(--space-xl);
-    background: linear-gradient(to top, rgba(12, 21, 9, 0.9) 0%, rgba(12, 21, 9, 0) 100%);
-  }
-
-  .social-title {
-    font-family: var(--font-display);
-    font-size: var(--text-lead);
+  .connect-title {
+    font-size: var(--type-display);
     color: var(--color-bone);
-    margin: 0 0 var(--space-sm) 0;
     line-height: 1.2;
+    margin: 0;
   }
 
-  .social-note {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: var(--color-mark-gold);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
+  .connect-desc {
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--color-forest-muted);
+    margin: 0;
+  }
+
+  .connect-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
   }
 </style>

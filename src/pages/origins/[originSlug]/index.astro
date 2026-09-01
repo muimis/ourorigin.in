@@ -22,295 +22,468 @@ const originProducts = allProducts.filter((product) => {
   return pOriginId === origin.id;
 });
 
+const canopyImg = origin.data.images?.canopy || origin.data.images?.hand || '/assets/images/gesture_hands.png';
 ---
 
 <Layout
-  title={`${origin.data.name} — OurOrigin`}
-  description={`Discover yields from ${origin.data.name} — ${origin.data.elevation}, ${origin.data.bioregion}.`}
+  title={`${origin.data.name} Terroir — OurOrigin`}
+  description={`Single-origin harvests and ecological profile of ${origin.data.name} — ${origin.data.elevation}, ${origin.data.bioregion}.`}
 >
-  <main class="origin-overview-viewport">
-    <!-- Background Image -->
-    <div class="layer bg-mask-layer pedestal-mask">
-      <div class="bg-image active" style={`background-image: url('${origin.data.images.canopy || origin.data.images.specimen}'); filter: grayscale(80%) brightness(0.3);`}></div>
-    </div>
+  <div class="origin-page">
+    
+    <!-- Hero Header -->
+    <header class="origin-hero">
+      <div class="container">
+        
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb font-mono" aria-label="Breadcrumb">
+          <a href="/">Home</a>
+          <span>/</span>
+          <a href="/#origins">Origins</a>
+          <span>/</span>
+          <span class="current-crumb">{origin.data.name}</span>
+        </nav>
 
-    <div class="layer ui-layer origin-ui">
-      
-      <a href="/#testimonies" class="back-link">
-        <OriginMark size={24} variant="gold" />
-        <span>Return to Journey</span>
-      </a>
+        <div class="origin-hero-grid">
+          <div class="origin-hero-content">
+            <span class="badge-origin badge-gold">
+              <OriginMark size={14} variant="gold" />
+              <span>{origin.data.bioregion} TERROIR</span>
+            </span>
 
-      <div class="origin-content-grid">
-        <!-- Left Column: Origin Facts -->
-        <div class="origin-facts-col">
-          <h1 class="origin-title">{origin.data.name}</h1>
-          <div class="origin-meta">
-            <span>{origin.data.bioregion}</span>
-            <span>{origin.data.elevation}</span>
-          </div>
-
-          <div class="narrative-box">
-            {origin.data.narrative?.canopy && <p>{origin.data.narrative.canopy}</p>}
-            {origin.data.narrative?.land && <p>{origin.data.narrative.land}</p>}
-            {origin.data.narrative?.hand && <p>{origin.data.narrative.hand}</p>}
-          </div>
-
-          <div class="data-grid">
-            <div class="data-item">
-              <div class="data-label">Coordinates</div>
-              <div class="data-value">{origin.data.coordinates}</div>
+            <h1 class="origin-title font-serif">{origin.data.name}</h1>
+            
+            <div class="origin-stats-row font-mono">
+              <span class="stat-pill">▲ {origin.data.elevation}</span>
+              <span class="stat-pill">{origin.data.coordinates}</span>
             </div>
-            {origin.data.rainfall && (
-              <div class="data-item">
-                <div class="data-label">Rainfall</div>
-                <div class="data-value">{origin.data.rainfall}</div>
-              </div>
-            )}
+
             {origin.data.soil && (
-              <div class="data-item">
-                <div class="data-label">Soil</div>
-                <div class="data-value">{origin.data.soil}</div>
-              </div>
-            )}
-            {origin.data.method && (
-              <div class="data-item">
-                <div class="data-label">Method</div>
-                <div class="data-value">{origin.data.method}</div>
-              </div>
+              <p class="origin-soil-meta font-mono">
+                SOIL: {origin.data.soil}
+              </p>
             )}
           </div>
-        </div>
 
-        <!-- Right Column: Products List -->
-        <div class="origin-products-col">
-          <h2 class="products-header">Yields from this Origin</h2>
-          <div class="products-list">
-            {originProducts.map(product => (
-              <a href={`/origins/${origin.id}/${product.id}`} class="product-card">
-                <div class="product-info">
-                  <h3 class="product-name">{product.data.name}</h3>
-                  {product.data.botanicalName && <div class="product-botanical">{product.data.botanicalName}</div>}
-                  <div class="product-sizes">
-                    {product.data.sizes.map(size => (
-                      <span class="size-tag">{size.label} - ₹{size.priceINR}</span>
-                    ))}
-                  </div>
-                </div>
-                <div class="product-arrow">&rarr;</div>
-              </a>
-            ))}
-            {originProducts.length === 0 && (
-              <p class="no-products">We are currently resting the yields from this origin.</p>
-            )}
+          <!-- Canopy Image -->
+          <div class="origin-hero-media">
+            <img 
+              src={canopyImg} 
+              alt={`${origin.data.name} forest canopy`} 
+              class="origin-canopy-img" 
+              onerror="this.src='/assets/images/gesture_hands.png'"
+            />
           </div>
         </div>
 
       </div>
+    </header>
+
+    <div class="container origin-main-content">
+      
+      <!-- Ecological Narrative -->
+      <section class="narrative-section">
+        <h2 class="section-heading font-serif">The Terroir & Ecology</h2>
+        
+        <div class="narrative-grid">
+          {origin.data.narrative?.canopy && (
+            <div class="narrative-card">
+              <span class="card-kicker font-mono">CANOPY & CLIMATE</span>
+              <p>{origin.data.narrative.canopy}</p>
+            </div>
+          )}
+
+          {origin.data.narrative?.land && (
+            <div class="narrative-card">
+              <span class="card-kicker font-mono">SOIL & MOISTURE</span>
+              <p>{origin.data.narrative.land}</p>
+            </div>
+          )}
+
+          {origin.data.narrative?.hand && (
+            <div class="narrative-card">
+              <span class="card-kicker font-mono">THE FIRST HANDS</span>
+              <p>{origin.data.narrative.hand}</p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <!-- Products from this Origin -->
+      <section class="origin-yields-section">
+        <div class="yields-header">
+          <div>
+            <span class="badge-origin badge-gold">TERROIR HARVESTS</span>
+            <h2 class="section-heading font-serif">Yields from {origin.data.name}</h2>
+          </div>
+          <span class="font-mono text-whisper">{originProducts.length} ACTIVE BATCHES</span>
+        </div>
+
+        <div class="origin-products-grid">
+          {originProducts.map(product => {
+            const firstSize = product.data.sizes[0];
+            const prodImg = product.data.images?.product || product.data.images?.packaging || '/assets/products/minimal-packaging-pouch.jpg';
+
+            const itemPayload = JSON.stringify({
+              id: `${product.id}-${firstSize.label}`,
+              productId: product.id,
+              name: product.data.name,
+              origin: origin.data.name,
+              originId: origin.id,
+              price: firstSize.priceINR,
+              size: firstSize.label,
+              weight: firstSize.label,
+              image: prodImg,
+              quantity: 1
+            });
+
+            return (
+              <article class="product-item-card">
+                <a href={`/origins/${origin.id}/${product.id}`} class="prod-img-link">
+                  <div class="prod-media">
+                    <img 
+                      src={prodImg} 
+                      alt={product.data.name} 
+                      class="prod-img" 
+                      loading="lazy"
+                      onerror="this.src='/assets/products/minimal-packaging-pouch.jpg'"
+                    />
+                  </div>
+                </a>
+
+                <div class="prod-details">
+                  <div class="prod-title-wrap">
+                    <h3 class="prod-title font-serif">
+                      <a href={`/origins/${origin.id}/${product.id}`}>{product.data.name}</a>
+                    </h3>
+                    {product.data.botanicalName && (
+                      <span class="prod-botanical font-serif">{product.data.botanicalName}</span>
+                    )}
+                  </div>
+
+                  <div class="prod-footer">
+                    <span class="prod-price font-mono">₹{firstSize.priceINR} <small class="text-whisper">/ {firstSize.label}</small></span>
+                    
+                    <button
+                      type="button"
+                      class="btn-add-harvest"
+                      data-product-json={itemPayload}
+                      aria-label={`Add ${product.data.name} to basket`}
+                    >
+                      + Add
+                    </button>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+
     </div>
-  </main>
+
+  </div>
 </Layout>
 
 <style>
-  .origin-overview-viewport {
-    position: relative;
-    min-height: 100vh;
-    width: 100vw;
-    pointer-events: auto;
-    overflow-x: hidden;
-    color: var(--color-bone);
+  .origin-page {
+    padding-bottom: clamp(4rem, 8vw, 7rem);
+    background-color: var(--color-bone);
   }
 
-  .pedestal-mask {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    z-index: -1;
-  }
-  
-  .bg-image {
-    width: 100%; height: 100%;
-    background-size: cover;
-    background-position: center;
+  .origin-hero {
+    padding: clamp(2.5rem, 5vw, 4.5rem) 0 clamp(2.5rem, 4vw, 3.5rem);
+    background: linear-gradient(180deg, var(--color-bone-warm) 0%, var(--color-bone) 100%);
+    border-bottom: 1px solid var(--color-border-subtle);
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
   }
 
-  .ui-layer {
-    padding: 8rem 5vw 4rem 5vw;
-    max-width: 1400px;
-    margin: 0 auto;
-  }
-
-  .back-link {
-    position: absolute;
-    top: 2rem;
-    left: 5vw;
+  .breadcrumb {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    color: var(--color-mark-gold);
-    text-decoration: none;
-    font-family: var(--font-evidence);
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    z-index: 100;
-    transition: opacity 0.3s;
-  }
-
-  .back-link:hover {
-    opacity: 0.7;
-  }
-
-  .origin-content-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6rem;
-    margin-top: 4rem;
-  }
-
-  @media (max-width: 900px) {
-    .origin-content-grid {
-      grid-template-columns: 1fr;
-      gap: 4rem;
-    }
-  }
-
-  /* Left Col */
-  .origin-title {
-    font-family: 'Cinzel', serif;
-    font-size: 4rem;
-    line-height: 1.1;
-    margin: 0 0 1rem 0;
-  }
-
-  .origin-meta {
-    font-family: var(--font-evidence);
-    font-size: 0.9rem;
-    color: var(--color-mark-gold);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    display: flex;
-    gap: 1.5rem;
-    margin-bottom: 3rem;
-  }
-
-  .narrative-box {
-    font-family: var(--font-narrative);
-    font-size: 1.2rem;
-    line-height: 1.6;
-    margin-bottom: 3rem;
-    color: rgba(245, 237, 216, 0.9);
-  }
-
-  .narrative-box p {
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--color-ink-whisper);
     margin-bottom: 1.5rem;
   }
 
-  .data-grid {
+  .breadcrumb a:hover {
+    color: var(--color-deep-forest);
+  }
+
+  .current-crumb {
+    color: var(--color-deep-forest);
+  }
+
+  .origin-hero-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    align-items: center;
   }
 
-  .data-item {
-    border-left: 1px solid var(--color-mark-gold);
-    padding-left: 1rem;
+  @media (min-width: 860px) {
+    .origin-hero-grid {
+      grid-template-columns: 1.2fr 1fr;
+      gap: 3.5rem;
+    }
   }
 
-  .data-label {
-    font-family: var(--font-evidence);
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    color: var(--color-mark-gold);
-    letter-spacing: 0.1em;
-    margin-bottom: 0.5rem;
-  }
-
-  .data-value {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.9rem;
-    line-height: 1.4;
-    color: rgba(245, 237, 216, 0.8);
-  }
-
-  /* Right Col */
-  .products-header {
-    font-family: 'Cinzel', serif;
-    font-size: 1.5rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 2rem;
-    border-bottom: 1px solid rgba(245, 237, 216, 0.2);
-    padding-bottom: 1rem;
-  }
-
-  .products-list {
+  .origin-hero-content {
     display: flex;
     flex-direction: column;
     gap: 1rem;
   }
 
-  .product-card {
+  .origin-title {
+    font-size: clamp(2.25rem, 4.5vw, 3.75rem);
+    margin: 0;
+    line-height: 1.1;
+    font-weight: 350;
+  }
+
+  .origin-stats-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    font-size: 0.8125rem;
+  }
+
+  .stat-pill {
+    padding: 0.3rem 0.65rem;
+    background-color: var(--color-bone-card);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 4px;
+    color: var(--color-deep-forest);
+  }
+
+  .origin-soil-meta {
+    font-size: 0.75rem;
+    color: var(--color-proof-green);
+    letter-spacing: 0.05em;
+    margin: 0;
+  }
+
+  .origin-hero-media {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--color-forest-dark);
+    box-shadow: var(--shadow-card);
+  }
+
+  .origin-canopy-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  /* Content */
+  .origin-main-content {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(3rem, 6vw, 5rem);
+  }
+
+  .section-heading {
+    font-size: var(--type-title);
+    font-weight: 450;
+    margin-top: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .narrative-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .narrative-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .narrative-card {
+    padding: 1.75rem;
+    background-color: var(--color-bone-card);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    box-shadow: var(--shadow-subtle);
+  }
+
+  .card-kicker {
+    font-size: 0.6875rem;
+    color: var(--color-mark-gold);
+    letter-spacing: 0.08em;
+  }
+
+  .narrative-card p {
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: var(--color-ink-muted);
+    margin: 0;
+  }
+
+  /* Yields Section */
+  .yields-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 1rem;
+    border-bottom: 1px solid var(--color-border-subtle);
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .origin-products-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 580px) {
+    .origin-products-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 960px) {
+    .origin-products-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+  }
+
+  .product-item-card {
+    background-color: var(--color-bone-card);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--duration-base) var(--ease-smooth), box-shadow var(--duration-base) var(--ease-smooth);
+  }
+
+  .product-item-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
+  }
+
+  .prod-img-link {
+    display: block;
+  }
+
+  .prod-media {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background-color: var(--color-bone-warm);
+    overflow: hidden;
+  }
+
+  .prod-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .prod-details {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .prod-title-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .prod-title {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .prod-botanical {
+    font-size: 0.8125rem;
+    font-style: italic;
+    color: var(--color-ink-muted);
+  }
+
+  .prod-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.5rem;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    text-decoration: none;
-    color: var(--color-bone);
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--color-border-subtle);
   }
 
-  .product-card:hover {
-    border-color: var(--color-mark-gold);
-    background: var(--color-gold-muted);
-    transform: translateX(5px);
+  .prod-price {
+    font-size: 1.05rem;
+    font-weight: 600;
   }
 
-  .product-name {
-    font-family: 'Cinzel', serif;
-    font-size: 1.2rem;
-    margin: 0 0 0.25rem 0;
+  .btn-add-harvest {
+    padding: 0.4rem 0.85rem;
+    background-color: var(--color-bone-warm);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 4px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-deep-forest);
+    transition: all var(--duration-base) var(--ease-smooth);
   }
 
-  .product-botanical {
-    font-family: var(--font-narrative);
-    font-size: 1rem;
-    font-style: italic;
-    color: rgba(245, 237, 216, 0.6);
-    margin-bottom: 1rem;
-  }
-
-  .product-sizes {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-
-  .size-tag {
-    font-family: var(--font-evidence);
-    font-size: 0.75rem;
-    color: var(--color-mark-gold);
-    border: 1px solid var(--color-gold-muted);
-    padding: 0.2rem 0.5rem;
-    border-radius: 2px;
-  }
-
-  .product-arrow {
-    font-size: 1.5rem;
-    color: var(--color-mark-gold);
-    opacity: 0.5;
-    transition: opacity 0.3s ease;
-  }
-
-  .product-card:hover .product-arrow {
-    opacity: 1;
-  }
-
-  .no-products {
-    font-family: var(--font-narrative);
-    font-style: italic;
-    color: rgba(245, 237, 216, 0.6);
+  .btn-add-harvest:hover {
+    background-color: var(--color-mark-gold);
+    color: #0C150A;
   }
 </style>
+
+<script>
+  function initOriginAddBtns() {
+    document.querySelectorAll<HTMLButtonElement>('.btn-add-harvest').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const jsonStr = btn.dataset.productJson;
+        if (!jsonStr) return;
+
+        try {
+          const product = JSON.parse(jsonStr);
+          const stored = localStorage.getItem('ourorigin_basket');
+          let items = stored ? JSON.parse(stored) : [];
+          
+          const existingIndex = items.findIndex((item: any) => item.id === product.id);
+          if (existingIndex > -1) {
+            items[existingIndex].quantity = (items[existingIndex].quantity || 1) + 1;
+          } else {
+            items.push(product);
+          }
+
+          localStorage.setItem('ourorigin_basket', JSON.stringify(items));
+          window.dispatchEvent(new CustomEvent('basket-updated'));
+          window.dispatchEvent(new CustomEvent('open-basket'));
+
+          btn.innerHTML = '<span>Added ✓</span>';
+          setTimeout(() => {
+            btn.innerHTML = '+ Add';
+          }, 1500);
+        } catch (err) {}
+      });
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', initOriginAddBtns);
+  document.addEventListener('astro:page-load', initOriginAddBtns);
+</script>
